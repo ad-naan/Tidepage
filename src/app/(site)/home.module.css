@@ -1,0 +1,217 @@
+﻿/* Keep the original coastal composition; refine only the home page. */
+.home :global(.hero) {
+  padding-bottom: 35px;
+}
+.coastEntry {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: max-content;
+  margin-top: 20px;
+  color: var(--accent);
+  font-size: 13px;
+}
+.coastEntry > span {
+  margin-left: 8px;
+  color: var(--muted);
+  font-size: 10px;
+  border-left: 1px solid var(--line);
+  padding-left: 13px;
+}
+.coastEntry:hover svg {
+  transform: translate(2px, -2px);
+}
+.home :global(.hero-art) {
+  margin-top: 8px;
+}
+.home :global(.home-middle) {
+  grid-template-columns: minmax(235px, 0.65fr) minmax(0, 1.35fr);
+  gap: 65px;
+  margin-top: 35px;
+}
+.home :global(.journey-map) {
+  grid-template-columns: 40% 60%;
+  height: 340px;
+  max-width: 310px;
+  margin-top: 35px;
+}
+.home :global(.journey-map > svg) {
+  height: 340px;
+}
+.home :global(.journey-labels h3) {
+  font-family: var(--hand);
+  font-size: 26px;
+  font-weight: 300;
+}
+.home :global(.journey-labels p) {
+  font-size: 12px;
+}
+.home :global(.journey-closing) {
+  display: block;
+  margin: 28px 0 0 15px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+.home :global(.article-row) {
+  grid-template-columns: 42px minmax(0, 1fr) 78px;
+  gap: 22px;
+  min-height: 99px;
+  padding-block: 21px;
+}
+.home :global(.article-row > .mini-sketch) {
+  width: 78px;
+  opacity: 0.65;
+}
+.home :global(.article-row:hover > .mini-sketch) {
+  opacity: 1;
+}
+.home :global(.article-row time) {
+  border-color: transparent;
+}
+.home :global(.article-row.article-lead) {
+  padding-top: 29px;
+  padding-bottom: 27px;
+}
+.home :global(.article-lead .article-info h3) {
+  font-size: 19px;
+  line-height: 1.8;
+  font-weight: 400;
+}
+.home :global(.article-excerpt) {
+  font-size: 13px;
+  line-height: 1.95;
+  color: var(--muted);
+  max-width: 530px;
+  margin-top: 10px;
+}
+.home :global(.article-lead .tags) {
+  margin-top: 12px;
+}
+.home :global(.home-bottom) {
+  margin-top: 42px;
+  padding-block: 30px;
+}
+.home :global(.note-preview > p) {
+  line-height: 2.1;
+}
+.home :global(.quote-preview p) {
+  font-family: var(--hand);
+  font-size: 20px;
+  font-weight: 300;
+}
+.home :global(.otter-hit) {
+  left: 29%;
+  top: 41%;
+  width: 15%;
+  height: 22%;
+}
+@media (max-width: 1200px) {
+  .home :global(.home-middle) {
+    gap: 30px;
+    grid-template-columns: minmax(200px, 0.6fr) minmax(0, 1.4fr);
+  }
+  .home :global(.article-row) {
+    grid-template-columns: 36px minmax(0, 1fr) 60px;
+    gap: 16px;
+  }
+  .home :global(.article-row > .mini-sketch) {
+    width: 60px;
+  }
+  .home :global(.article-lead .article-info h3) {
+    font-size: 17px;
+  }
+  .home :global(.journey-labels a) {
+    gap: 10px;
+  }
+  .home :global(.journey-labels p) {
+    font-size: 11px;
+  }
+}
+@media (max-width: 960px) {
+  .home :global(.home-middle) {
+    grid-template-columns: 180px minmax(0, 1fr);
+    gap: 25px;
+  }
+  .home :global(.article-row) {
+    grid-template-columns: 33px minmax(0, 1fr);
+  }
+  .home :global(.article-row > .mini-sketch) {
+    display: none;
+  }
+  .home :global(.journey-labels h3) {
+    font-size: 23px;
+  }
+  .home :global(.journey-labels p) {
+    white-space: normal;
+  }
+  .home :global(.journey-labels a > span) {
+    display: none;
+  }
+  .home :global(.journey-closing) {
+    font-size: 12px;
+    margin-left: 0;
+  }
+}
+@media (max-width: 700px) {
+  .home :global(.hero) {
+    padding-bottom: 5px;
+  }
+  .home :global(.home-middle) {
+    display: flex;
+    gap: 32px;
+    margin-top: 28px;
+  }
+  .home :global(.article-row) {
+    grid-template-columns: 35px minmax(0, 1fr) 60px;
+    gap: 14px;
+    min-height: 92px;
+  }
+  .home :global(.article-row > .mini-sketch) {
+    display: block;
+  }
+  .home :global(.article-lead) {
+    grid-template-columns: 35px minmax(0, 1fr);
+  }
+  .home :global(.article-lead > .mini-sketch) {
+    display: none;
+  }
+  .home :global(.article-excerpt) {
+    font-size: 12px;
+  }
+  .home :global(.journey) {
+    max-width: 360px;
+    min-height: 0;
+  }
+  .home :global(.journey-map) {
+    max-width: 310px;
+    margin: 18px auto 0;
+    height: 310px;
+  }
+  .home :global(.journey-map > svg) {
+    height: 310px;
+  }
+  .home :global(.journey-labels a > span) {
+    display: block;
+  }
+  .home :global(.journey-labels p) {
+    font-size: 12px;
+  }
+  .home :global(.journey-closing) {
+    text-align: center;
+    margin-top: 10px;
+  }
+  .home :global(.home-bottom) {
+    margin-top: 25px;
+  }
+  .home :global(.quote-preview p) {
+    font-size: 18px;
+  }
+}
+@media (max-width: 400px) {
+  .home :global(.article-row) {
+    grid-template-columns: 33px minmax(0, 1fr);
+  }
+  .home :global(.article-row > .mini-sketch) {
+    display: none;
+  }
+}

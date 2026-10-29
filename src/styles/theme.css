@@ -1,0 +1,357 @@
+/* Theme copy is given room to read, without adding another card to the hero. */
+.svg-hand {
+  font-family: var(--font-hand), "KaiTi", serif;
+  font-style: normal;
+  font-weight: 300;
+}
+.hero-introduction {
+  max-width: 365px;
+  margin-top: 30px;
+  padding-left: 16px;
+  position: relative;
+}
+.hero-introduction:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 7px;
+  bottom: 6px;
+  width: 2px;
+  background: linear-gradient(var(--accent), #df793d22);
+  border-radius: 2px;
+  opacity: 0.65;
+}
+.hero-introduction > p {
+  font-size: 14px;
+  line-height: 2;
+  color: var(--muted);
+  letter-spacing: 0;
+  margin: 0;
+}
+.hero-introduction > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.8;
+}
+.hero-introduction > a > svg {
+  color: var(--accent);
+  transition: transform 0.25s;
+}
+.hero-introduction > a:hover > svg {
+  transform: translate(2px, -2px);
+}
+.hero .hero-copy > .explore-link {
+  margin-top: 23px;
+}
+.memoir-page {
+  max-width: 1000px;
+}
+.memoir-byline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 0 30px;
+  margin-top: 1px;
+  border-bottom: 1px solid var(--line);
+}
+.memoir-avatar {
+  width: 44px;
+  height: 44px;
+  background: var(--sand);
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 32px;
+  line-height: 1;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.memoir-byline > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.memoir-byline strong {
+  font-size: 14px;
+  font-weight: 500;
+}
+.memoir-byline > div > span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.memoir-status {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.memoir-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 190px;
+  gap: 65px;
+  margin-top: 40px;
+  align-items: start;
+}
+.memoir-text > section {
+  margin-bottom: 39px;
+  scroll-margin-top: 115px;
+}
+.memoir-text h2 {
+  font-family: var(--ui-font);
+  font-size: 23px;
+  font-weight: 500;
+  line-height: 1.65;
+  letter-spacing: -0.2px;
+  margin: 0 0 19px;
+}
+.memoir-text p {
+  font-size: 16px;
+  line-height: 2.15;
+  letter-spacing: 0;
+  margin-top: 17px;
+}
+.memoir-margin {
+  position: sticky;
+  top: 120px;
+  border-left: 1px solid var(--line);
+  padding-left: 23px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.memoir-margin-label {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+.memoir-margin > a {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+.memoir-margin > a:hover {
+  color: var(--accent);
+}
+.memoir-margin > .mini-sketch {
+  width: 140px;
+  margin-top: 12px;
+  opacity: 0.8;
+}
+.memoir-margin > p {
+  font-size: 13px;
+  line-height: 2;
+  color: var(--muted);
+}
+.memoir-signature {
+  margin-top: 39px;
+  border-top: 1px dashed var(--line);
+  padding: 25px 0 5px;
+}
+.memoir-signature > p {
+  font-size: 15px;
+  color: var(--muted);
+  margin-top: 0;
+}
+.memoir-signature > span {
+  display: block;
+  font-family: "Segoe Script", "Brush Script MT", cursive;
+  font-style: italic;
+  font-size: 28px;
+  color: var(--accent);
+  margin-top: 10px;
+  transform: rotate(-5deg);
+  width: max-content;
+}
+.memoir-next {
+  margin-top: 52px;
+  border-top: 1px solid var(--line);
+  padding-top: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+}
+.memoir-next > div > span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.memoir-next p {
+  font-size: 15px;
+  margin-top: 7px;
+}
+.memoir-next > a {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.memoir-next > a > svg {
+  color: var(--accent);
+  transition: transform 0.25s;
+}
+.memoir-next > a:hover > svg {
+  transform: translateX(4px);
+}
+@media (min-width: 1500px) {
+  .hero-introduction {
+    max-width: 410px;
+    margin-top: 32px;
+  }
+  .hero-introduction > p {
+    font-size: 15px;
+  }
+  .hero-introduction > a {
+    font-size: 14px;
+  }
+  .hero {
+    min-height: 445px;
+  }
+}
+@media (max-width: 1190px) {
+  .hero-introduction {
+    max-width: 335px;
+    padding-left: 13px;
+  }
+  .hero-introduction > p {
+    font-size: 14px;
+  }
+  .memoir-layout {
+    gap: 35px;
+    grid-template-columns: minmax(0, 1fr) 165px;
+  }
+  .memoir-margin {
+    padding-left: 18px;
+  }
+}
+@media (max-width: 960px) {
+  .hero-introduction {
+    max-width: 290px;
+    margin-top: 27px;
+  }
+  .hero-introduction > p {
+    font-size: 13px;
+  }
+  .hero-introduction > a {
+    font-size: 12px;
+  }
+  .memoir-layout {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .memoir-margin {
+    display: none;
+  }
+  .memoir-text h2 {
+    font-size: 22px;
+  }
+  .memoir-text p {
+    font-size: 16px;
+  }
+}
+@media (max-width: 700px) {
+  .hero-introduction {
+    margin-top: 29px;
+    max-width: 350px;
+    padding-left: 15px;
+  }
+  .hero-introduction > p {
+    font-size: 14px;
+    line-height: 2;
+  }
+  .hero-introduction > a {
+    font-size: 13px;
+    margin-top: 10px;
+  }
+  .hero .hero-copy > .explore-link {
+    margin-top: 25px;
+  }
+  .hero .hero-art {
+    margin-top: 12px;
+  }
+  .memoir-byline {
+    padding-bottom: 25px;
+    gap: 11px;
+  }
+  .memoir-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 29px;
+  }
+  .memoir-byline strong {
+    font-size: 14px;
+  }
+  .memoir-byline > div > span {
+    font-size: 12px;
+  }
+  .memoir-status {
+    font-size: 11px;
+    gap: 6px;
+  }
+  .memoir-layout {
+    margin-top: 30px;
+  }
+  .memoir-text h2 {
+    font-size: 21px;
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+  .memoir-text p {
+    font-size: 15px;
+    line-height: 2.1;
+    margin-top: 16px;
+  }
+  .memoir-text > section {
+    margin-bottom: 32px;
+  }
+  .memoir-signature {
+    padding-top: 21px;
+    margin-top: 30px;
+  }
+  .memoir-signature > p {
+    font-size: 14px;
+  }
+  .memoir-signature > span {
+    font-size: 26px;
+  }
+  .memoir-next {
+    margin-top: 39px;
+    padding-top: 23px;
+    gap: 15px;
+  }
+  .memoir-next p {
+    font-size: 14px;
+  }
+  .memoir-next > a {
+    font-size: 12px;
+    gap: 8px;
+  }
+}
+@media (max-width: 380px) {
+  .memoir-status {
+    display: none;
+  }
+  .hero-introduction > p {
+    font-size: 14px;
+  }
+  .hero-introduction {
+    max-width: 305px;
+  }
+  .memoir-next {
+    align-items: flex-start;
+  }
+  .memoir-next p {
+    max-width: 180px;
+    line-height: 1.8;
+  }
+}

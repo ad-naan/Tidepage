@@ -1,0 +1,90 @@
+/* Hidden native rails reserve no gutter, so locking the body cannot shift the page. */
+html,
+body,
+* {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none;
+}
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+html,
+body {
+  scrollbar-gutter: auto;
+  overflow-x: clip;
+}
+.custom-scrollbar {
+  position: fixed;
+  z-index: 900;
+  touch-action: none;
+  user-select: none;
+  pointer-events: auto;
+  background: transparent;
+  contain: layout style;
+}
+.custom-scrollbar-thumb {
+  position: absolute;
+  opacity: 0.45;
+  cursor: grab;
+  touch-action: none;
+  background: #0000004d;
+  border-radius: 3px;
+  transition:
+    opacity 0.2s,
+    background-color 0.2s;
+  outline-offset: 2px;
+}
+.custom-scrollbar-vertical .custom-scrollbar-thumb {
+  top: 0;
+  left: 3.5px;
+  width: 5px;
+}
+.custom-scrollbar-horizontal .custom-scrollbar-thumb {
+  left: 0;
+  top: 3.5px;
+  height: 5px;
+}
+.custom-scrollbar:hover .custom-scrollbar-thumb,
+.custom-scrollbar.dragging .custom-scrollbar-thumb,
+.custom-scrollbar-thumb:focus-visible {
+  opacity: 0.9;
+  background: #00000073;
+}
+.custom-scrollbar.dragging,
+.custom-scrollbar-thumb:active {
+  cursor: grabbing;
+}
+.custom-scrollbar-local .custom-scrollbar-thumb {
+  opacity: 0.25;
+}
+html:has(dialog[open]) .custom-scrollbar-page {
+  visibility: hidden;
+  pointer-events: none;
+}
+[data-theme="dark"] .custom-scrollbar-thumb {
+  background: #ffffff45;
+}
+[data-theme="dark"] .custom-scrollbar:hover .custom-scrollbar-thumb,
+[data-theme="dark"] .custom-scrollbar.dragging .custom-scrollbar-thumb {
+  background: #ffffff80;
+}
+@media (pointer: coarse) {
+  .custom-scrollbar-thumb {
+    opacity: 0.3;
+  }
+  .custom-scrollbar-vertical .custom-scrollbar-thumb {
+    width: 4px;
+    left: 4px;
+  }
+  .custom-scrollbar-horizontal .custom-scrollbar-thumb {
+    height: 4px;
+    top: 4px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .custom-scrollbar-thumb {
+    transition: none;
+  }
+}

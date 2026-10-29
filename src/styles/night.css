@@ -1,0 +1,279 @@
+:root {
+  --sun-top: #f7b16d;
+  --sun-bottom: #ffedd4;
+  --rock-light: #d8d5c9;
+  --letter-paper: #fffdf7;
+}
+[data-theme="dark"] {
+  --paper: #171c26;
+  --ink: #d5dbe5;
+  --muted: #959fb0;
+  --accent: #d8aa7d;
+  --wash: #34313a;
+  --line: #2c3545;
+  --card: #202735;
+  --soft: #242d3c;
+  --sage: #293641;
+  --sand: #34333e;
+  --peach: #3b303c;
+  --shadow: 0 18px 60px #070c1540;
+  --sun-top: #c3cde5;
+  --sun-bottom: #566681;
+  --rock-light: #65738a;
+  --letter-paper: #252e3d;
+  color-scheme: dark;
+}
+[data-theme="dark"] body:before {
+  opacity: 0.016;
+}
+[data-theme="dark"] .hero-art > svg {
+  color: #95a1b6;
+}
+[data-theme="dark"] .hero-art .svg-hand {
+  fill: #bac5d7;
+}
+[data-theme="dark"] .sky-night {
+  color: #8f9fbe;
+}
+[data-theme="dark"] .sky-night .sky-orb {
+  color: #c3cee5;
+}
+[data-theme="dark"] .sky-night .sky-halo {
+  background: radial-gradient(
+    ellipse,
+    #92a6d210 0%,
+    #8199c607 45%,
+    transparent 72%
+  );
+}
+[data-theme="dark"] .sky-night .sky-orb:after {
+  box-shadow: 0 0 30px #8ea5d21a;
+}
+[data-theme="dark"] .sky-night .sky-link.active,
+[data-theme="dark"] .sky-night .sky-link:hover {
+  color: #c0cee8;
+}
+[data-theme="dark"] .living-header.is-compact {
+  box-shadow: 0 8px 28px #080d181c;
+}
+[data-theme="dark"] .living-header.is-expanded {
+  box-shadow: 0 18px 55px #080d1840;
+}
+[data-theme="dark"] .header-visitor-faces i {
+  background: #334249;
+  color: #b8c9c7;
+  border-color: var(--card);
+}
+[data-theme="dark"] .header-visitor-faces i:nth-child(2) {
+  background: #453f43;
+  color: #d1c0b4;
+}
+[data-theme="dark"] .header-visitor-faces i:nth-child(3) {
+  background: #354254;
+  color: #b4c4dc;
+}
+[data-theme="dark"] .live-dot,
+[data-theme="dark"] .living-avatar > i {
+  background: #94aaac;
+}
+[data-theme="dark"] .activity-cursor,
+[data-theme="dark"] .status-type-caret {
+  background: #9aacc7;
+}
+[data-theme="dark"] .focus-dots > i {
+  background: #8c9eb9;
+}
+[data-theme="dark"] .app-icon {
+  color: #9cacc5;
+  background: #2c394c;
+  border-color: #7183a122;
+}
+[data-theme="dark"] .article-row time {
+  border-right-color: #d8aa7d45;
+}
+[data-theme="dark"] .article-callout {
+  border-color: #869eb126;
+}
+.about-letter-anchor {
+  position: absolute;
+  left: 42%;
+  top: 65%;
+  width: 42px;
+  height: 36px;
+  z-index: 7;
+  perspective: 900px;
+}
+.shore-envelope {
+  position: relative;
+  width: 42px;
+  height: 36px;
+  padding: 3px;
+  display: block;
+  color: var(--ink);
+  transform: rotate(-9deg);
+  border-radius: 3px;
+}
+.shore-envelope > svg {
+  width: 36px;
+  height: 28px;
+  filter: drop-shadow(1px 2px 1px #34271b12);
+}
+.envelope-discovery {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 5px);
+  top: 37px;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+  opacity: 0;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+  pointer-events: none;
+}
+.shore-envelope:hover .envelope-discovery,
+.shore-envelope:focus-visible .envelope-discovery {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.about-letter-sheet {
+  position: absolute;
+  left: -95px;
+  bottom: 48px;
+  width: 305px;
+  padding: 23px 24px 24px;
+  background: var(--letter-paper);
+  border: 1px solid var(--line);
+  border-radius: 3px 13px 4px 4px;
+  box-shadow: 0 12px 40px #332f201a;
+  transform-origin: 40% bottom;
+  overflow: hidden;
+}
+.letter-paper-fold {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 22px;
+  width: 22px;
+  background: var(--soft);
+  clip-path: polygon(0 0, 100% 100%, 100% 0);
+  border-left: 1px solid var(--line);
+}
+.letter-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--muted);
+  gap: 15px;
+  margin-bottom: 21px;
+}
+.letter-topline > button {
+  padding: 0;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+.about-letter-sheet h2 {
+  font-family: var(--ui-font);
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.7;
+}
+.about-letter-sheet > p {
+  font-size: 13px;
+  line-height: 2;
+  color: var(--muted);
+  margin-top: 13px;
+}
+.letter-signature {
+  display: block;
+  font-family: "Segoe Script", "Brush Script MT", cursive;
+  font-style: italic;
+  font-size: 24px;
+  color: var(--accent);
+  text-align: right;
+  margin-top: 13px;
+  line-height: 1.6;
+}
+.about-letter-sheet > a {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 12px;
+  margin-top: 15px;
+  border-top: 1px dashed var(--line);
+  padding-top: 15px;
+}
+.about-letter-sheet > a > svg {
+  color: var(--accent);
+}
+[data-theme="dark"] .about-letter-sheet {
+  box-shadow: 0 12px 40px #080d1840;
+}
+.music-panel input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  height: 2px;
+  border: 0;
+  background: var(--line);
+  accent-color: var(--accent);
+  cursor: pointer;
+  outline-offset: 5px;
+}
+.music-panel input[type="range"]::-webkit-slider-runnable-track {
+  height: 2px;
+  background: var(--line);
+  border-radius: 3px;
+}
+.music-panel input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 7px;
+  height: 7px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-top: -2.5px;
+}
+.music-panel input[type="range"]::-moz-range-track {
+  height: 2px;
+  background: var(--line);
+  border-radius: 3px;
+}
+.music-panel input[type="range"]::-moz-range-thumb {
+  width: 7px;
+  height: 7px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+}
+@media (max-width: 700px) {
+  .about-letter-anchor {
+    left: 42%;
+    top: 65%;
+  }
+  .about-letter-sheet {
+    left: -135px;
+    width: min(300px, calc(100vw - 48px));
+    padding: 21px 22px 22px;
+    bottom: 44px;
+  }
+  .letter-topline {
+    margin-bottom: 17px;
+  }
+  .about-letter-sheet h2 {
+    font-size: 16px;
+  }
+  .about-letter-sheet > p {
+    font-size: 13px;
+  }
+  .letter-signature {
+    font-size: 23px;
+  }
+  .envelope-discovery {
+    font-size: 10px;
+  }
+}

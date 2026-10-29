@@ -1,0 +1,308 @@
+/* Secondary utility labels make room before the live status loses space. */
+.living-header.is-expanded .living-context {
+  display: flex;
+  flex: 0 0 auto;
+  min-width: 63px;
+  overflow: visible;
+}
+.living-header.is-expanded .living-avatar {
+  display: none;
+}
+.living-header.is-expanded .living-activity-trigger {
+  gap: 4px;
+  padding-right: 0;
+}
+.living-header.is-expanded .living-status > strong {
+  font-size: 12px;
+}
+.living-header.is-expanded .header-wordmark {
+  min-width: 116px;
+  margin-right: 0;
+}
+.living-header.is-expanded .header-wordmark > span {
+  font-size: 33px;
+}
+.living-header.is-expanded .header-music .music-open > span:last-child {
+  display: none;
+}
+.living-header.is-expanded .header-music .music-open {
+  gap: 0;
+}
+.living-header.is-expanded .header-visitor-faces {
+  display: none;
+}
+.living-header.is-expanded .header-visitors-icon {
+  display: block;
+  width: 14px;
+}
+.living-header.is-expanded .living-search-trigger .search-text,
+.living-header.is-expanded .living-search-trigger kbd {
+  display: none;
+}
+.living-header.is-expanded .living-actions {
+  gap: 14px;
+}
+.living-header.is-expanded .living-header-row {
+  gap: 18px;
+}
+.sky-orb {
+  touch-action: none;
+}
+.sky-playground {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.sky-air {
+  position: absolute;
+  inset: 0;
+  width: 225px;
+  height: 490px;
+  opacity: 0.22;
+  pointer-events: none;
+}
+.sky-clock {
+  position: absolute;
+  left: 21px;
+  top: 132px;
+  width: 65px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  color: var(--muted);
+  pointer-events: auto;
+  font-variant-numeric: tabular-nums;
+}
+.sky-clock > svg {
+  width: 27px;
+  height: 27px;
+  color: currentColor;
+  opacity: 0.6;
+}
+.sky-clock > span:not(.sky-clock-caption) {
+  font-size: 12px;
+  line-height: 1.7;
+  white-space: nowrap;
+}
+.sky-clock-caption {
+  position: absolute;
+  bottom: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: var(--muted);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.sky-clock:hover .sky-clock-caption,
+.sky-clock:focus-visible .sky-clock-caption {
+  opacity: 0.8;
+}
+.sky-paper-boat {
+  position: absolute;
+  left: 31px;
+  top: 348px;
+  width: 55px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  pointer-events: auto;
+  transform-origin: 50% 70%;
+}
+.sky-paper-boat > svg {
+  width: 47px;
+  height: 36px;
+  opacity: 0.7;
+}
+.sky-paper-boat > span {
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--muted);
+  opacity: 0.75;
+}
+.sky-paper-boat:hover > svg {
+  color: var(--accent);
+  opacity: 1;
+}
+.sky-found-line {
+  position: absolute;
+  left: 26px;
+  top: 412px;
+  width: 162px;
+  pointer-events: auto;
+}
+.sky-found-line > span {
+  position: absolute;
+  font-family: Georgia, serif;
+  font-size: 30px;
+  left: -5px;
+  top: -17px;
+  opacity: 0.3;
+  color: var(--accent);
+}
+.sky-found-line > p {
+  font-size: 13px;
+  line-height: 1.95;
+  color: var(--muted);
+  letter-spacing: 0.2px;
+}
+.sky-found-line > button {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  font-size: 11px;
+  color: var(--muted);
+  padding: 0;
+  margin-top: 9px;
+}
+.sky-found-line > button > span {
+  color: var(--accent);
+}
+.sky-mobile-activity {
+  display: none;
+}
+.sky-time-orbit {
+  position: absolute;
+  inset: 0;
+  width: 225px;
+  height: 490px;
+  pointer-events: none;
+  color: var(--muted);
+  opacity: 0.33;
+}
+.sky-clock {
+  left: 18px;
+  top: 291px;
+  width: 78px;
+  gap: 0;
+}
+.sky-clock > span:not(.sky-clock-caption) {
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  opacity: 0.8;
+}
+.sky-clock-caption {
+  bottom: -17px;
+}
+.sky-paper-boat {
+  touch-action: none;
+}
+.sky-paper-boat > span {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.sky-paper-boat:hover > span,
+.sky-paper-boat:focus-visible > span {
+  opacity: 0.85;
+}
+@media (max-width: 960px) {
+  .living-header.is-expanded .living-context {
+    min-width: 61px;
+  }
+  .living-header.is-expanded .header-wordmark {
+    min-width: 99px;
+  }
+  .living-header.is-expanded .header-wordmark > span {
+    font-size: 30px;
+  }
+  .living-header.is-expanded .living-header-row {
+    gap: 14px;
+  }
+  .living-header.is-expanded .living-actions {
+    gap: 12px;
+  }
+  .living-header.is-expanded
+    .header-visitors-trigger
+    > span:not(.header-visitor-faces) {
+    display: none;
+  }
+  .living-header.is-expanded .header-widget-divider {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  .living-header.is-expanded .living-context {
+    display: none;
+  }
+  .living-header.is-expanded .header-wordmark {
+    min-width: 84px;
+  }
+  .living-header.is-expanded .header-wordmark > span {
+    font-size: 27px;
+  }
+  .living-header.is-expanded .header-wordmark.wordmark-condensed {
+    min-width: 25px;
+  }
+  .living-header.is-expanded .header-wordmark.wordmark-condensed > span {
+    font-size: 31px;
+  }
+  .living-header .living-actions,
+  .living-header.is-expanded .living-actions {
+    gap: 10px;
+  }
+  .sky-mobile-activity {
+    display: grid;
+    place-items: center;
+    padding: 2px;
+    color: var(--muted);
+    width: 22px;
+    height: 24px;
+    position: relative;
+  }
+  .sky-mobile-activity:after {
+    content: "";
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: #93a17e;
+    border-radius: 50%;
+    right: 0;
+    top: 2px;
+  }
+  .sky-mobile-activity.selected {
+    color: var(--accent);
+  }
+  .sky-clock > span:not(.sky-clock-caption) {
+    font-size: 13px;
+  }
+  .sky-paper-boat > span {
+    font-size: 12px;
+  }
+  .sky-clock-caption {
+    font-size: 11px;
+  }
+  .sky-found-line > p {
+    font-size: 14px;
+  }
+  .sky-found-line {
+    width: 170px;
+  }
+  .sky-found-line > button {
+    font-size: 12px;
+  }
+  .living-header.is-reading .sky-mobile-activity {
+    display: none;
+  }
+}
+@media (max-width: 400px) {
+  .living-header .living-actions,
+  .living-header.is-expanded .living-actions {
+    gap: 8px;
+  }
+  .living-header .living-actions > .login-trigger {
+    display: none;
+  }
+  .living-header.is-expanded .header-wordmark {
+    min-width: 79px;
+  }
+  .living-header.is-expanded .header-wordmark > span {
+    font-size: 26px;
+  }
+}

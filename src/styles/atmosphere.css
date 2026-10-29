@@ -1,0 +1,42 @@
+/* A wash of light above the paper, with no hard orb or animated glare. */
+body {
+  background-image:
+    radial-gradient(
+      ellipse 38% 44% at 72% -3%,
+      #f3bb7138 0%,
+      #f3bb7117 44%,
+      transparent 76%
+    ),
+    radial-gradient(
+      ellipse 49% 48% at 47% 0%,
+      #ebae8a1f 0%,
+      #ebae8a0a 55%,
+      transparent 83%
+    ),
+    radial-gradient(ellipse 24% 33% at 83% 6%, #fff0ce2b 0%, transparent 80%);
+  background-size: 100% 570px;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+[data-theme="dark"] body {
+  background-image:
+    radial-gradient(
+      ellipse 34% 40% at 72% -2%,
+      #bfcef51c 0%,
+      #9eb7e70c 48%,
+      transparent 78%
+    ),
+    radial-gradient(
+      ellipse 51% 48% at 51% 0%,
+      #6e91c915 0%,
+      #7895c507 53%,
+      transparent 83%
+    ),
+    radial-gradient(ellipse 22% 30% at 82% 4%, #dce6ff10 0%, transparent 80%);
+}
+@media (max-width: 700px) {
+  body {
+    background-size: 150% 430px;
+    background-position: 60% 0;
+  }
+}
