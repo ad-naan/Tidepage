@@ -1,15 +1,11 @@
-import { pageMetadata } from "@/server/seo/metadata";
-import Link from "next/link";
+import { getPageMetadata } from "@/server/seo/metadata";
+import { Link } from "@/shared/i18n/navigation";
 import { ArrowRight } from "lucide-react";
 import { PageHeading } from "@/shared/ui/primitives";
 import { MiniSketch } from "@/components/Sketch";
 import { profile } from "@/shared/config/profile";
 
-export const metadata = pageMetadata(
-  "/about",
-  "我的自述",
-  "关于 adnaan，以及这份仍在更新的光阴副本。",
-);
+export const generateMetadata = () => getPageMetadata("/about");
 export default function Page() {
   return (
     <div className="inner-page memoir-page">

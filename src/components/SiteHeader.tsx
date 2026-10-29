@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link } from "@/shared/i18n/navigation";
+import { usePathname } from "@/shared/i18n/navigation";
 import {
   AnimatePresence,
   motion,

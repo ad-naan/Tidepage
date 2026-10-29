@@ -1,0 +1,141 @@
+{
+  "site": {
+    "name": "Tidepage · 潮页",
+    "description": "adnaan 的潮页。记录技术、产品与生活，走进一片可以探索的光阴海岸。",
+    "skip": "跳到主要内容"
+  },
+  "nav": {
+    "home": "首页",
+    "articles": "文章",
+    "notes": "手记",
+    "projects": "项目",
+    "quotes": "一言",
+    "gallery": "照片廊",
+    "about": "自述",
+    "elsewhere": "随便逛逛"
+  },
+  "categories": {
+    "all": "全部",
+    "technology": "技术",
+    "product": "产品",
+    "life": "生活"
+  },
+  "home": {
+    "greeting": "你好，我是 adnaan。",
+    "line1": "把光阴，",
+    "line2": "写成自己的副本",
+    "intro": "我用代码把想法做出来，也用文字留住自己的变化。这里记录技术、产品与生活，还有每一次重新出发。",
+    "articles": "探索文章",
+    "coast": "走进这片海岸",
+    "world": "空间漫游",
+    "latest": "最近写下的",
+    "all": "翻阅全部",
+    "footnote": "写下这一页，继续往前走。",
+    "count": "{count} 份光阴的记录",
+    "note": "最近留下一页",
+    "quote": "让过去有处安放，让明天仍有期待。",
+    "next": "留给下一页"
+  },
+  "articles": {
+    "title": "写在光阴里",
+    "description": "记录思考、尝试和转变。让每一次向前，都有迹可循。",
+    "search": "筛选文章",
+    "placeholder": "输入关键词…",
+    "archive": "光阴归档",
+    "count": "{count} 篇文章 · 持续记录",
+    "pagination": "文章分页",
+    "previous": "上一页",
+    "next": "下一页",
+    "empty": "这里还没有故事",
+    "try": "换个关键词，或看看其他分类。",
+    "all": "查看全部文章",
+    "back": "回到文章",
+    "minutes": "{count} 分钟阅读",
+    "toc": "这篇文章里",
+    "demo": "本文为博客示例内容，用于展示阅读体验。",
+    "continue": "下一篇，接着逛逛"
+  },
+  "header": {
+    "search": "搜索文章",
+    "searchLabel": "搜索",
+    "loading": "正在搜索…",
+    "results": "{count} 个结果",
+    "recent": "最近的文章",
+    "escape": "按 Esc 收起",
+    "error": "暂时无法搜索，请稍后重试。",
+    "empty": "没有找到相关内容，试试其他关键词。",
+    "light": "切换浅色模式",
+    "dark": "切换深色模式",
+    "explore": "走进光阴海岸"
+  },
+  "journey": {
+    "title": "走过的，留在这里",
+    "technology": "构建、踩坑、思考",
+    "product": "从想法到落地",
+    "life": "记录与热爱",
+    "end": "一步一步，成为更好的自己。"
+  },
+  "footer": {
+    "demo": "内容与数据为演示",
+    "coast": "回到海岸",
+    "rss": "订阅 RSS",
+    "contact": "联系与留言",
+    "heart": "留下一份心意"
+  },
+  "notes": {
+    "title": "日子的副本",
+    "description": "把还没写成文章的念头，和不想忘记的瞬间，留在这一页。",
+    "year": "生活切片",
+    "all": "查看所有手记",
+    "saved": "收藏的片段 ({count})",
+    "save": "收藏手记",
+    "unsave": "取消收藏手记",
+    "savedLabel": "已收藏",
+    "remember": "记在心里",
+    "empty": "点击手记里的爱心，收藏打动你的片段。",
+    "end": "— 记住这一刻，然后继续生活。—"
+  },
+  "quotes": {
+    "title": "留给下一页的话",
+    "description": "写给走过这一段路，也准备重新出发的自己。",
+    "empty": "这里的句子还在酝酿。",
+    "page": "第 {index} 页 / {total}",
+    "next": "翻到下一句",
+    "save": "收藏这句一言",
+    "unsave": "取消收藏一言",
+    "copy": "复制一言",
+    "copied": "这句话已复制。",
+    "failed": "复制暂不可用，可以直接选中文字复制。",
+    "saved": "已收藏在这个浏览器里。",
+    "hint": "点击爱心，把喜欢的话留在这里。",
+    "collection": "留在心里的话"
+  },
+  "projects": {
+    "title": "把想法写进现实",
+    "description": "把每一次动手，都当作新的起点。这些作品记录了我走过的路。",
+    "all": "全部",
+    "product": "产品",
+    "open-source": "开源",
+    "experiment": "实验",
+    "next": "下一页，仍在尝试。",
+    "progress": "完成一段，再开始一段。新的想法会继续留在这里。",
+    "drag": "拖动这颗小太阳，再轻轻松手。",
+    "demo": "这是博客的示例项目展示，暂未提供真实应用或源码链接。"
+  },
+  "about": {
+    "title": "我的自述",
+    "description": "关于我，也关于这份仍在更新的潮页。",
+    "byline": "写给来到这里的你",
+    "status": "这一页，还在继续"
+  },
+  "world": {
+    "name": "光阴海岸",
+    "description": "驾船探索海岸，寻找灯芯，发现星光下的隐秘海湾。"
+  },
+  "language": {
+    "label": "语言"
+  },
+  "gallery": {
+    "description": "记录沿途的风景与日常。"
+  }
+}

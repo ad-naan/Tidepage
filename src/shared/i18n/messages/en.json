@@ -1,0 +1,141 @@
+{
+  "site": {
+    "name": "Tidepage",
+    "description": "Code, products and everyday life by adnaan. Step into an explorable coast of stories.",
+    "skip": "Skip to main content"
+  },
+  "nav": {
+    "home": "Home",
+    "articles": "Articles",
+    "notes": "Notes",
+    "projects": "Projects",
+    "quotes": "Quotes",
+    "gallery": "Gallery",
+    "about": "About",
+    "elsewhere": "Explore"
+  },
+  "categories": {
+    "all": "All",
+    "technology": "Technology",
+    "product": "Product",
+    "life": "Life"
+  },
+  "home": {
+    "greeting": "Hello, I'm adnaan.",
+    "line1": "Keep a little time,",
+    "line2": "write your own story.",
+    "intro": "I build ideas with code and keep track of change through words. Notes on technology, products, everyday life, and starting again.",
+    "articles": "Explore the writing",
+    "coast": "Step into the coast",
+    "world": "Explore the world",
+    "latest": "Recently written",
+    "all": "View all",
+    "footnote": "Write another page. Keep moving.",
+    "count": "{count} entries along the way",
+    "note": "A recent moment",
+    "quote": "Give the past a place, and the future a little hope.",
+    "next": "For the next page"
+  },
+  "articles": {
+    "title": "Written along the way",
+    "description": "Thoughts, experiments, and changes worth keeping.",
+    "search": "Search articles",
+    "placeholder": "Search by keyword…",
+    "archive": "The archive",
+    "count": "{count, plural, one {# article} other {# articles}} · Still writing",
+    "pagination": "Article pagination",
+    "previous": "Previous",
+    "next": "Next",
+    "empty": "No stories here yet",
+    "try": "Try another keyword or category.",
+    "all": "View all articles",
+    "back": "Back to articles",
+    "minutes": "{count} min read",
+    "toc": "On this page",
+    "demo": "This sample article demonstrates the reading experience.",
+    "continue": "Continue with the next story"
+  },
+  "header": {
+    "search": "Search articles",
+    "searchLabel": "Search",
+    "loading": "Searching…",
+    "results": "{count, plural, one {# result} other {# results}}",
+    "recent": "Recent articles",
+    "escape": "Esc to close",
+    "error": "Search is unavailable. Please try again.",
+    "empty": "No matching articles. Try another keyword.",
+    "light": "Switch to light mode",
+    "dark": "Switch to dark mode",
+    "explore": "Explore the coast"
+  },
+  "journey": {
+    "title": "Places along the way",
+    "technology": "Build, experiment, reflect",
+    "product": "From idea to something real",
+    "life": "Moments worth keeping",
+    "end": "One step, then another."
+  },
+  "footer": {
+    "demo": "Sample content and data",
+    "coast": "Back to the coast",
+    "rss": "Subscribe via RSS",
+    "contact": "Contact",
+    "heart": "Leave a little kindness"
+  },
+  "notes": {
+    "title": "Copies of ordinary days",
+    "description": "Small thoughts, unfinished ideas, and moments I don't want to forget.",
+    "year": "Slices of everyday life",
+    "all": "View all notes",
+    "saved": "Saved moments ({count})",
+    "save": "Save note",
+    "unsave": "Unsave note",
+    "savedLabel": "Saved",
+    "remember": "Keep this moment",
+    "empty": "Tap a heart to keep a note here.",
+    "end": "— Remember this moment, then keep living. —"
+  },
+  "quotes": {
+    "title": "For the next page",
+    "description": "A few words for the road behind and the one ahead.",
+    "empty": "The next words are still taking shape.",
+    "page": "Page {index} / {total}",
+    "next": "Another thought",
+    "save": "Save this quote",
+    "unsave": "Unsave quote",
+    "copy": "Copy quote",
+    "copied": "Copied to your clipboard.",
+    "failed": "Copy is unavailable. You can select the text instead.",
+    "saved": "Saved in this browser.",
+    "hint": "Tap the heart to keep words you like.",
+    "collection": "Words kept close"
+  },
+  "projects": {
+    "title": "From an idea to something real",
+    "description": "Small products, open experiments, and things I've tried to build.",
+    "all": "All",
+    "product": "Product",
+    "open-source": "Open source",
+    "experiment": "Experiment",
+    "next": "The next page is still taking shape.",
+    "progress": "Finish one experiment, then begin another.",
+    "drag": "Drag the little sun, then let go.",
+    "demo": "This is a sample project. No live application or source repository is linked yet."
+  },
+  "about": {
+    "title": "A little about me",
+    "description": "About me, and this still-growing Tidepage.",
+    "byline": "A note to everyone who stops by",
+    "status": "Still turning the page"
+  },
+  "world": {
+    "name": "The Coast",
+    "description": "Sail the coast, find the lost lights, and discover a hidden bay under the stars."
+  },
+  "language": {
+    "label": "Language"
+  },
+  "gallery": {
+    "description": "Places and small moments worth keeping."
+  }
+}

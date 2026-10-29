@@ -1,16 +1,18 @@
-import Link from "next/link";
+import { getLocale, getTranslations } from "next-intl/server";
+import { Link } from "@/shared/i18n/navigation";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { HeroSketch, MiniSketch } from "@/components/Sketch";
 import { Journey } from "@/components/Journey";
 import { ArticleList } from "@/modules/content/ui/ArticleList";
 import { getArticles, getNotes } from "@/modules/content/server";
-import { pageMetadata } from "@/server/seo/metadata";
-export const metadata = pageMetadata("/");
+import { getPageMetadata } from "@/server/seo/metadata";
+export const generateMetadata = () => getPageMetadata("/");
 import { profile } from "@/shared/config/profile";
 import styles from "./home.module.css";
 
 export default async function Home() {
-  const [articles, notes] = await Promise.all([getArticles(), getNotes()]);
+  const locale = await getLocale();
+  const [articles, notes] = await Promise.all([getArticles(locale), getNotes(locale)]);
   return (
     <div className={styles.home}>
       <section className="hero">

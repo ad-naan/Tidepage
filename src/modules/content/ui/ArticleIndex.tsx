@@ -1,10 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "@/shared/i18n/navigation";
+import { useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
 import type { ArticleSummary } from "../domain/models";
 import type { Page } from "@/shared/contracts/api";
-import Link from "next/link";
+import { Link } from "@/shared/i18n/navigation";
 import { ArticleList } from "@/modules/content/ui/ArticleList";
 import { MiniSketch } from "@/components/Sketch";
 import { PageHeading, SpringButton } from "@/shared/ui/primitives";

@@ -1,3 +1,4 @@
+import { getLocale } from "next-intl/server";
 import { Shell } from "@/components/Shell";
 import { CustomScrollbars } from "@/components/CustomScrollbars";
 import { PreviewIdentityProvider } from "@/modules/identity/ui/PreviewIdentity";
@@ -10,7 +11,7 @@ export default async function SiteLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const articles = await getArticles();
+  const articles = await getArticles(await getLocale());
   return (
     <PreviewIdentityProvider>
       <Shell articles={articles}>{children}</Shell>

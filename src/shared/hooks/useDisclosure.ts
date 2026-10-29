@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/shared/i18n/navigation";
 export function useDisclosure(name: string) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);

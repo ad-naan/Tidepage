@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import { Link } from "@/shared/i18n/navigation";
 import { motion } from "motion/react";
 import { House, Tree } from "./Sketch";
 import { softSpring } from "@/shared/lib/motion";

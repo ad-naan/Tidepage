@@ -7,12 +7,14 @@ import type {
 } from "../domain/models";
 import type { ArticleQuery } from "../domain/query";
 import type { Page } from "@/shared/contracts/api";
+import type { Locale } from "@/shared/i18n/config";
 // Every adapter returns only published content, including publication-time checks.
 export interface ContentRepository {
   listArticles(query: ArticleQuery): Promise<Page<ArticleSummary>>;
-  allArticles(): Promise<ArticleSummary[]>;
-  articleBySlug(slug: string): Promise<Article | null>;
-  notes(): Promise<Note[]>;
-  projects(): Promise<Project[]>;
-  quotes(): Promise<Quote[]>;
+  allArticles(locale: Locale): Promise<ArticleSummary[]>;
+  articleBySlug(slug: string, locale: Locale): Promise<Article | null>;
+  articleLocales(slug: string): Promise<Locale[]>;
+  notes(locale: Locale): Promise<Note[]>;
+  projects(locale: Locale): Promise<Project[]>;
+  quotes(locale: Locale): Promise<Quote[]>;
 }

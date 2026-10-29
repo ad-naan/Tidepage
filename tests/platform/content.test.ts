@@ -6,7 +6,7 @@ import { readFile } from "node:fs/promises";
 import { articlesTable } from "../../src/modules/content/infrastructure/schema";
 import { postgresContentRepository } from "../../src/modules/content/infrastructure/postgres-repository";
 import { demoContentRepository } from "../../src/modules/content/infrastructure/demo-repository";
-import { articles } from "../../src/modules/content/infrastructure/demo-data";
+import { seedArticles } from "../../src/modules/content/infrastructure/demo-repository";
 import { createContentService } from "../../src/modules/content/application/service";
 import type { Database } from "../../src/server/db/client";
 
@@ -20,7 +20,7 @@ test("demo and PostgreSQL adapters honor publication and summary boundaries", as
       ),
     );
     const db = drizzle(pg);
-    const source = articles[0];
+    const source = seedArticles[0];
     const row = {
       slug: source.slug,
       title: source.title,

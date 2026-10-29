@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import { Link } from "@/shared/i18n/navigation";
 export default function ErrorPage({
   reset,
 }: {

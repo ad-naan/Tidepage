@@ -1,7 +1,8 @@
-import Link from "next/link";
+import { getLocale, getTranslations } from "next-intl/server";
+import { Link } from "@/shared/i18n/navigation";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
-import { getArticles, getArticle } from "@/modules/content/server";
+import { getArticles, getArticle, getArticleLocales } from "@/modules/content/server";
 import { articleMetadata } from "@/server/seo/metadata";
 import { articleGraph } from "@/server/seo/structured-data";
 import { JsonLd } from "@/server/seo/JsonLd";
@@ -19,21 +20,24 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const locale = await getLocale();
   if (!slugSchema.safeParse(slug).success) notFound();
-  const article = await getArticle(slug);
+  const article = await getArticle(slug, locale);
   if (!article) notFound();
-  return articleMetadata(article);
+  return articleMetadata(article, await getArticleLocales(slug));
 }
 export default async function ArticlePage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  const locale = await getLocale();
   const { slug } = await params;
+  const locale = await getLocale();
   if (!slugSchema.safeParse(slug).success) notFound();
   const [article, articles] = await Promise.all([
-    getArticle(slug),
-    getArticles(),
+    getArticle(slug, locale),
+    getArticles(locale),
   ]);
   if (!article) notFound();
   const next =

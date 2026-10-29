@@ -1,11 +1,10 @@
 import { config } from "dotenv";
 config({ path: [".env.local", ".env"], quiet: true });
 import { getDb, closeDatabase } from "../src/server/db/client";
+
 import {
-  articles,
-  projects,
-} from "../src/modules/content/infrastructure/demo-data";
-import {
+  seedArticles,
+  seedProjects,
   demoNotes,
   demoQuotes,
 } from "../src/modules/content/infrastructure/demo-repository";
@@ -23,7 +22,8 @@ try {
     await tx
       .insert(articlesTable)
       .values(
-        articles.map((a) => ({
+        seedArticles.map((a) => ({
+          locale:a.locale,
           slug: a.slug,
           title: a.title,
           excerpt: a.excerpt,
@@ -52,7 +52,7 @@ try {
     await tx
       .insert(projectsTable)
       .values(
-        projects.map((p, i) => ({
+        seedProjects.map((p, i) => ({
           ...p,
           sortOrder: i,
           visibility: "published" as const,

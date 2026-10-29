@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, type ReactNode } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link } from "@/shared/i18n/navigation";
+import { usePathname } from "@/shared/i18n/navigation";
 import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import { Mail, Rss, X, Heart, ArrowRight } from "lucide-react";
 import { useLocalState } from "@/shared/hooks/useLocalState";

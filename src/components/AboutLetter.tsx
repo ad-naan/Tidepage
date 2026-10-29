@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import { Link } from "@/shared/i18n/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight, X } from "lucide-react";
 import { useDisclosure } from "@/shared/hooks/useDisclosure";

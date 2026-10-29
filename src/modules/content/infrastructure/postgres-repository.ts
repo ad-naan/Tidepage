@@ -11,6 +11,7 @@ import {
   quotesTable as q,
 } from "./schema";
 const summaryColumns = {
+  locale: a.locale,
   slug: a.slug,
   title: a.title,
   excerpt: a.excerpt,
@@ -42,28 +43,30 @@ export function postgresContentRepository(
   db: Database = getDb(),
 ): ContentRepository {
   return {
-    allArticles: async () =>
+    allArticles: async (locale) =>
       (
         await db
           .select(summaryColumns)
           .from(a)
-          .where(published(a))
+          .where(and(published(a), eq(a.locale, locale)))
           .orderBy(desc(a.publishedAt), asc(a.slug))
       ).map(summary),
-    articleBySlug: async (slug) => {
+    articleBySlug: async (slug, locale) => {
       const [row] = await db
         .select()
         .from(a)
-        .where(and(published(a), eq(a.slug, slug)))
+        .where(and(published(a), eq(a.slug, slug), eq(a.locale, locale)))
         .limit(1);
       return row
         ? articleSchema.parse({ ...summary(row), sections: row.sections })
         : null;
     },
+    articleLocales: async (slug) => (await db.select({locale:a.locale}).from(a).where(and(published(a),eq(a.slug,slug)))).map(row=>row.locale),
     listArticles: async (query) => {
       const pattern = `%${query.q.replace(/[\\%_]/g, "\\$&")}%`;
       const where = and(
         published(a),
+        eq(a.locale, query.locale),
         query.category ? eq(a.category, query.category) : undefined,
         query.q
           ? or(
@@ -97,31 +100,33 @@ export function postgresContentRepository(
         { isolationLevel: "repeatable read", accessMode: "read only" },
       );
     },
-    notes: async () =>
+    notes: async (locale) =>
       (
         await db
           .select()
           .from(n)
-          .where(published(n))
+          .where(and(published(n),eq(n.locale,locale)))
           .orderBy(desc(n.publishedOn), asc(n.id))
       ).map((row) => ({
+        locale: row.locale,
         id: row.id,
-        date: `${Number(row.publishedOn.slice(5, 7))} 月 ${row.publishedOn.slice(8)} 日`,
+        date: new Intl.DateTimeFormat(locale,{month:"long",day:"2-digit",timeZone:"UTC"}).format(new Date(row.publishedOn)),
         publishedOn: row.publishedOn,
         mood: row.mood,
         text: row.text,
         tag: row.tag,
         sketch: row.sketch,
       })),
-    projects: async () =>
+    projects: async (locale) =>
       (
         await db
           .select()
           .from(p)
-          .where(published(p))
+          .where(and(published(p),eq(p.locale,locale)))
           .orderBy(asc(p.sortOrder), asc(p.id))
       ).map(
         ({
+          locale,
           id,
           name,
           subtitle,
@@ -132,6 +137,7 @@ export function postgresContentRepository(
           sketch,
           color,
         }) => ({
+          locale,
           id,
           name,
           subtitle,
@@ -143,13 +149,13 @@ export function postgresContentRepository(
           color,
         }),
       ),
-    quotes: async () =>
+    quotes: async (locale) =>
       (
         await db
           .select()
           .from(q)
-          .where(published(q))
+          .where(and(published(q),eq(q.locale,locale)))
           .orderBy(asc(q.sortOrder), asc(q.id))
-      ).map(({ id, text, author }) => ({ id, text, author })),
+      ).map(({ id, locale, text, author }) => ({ id, locale, text, author })),
   };
 }

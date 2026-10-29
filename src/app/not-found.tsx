@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/shared/i18n/navigation";
 import { MiniSketch } from "@/components/Sketch";
 export default function NotFound() {
   return (

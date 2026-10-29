@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import { Link } from "@/shared/i18n/navigation";
 import { motion } from "motion/react";
 import type { ArticleSummary } from "../domain/models";
 import { MiniSketch } from "@/components/Sketch";

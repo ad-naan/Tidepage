@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/shared/i18n/navigation";
 import { useReducedMotion } from "motion/react";
 import {
   ArrowLeft,
