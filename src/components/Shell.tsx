@@ -1,4 +1,6 @@
 "use client";
+import { useLocale, useTranslations } from "next-intl";
+import { navigationItems } from "@/shared/config/site";
 import { useEffect, useState, type ReactNode } from "react";
 import { Link } from "@/shared/i18n/navigation";
 import { usePathname } from "@/shared/i18n/navigation";
@@ -12,15 +14,7 @@ import { CelestialNav } from "./CelestialNav";
 
 import type { ArticleSummary } from "@/modules/content/domain/models";
 
-const nav = [
-  { href: "/", label: "首页" },
-  { href: "/articles", label: "文章" },
-  { href: "/notes", label: "手记" },
-  { href: "/projects", label: "项目" },
-  { href: "/quotes", label: "一言" },
-  { href: "/gallery", label: "照片廊" },
-  { href: "/about", label: "自述" },
-];
+const nav = navigationItems;
 export function Shell({
   children,
   articles,
@@ -28,6 +22,8 @@ export function Shell({
   children: ReactNode;
   articles: ArticleSummary[];
 }) {
+  const t=useTranslations("nav"),footer=useTranslations("footer");
+  const locale=useLocale();
   const pathname = usePathname();
   const [theme, setTheme] = useLocalState<"light" | "dark">(
     "adnaan-theme",
@@ -51,13 +47,13 @@ export function Shell({
       <div className={`site-shell ${immersive ? "is-immersive" : ""}`}>
         <SiteHeader
           articles={articles}
-          label={
+          label={t(
             nav.find(
               (item) =>
                 item.href ===
                 (pathname.startsWith("/articles/") ? "/articles" : pathname),
-            )?.label || "随便逛逛"
-          }
+            )?.key || "elsewhere"
+          )}
           immersive={immersive}
           onImmersiveChange={() => setImmersive((v) => !v)}
           theme={theme}
@@ -91,7 +87,7 @@ export function Shell({
           </main>
           {visitedCoast && pathname !== "/" && (
             <Link href="/explore" className="return-to-coast">
-              回到海岸 <ArrowRight size={14} />
+              {footer("coast")} <ArrowRight size={14} />
             </Link>
           )}
           <footer className="page-footer">
@@ -100,15 +96,15 @@ export function Shell({
               <button aria-label="留下一份心意" onClick={() => setSecret(true)}>
                 <Heart size={14} />
               </button>
-              <Link href="/feed.xml" aria-label="订阅 RSS">
+              <a href={`/feed.xml?locale=${locale}`} aria-label={footer("rss")}>
                 <Rss size={14} />
-              </Link>
+              </a>
               <button aria-label="联系与留言" onClick={() => setContact(true)}>
                 <Mail size={14} />
               </button>
             </div>
             <span>
-              内容与数据为演示 <span className="footer-star">✳</span>
+              {footer("demo")} <span className="footer-star">✳</span>
             </span>
           </footer>
         </div>

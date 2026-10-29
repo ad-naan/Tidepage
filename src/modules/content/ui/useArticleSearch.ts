@@ -1,4 +1,5 @@
 "use client";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { apiGet } from "@/shared/http/client";
 import type { Page } from "@/shared/contracts/api";
@@ -8,6 +9,7 @@ export function useArticleSearch(
   enabled: boolean,
   initial: ArticleSummary[],
 ) {
+  const locale=useLocale();const t=useTranslations("header");
   const [state, setState] = useState<{
     items: ArticleSummary[];
     total: number;
@@ -25,7 +27,7 @@ export function useArticleSearch(
     setState((s) => ({ ...s, loading: true, error: "" }));
     const timer = setTimeout(() => {
       apiGet<Page<ArticleSummary>>(
-        `/api/v1/articles?q=${encodeURIComponent(query)}&pageSize=4`,
+        `/api/v1/articles?q=${encodeURIComponent(query)}&pageSize=4&locale=${encodeURIComponent(locale)}`,
         { signal: controller.signal },
       )
         .then((data) => {
@@ -43,7 +45,7 @@ export function useArticleSearch(
               items: [],
               total: 0,
               loading: false,
-              error: "暂时无法搜索，请稍后重试。",
+              error: t("error"),
             });
         });
     }, 200);
@@ -51,6 +53,6 @@ export function useArticleSearch(
       clearTimeout(timer);
       controller.abort();
     };
-  }, [query, enabled]);
+  }, [query, enabled, locale, t]);
   return state;
 }

@@ -1,4 +1,6 @@
 "use client";
+import { useLocale, useTranslations } from "next-intl";
+import { navigationItems } from "@/shared/config/site";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@/shared/i18n/navigation";
 import { usePathname } from "@/shared/i18n/navigation";
@@ -14,15 +16,7 @@ import { ChevronRight, X } from "lucide-react";
 import { softSpring, spring } from "@/shared/lib/motion";
 import { SkyPlayground } from "./SkyPlayground";
 
-const destinations = [
-  { href: "/", label: "首页" },
-  { href: "/articles", label: "文章" },
-  { href: "/notes", label: "手记" },
-  { href: "/projects", label: "项目" },
-  { href: "/quotes", label: "一言" },
-  { href: "/gallery", label: "照片廊" },
-  { href: "/about", label: "自述" },
-];
+const destinations = navigationItems;
 const angles = [-73, -48, -24, 0, 24, 48, 73];
 const rounded = (value: number) => Number(value.toFixed(3));
 const points = angles.map((angle) => {
@@ -49,6 +43,8 @@ export function CelestialNav({
   onNavigate: () => void;
   immersive?: boolean;
 }) {
+  const t=useTranslations("nav"),footer=useTranslations("footer");
+  const locale=useLocale();
   const pathname = usePathname();
   const [compact, setCompact] = useState(false);
   const [revealed, setRevealed] = useState<boolean | null>(null);
@@ -296,7 +292,7 @@ export function CelestialNav({
                     onBlur={() => setHovered(null)}
                     onClick={onNavigate}
                   >
-                    {d.label}
+                    {t(d.key)}
                   </Link>
                 </motion.div>
               ))}
@@ -311,7 +307,7 @@ export function CelestialNav({
               exit={{ opacity: 0, x: -5 }}
               transition={spring}
             >
-              <span>{destinations[active].label}</span>
+              <span>{t(destinations[active].key)}</span>
               <ChevronRight size={12} />
             </motion.button>
           )}

@@ -4,7 +4,7 @@ import { ArticleIndex } from "@/modules/content/ui/ArticleIndex";
 import { listArticles } from "@/modules/content/server";
 import { getPageMetadata } from "@/server/seo/metadata";
 export const generateMetadata = () => getPageMetadata("/articles");
-import { redirect } from "next/navigation";
+import { redirect } from "@/shared/i18n/navigation";
 import { articleQuerySchema } from "@/modules/content/domain/query";
 export default async function Page({
   searchParams,
@@ -19,11 +19,11 @@ export default async function Page({
     q: input.q,
     category: input.category,
   });
-  if (!parsed.success) redirect("/articles");
+  if (!parsed.success) redirect({href:"/articles",locale});
   const result = await listArticles({...parsed.data, locale});
   return (
     <Suspense fallback={<p className="loading">正在翻开新的一页…</p>}>
-      <ArticleIndex result={result} />
+      <ArticleIndex result={result} category={parsed.data.category} />
     </Suspense>
   );
 }

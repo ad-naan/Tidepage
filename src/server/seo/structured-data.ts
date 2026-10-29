@@ -1,8 +1,10 @@
 import "server-only";
 import type { Article } from "@/modules/content/domain/models";
 import { site } from "@/shared/config/site";
-import { absoluteUrl } from "./metadata";
-export function siteGraph() {
+import { localizedUrl } from "./metadata";
+import type { Locale } from "@/shared/i18n/config";
+export function siteGraph(locale:Locale) {
+  const absoluteUrl=(path:string)=>localizedUrl(locale,path);
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -17,13 +19,14 @@ export function siteGraph() {
         "@id": absoluteUrl("/#website"),
         name: site.name,
         url: absoluteUrl("/"),
-        inLanguage: site.language,
+        inLanguage: locale,
         publisher: { "@id": absoluteUrl("/#author") },
       },
     ],
   };
 }
 export function articleGraph(article: Article) {
+  const absoluteUrl=(path:string)=>localizedUrl(article.locale,path);
   const url = absoluteUrl(`/articles/${article.slug}`);
   return {
     "@context": "https://schema.org",
@@ -34,7 +37,7 @@ export function articleGraph(article: Article) {
         url,
         headline: article.title,
         description: article.excerpt,
-        inLanguage: site.language,
+        inLanguage: article.locale,
         datePublished: `${article.date}T00:00:00.000Z`,
         dateModified: article.updatedAt,
         author: {

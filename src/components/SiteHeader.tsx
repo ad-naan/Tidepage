@@ -1,4 +1,6 @@
 "use client";
+import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "@/shared/ui/LanguageSwitcher";
 
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@/shared/i18n/navigation";
@@ -55,6 +57,7 @@ export function SiteHeader({
   menuOpen,
   onMenuToggle,
 }: Props) {
+  const t=useTranslations("header"),categories=useTranslations("categories");
   const pathname = usePathname();
   const { open, setOpen, ref } = useDisclosure("header");
   const [panel, setPanel] = useState<HeaderPanel>("activity");
@@ -233,7 +236,7 @@ export function SiteHeader({
               ref={trigger}
               className={`living-search-trigger ${open && panel === "search" ? "selected" : ""}`}
               onClick={() => show("search")}
-              aria-label="搜索文章"
+              aria-label={t("search")}
               aria-expanded={open && panel === "search"}
               aria-controls="header-panel"
               whileTap={{ scale: 0.94 }}
@@ -253,15 +256,16 @@ export function SiteHeader({
                   )}
                 </motion.span>
               </AnimatePresence>
-              <span className="search-text">搜索</span>
+              <span className="search-text">{t("searchLabel")}</span>
               <kbd>
                 <Command size={10} />K
               </kbd>
             </motion.button>
+            <LanguageSwitcher />
             <span className="living-action-divider" />
             <motion.button
               className="living-theme-button"
-              aria-label={theme === "light" ? "切换深色模式" : "切换浅色模式"}
+              aria-label={theme === "light" ? t("dark") : t("light")}
               onClick={onThemeChange}
               whileTap={{ scale: 0.85 }}
             >
@@ -377,12 +381,12 @@ export function SiteHeader({
                       <div className="living-search-meta">
                         <span>
                           {search.loading
-                            ? "正在搜索…"
+                            ? t("loading")
                             : query
-                              ? `${search.total} 个结果`
-                              : "最近的文章"}
+                              ? t("results", {count: search.total})
+                              : t("recent")}
                         </span>
-                        <span>按 Esc 收起</span>
+                        <span>{t("escape")}</span>
                       </div>
                       <div className="living-search-results">
                         {results.slice(0, 4).map((a, i) => (
@@ -405,7 +409,7 @@ export function SiteHeader({
                               <div>
                                 <strong>{a.title}</strong>
                                 <span>
-                                  {a.category} · {a.minutes} 分钟阅读
+                                  {categories(a.category)} · {a.minutes} min
                                 </span>
                               </div>
                               <ArrowRight size={15} />
@@ -416,8 +420,8 @@ export function SiteHeader({
                           <p className="header-search-empty">
                             {search.error ||
                               (search.loading
-                                ? "正在查找文章…"
-                                : "没有找到相关内容，试试其他关键词。")}
+                                ? t("loading")
+                                : t("empty"))}
                           </p>
                         )}
                       </div>

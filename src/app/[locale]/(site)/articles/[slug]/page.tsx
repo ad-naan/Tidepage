@@ -31,7 +31,6 @@ export default async function ArticlePage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const locale = await getLocale();
   const { slug } = await params;
   const locale = await getLocale();
   if (!slugSchema.safeParse(slug).success) notFound();
@@ -40,6 +39,8 @@ export default async function ArticlePage({
     getArticles(locale),
   ]);
   if (!article) notFound();
+  const t=await getTranslations("articles");
+  const categories=await getTranslations("categories");
   const next =
     articles[
       (articles.findIndex((a) => a.slug === article.slug) + 1) % articles.length
@@ -50,10 +51,10 @@ export default async function ArticlePage({
       <ReadingAnnotations />
       <Link href="/articles" className="back-link">
         <ArrowLeft size={16} />
-        回到文章
+        {t("back")}
       </Link>
       <header className="reading-header">
-        <div className="eyebrow">{article.category}</div>
+        <div className="eyebrow">{categories(article.category)}</div>
         <h1>{article.title}</h1>
         <div className="reading-meta">
           <span>adnaan</span>
@@ -63,7 +64,7 @@ export default async function ArticlePage({
           </time>
           <span>·</span>
           <Clock size={13} />
-          <span>{article.minutes} 分钟阅读</span>
+          <span>{t("minutes", {count:article.minutes})}</span>
         </div>
         <p className="reading-excerpt">{article.excerpt}</p>
         <MiniSketch kind={article.sketch} />
@@ -91,10 +92,10 @@ export default async function ArticlePage({
             ))}
           </div>
           <ArticleActions slug={article.slug} title={article.title} />
-          <p className="content-note">本文为博客示例内容，用于展示阅读体验。</p>
+          <p className="content-note">{t("demo")}</p>
         </div>
         <aside className="toc">
-          <span>这篇文章里</span>
+          <span>{t("toc")}</span>
           {article.sections.map((s, i) => (
             <a href={`#section-${i}`} key={s.title}>
               {String(i + 1).padStart(2, "0")} {s.title}
@@ -106,7 +107,7 @@ export default async function ArticlePage({
       {next && (
         <Link href={`/articles/${next.slug}`} className="next-article">
           <span>
-            下一篇，接着逛逛<strong>{next.title}</strong>
+            {t("continue")}<strong>{next.title}</strong>
           </span>
           <ArrowRight size={23} />
         </Link>

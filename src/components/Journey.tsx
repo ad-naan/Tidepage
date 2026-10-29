@@ -1,19 +1,17 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { Link } from "@/shared/i18n/navigation";
 import { motion } from "motion/react";
 import { House, Tree } from "./Sketch";
 import { softSpring } from "@/shared/lib/motion";
-const stops = [
-  { number: "01", title: "技术", description: "构建、踩坑、思考" },
-  { number: "02", title: "产品", description: "从想法到落地" },
-  { number: "03", title: "生活", description: "记录与热爱" },
-];
+const stops = [{number:"01",key:"technology"},{number:"02",key:"product"},{number:"03",key:"life"}] as const;
 export function Journey() {
+  const t=useTranslations("journey"),categories=useTranslations("categories");
   return (
     <div className="journey journey-clean">
       <div className="section-kicker">
         <span />
-        走过的，留在这里
+        {t("title")}
       </div>
       <div className="journey-map">
         <svg viewBox="0 0 150 350" fill="none" aria-hidden="true">
@@ -63,19 +61,19 @@ export function Journey() {
               transition={softSpring}
             >
               <Link
-                href={`/articles?category=${encodeURIComponent(stop.title)}`}
+                href={`/articles?category=${stop.key}`}
               >
                 <span>{stop.number}</span>
                 <div>
-                  <h3>{stop.title}</h3>
-                  <p>{stop.description}</p>
+                  <h3>{categories(stop.key)}</h3>
+                  <p>{t(stop.key)}</p>
                 </div>
               </Link>
             </motion.div>
           ))}
         </div>
       </div>
-      <p className="journey-closing">一步一步，成为更好的自己。</p>
+      <p className="journey-closing">{t("end")}</p>
     </div>
   );
 }
