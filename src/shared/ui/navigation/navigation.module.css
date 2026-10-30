@@ -1,0 +1,135 @@
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  background: var(--paper, #faf9f6);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 280ms ease,
+    visibility 280ms;
+}
+.veil[data-visible="true"] {
+  opacity: 1;
+  visibility: visible;
+}
+.composition {
+  display: grid;
+  justify-items: center;
+  width: min(340px, 80vw);
+  text-align: center;
+  color: var(--accent, #dc8c55);
+}
+.composition svg {
+  display: block;
+  margin-inline: auto;
+  width: 200px;
+  height: 90px;
+  overflow: visible;
+}
+.composition path {
+  stroke: currentColor;
+  stroke-width: 0.8;
+  stroke-linecap: round;
+}
+.label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.composition p {
+  margin: 20px 0 0;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 2;
+  letter-spacing: 0.12em;
+  color: var(--muted, #85877d);
+}
+.sun {
+  stroke-dasharray: 52;
+  animation: trace 2.8s ease-in-out infinite;
+}
+.horizon {
+  opacity: 0.6;
+}
+.water {
+  animation: breathe 2.8s ease-in-out infinite;
+}
+.glow {
+  transform-origin: 100px 43px;
+  animation: glow 2.8s ease-in-out infinite;
+}
+.spark {
+  animation: breathe 2.8s ease-in-out infinite reverse;
+}
+.veil[data-visible="false"] * {
+  animation-play-state: paused;
+}
+.placeholder {
+  min-height: max(65svh, var(--route-content-height, 0px));
+}
+:global(.main-wrap) {
+  min-height: calc(100svh - 99px);
+  display: flex;
+  flex-direction: column;
+}
+:global(.main-wrap > main) {
+  flex: 1 0 auto;
+  min-height: max(60svh, var(--route-content-height, 0px));
+}
+:global(.main-wrap > .page-footer) {
+  flex-shrink: 0;
+}
+:global([data-navigating="true"] .page-footer),
+:global(.main-wrap):has(.placeholder) :global(.page-footer) {
+  visibility: hidden;
+}
+@keyframes trace {
+  0%,
+  100% {
+    stroke-dashoffset: 52;
+    opacity: 0.3;
+  }
+  50% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+@keyframes glow {
+  0%,
+  100% {
+    transform: scale(0.8);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+@media (max-width: 700px) {
+  :global(.main-wrap) {
+    min-height: calc(100svh - 87px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .veil {
+    transition: none;
+  }
+  .composition * {
+    animation: none !important;
+  }
+}

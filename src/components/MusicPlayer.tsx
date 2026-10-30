@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { PlayerRecord, Equalizer } from "./PlayerRecord";
+import { RecordDeck } from "./RecordDeck";
 import {
   ChevronDown,
   Headphones,
@@ -143,12 +144,7 @@ export function MusicPlayer({
                     </button>
                   </div>
                   <div className="record-stage">
-                    <PlayerRecord large playing={playing} cover={track.cover} />
-                    <motion.span
-                      className="record-arm"
-                      animate={{ rotate: playing ? -28 : -44 }}
-                      transition={softSpring}
-                    />
+                    <RecordDeck playing={playing} cover={track.cover} />
                   </div>
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.div

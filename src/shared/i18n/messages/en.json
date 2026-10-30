@@ -42,7 +42,11 @@
     "slow": "take it slow.",
     "greet": "Say hello to the little otter",
     "greeting": "This page, we'll watch the sunset.",
-    "next": "Next page, we'll keep walking together ♡"
+    "next": "Next page, we'll keep walking together ♡",
+    "skyPlay": "Tap the sun or moon and make a wish",
+    "board": "Board the paper boat and explore the coast",
+    "boardHint": "Another coast is waiting in this boat",
+    "departing": "Setting sail for the coast…"
   },
   "ui": {
     "scroll": {
@@ -205,7 +209,11 @@
   },
   "stats": {
     "open": "View visitor statistics",
-    "faces": ["a", "d", "n"],
+    "faces": [
+      "a",
+      "d",
+      "n"
+    ],
     "reading": " reading now",
     "nowIntro": "Right now, ",
     "nowFriends": "8 friends",
@@ -607,5 +615,16 @@
   },
   "language": {
     "label": "Language"
+  },
+  "navigationLoading": {
+    "label": "Following the light to the next page",
+    "lines": [
+      "Let the sea breeze turn the page.",
+      "Another shore is coming into view.",
+      "A little room to breathe.",
+      "Follow the light, slowly.",
+      "A story is taking shape between the tides.",
+      "Let a small wave bring the distance closer."
+    ]
   }
 }

@@ -1,0 +1,173 @@
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 36px;
+  min-width: 0;
+  max-width: 100%;
+  padding: 7px 11px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    background 0.18s,
+    color 0.18s,
+    border-color 0.18s;
+}
+.trigger:hover {
+  border-color: var(--muted);
+}
+.trigger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.trigger[data-state="open"] {
+  color: var(--ink);
+  background: var(--soft);
+}
+.trigger[data-disabled] {
+  cursor: default;
+  opacity: 0.55;
+}
+.trigger[aria-invalid="true"] {
+  border-color: var(--accent);
+}
+.ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted);
+  padding-inline: 7px;
+}
+.ghost:hover {
+  border-color: transparent;
+  background: var(--soft);
+  color: var(--ink);
+}
+.leading,
+.chevron {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+}
+.chevron {
+  opacity: 0.7;
+}
+.trigger[data-state="open"] .chevron {
+  transform: rotate(180deg);
+}
+.trigger[aria-busy="true"] .chevron {
+  transform: none;
+}
+.value {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.content {
+  z-index: 1500;
+  min-width: max(172px, var(--radix-select-trigger-width));
+  max-width: min(320px, calc(100vw - 24px));
+  max-height: min(360px, var(--radix-select-content-available-height));
+  overflow: hidden;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: var(--card);
+  color: var(--ink);
+  box-shadow:
+    0 12px 40px #14252c1a,
+    0 2px 8px #14252c08;
+  font-family: inherit;
+  transform-origin: var(--radix-select-content-transform-origin);
+  animation: appear 0.14s ease-out;
+}
+.viewport {
+  padding: 1px;
+}
+.item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 39px;
+  padding: 9px 11px;
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+}
+.item[data-state="checked"] {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--accent) 10%, var(--card));
+}
+.item[data-highlighted] {
+  background: var(--soft);
+  color: var(--ink);
+}
+.item[data-state="checked"][data-highlighted] {
+  background: color-mix(in srgb, var(--accent) 14%, var(--card));
+}
+.item[data-disabled] {
+  opacity: 0.4;
+  pointer-events: none;
+}
+.optionCopy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+}
+.description {
+  font-size: 11px;
+  opacity: 0.7;
+}
+.indicator {
+  color: var(--accent);
+  display: flex;
+  flex: none;
+}
+.scrollButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  color: var(--muted);
+}
+.spinner {
+  animation: spin 1s linear infinite;
+}
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(-3px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .content,
+  .spinner {
+    animation: none;
+  }
+  .trigger {
+    transition: none;
+  }
+}

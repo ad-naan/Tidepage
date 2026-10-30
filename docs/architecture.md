@@ -7,11 +7,11 @@
 ```text
 src/
   app/                         路由、布局和请求适配，不编写业务查询
-    (site)/                    阅读站点，共享 Shell；URL 不带分组名称
+    [locale]/(site)/                    阅读站点，共享 Shell；URL 不带分组名称
       articles/[slug]/
       notes/ projects/ quotes/ gallery/ about/
-    (immersive)/explore/       海岸世界，不加载阅读站点布局或身份预览
-    (publishing)/              正文文本输出，不加载页面布局
+    [locale]/(immersive)/explore/       海岸世界，不加载阅读站点布局或身份预览
+    [locale]/(publishing)/              正文文本输出，不加载页面布局
       articles/[slug]/text/
     api/v1/                    有版本的 JSON 接口
     feed.xml/ llms.txt/        与页面同源的机器可读输出
@@ -73,7 +73,7 @@ PG 连接池惰性创建并在开发热更新中复用，设有连接、查询�
 
 Redis 无配置时不启用缓存，不自动启动进程内缓存。文章摘要集合和详情使用 cache-aside，包含环境命名空间、内容来源与 TTL；缓存值先校验，并合并同一进程的并发未命中。Redis 出错时继续读取数据源，源数据错误向上传递。手记、项目、一言和搜索目前直接查询，避免过早缓存任意组合条件。
 
-发布、编辑或下架文章后调用 `invalidateContentCache(slug)`。失效失败时写入本身仍然已经提交，最多在 TTL 内保留旧缓存；后续写接口应记录失效失败，必要时使用事务外盒重试。多实例共享 Redis，生产连接池大小要按实例数和数据库总连接预算配置。
+发布、编辑或下架文章后调用 `invalidateContentCache(slug, locale)`。失效失败时写入本身仍然已经提交，最多在 TTL 内保留旧缓存；后续写接口应记录失效失败，必要时使用事务外盒重试。多实例共享 Redis，生产连接池大小要按实例数和数据库总连接预算配置。
 
 ## HTTP 与身份边界
 
@@ -111,3 +111,9 @@ GEO 采用可抓取 HTML、清晰作者、稳定引用、同源 Markdown 正文�
 实时多人（Socket.IO / 世界空间陪伴）走独立网关进程，不在 Route Handler 中挂 WebSocket：握手复用数据库会话校验，跨实例广播复用 `realtime/pubsub`，事件频率用 `http/rate-limit` 约束；接入步骤见上手指南。
 
 CI 执行架构检查、类型检查、规则与查询测试、生产构建。PG 查询测试使用运行真实 PostgreSQL 引擎的 PGlite，并执行仓库中的初始 SQL；它不替代部署前对 TCP 连接池、Redis、TLS 和目标 PostgreSQL 服务的联调。
+
+## 国际化与基础组件
+
+语言配置统一由注册表和词典加载器维护，当前提供简体中文、英文，支持继续注册更多语言及 RTL 方向。路由语言布局提供客户端词典，根布局只保留错误页的最小兜底词条；切换后同步 HTML 的 lang 与 dir。内容表使用 slug/id 与 locale 的复合主键，缓存带 locale，查询和 hreflang 只引用实际发布的翻译。
+
+Select、Portal 归属、语言切换与局部交互约定见 [基础组件文档](ui-components.md)。

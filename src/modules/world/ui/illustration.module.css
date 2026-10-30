@@ -1,0 +1,162 @@
+.scene {
+  --coast-ink: #4b5048;
+  --coast-shore: #faf9f5;
+  --coast-reflection: #df925b;
+  --otter-fur: #e9dfc8;
+  --otter-muzzle: #fff9e9;
+  --otter-ink: #55594c;
+  --moon-fill: #e8eef6;
+  --rock-light: #d8d5c9;
+  isolation: isolate;
+}
+.scene > svg {
+  color: var(--coast-ink);
+}
+:global([data-theme="dark"]) .scene {
+  --coast-ink: #b2c0d1;
+  --coast-shore: #263447;
+  --coast-reflection: #a7c1e3;
+  --otter-fur: #a6b3bf;
+  --otter-muzzle: #dce5e5;
+  --otter-ink: #3d4a5a;
+  --rock-light: #8296af;
+}
+:global([data-theme="dark"]) .scene > svg {
+  color: var(--coast-ink);
+}
+.night {
+  display: none;
+}
+:global([data-theme="dark"]) .scene .day {
+  display: none;
+}
+:global([data-theme="dark"]) .scene .night {
+  display: inline;
+}
+.skyHit {
+  position: absolute;
+  left: 64%;
+  top: 25%;
+  width: 11%;
+  height: 19%;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.skyHit:focus-visible {
+  outline: 1px dashed var(--coast-reflection);
+  outline-offset: 8px;
+}
+.boatLink {
+  position: absolute;
+  left: 53%;
+  top: 49%;
+  width: 11%;
+  height: 16%;
+  color: var(--coast-ink);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  -webkit-tap-highlight-color: transparent;
+}
+.boatLink svg {
+  width: 74%;
+  height: 72%;
+  overflow: visible;
+}
+.boatLink:hover,
+.boatLink:focus-visible {
+  color: var(--coast-reflection);
+}
+.boatLink:focus-visible {
+  outline: 1px dashed var(--coast-reflection);
+  outline-offset: 3px;
+}
+.boatLink::before {
+  content: "";
+  position: absolute;
+  inset: 10% -20%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #e8ae6b1c, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.boatLink:hover::before,
+.boatLink:focus-visible::before {
+  opacity: 1;
+}
+.boatHint {
+  position: absolute;
+  bottom: 94%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--coast-ink);
+  background: var(--card);
+  border: 1px solid var(--line);
+  padding: 5px 10px;
+  border-radius: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.boatLink:hover .boatHint,
+.boatLink:focus-visible .boatHint {
+  opacity: 1;
+}
+.whisper {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.star {
+  opacity: 0.45;
+  animation: twinkle 5s ease-in-out infinite;
+}
+.star:nth-child(2n) {
+  animation-delay: 1.6s;
+}
+.star:nth-child(3n) {
+  animation-delay: 3.1s;
+}
+.firefly {
+  animation: glow 5s ease-in-out infinite;
+}
+.firefly:nth-child(2n) {
+  animation-delay: 2.2s;
+}
+.firefly:nth-child(3n) {
+  animation-delay: 1s;
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  55% {
+    opacity: 0.85;
+  }
+}
+@keyframes glow {
+  0%,
+  100% {
+    opacity: 0.12;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .star,
+  .firefly {
+    animation: none;
+  }
+  .boatHint,
+  .boatLink::before {
+    transition: none;
+  }
+}

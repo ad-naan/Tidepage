@@ -24,4 +24,21 @@ test("content API returns paginated summaries, validates inputs and reports 404"
     { params: Promise.resolve({ slug: "missing" }) },
   );
   assert.equal(missing.status, 404);
+  const english = await list(
+    new Request("http://localhost/api/v1/articles?locale=en&q=AI"),
+    context,
+  );
+  const translated = await english.json();
+  assert.equal(english.status, 200);
+  assert.ok(translated.data.items.length > 0);
+  assert.ok(
+    translated.data.items.every(
+      (item: { locale: string }) => item.locale === "en",
+    ),
+  );
+  const unsupported = await list(
+    new Request("http://localhost/api/v1/articles?locale=unknown"),
+    context,
+  );
+  assert.equal(unsupported.status, 400);
 });

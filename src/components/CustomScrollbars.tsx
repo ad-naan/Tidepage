@@ -12,6 +12,8 @@ import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 
 type Axis = "vertical" | "horizontal";
+// Internal layout refreshes are not browser resizes. Other overlays may close on resize.
+const SCROLLBARS_REFRESH_EVENT = "tidepage:scrollbars-refresh";
 type Geometry = {
   top: number;
   left: number;
@@ -145,6 +147,7 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
     });
     document.addEventListener("scroll", schedule, true);
     window.addEventListener("resize", schedule);
+    window.addEventListener(SCROLLBARS_REFRESH_EVENT, schedule);
     // Covers the final position after a disclosure's initial transform settles.
     const settled = window.setTimeout(schedule, 450);
     return () => {
@@ -154,6 +157,7 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
       clearTimeout(settled);
       document.removeEventListener("scroll", schedule, true);
       window.removeEventListener("resize", schedule);
+      window.removeEventListener(SCROLLBARS_REFRESH_EVENT, schedule);
       if (originalSelect.current !== null)
         document.documentElement.style.userSelect = originalSelect.current;
     };
@@ -307,7 +311,7 @@ export function CustomScrollbars() {
           : next,
       );
       // Class changes (e.g. opening the mobile sidebar) may change a host's scrollability.
-      window.dispatchEvent(new Event("resize"));
+      window.dispatchEvent(new Event(SCROLLBARS_REFRESH_EVENT));
     };
     collect();
     const observer = new MutationObserver((records) => {

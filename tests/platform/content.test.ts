@@ -14,7 +14,9 @@ test("demo and PostgreSQL adapters honor publication and summary boundaries", as
   const pg = new PGlite();
   try {
     const migrations = new URL("../../drizzle/", import.meta.url);
-    const files = (await readdir(migrations)).filter((name) => name.endsWith(".sql")).sort();
+    const files = (await readdir(migrations))
+      .filter((name) => name.endsWith(".sql"))
+      .sort();
     for (const name of files) {
       await pg.exec(await readFile(new URL(name, migrations), "utf8"));
     }
@@ -38,6 +40,7 @@ test("demo and PostgreSQL adapters honor publication and summary boundaries", as
       .insert(articlesTable)
       .values([
         row,
+        { ...row, locale: "en", title: "AI: the English edition" },
         { ...row, slug: "draft-only", visibility: "draft", publishedAt: null },
         { ...row, slug: "scheduled-only", publishedAt: new Date("2099-01-01") },
       ]);
@@ -46,6 +49,17 @@ test("demo and PostgreSQL adapters honor publication and summary boundaries", as
     const service = createContentService(repository);
     const all = await service.allArticles();
     assert.equal(all.length, 1);
+    const english = await service.allArticles("en");
+    assert.equal(english.length, 1);
+    assert.equal(english[0].title, "AI: the English edition");
+    assert.equal(
+      (await service.articleBySlug(source.slug, "en"))?.locale,
+      "en",
+    );
+    assert.deepEqual((await service.articleLocales(source.slug)).sort(), [
+      "en",
+      "zh-CN",
+    ]);
     assert.equal("sections" in all[0], false);
     assert.equal(await service.articleBySlug("draft-only"), null);
     assert.equal(await service.articleBySlug("scheduled-only"), null);

@@ -8,10 +8,19 @@ export function useDisclosure(name: string) {
   useEffect(() => setOpen(false), [path]);
   useEffect(() => {
     const outside = (e: PointerEvent) => {
+      const target = e.target;
+      if (
+        target instanceof Element &&
+        target
+          .closest("[data-ui-overlay-owner]")
+          ?.getAttribute("data-ui-overlay-owner") === name
+      )
+        return;
       if (ref.current && !ref.current.contains(e.target as Node))
         setOpen(false);
     };
     const escape = (e: KeyboardEvent) => {
+      if (e.defaultPrevented) return;
       if (e.key === "Escape") {
         setOpen(false);
         if (ref.current?.contains(document.activeElement))

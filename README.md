@@ -1,4 +1,4 @@
-# adnaan · 光阴副本
+# Tidepage · 潮页
 
 手绘博客与可探索海岸，基于 Next.js App Router、React、TypeScript、Three.js。后端采用模块化单体，已封装 PostgreSQL、Redis、内容服务、版本化 API、会话读取与 SEO / GEO 输出。
 
@@ -31,18 +31,18 @@ npm run db:seed
 
 ## 目录入口
 
-| 目录                   | 责任                                               |
-| ---------------------- | -------------------------------------------------- |
-| `src/app/(site)`       | 文章、手记、项目等阅读页面与布局                   |
-| `src/app/(immersive)`  | 独立的海岸体验布局                                 |
-| `src/app/(publishing)` | 便于引用的正文文本输出                             |
-| `src/app/api/v1`       | 版本化 HTTP 请求适配                               |
-| `src/modules`          | content、identity、engagement、world 业务模块      |
-| `src/server`           | 配置、PG、Redis、HTTP、日志、SEO、实时广播基础设施 |
-| `src/shared`           | 基础组件、hooks、DTO、浏览器请求客户端             |
-| `src/components`       | 站点布局、播放器与原创插画                         |
-| `drizzle`              | SQL 迁移与结构快照                                 |
-| `docs/architecture.md` | 模块边界、发布规则、会话、缓存与扩展约定           |
+| 目录                            | 责任                                               |
+| ------------------------------- | -------------------------------------------------- |
+| `src/app/[locale]/(site)`       | 文章、手记、项目等阅读页面与布局                   |
+| `src/app/[locale]/(immersive)`  | 独立的海岸体验布局                                 |
+| `src/app/[locale]/(publishing)` | 便于引用的正文文本输出                             |
+| `src/app/api/v1`                | 版本化 HTTP 请求适配                               |
+| `src/modules`                   | content、identity、engagement、world 业务模块      |
+| `src/server`                    | 配置、PG、Redis、HTTP、日志、SEO、实时广播基础设施 |
+| `src/shared`                    | 基础组件、hooks、DTO、浏览器请求客户端             |
+| `src/components`                | 站点布局、播放器与原创插画                         |
+| `drizzle`                       | SQL 迁移与结构快照                                 |
+| `docs/architecture.md`          | 模块边界、发布规则、会话、缓存与扩展约定           |
 
 完整说明见 [架构文档](docs/architecture.md)，互动海岸说明见 [交互设计](docs/interaction-design.md)，接手开发与实时多人接入见 [上手指南](docs/onboarding.md)。
 
@@ -60,6 +60,12 @@ npm run format                # 统一格式
 ```
 
 `GET /api/v1/articles?page=1&pageSize=12&q=AI` 返回分页摘要；详情使用 `/api/v1/articles/:slug`。API 返回请求编号，支持统一校验与错误响应。存活和就绪探针分别为 `/api/v1/health/live` 与 `/api/v1/health/ready`。
+
+## 国际化
+
+语言通过 `src/shared/i18n/config.ts` 统一注册，词典通过 `src/i18n/catalogs.ts` 加载。已提供简体中文和英文，采用 `/zh-CN/…`、`/en/…` 独立路由。内容、缓存键、canonical 与 hreflang 均包含 locale。后续语言按注册表扩展，不在组件中写语言二选一分支。
+
+语言切换和通用选择器的封装说明见 [基础组件约定](docs/ui-components.md)。
 
 ## SEO 与 GEO
 

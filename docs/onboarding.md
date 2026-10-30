@@ -27,7 +27,7 @@
 
 ### 1. 新增或修改文案（i18n）
 
-两个语言包文件必须同步改：`src/shared/i18n/messages/zh-CN.json` 和 `en.json`，key 结构一致。组件里用 `useTranslations("<命名空间>")`，服务端用 `getTranslations`。API 错误文案放在顶层 `apiErrors` 命名空间，key 就是错误 code（见下文错误处理）。
+所有已注册语言包必须同步改；当前文件为：`src/shared/i18n/messages/zh-CN.json` 和 `en.json`，key 结构一致。组件里用 `useTranslations("<命名空间>")`，服务端用 `getTranslations`。API 错误文案放在顶层 `apiErrors` 命名空间，key 就是错误 code（见下文错误处理）。
 
 检查残留硬编码文案：全局搜中文字符或英文句子，确认是否应进语言包。
 
@@ -74,7 +74,7 @@ throw conflictError(); // 409 CONFLICT
 throw tooManyRequestsError(30); // 429 RATE_LIMITED，details 带 retryAfterSeconds
 ```
 
-新错误 code 要在两个语言包的 `apiErrors` 里补 key，否则回退到抛出时传入的 message。日志用 `log(level, "事件名", { component })`，禁止记录请求体、Cookie、SQL 和原始异常消息。
+新错误 code 要在所有语言包的 `apiErrors` 里补 key，否则回退到抛出时传入的 message。日志用 `log(level, "事件名", { component })`，禁止记录请求体、Cookie、SQL 和原始异常消息。
 
 ### 5. 新增 / 修改数据表
 
@@ -160,8 +160,10 @@ npm run check   # 架构边界 + Next 类型生成 + tsc + 测试，一条命令
 npm run build   # 需要验证生产构建时
 ```
 
-- [ ] 两个语言包 key 同步
+- [ ] 所有已注册语言包 key 同步
 - [ ] 新 SQL 迁移与快照一起提交
 - [ ] 错误 code 进了 `apiErrors`
 - [ ] 没有绕过模块入口直接 import 适配器
 - [ ] 日志不含敏感信息
+
+新增语言与选择器封装：见 [基础组件约定](ui-components.md)。切换语言时不要改写全局词典状态，也不要用按语言二选一的组件分支。

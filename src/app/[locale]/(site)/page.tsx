@@ -11,8 +11,11 @@ import styles from "./home.module.css";
 
 export default async function Home() {
   const locale = await getLocale();
-  const t=await getTranslations("home");
-  const [articles, notes] = await Promise.all([getArticles(locale), getNotes(locale)]);
+  const t = await getTranslations("home");
+  const [articles, notes] = await Promise.all([
+    getArticles(locale),
+    getNotes(locale),
+  ]);
   return (
     <div className={styles.home}>
       <section className="hero">
@@ -42,10 +45,6 @@ export default async function Home() {
           <Link className="explore-link" href="/articles">
             {t("articles")} <ArrowRight size={22} />
           </Link>
-          <Link href="/explore" className={styles.coastEntry}>
-            {t("coast")} <ArrowUpRight size={16} />
-            <span>{t("world")}</span>
-          </Link>
         </div>
         <HeroSketch quiet />
       </section>
@@ -64,7 +63,7 @@ export default async function Home() {
           <ArticleList items={articles.slice(0, 5)} lead />
           <div className="writing-footnote">
             {t("footnote")}
-            <span>↳ {t("count", {count: articles.length})}</span>
+            <span>↳ {t("count", { count: articles.length })}</span>
           </div>
         </div>
       </section>

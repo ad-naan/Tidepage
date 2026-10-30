@@ -1,10 +1,1 @@
-import { getTranslations } from "next-intl/server";
-
-export default async function Loading() {
-  const t = await getTranslations("common");
-  return (
-    <p className="loading" role="status">
-      {t("loading")}
-    </p>
-  );
-}
+export { RouteLoading as default } from "@/shared/ui/navigation/NavigationFeedback";
