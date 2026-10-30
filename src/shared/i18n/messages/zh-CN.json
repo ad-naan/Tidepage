@@ -141,8 +141,7 @@
     "tools": "{label}页面工具",
     "wordmark": "adnaan · 光阴副本，首页",
     "reading": "正在阅读",
-    "backToArticles": "返回文章列表"
-,
+    "backToArticles": "返回文章列表",
     "now": "此刻",
     "doing": "正在",
     "coding": "写代码",
@@ -284,7 +283,9 @@
     "IDENTITY_UNAVAILABLE": "账号服务尚未配置",
     "UNAUTHORIZED": "请先登录",
     "FORBIDDEN": "没有执行此操作的权限",
-    "INVALID_ORIGIN": "请求来源不合法"
+    "INVALID_ORIGIN": "请求来源不合法",
+    "CONFLICT": "资源状态冲突，请刷新后重试",
+    "RATE_LIMITED": "请求过于频繁，请稍后再试"
   },
   "notes": {
     "title": "日子的副本",

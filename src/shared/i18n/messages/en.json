@@ -141,8 +141,7 @@
     "tools": "{label} tools",
     "wordmark": "adnaan · Tidepage, home",
     "reading": "Now reading",
-    "backToArticles": "Back to articles"
-,
+    "backToArticles": "Back to articles",
     "now": "Right now",
     "doing": "working on",
     "coding": "Code",
@@ -284,7 +283,9 @@
     "IDENTITY_UNAVAILABLE": "The account service isn't configured yet",
     "UNAUTHORIZED": "Please sign in first",
     "FORBIDDEN": "You don't have permission to perform this action",
-    "INVALID_ORIGIN": "Invalid request origin"
+    "INVALID_ORIGIN": "Invalid request origin",
+    "CONFLICT": "Conflicting state, please refresh and retry",
+    "RATE_LIMITED": "Too many requests, please try again later"
   },
   "notes": {
     "title": "Copies of ordinary days",

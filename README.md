@@ -1,4 +1,4 @@
-﻿# adnaan · 光阴副本
+# adnaan · 光阴副本
 
 手绘博客与可探索海岸，基于 Next.js App Router、React、TypeScript、Three.js。后端采用模块化单体，已封装 PostgreSQL、Redis、内容服务、版本化 API、会话读取与 SEO / GEO 输出。
 
@@ -31,20 +31,20 @@ npm run db:seed
 
 ## 目录入口
 
-| 目录                   | 责任                                          |
-| ---------------------- | --------------------------------------------- |
-| `src/app/(site)`       | 文章、手记、项目等阅读页面与布局              |
-| `src/app/(immersive)`  | 独立的海岸体验布局                            |
-| `src/app/(publishing)` | 便于引用的正文文本输出                        |
-| `src/app/api/v1`       | 版本化 HTTP 请求适配                          |
-| `src/modules`          | content、identity、engagement、world 业务模块 |
-| `src/server`           | 配置、PG、Redis、HTTP、日志、SEO 基础设施     |
-| `src/shared`           | 基础组件、hooks、DTO、浏览器请求客户端        |
-| `src/components`       | 站点布局、播放器与原创插画                    |
-| `drizzle`              | SQL 迁移与结构快照                            |
-| `docs/architecture.md` | 模块边界、发布规则、会话、缓存与扩展约定      |
+| 目录                   | 责任                                               |
+| ---------------------- | -------------------------------------------------- |
+| `src/app/(site)`       | 文章、手记、项目等阅读页面与布局                   |
+| `src/app/(immersive)`  | 独立的海岸体验布局                                 |
+| `src/app/(publishing)` | 便于引用的正文文本输出                             |
+| `src/app/api/v1`       | 版本化 HTTP 请求适配                               |
+| `src/modules`          | content、identity、engagement、world 业务模块      |
+| `src/server`           | 配置、PG、Redis、HTTP、日志、SEO、实时广播基础设施 |
+| `src/shared`           | 基础组件、hooks、DTO、浏览器请求客户端             |
+| `src/components`       | 站点布局、播放器与原创插画                         |
+| `drizzle`              | SQL 迁移与结构快照                                 |
+| `docs/architecture.md` | 模块边界、发布规则、会话、缓存与扩展约定           |
 
-完整说明见 [架构文档](docs/architecture.md)，互动海岸说明见 [交互设计](docs/interaction-design.md)。
+完整说明见 [架构文档](docs/architecture.md)，互动海岸说明见 [交互设计](docs/interaction-design.md)，接手开发与实时多人接入见 [上手指南](docs/onboarding.md)。
 
 ## 常用命令
 
