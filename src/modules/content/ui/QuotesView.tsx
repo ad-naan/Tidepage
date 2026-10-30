@@ -1,4 +1,7 @@
 "use client";
+import { RoomHeading } from "@/components/RoomHeading";
+import styles from "@/components/rooms.module.css";
+
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
@@ -6,11 +9,11 @@ import { ArrowUpRight, Check, Copy, Heart, RotateCw } from "lucide-react";
 import type { Quote } from "../domain/models";
 import { useLocalState } from "@/shared/hooks/useLocalState";
 import { MiniSketch } from "@/components/Sketch";
-import { PageHeading, SpringButton } from "@/shared/ui/primitives";
+import { SpringButton } from "@/shared/ui/primitives";
 import { softSpring } from "@/shared/lib/motion";
 
 export function QuotesView({ quotes }: { quotes: Quote[] }) {
-  const t=useTranslations("quotes");
+  const t = useTranslations("quotes");
   const [index, setIndex] = useState(0);
   const [saved, setSaved] = useLocalState<number[]>("adnaan-quotes", []);
   const [copied, setCopied] = useState(false);
@@ -28,22 +31,24 @@ export function QuotesView({ quotes }: { quotes: Quote[] }) {
   }
   if (!quote)
     return (
-      <div className="inner-page">
-        <PageHeading
+      <div className={`inner-page ${styles.quotes}`}>
+        <RoomHeading
+          room="quotes"
           title={t("title")}
           description={t("empty")}
         />
       </div>
     );
   return (
-    <div className="inner-page quotes-page">
-      <PageHeading
+    <div className={`inner-page quotes-page ${styles.quotes}`}>
+      <RoomHeading
+        room="quotes"
         title={t("title")}
         description={t("description")}
       />
       <div className="quote-stage">
         <span className="quote-index">
-          {t("page", {index:index+1,total:quotes.length})}
+          {t("page", { index: index + 1, total: quotes.length })}
         </span>
         <span className="big-quote">“</span>
         <AnimatePresence mode="wait">
@@ -89,7 +94,11 @@ export function QuotesView({ quotes }: { quotes: Quote[] }) {
               fill={saved.includes(index) ? "currentColor" : "none"}
             />
           </SpringButton>
-          <SpringButton className="icon-button" label={t("copy")} onClick={copy}>
+          <SpringButton
+            className="icon-button"
+            label={t("copy")}
+            onClick={copy}
+          >
             {copied ? <Check size={19} /> : <Copy size={18} />}
           </SpringButton>
         </div>

@@ -1,0 +1,90 @@
+.heading {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 10px 0 18px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 18px;
+}
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.identity > div {
+  display: grid;
+  gap: 2px;
+}
+.number {
+  align-self: stretch;
+  padding: 7px 10px 0 0;
+  border-right: 1px solid var(--line);
+  color: var(--accent);
+  font: 400 11px/1.6 var(--ui-font);
+  font-variant-numeric: tabular-nums;
+}
+.eyebrow {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+}
+.heading h1 {
+  margin: 0;
+  font: 500 20px/1.5 var(--ui-font);
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+.heading > p {
+  max-width: 34ch;
+  margin: 0 0 0 auto;
+  font: 400 11px/1.85 var(--ui-font);
+  color: var(--muted);
+}
+.vignette {
+  width: 78px;
+  height: 38px;
+  color: var(--muted);
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+.vignette svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.vignette path,
+.vignette circle {
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.vignette .accent {
+  color: var(--accent);
+}
+.vignette .faint {
+  opacity: 0.3;
+}
+@media (max-width: 700px) {
+  .heading {
+    gap: 8px 16px;
+    flex-wrap: wrap;
+    padding: 7px 0 14px;
+    margin-bottom: 14px;
+  }
+  .heading h1 {
+    font-size: 19px;
+  }
+  .heading > p {
+    flex-basis: 100%;
+    max-width: none;
+    margin-left: 30px;
+    font-size: 11px;
+  }
+  .vignette {
+    display: none;
+  }
+}

@@ -1,18 +1,23 @@
+import styles from "@/components/rooms.module.css";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/shared/i18n/navigation";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
-import { getArticles, getArticle, getArticleLocales } from "@/modules/content/server";
+import {
+  getArticles,
+  getArticle,
+  getArticleLocales,
+} from "@/modules/content/server";
 import { articleMetadata } from "@/server/seo/metadata";
 import { articleGraph } from "@/server/seo/structured-data";
 import { JsonLd } from "@/server/seo/JsonLd";
 import { slugSchema } from "@/modules/content/domain/models";
 import { MiniSketch } from "@/components/Sketch";
 import { ArticleActions } from "@/modules/content/ui/ArticleActions";
+import { ArticleBlocks } from "@/modules/content/ui/ArticleBlocks";
 import {
   Discussion,
   ReadingAnnotations,
-  RichArticleDetails,
 } from "@/modules/engagement/ui/Discussion";
 export async function generateMetadata({
   params,
@@ -39,16 +44,22 @@ export default async function ArticlePage({
     getArticles(locale),
   ]);
   if (!article) notFound();
-  const t=await getTranslations("articles");
-  const categories=await getTranslations("categories");
+  const t = await getTranslations("articles");
+  const categories = await getTranslations("categories");
   const nav = await getTranslations("nav");
   const next =
     articles[
       (articles.findIndex((a) => a.slug === article.slug) + 1) % articles.length
     ];
   return (
-    <div className="reading-page">
-      <JsonLd data={articleGraph(article, { home: nav("home"), articles: nav("articles"), category: categories(article.category) })} />
+    <div className={`reading-page ${styles.reading}`}>
+      <JsonLd
+        data={articleGraph(article, {
+          home: nav("home"),
+          articles: nav("articles"),
+          category: categories(article.category),
+        })}
+      />
       <ReadingAnnotations />
       <Link href="/articles" className="back-link">
         <ArrowLeft size={16} />
@@ -65,7 +76,7 @@ export default async function ArticlePage({
           </time>
           <span>·</span>
           <Clock size={13} />
-          <span>{t("minutes", {count:article.minutes})}</span>
+          <span>{t("minutes", { count: article.minutes })}</span>
         </div>
         <p className="reading-excerpt">{article.excerpt}</p>
         <MiniSketch kind={article.sketch} />
@@ -78,9 +89,9 @@ export default async function ArticlePage({
               {s.paragraphs.map((p) => (
                 <p key={p}>{p}</p>
               ))}
+              {s.blocks && <ArticleBlocks blocks={s.blocks} />}
             </section>
           ))}
-          <RichArticleDetails />
           <div className="article-end">✳</div>
           <div className="tags">
             {article.tags.map((t) => (
@@ -108,7 +119,8 @@ export default async function ArticlePage({
       {next && (
         <Link href={`/articles/${next.slug}`} className="next-article">
           <span>
-            {t("continue")}<strong>{next.title}</strong>
+            {t("continue")}
+            <strong>{next.title}</strong>
           </span>
           <ArrowRight size={23} />
         </Link>

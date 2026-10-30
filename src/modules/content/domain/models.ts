@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { localeSchema } from "@/shared/i18n/schema";
 import type { Locale } from "@/shared/i18n/config";
+import { articleBlockSchema } from "./blocks";
 
 export const categorySchema = z.enum(["technology", "product", "life"]);
 export const sketchSchema = z.enum(["sun", "mountain", "boat", "tree"]);
@@ -12,6 +13,7 @@ export const slugSchema = z
 export const sectionSchema = z.object({
   title: z.string().min(1),
   paragraphs: z.array(z.string()),
+  blocks: z.array(articleBlockSchema).max(50).optional(),
 });
 export const articleSchema = z.object({
   locale: localeSchema,
@@ -51,7 +53,12 @@ export type Project = {
   sketch: z.infer<typeof sketchSchema>;
   color: string;
 };
-export type Quote = { id: string; locale: Locale; text: string; author: string };
+export type Quote = {
+  id: string;
+  locale: Locale;
+  text: string;
+  author: string;
+};
 export function summarize({
   sections: _sections,
   ...summary

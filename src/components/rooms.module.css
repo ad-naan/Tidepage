@@ -1,0 +1,687 @@
+.archive,
+.notes,
+.projects,
+.gallery,
+.about,
+.quotes {
+  max-width: 1080px;
+  margin: 10px auto 48px;
+  min-height: 0;
+}
+
+/* The archive is a set of indexed spines, with one open page. */
+.archive :global(.filter-bar) {
+  margin-top: 0;
+  padding: 0 0 9px;
+  border-bottom: 1px solid var(--line);
+  gap: 24px;
+}
+.archive :global(.inline-search) {
+  border-bottom: 1px solid var(--line);
+  padding: 9px 0;
+  min-width: 140px;
+}
+.archive :global(.archive-label) {
+  margin: 14px 0 4px;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+.archive :global(.archive-label > span:first-child) {
+  font-size: 11px;
+  font-weight: 400;
+}
+.archive :global(.filter-bar .tabs > button) {
+  padding-block: 8px;
+  font-size: 12px;
+}
+.archive :global(.article-row) {
+  padding: 10px 0;
+  min-height: 64px;
+  grid-template-columns: 38px minmax(0, 1fr) 64px;
+  gap: 17px;
+}
+.archive :global(.article-list) {
+  counter-reset: archive;
+}
+.archive :global(.article-list > article) {
+  position: relative;
+  counter-increment: archive;
+}
+.archive :global(.article-info h3) {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.archive :global(.article-info) {
+  border-left: 1px solid var(--line);
+  padding-left: 17px;
+}
+.archive :global(.article-row time) {
+  width: 38px;
+  padding-top: 0;
+  border-right: 0;
+}
+.archive :global(.article-row time > span) {
+  font-size: 21px;
+  font-family: var(--font-hand), sans-serif;
+}
+.archive :global(.article-row > .mini-sketch) {
+  width: 64px;
+  opacity: 0.6;
+  transition:
+    transform 0.5s,
+    opacity 0.5s;
+}
+.archive :global(.article-row:hover > .mini-sketch) {
+  transform: translate(4px, -3px) rotate(3deg);
+  opacity: 1;
+}
+.archive :global(.article-row::after) {
+  display: none;
+}
+.archive :global(.article-list > article:first-child .article-row) {
+  margin-top: 10px;
+  padding: 12px 17px;
+  background: linear-gradient(
+    110deg,
+    color-mix(in srgb, var(--sand) 32%, transparent),
+    transparent
+  );
+  border: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  border-radius: 2px 16px 3px 2px;
+}
+.archive :global(.article-list > article:first-child .article-info h3) {
+  font-size: 16px;
+}
+.archive :global(.article-excerpt) {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 60ch;
+  margin: 6px 0;
+  font-size: 12px;
+  line-height: 1.75;
+  color: var(--muted);
+}
+.archive :global(.article-list > article + article) {
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+}
+.archive :global(.article-info .tags) {
+  font-size: 10px;
+  gap: 9px;
+  margin-top: 5px;
+}
+
+/* Postcards alternate around a narrow dotted tide line. */
+.notes {
+  max-width: 1000px;
+}
+.notes :global(.notes-toolbar) {
+  margin: 0 0 20px;
+  padding: 8px 0 12px;
+  border-bottom: 1px solid var(--line);
+}
+.notes :global(.notes-grid) {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  align-items: start;
+  padding: 10px 3px 18px;
+}
+.notes :global(.notes-grid)::before {
+  content: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  border-left: 1px dashed var(--line);
+}
+.notes :global(.note-card) {
+  padding: 18px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper) 85%, var(--sand));
+  box-shadow: 0 8px 25px #00000003;
+  border-radius: 2px;
+}
+.notes :global(.note-card:nth-child(even)) {
+  margin-top: 18px;
+  background: color-mix(in srgb, var(--paper) 86%, var(--sage));
+}
+.notes :global(.note-card)::before {
+  width: 40px;
+  height: 11px;
+  left: calc(50% - 20px);
+  top: -6px;
+  opacity: 0.55;
+}
+.notes :global(.note-card > p) {
+  font: 400 14px/1.85 var(--ui-font);
+  margin-top: 13px;
+}
+.notes :global(.note-top) {
+  font-size: 10px;
+}
+.notes :global(.note-card > .mini-sketch) {
+  width: 75px;
+  height: 38px;
+  margin: 9px 0 8px auto;
+  opacity: 0.8;
+}
+.notes :global(.note-bottom) {
+  padding-top: 11px;
+  margin-top: 9px;
+}
+.notes :global(.note-bottom),
+.notes :global(.like-button),
+.notes :global(.note-discuss),
+.notes :global(.note-top > span) {
+  font-size: 10px;
+}
+
+/* An open workbench with a main prototype and smaller experiments. */
+.projects :global(.project-tabs) {
+  justify-content: center;
+  margin-top: 10px;
+  padding-bottom: 8px;
+}
+.projects :global(.project-grid) {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  align-items: start;
+}
+.projects :global(.project-card) {
+  grid-column: auto;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--paper);
+  overflow: hidden;
+}
+.projects :global(.project-card:nth-child(odd)) {
+  grid-column: auto;
+}
+.projects :global(.project-card:nth-child(even)) {
+  margin-top: 18px;
+}
+.projects :global(.project-cover) {
+  min-height: 0;
+  height: 170px;
+  border-radius: 0;
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--ink) 12%, transparent) 0.7px,
+    transparent 0.7px
+  );
+  background-size: 18px 18px;
+}
+.projects :global(.project-cover > .mini-sketch) {
+  width: 90px;
+  height: 47px;
+  margin-bottom: 8px;
+  transition: transform 0.6s;
+}
+.projects :global(.project-card:hover .project-cover > .mini-sketch) {
+  transform: translateY(-8px) rotate(-3deg);
+}
+.projects :global(.project-cover-label) {
+  font:
+    300 23px/1.2 var(--font-hand),
+    "KaiTi",
+    serif;
+}
+.projects :global(.project-cover-caption) {
+  font-size: 11px;
+  max-width: 80%;
+  text-align: center;
+}
+.projects :global(.project-info) {
+  padding: 16px;
+}
+.projects :global(.project-info h2) {
+  font-size: 14px;
+}
+.projects :global(.project-info > p) {
+  font-size: 12px;
+  line-height: 1.85;
+  margin-top: 9px;
+}
+.projects :global(.project-status) {
+  font-size: 10px;
+}
+.projects :global(.project-info .tags) {
+  font-size: 10px;
+  gap: 7px;
+  margin-top: 12px;
+}
+.projects :global(.work-in-progress) {
+  width: fit-content;
+  max-width: 100%;
+  margin: 35px auto 0;
+  padding: 20px 30px;
+  border: 1px dashed var(--line);
+  background: none;
+}
+
+/* A thought suspended in a circle of air, with compact controls. */
+.quotes {
+  max-width: 1000px;
+}
+.quotes :global(.quote-stage) {
+  padding: 12px 24px 22px;
+  margin-top: 4px;
+  background: none;
+  isolation: isolate;
+}
+.quotes :global(.quote-stage)::before {
+  content: "";
+  z-index: -1;
+  position: absolute;
+  width: min(250px, 75%);
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--accent) 14%, transparent);
+  border-radius: 50%;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--wash) 20%, transparent),
+    transparent 68%
+  );
+}
+.quotes :global(.quote-index) {
+  letter-spacing: 0.14em;
+  font-size: 10px;
+}
+.quotes :global(.big-quote) {
+  height: 30px;
+  margin: 16px 0 2px;
+  font-size: 42px;
+  opacity: 0.4;
+}
+.quotes :global(.quote-stage blockquote) {
+  max-width: 24ch;
+  margin: auto;
+  font: 400 clamp(19px, 1.55vw, 22px)/1.8 var(--ui-font);
+  min-height: 76px;
+  text-wrap: balance;
+}
+.quotes :global(.quote-stage cite) {
+  margin-top: 16px;
+  font-size: 11px;
+}
+.quotes :global(.quote-stage > .mini-sketch) {
+  width: 90px;
+  height: 45px;
+  margin: 18px auto 10px;
+  opacity: 0.65;
+}
+.quotes :global(.quote-actions) {
+  gap: 16px;
+  margin-top: 14px;
+}
+.quotes :global(.quote-actions .button-solid) {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  padding: 9px 17px;
+  font-size: 12px;
+}
+.quotes :global(.quote-feedback) {
+  margin-top: 13px;
+  font-size: 11px;
+}
+
+/* Contact sheets leave a little room around each piece of light. */
+.gallery :global(.gallery-toolbar) {
+  justify-content: center;
+  position: relative;
+  padding-bottom: 18px;
+}
+.gallery :global(.gallery-upload) {
+  margin-left: auto;
+  font-size: 11px;
+}
+.gallery :global(.gallery-meta) {
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  margin-bottom: 32px;
+  font-size: 10px;
+}
+.gallery :global(.masonry-gallery) {
+  columns: unset;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px 20px;
+  align-items: start;
+}
+.gallery :global(.masonry-gallery > figure) {
+  grid-column: auto;
+  margin: 0;
+  padding: 7px 7px 0;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper) 92%, var(--sand));
+}
+.gallery :global(.masonry-gallery > figure:nth-child(3n + 2)) {
+  margin-top: 18px;
+}
+.gallery :global(.photo-button) {
+  border-radius: 0;
+}
+.gallery :global(.masonry-gallery figcaption) {
+  padding: 16px 3px 20px;
+}
+.gallery :global(.masonry-gallery figcaption h3) {
+  font: 500 13px/1.6 var(--ui-font);
+}
+.gallery :global(.masonry-gallery figcaption p) {
+  margin-top: 4px;
+  font-size: 10px;
+}
+
+/* A letter, with its chapters marked along the margin. */
+.about {
+  max-width: 950px;
+}
+.about :global(.memoir-byline) {
+  justify-content: center;
+  margin: 0 auto 26px;
+  border: 0;
+  padding: 0;
+}
+.about :global(.memoir-avatar) {
+  width: 40px;
+  height: 40px;
+  font-size: 30px;
+}
+.about :global(.memoir-status) {
+  margin-left: 30px;
+  font-size: 10px;
+}
+.about :global(.memoir-layout) {
+  grid-template-columns: minmax(0, 1fr) 160px;
+  gap: 45px;
+  border-top: 1px solid var(--line);
+  padding-top: 28px;
+}
+.about :global(.memoir-text) {
+  counter-reset: chapter;
+}
+.about :global(.memoir-text section) {
+  position: relative;
+  padding-left: 45px;
+  counter-increment: chapter;
+  margin-bottom: 32px;
+}
+.about :global(.memoir-text section)::before {
+  content: "0" counter(chapter);
+  position: absolute;
+  left: 0;
+  top: 5px;
+  font:
+    300 18px/1 var(--font-hand),
+    sans-serif;
+  color: var(--accent);
+}
+.about :global(.memoir-text h2) {
+  font: 500 18px/1.6 var(--ui-font);
+  margin-bottom: 20px;
+}
+.about :global(.memoir-text p) {
+  font-size: 14px;
+  line-height: 1.9;
+}
+.about :global(.memoir-margin) {
+  padding-top: 6px;
+}
+.about :global(.memoir-margin a) {
+  font-size: 11px;
+}
+.about :global(.memoir-signature) {
+  margin-left: 45px;
+}
+.about :global(.memoir-next) {
+  padding: 26px 0;
+  border-top: 1px solid var(--line);
+}
+
+.reading {
+  max-width: 1050px;
+  margin-inline: auto;
+}
+.reading :global(.back-link) {
+  font-size: 11px;
+  margin-top: 28px;
+}
+.reading :global(.reading-header) {
+  text-align: start;
+  margin: 14px 0 28px;
+  padding: 6px 0 22px;
+  border-bottom: 1px solid var(--line);
+}
+.reading :global(.reading-header h1) {
+  max-width: 32ch;
+  margin: 10px 0 0;
+  font: 500 26px/1.55 var(--ui-font);
+  text-wrap: balance;
+  letter-spacing: -0.02em;
+}
+.reading :global(.reading-header .eyebrow) {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+}
+.reading :global(.reading-meta) {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  font-size: 11px;
+}
+.reading :global(.reading-excerpt) {
+  max-width: 58ch;
+  margin: 16px 0 0;
+  padding: 0;
+  font-size: 13px;
+  line-height: 2;
+}
+.reading :global(.reading-header > .mini-sketch) {
+  display: none;
+}
+.reading :global(.reading-layout) {
+  grid-template-columns: minmax(0, 1fr) 155px;
+  gap: 40px;
+}
+.reading :global(.prose h2) {
+  font-size: 19px;
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+.reading :global(.prose p) {
+  font-size: 15px;
+  line-height: 1.9;
+  margin-top: 12px;
+}
+.reading :global(.prose section) {
+  margin-bottom: 28px;
+}
+
+@media (max-width: 1050px) {
+  .gallery :global(.masonry-gallery) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px 16px;
+  }
+  .gallery :global(.masonry-gallery > figure) {
+    grid-column: auto;
+  }
+  .gallery :global(.masonry-gallery > figure:nth-child(3n + 2)) {
+    margin-top: 0;
+  }
+  .gallery :global(.masonry-gallery > figure:nth-child(even)) {
+    margin-top: 18px;
+  }
+  .notes :global(.notes-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .notes :global(.note-card) {
+    padding: 18px;
+  }
+  .projects :global(.project-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  .archive,
+  .notes,
+  .projects,
+  .gallery,
+  .about,
+  .quotes {
+    margin: 8px auto 35px;
+  }
+  .coordinates {
+    font-size: 9px;
+    letter-spacing: 0.04em;
+  }
+  .coordinates > span:last-child {
+    max-width: 45%;
+    text-align: end;
+  }
+  .heading {
+    padding-bottom: 22px;
+  }
+  .heading h1 {
+    font-size: 26px;
+  }
+  .heading > p {
+    max-width: 34ch;
+    font-size: 11px;
+  }
+  .vignette {
+    width: 150px;
+    height: 65px;
+  }
+  .archive :global(.filter-bar) {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .archive :global(.inline-search) {
+    width: 100%;
+  }
+  .archive :global(.article-row) {
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 12px;
+    padding: 14px 0;
+  }
+  .archive :global(.article-info) {
+    padding-left: 14px;
+  }
+  .archive :global(.article-info h3) {
+    font-size: 14px;
+  }
+  .archive :global(.article-list > article:first-child .article-row) {
+    padding: 16px 12px;
+  }
+  .archive :global(.article-list > article:first-child .article-info h3) {
+    font-size: 16px;
+  }
+  .archive :global(.article-row > .mini-sketch) {
+    display: none;
+  }
+  .archive :global(.article-excerpt) {
+    font-size: 12px;
+  }
+  .notes :global(.notes-grid) {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding-inline: 5px;
+  }
+  .notes :global(.notes-grid)::before {
+    left: 20px;
+  }
+  .notes :global(.note-card:nth-child(even)) {
+    margin-top: 0;
+    margin-left: 0;
+  }
+  .notes :global(.note-card:nth-child(odd)) {
+    margin-right: 0;
+  }
+  .projects :global(.project-grid) {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .projects :global(.project-card),
+  .projects :global(.project-card:nth-child(odd)) {
+    grid-column: auto;
+  }
+  .projects :global(.project-card:nth-child(even)) {
+    margin-top: 0;
+  }
+  .projects :global(.project-cover) {
+    height: 165px;
+  }
+  .projects :global(.project-tabs) {
+    gap: 20px;
+  }
+  .quotes :global(.quote-stage) {
+    padding-inline: 8px;
+  }
+  .quotes :global(.quote-stage blockquote) {
+    font-size: 22px;
+  }
+  .gallery :global(.gallery-toolbar) {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  .gallery :global(.masonry-gallery) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 15px;
+  }
+  .gallery :global(.masonry-gallery > figure) {
+    padding: 6px 6px 0;
+  }
+  .gallery :global(.masonry-gallery figcaption) {
+    padding: 10px 2px 15px;
+  }
+  .gallery :global(.masonry-gallery figcaption h3) {
+    font-size: 19px;
+  }
+  .gallery :global(.gallery-meta > span:last-child) {
+    max-width: 55%;
+    text-align: end;
+  }
+  .about :global(.memoir-layout) {
+    grid-template-columns: 1fr;
+    padding-top: 27px;
+  }
+  .about :global(.memoir-text section) {
+    padding-left: 35px;
+  }
+  .about :global(.memoir-text h2) {
+    font-size: 25px;
+  }
+  .about :global(.memoir-margin) {
+    display: none;
+  }
+  .about :global(.memoir-status) {
+    margin-left: 15px;
+  }
+  .reading :global(.reading-layout) {
+    grid-template-columns: 1fr;
+  }
+  .reading :global(.reading-layout > .toc) {
+    display: none;
+  }
+  .reading :global(.reading-header h1) {
+    font-size: 24px;
+  }
+  .reading :global(.prose p) {
+    font-size: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .archive *,
+  .projects * {
+    transition: none !important;
+  }
+}

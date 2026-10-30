@@ -17,6 +17,8 @@ import "../styles/celestial.css";
 import "../styles/night.css";
 import "../styles/playground.css";
 import "../styles/atmosphere.css";
+import "@fontsource-variable/noto-sans-sc";
+import "../styles/layout.css";
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   const t = await getTranslations("site");

@@ -1,0 +1,93 @@
+/* Content is centered on the viewport. The celestial navigation is an overlay, never a grid column. */
+:root {
+  --ui-font:
+    "Noto Sans SC Variable", system-ui, -apple-system, "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+}
+body {
+  font-family: var(--ui-font);
+  font-weight: 400;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+}
+.site-shell {
+  max-width: none;
+}
+.site-shell .main-wrap {
+  width: min(1040px, calc(100% - 112px));
+  margin-inline: auto;
+  padding-inline: 0;
+}
+.site-shell[data-page="home"] .main-wrap {
+  width: min(1320px, calc(100% - 112px));
+}
+.site-shell[data-page="inner"] > .header-slot {
+  height: 86px;
+  padding-inline: 36px;
+}
+.site-shell > .header-slot > .living-header {
+  max-width: 1280px;
+}
+.site-shell[data-page="inner"] .living-header-row {
+  height: 54px;
+}
+.site-shell[data-page="inner"] .main-wrap {
+  min-height: calc(100svh - 86px);
+}
+.site-shell[data-page="inner"] main > div {
+  min-height: 0;
+}
+.site-shell[data-page="inner"] .page-footer {
+  font-size: 10px;
+  padding: 20px 0;
+}
+.site-shell[data-page="inner"] .page-footer > span:last-child {
+  font-size: 10px;
+}
+@media (min-width: 701px) {
+  .celestial-sidebar {
+    left: 4px;
+    width: 225px;
+    top: 70px;
+  }
+  .celestial-sidebar .sky-navigation {
+    transform: translateX(-28px);
+  }
+  .celestial-sidebar.sky-expanded {
+    z-index: 55;
+  }
+  .celestial-sidebar.sky-expanded::before {
+    content: "";
+    position: absolute;
+    inset: 10% -32px 10% -25px;
+    background: radial-gradient(ellipse, var(--paper) 45%, transparent 72%);
+    opacity: 0.98;
+    pointer-events: none;
+  }
+  .sky-folded .sky-current {
+    font-size: 10px;
+    opacity: 0.65;
+  }
+  .sky-folded .sky-clock {
+    opacity: 0.45;
+  }
+}
+@media (max-width: 1100px) {
+  .site-shell .main-wrap,
+  .site-shell[data-page="home"] .main-wrap {
+    width: calc(100% - 104px);
+  }
+}
+@media (max-width: 700px) {
+  .site-shell .main-wrap,
+  .site-shell[data-page="home"] .main-wrap {
+    width: calc(100% - 40px);
+  }
+  .site-shell[data-page="inner"] > .header-slot {
+    height: 80px;
+    padding-inline: 18px;
+  }
+  .site-shell[data-page="inner"] .main-wrap {
+    min-height: calc(100svh - 80px);
+  }
+}

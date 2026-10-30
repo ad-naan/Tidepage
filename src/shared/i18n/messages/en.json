@@ -163,7 +163,8 @@
       "search": "Find something here",
       "music": "Background sound for the next page",
       "stats": "Meeting along the way"
-    }
+    },
+    "readingProgress": "Article reading progress"
   },
   "celestial": {
     "label": "Light trail navigation",
@@ -626,5 +627,39 @@
       "A story is taking shape between the tides.",
       "Let a small wave bring the distance closer."
     ]
+  },
+  "rooms": {
+    "archive": {
+      "label": "THE READING ROOM",
+      "aside": "A shore for wandering thoughts"
+    },
+    "notes": {
+      "label": "TIDAL NOTES",
+      "aside": "Ordinary days, carefully folded"
+    },
+    "projects": {
+      "label": "THE WORKBENCH",
+      "aside": "Where ideas begin to take shape"
+    },
+    "quotes": {
+      "label": "LETTERS ON THE WIND",
+      "aside": "A thought to carry with you"
+    },
+    "gallery": {
+      "label": "THE LIGHT ROOM",
+      "aside": "Moments worth keeping your eyes open for"
+    },
+    "about": {
+      "label": "AN UNFINISHED LETTER",
+      "aside": "For you, who happened to stop by"
+    }
+  },
+  "articleBlocks": {
+    "preview": "Preview this reference",
+    "visit": "Visit website",
+    "film": "A film to watch",
+    "copy": "Copy code",
+    "copied": "Copied",
+    "failed": "Could not copy. Try again."
   }
 }

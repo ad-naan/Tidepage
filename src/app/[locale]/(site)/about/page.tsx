@@ -1,7 +1,9 @@
+import { RoomHeading } from "@/components/RoomHeading";
+import styles from "@/components/rooms.module.css";
 import { getPageMetadata } from "@/server/seo/metadata";
 import { Link } from "@/shared/i18n/navigation";
 import { ArrowRight } from "lucide-react";
-import { PageHeading } from "@/shared/ui/primitives";
+
 import { MiniSketch } from "@/components/Sketch";
 import { profile } from "@/shared/config/profile";
 import { getTranslations } from "next-intl/server";
@@ -11,8 +13,9 @@ export default async function Page() {
   const t = await getTranslations("about");
   const sections = t.raw("sections") as typeof profile.about;
   return (
-    <div className="inner-page memoir-page">
-      <PageHeading
+    <div className={`inner-page memoir-page ${styles.about}`}>
+      <RoomHeading
+        room="about"
         title={t("title")}
         description={t("description")}
       />
@@ -45,7 +48,9 @@ export default async function Page() {
         <aside className="memoir-margin">
           <span className="memoir-margin-label">{t("marginLabel")}</span>
           {sections.map((section, i) => (
-            <a href={`#memoir-${i}`} key={section.title}>{section.title}</a>
+            <a href={`#memoir-${i}`} key={section.title}>
+              {section.title}
+            </a>
           ))}
           <MiniSketch kind="tree" />
           <p>

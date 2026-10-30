@@ -12,7 +12,6 @@ import {
   useMotionValueEvent,
   useReducedMotion,
   useScroll,
-  useSpring,
 } from "motion/react";
 import {
   ArrowLeft,
@@ -35,6 +34,7 @@ import { LoginTrigger } from "@/modules/identity/ui/PreviewIdentity";
 import { ActivityDetails } from "./ActivityDetails";
 import { MusicPlayer } from "./MusicPlayer";
 import { HeaderStatsPanel, HeaderStatsTrigger } from "./HeaderStats";
+import { ReadingProgress } from "./ReadingProgress";
 
 type HeaderPanel = "activity" | "search" | "music" | "stats";
 type Props = {
@@ -72,8 +72,7 @@ export function SiteHeader({
   const input = useRef<HTMLInputElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const reduce = useReducedMotion();
-  const { scrollY, scrollYProgress } = useScroll();
-  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30 });
+  const { scrollY } = useScroll();
   const article = pathname.startsWith("/articles/")
     ? articles.find((a) => pathname.endsWith(a.slug))
     : undefined;
@@ -131,7 +130,7 @@ export function SiteHeader({
                   : "resting"
           }
           transition={spring}
-          animate={{ y: condensed || open ? 12 : 20 }}
+          animate={{ y: condensed || open || pathname !== "/" ? 12 : 20 }}
         >
           <motion.div layout="position" className="living-header-row">
             <Link
@@ -163,17 +162,7 @@ export function SiteHeader({
                     exit={{ opacity: 0, y: -6 }}
                     transition={spring}
                   >
-                    <Link
-                      href="/articles"
-                      className="header-back"
-                      aria-label={t("backToArticles")}
-                    >
-                      <ArrowLeft size={17} />
-                    </Link>
-                    <div>
-                      <span>{t("reading")}</span>
-                      <strong>{article.title}</strong>
-                    </div>
+                    <ReadingProgress key={article.slug} title={article.title} />
                   </motion.div>
                 ) : (
                   <motion.div
@@ -430,13 +419,6 @@ export function SiteHeader({
               </motion.div>
             )}
           </AnimatePresence>
-          {article && condensed && (
-            <motion.div
-              className="living-reading-progress"
-              style={{ scaleX: reduce ? scrollYProgress : progress }}
-              aria-hidden="true"
-            />
-          )}
         </motion.header>
       </div>
     </OverlayScope>

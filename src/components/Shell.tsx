@@ -22,8 +22,11 @@ export function Shell({
   children: ReactNode;
   articles: ArticleSummary[];
 }) {
-  const t=useTranslations("nav"),footer=useTranslations("footer"),ui=useTranslations("common"),contactT=useTranslations("contact");
-  const locale=useLocale();
+  const t = useTranslations("nav"),
+    footer = useTranslations("footer"),
+    ui = useTranslations("common"),
+    contactT = useTranslations("contact");
+  const locale = useLocale();
   const pathname = usePathname();
   const [theme, setTheme] = useLocalState<"light" | "dark">(
     "adnaan-theme",
@@ -40,11 +43,18 @@ export function Shell({
   useEffect(() => {
     setMenu(false);
     setImmersive(false);
-    try { setVisitedCoast(sessionStorage.getItem("coast-visited") === "true"); } catch { /* Optional navigation hint. */ }
+    try {
+      setVisitedCoast(sessionStorage.getItem("coast-visited") === "true");
+    } catch {
+      /* Optional navigation hint. */
+    }
   }, [pathname]);
   return (
     <MotionConfig transition={spring} reducedMotion="user">
-      <div className={`site-shell ${immersive ? "is-immersive" : ""}`}>
+      <div
+        className={`site-shell ${immersive ? "is-immersive" : ""}`}
+        data-page={pathname === "/" ? "home" : "inner"}
+      >
         <SiteHeader
           articles={articles}
           label={t(
@@ -52,7 +62,7 @@ export function Shell({
               (item) =>
                 item.href ===
                 (pathname.startsWith("/articles/") ? "/articles" : pathname),
-            )?.key || "elsewhere"
+            )?.key || "elsewhere",
           )}
           immersive={immersive}
           onImmersiveChange={() => setImmersive((v) => !v)}
@@ -92,13 +102,19 @@ export function Shell({
           <footer className="page-footer">
             <div className="footer-identity">
               <span>© 2026 adnaan</span>
-              <button aria-label={footer("heart")} onClick={() => setSecret(true)}>
+              <button
+                aria-label={footer("heart")}
+                onClick={() => setSecret(true)}
+              >
                 <Heart size={14} />
               </button>
               <a href={`/feed.xml?locale=${locale}`} aria-label={footer("rss")}>
                 <Rss size={14} />
               </a>
-              <button aria-label={footer("contact")} onClick={() => setContact(true)}>
+              <button
+                aria-label={footer("contact")}
+                onClick={() => setContact(true)}
+              >
                 <Mail size={14} />
               </button>
             </div>
@@ -108,10 +124,7 @@ export function Shell({
           </footer>
         </div>
         {contact && (
-          <Dialog
-            title={contactT("title")}
-            onClose={() => setContact(false)}
-          >
+          <Dialog title={contactT("title")} onClose={() => setContact(false)}>
             <div className="contact-card">
               <Mail size={32} />
               <h2>{contactT("heading")}</h2>

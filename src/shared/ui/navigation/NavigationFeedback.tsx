@@ -26,10 +26,10 @@ export function useNavigationFeedback() {
   return useContext(Context);
 }
 
-function RouteCommit({ settle }: { settle: () => void }) {
+function RouteCommit({ commit }: { commit: (route: string) => void }) {
   const path = usePathname();
   const search = useSearchParams();
-  useEffect(settle, [path, search, settle]);
+  useEffect(() => commit(`${path}?${search}`), [path, search, commit]);
   return null;
 }
 
@@ -52,6 +52,7 @@ export function NavigationFeedback({
   const holds = useRef(0);
   const exit = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const previous = useRef(-1);
+  const committed = useRef("");
   const count = useRef(words.lines.length);
   count.current = words.lines.length;
 
@@ -102,10 +103,19 @@ export function NavigationFeedback({
       settle();
     };
   }, [begin, settle]);
+  const commit = useCallback(
+    (route: string) => {
+      committed.current = route;
+      settle();
+    },
+    [settle],
+  );
 
   useEffect(() => {
     function back() {
-      begin();
+      const current = `${location.pathname}?${location.search.slice(1)}`;
+      if (current !== committed.current) begin();
+      else settle();
     }
     window.addEventListener("popstate", back);
     return () => {
@@ -114,13 +124,13 @@ export function NavigationFeedback({
       delete document.documentElement.dataset.navigating;
       document.documentElement.style.removeProperty("--route-content-height");
     };
-  }, [begin]);
+  }, [begin, settle]);
 
   return (
     <Context.Provider value={{ begin, settle, hold }}>
       {children}
       <Suspense fallback={null}>
-        <RouteCommit settle={settle} />
+        <RouteCommit commit={commit} />
       </Suspense>
       <div
         className={styles.veil}

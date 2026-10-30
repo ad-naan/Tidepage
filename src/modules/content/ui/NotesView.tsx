@@ -1,4 +1,7 @@
 "use client";
+import { RoomHeading } from "@/components/RoomHeading";
+import styles from "@/components/rooms.module.css";
+
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { motion } from "motion/react";
@@ -7,16 +10,17 @@ import type { Note } from "../domain/models";
 import { useLocalState } from "@/shared/hooks/useLocalState";
 import { MiniSketch } from "@/components/Sketch";
 import { NoteReplies } from "@/modules/engagement/ui/NoteReplies";
-import { PageHeading, SpringButton } from "@/shared/ui/primitives";
+import { SpringButton } from "@/shared/ui/primitives";
 import { softSpring } from "@/shared/lib/motion";
 
 export function NotesView({ notes }: { notes: Note[] }) {
-  const t=useTranslations("notes");
+  const t = useTranslations("notes");
   const [saved, setSaved] = useLocalState<string[]>("adnaan-notes", []);
   const [onlySaved, setOnlySaved] = useState(false);
   return (
-    <div className="inner-page">
-      <PageHeading
+    <div className={`inner-page ${styles.notes}`}>
+      <RoomHeading
+        room="notes"
         title={t("title")}
         description={t("description")}
       />
@@ -31,7 +35,7 @@ export function NotesView({ notes }: { notes: Note[] }) {
           aria-pressed={onlySaved}
         >
           <Heart size={15} />
-          {onlySaved ? t("all") : t("saved", {count:saved.length})}
+          {onlySaved ? t("all") : t("saved", { count: saved.length })}
         </button>
       </div>
       <div className="notes-grid">
@@ -69,7 +73,9 @@ export function NotesView({ notes }: { notes: Note[] }) {
                     size={17}
                     fill={saved.includes(note.id) ? "currentColor" : "none"}
                   />
-                  <span>{saved.includes(note.id) ? t("savedLabel") : t("remember")}</span>
+                  <span>
+                    {saved.includes(note.id) ? t("savedLabel") : t("remember")}
+                  </span>
                 </SpringButton>
               </div>
               <NoteReplies />

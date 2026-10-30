@@ -163,7 +163,8 @@
       "search": "在这里找一找",
       "music": "给下一页一点背景声",
       "stats": "在光阴里相遇"
-    }
+    },
+    "readingProgress": "文章阅读进度"
   },
   "celestial": {
     "label": "光轨导航",
@@ -626,5 +627,39 @@
       "故事正在潮汐之间浮现。",
       "等一朵浪花，把远方带来。"
     ]
+  },
+  "rooms": {
+    "archive": {
+      "label": "沿岸藏书室",
+      "aside": "想法在这里，慢慢靠岸"
+    },
+    "notes": {
+      "label": "潮汐便笺",
+      "aside": "把普通的一天，折好收起"
+    },
+    "projects": {
+      "label": "造物工作台",
+      "aside": "一些想法，正在长出形状"
+    },
+    "quotes": {
+      "label": "风中来信",
+      "aside": "捡起一句，带往下一页"
+    },
+    "gallery": {
+      "label": "采光暗房",
+      "aside": "收藏那些，舍不得眨眼的瞬间"
+    },
+    "about": {
+      "label": "一封未完的信",
+      "aside": "寄给偶然路过这里的你"
+    }
+  },
+  "articleBlocks": {
+    "preview": "展开网页摘要",
+    "visit": "访问网站",
+    "film": "观影推荐",
+    "copy": "复制代码",
+    "copied": "已复制",
+    "failed": "复制失败，请重试"
   }
 }

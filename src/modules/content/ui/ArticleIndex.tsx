@@ -1,4 +1,7 @@
 "use client";
+import { RoomHeading } from "@/components/RoomHeading";
+import styles from "@/components/rooms.module.css";
+
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useRouter } from "@/shared/i18n/navigation";
@@ -9,10 +12,17 @@ import type { Page } from "@/shared/contracts/api";
 import { Link } from "@/shared/i18n/navigation";
 import { ArticleList } from "@/modules/content/ui/ArticleList";
 import { MiniSketch } from "@/components/Sketch";
-import { PageHeading, SpringButton } from "@/shared/ui/primitives";
+import { SpringButton } from "@/shared/ui/primitives";
 
-export function ArticleIndex({ result, category }: { result: Page<ArticleSummary>; category?: Category }) {
-  const t=useTranslations("articles"),categories=useTranslations("categories");
+export function ArticleIndex({
+  result,
+  category,
+}: {
+  result: Page<ArticleSummary>;
+  category?: Category;
+}) {
+  const t = useTranslations("articles"),
+    categories = useTranslations("categories");
   const params = useSearchParams();
   const router = useRouter();
   const selected = category || "all";
@@ -47,8 +57,9 @@ export function ArticleIndex({ result, category }: { result: Page<ArticleSummary
     return `/articles?${next}`;
   }
   return (
-    <div className="inner-page">
-      <PageHeading
+    <div className={`inner-page ${styles.archive}`}>
+      <RoomHeading
+        room="archive"
         title={t("title")}
         description={t("description")}
       />
@@ -81,9 +92,9 @@ export function ArticleIndex({ result, category }: { result: Page<ArticleSummary
       </div>
       <div className="archive-label">
         <span>{t("archive")}</span>
-        <span>{t("count", {count:result.total})}</span>
+        <span>{t("count", { count: result.total })}</span>
       </div>
-      <ArticleList items={result.items} />
+      <ArticleList items={result.items} lead />
       {result.pageCount > 1 && (
         <nav className="archive-pagination" aria-label={t("pagination")}>
           {result.page > 1 ? (

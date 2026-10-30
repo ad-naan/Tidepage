@@ -43,18 +43,21 @@ export function CelestialNav({
   onNavigate: () => void;
   immersive?: boolean;
 }) {
-  const t=useTranslations("nav"),footer=useTranslations("footer"),sky=useTranslations("celestial");
-  const locale=useLocale();
+  const t = useTranslations("nav"),
+    footer = useTranslations("footer"),
+    sky = useTranslations("celestial");
+  const locale = useLocale();
   const pathname = usePathname();
   const [compact, setCompact] = useState(false);
   const [revealed, setRevealed] = useState<boolean | null>(null);
   const [hovered, setHovered] = useState<number | null>(null);
   const dragging = useRef(false);
+  const navRoot = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
   const { scrollY, scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 100, damping: 25 });
-  const folded = compact || immersive;
-  const expanded = mobileOpen || (revealed ?? !folded);
+  const folded = true;
+  const expanded = mobileOpen || (revealed ?? false);
   const active = Math.max(
     0,
     destinations.findIndex((d) =>
@@ -71,8 +74,24 @@ export function CelestialNav({
   useEffect(() => {
     setRevealed(null);
   }, [pathname, compact, immersive]);
+  useEffect(() => {
+    if (!revealed) return;
+    function outside(event: PointerEvent) {
+      if (!navRoot.current?.contains(event.target as Node)) setRevealed(false);
+    }
+    function escape(event: KeyboardEvent) {
+      if (event.key === "Escape") setRevealed(false);
+    }
+    document.addEventListener("pointerdown", outside);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("pointerdown", outside);
+      document.removeEventListener("keydown", escape);
+    };
+  }, [revealed]);
   return (
     <aside
+      ref={navRoot}
       className={`celestial-sidebar ${mobileOpen ? "is-open" : ""} ${expanded ? "sky-expanded" : "sky-folded"} ${theme === "dark" ? "sky-night" : "sky-day"}`}
       aria-label={sky("label")}
     >
@@ -290,7 +309,10 @@ export function CelestialNav({
                     onMouseLeave={() => setHovered(null)}
                     onFocus={() => setHovered(i)}
                     onBlur={() => setHovered(null)}
-                    onClick={onNavigate}
+                    onClick={() => {
+                      setRevealed(false);
+                      onNavigate();
+                    }}
                   >
                     {t(d.key)}
                   </Link>

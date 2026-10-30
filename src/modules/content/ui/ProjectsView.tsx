@@ -1,20 +1,24 @@
 "use client";
+import { RoomHeading } from "@/components/RoomHeading";
+import styles from "@/components/rooms.module.css";
+
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { motion } from "motion/react";
 import { ArrowUpRight, Sparkles } from "lucide-react";
 import type { Project } from "../domain/models";
 import { MiniSketch } from "@/components/Sketch";
-import { Dialog, PageHeading } from "@/shared/ui/primitives";
+import { Dialog } from "@/shared/ui/primitives";
 import { softSpring } from "@/shared/lib/motion";
 
 export function ProjectsView({ projects }: { projects: Project[] }) {
-  const t=useTranslations("projects");
+  const t = useTranslations("projects");
   const [category, setCategory] = useState("all");
   const [selected, setSelected] = useState<Project | null>(null);
   return (
-    <div className="inner-page">
-      <PageHeading
+    <div className={`inner-page ${styles.projects}`}>
+      <RoomHeading
+        room="projects"
         title={t("title")}
         description={t("description")}
       />
@@ -60,7 +64,13 @@ export function ProjectsView({ projects }: { projects: Project[] }) {
               <div className="project-info">
                 <h2>
                   {p.name}
-                  <small>{p.category === "product" || p.category === "open-source" || p.category === "experiment" ? t(p.category) : p.category}</small>
+                  <small>
+                    {p.category === "product" ||
+                    p.category === "open-source" ||
+                    p.category === "experiment"
+                      ? t(p.category)
+                      : p.category}
+                  </small>
                 </h2>
                 <p>{p.description}</p>
                 <div className="tags">
@@ -114,9 +124,7 @@ export function ProjectsView({ projects }: { projects: Project[] }) {
                 <p>{t("drag")}</p>
               </div>
             ) : (
-              <p className="demo-disclaimer">
-                {t("demo")}
-              </p>
+              <p className="demo-disclaimer">{t("demo")}</p>
             )}
           </div>
         </Dialog>

@@ -1,4 +1,7 @@
 "use client";
+import { RoomHeading } from "@/components/RoomHeading";
+import styles from "./rooms.module.css";
+
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { useMessages, useTranslations } from "next-intl";
@@ -11,7 +14,7 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import { Dialog, PageHeading } from "@/shared/ui/primitives";
+import { Dialog } from "@/shared/ui/primitives";
 type PhotoCategory = "daily" | "nature" | "travel";
 type Photo = {
   id: string;
@@ -106,8 +109,12 @@ export function Gallery() {
     setSelected(filtered[(i + n + filtered.length) % filtered.length]);
   }
   return (
-    <div className="inner-page gallery-page">
-      <PageHeading title={t("title")} description={t("subtitle")} />
+    <div className={`inner-page gallery-page ${styles.gallery}`}>
+      <RoomHeading
+        room="gallery"
+        title={t("title")}
+        description={t("subtitle")}
+      />
       <div className="gallery-toolbar">
         <div className="tabs">
           {galleryTabs.map((c) => (
