@@ -263,7 +263,7 @@ export function CoastalExperience() {
               className={styles.interact}
               onClick={() => interaction.current()}
             >
-              <span>{location.name}</span>
+              <span>{places[location.id].name}</span>
               <strong>
                 <kbd>E</kbd>
                 {action}

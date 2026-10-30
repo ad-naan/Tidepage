@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { PGlite } from "@electric-sql/pglite";
 import { drizzle } from "drizzle-orm/pglite";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import { articlesTable } from "../../src/modules/content/infrastructure/schema";
 import { postgresContentRepository } from "../../src/modules/content/infrastructure/postgres-repository";
 import { demoContentRepository } from "../../src/modules/content/infrastructure/demo-repository";
@@ -13,16 +13,16 @@ import type { Database } from "../../src/server/db/client";
 test("demo and PostgreSQL adapters honor publication and summary boundaries", async () => {
   const pg = new PGlite();
   try {
-    await pg.exec(
-      await readFile(
-        new URL("../../drizzle/0000_initial.sql", import.meta.url),
-        "utf8",
-      ),
-    );
+    const migrations = new URL("../../drizzle/", import.meta.url);
+    const files = (await readdir(migrations)).filter((name) => name.endsWith(".sql")).sort();
+    for (const name of files) {
+      await pg.exec(await readFile(new URL(name, migrations), "utf8"));
+    }
     const db = drizzle(pg);
     const source = seedArticles[0];
     const row = {
       slug: source.slug,
+      locale: source.locale,
       title: source.title,
       excerpt: source.excerpt,
       category: source.category,

@@ -1,14 +1,16 @@
 import { Link } from "@/shared/i18n/navigation";
 import { MiniSketch } from "@/components/Sketch";
-export default function NotFound() {
+import { getTranslations } from "next-intl/server";
+export default async function NotFound() {
+  const t = await getTranslations("notFound");
   return (
     <main id="main-content" className="not-found">
       <MiniSketch kind="boat" />
       <div className="eyebrow">404 · A LITTLE DETOUR</div>
-      <h1>好像漂到了未知的海域。</h1>
-      <p>没关系，沿着来时的路，翻回熟悉的那一页。</p>
+      <h1>{t("title")}</h1>
+      <p>{t("description")}</p>
       <Link href="/" className="button-outline">
-        回到首页 →
+        {t("back")}
       </Link>
     </main>
   );

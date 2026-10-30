@@ -41,13 +41,14 @@ export default async function ArticlePage({
   if (!article) notFound();
   const t=await getTranslations("articles");
   const categories=await getTranslations("categories");
+  const nav = await getTranslations("nav");
   const next =
     articles[
       (articles.findIndex((a) => a.slug === article.slug) + 1) % articles.length
     ];
   return (
     <div className="reading-page">
-      <JsonLd data={articleGraph(article)} />
+      <JsonLd data={articleGraph(article, { home: nav("home"), articles: nav("articles"), category: categories(article.category) })} />
       <ReadingAnnotations />
       <Link href="/articles" className="back-link">
         <ArrowLeft size={16} />

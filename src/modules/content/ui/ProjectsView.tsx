@@ -60,7 +60,7 @@ export function ProjectsView({ projects }: { projects: Project[] }) {
               <div className="project-info">
                 <h2>
                   {p.name}
-                  <small>{t(p.category)}</small>
+                  <small>{p.category === "product" || p.category === "open-source" || p.category === "experiment" ? t(p.category) : p.category}</small>
                 </h2>
                 <p>{p.description}</p>
                 <div className="tags">

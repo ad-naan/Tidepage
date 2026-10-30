@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
 import { CoastalExperience } from "@/modules/world/ui/CoastalExperience";
+import { getLocale, getTranslations } from "next-intl/server";
+import { pageMetadata } from "@/server/seo/metadata";
 
-export const metadata: Metadata = {
-  title: "海岸探索",
-  description: "驾船探索光阴海岸，寻找灯芯，发现星光下的隐秘海湾。",
-  robots: { index: false, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const t = await getTranslations("world");
+  return {
+    ...pageMetadata("/explore", t("name"), t("description"), locale),
+    robots: { index: false, follow: true },
+  };
+}
 
 export default function ExplorePage() {
   return <CoastalExperience />;

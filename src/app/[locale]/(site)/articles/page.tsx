@@ -19,10 +19,11 @@ export default async function Page({
     q: input.q,
     category: input.category,
   });
-  if (!parsed.success) redirect({href:"/articles",locale});
+  if (!parsed.success) return redirect({href:"/articles",locale});
   const result = await listArticles({...parsed.data, locale});
+  const t = await getTranslations("common");
   return (
-    <Suspense fallback={<p className="loading">正在翻开新的一页…</p>}>
+    <Suspense fallback={<p className="loading" role="status">{t("loading")}</p>}>
       <ArticleIndex result={result} category={parsed.data.category} />
     </Suspense>
   );

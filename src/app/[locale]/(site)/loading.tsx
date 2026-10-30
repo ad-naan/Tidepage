@@ -1,7 +1,10 @@
-export default function Loading() {
+import { getTranslations } from "next-intl/server";
+
+export default async function Loading() {
+  const t = await getTranslations("common");
   return (
     <p className="loading" role="status">
-      正在翻开新的一页…
+      {t("loading")}
     </p>
   );
 }

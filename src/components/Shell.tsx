@@ -72,7 +72,15 @@ export function Shell({
             className="mobile-scrim"
             aria-label={ui("close")}
             onClick={() => setMenu(false)}
-          >
+          />
+        )}
+        <div className="main-wrap">
+          <main id="main-content">
+            <motion.div
+              key={pathname}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
               {children}
             </motion.div>
           </main>

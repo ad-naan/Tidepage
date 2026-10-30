@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
@@ -25,7 +25,7 @@ export default async function RootLayout({children}:Readonly<{children:React.Rea
   const locale=await getLocale();const messages=await getMessages();const t=await getTranslations("site");
   return <html lang={locale} dir={localeRegistry[locale].direction} className={gardenHand.variable} data-scroll-behavior="smooth"><body>
     <a href="#main-content" className="skip-link">{t("skip")}</a>
-    <JsonLd data={siteGraph(locale)}/>
+    <JsonLd data={siteGraph(locale, { name: t("name"), description: t("description") })}/>
     <NextIntlClientProvider locale={locale} messages={messages}>{children}</NextIntlClientProvider>
   </body></html>;
 }

@@ -3,7 +3,7 @@ import type { Article } from "@/modules/content/domain/models";
 import { site } from "@/shared/config/site";
 import { localizedUrl } from "./metadata";
 import type { Locale } from "@/shared/i18n/config";
-export function siteGraph(locale:Locale) {
+export function siteGraph(locale: Locale, labels: { name: string; description: string }) {
   const absoluteUrl=(path:string)=>localizedUrl(locale,path);
   return {
     "@context": "https://schema.org",
@@ -17,7 +17,8 @@ export function siteGraph(locale:Locale) {
       {
         "@type": "WebSite",
         "@id": absoluteUrl("/#website"),
-        name: site.name,
+        name: labels.name,
+        description: labels.description,
         url: absoluteUrl("/"),
         inLanguage: locale,
         publisher: { "@id": absoluteUrl("/#author") },
@@ -25,7 +26,7 @@ export function siteGraph(locale:Locale) {
     ],
   };
 }
-export function articleGraph(article: Article) {
+export function articleGraph(article: Article, labels: { home: string; articles: string; category: string }) {
   const absoluteUrl=(path:string)=>localizedUrl(article.locale,path);
   const url = absoluteUrl(`/articles/${article.slug}`);
   return {
@@ -47,7 +48,7 @@ export function articleGraph(article: Article) {
         },
         mainEntityOfPage: { "@type": "WebPage", "@id": url },
         keywords: article.tags.join(", "),
-        articleSection: article.category,
+        articleSection: labels.category,
       },
       {
         "@type": "BreadcrumbList",
@@ -55,13 +56,13 @@ export function articleGraph(article: Article) {
           {
             "@type": "ListItem",
             position: 1,
-            name: "首页",
+            name: labels.home,
             item: absoluteUrl("/"),
           },
           {
             "@type": "ListItem",
             position: 2,
-            name: "文章",
+            name: labels.articles,
             item: absoluteUrl("/articles"),
           },
           { "@type": "ListItem", position: 3, name: article.title, item: url },

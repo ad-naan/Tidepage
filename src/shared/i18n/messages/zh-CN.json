@@ -19,6 +19,31 @@
     "description": "没关系，沿着来时的路，翻回熟悉的那一页。",
     "back": "回到首页 →"
   },
+  "sky": {
+    "toggleClock": "切换此刻时间与本次停留时长",
+    "moment": "片刻",
+    "minutes": "{count} 分钟",
+    "now": "此刻",
+    "stay": "在这页停留",
+    "boat": "让纸船带来一句话",
+    "pick": "拾一句话",
+    "keepLabel": "收好拾到的话",
+    "keep": "收好这页",
+    "lines": [
+      "这一页写得慢一点，也没有关系。",
+      "让过去有处安放，让明天仍有期待。",
+      "走完这一段，仍然可以重新出发。",
+      "此刻的停留，也算一种前进。"
+    ]
+  },
+  "sketch": {
+    "coast": "手绘海岸：水獭坐在礁石上，看着落日与远山",
+    "page": "这一页，",
+    "slow": "慢慢写。",
+    "greet": "和小水獭打个招呼",
+    "greeting": "这一页，陪你看日落。",
+    "next": "下一页，一起继续走 ♡"
+  },
   "ui": {
     "scroll": {
       "page": "页面",
@@ -117,6 +142,25 @@
     "wordmark": "adnaan · 光阴副本，首页",
     "reading": "正在阅读",
     "backToArticles": "返回文章列表"
+,
+    "now": "此刻",
+    "doing": "正在",
+    "coding": "写代码",
+    "activityLabel": "查看作者活动预览",
+    "focusEnter": "进入专注阅读",
+    "focusExit": "退出专注阅读",
+    "toggleNav": "切换光轨导航",
+    "scrollRegion": "页头内容",
+    "collapsePanel": "收起页头面板",
+    "searchContent": "搜索文章内容",
+    "searchPlaceholder": "文章、话题，或一个关键词…",
+    "clearSearch": "清除搜索",
+    "panels": {
+      "activity": "此刻，在做什么",
+      "search": "在这里找一找",
+      "music": "给下一页一点背景声",
+      "stats": "在光阴里相遇"
+    }
   },
   "celestial": {
     "label": "光轨导航",
@@ -226,6 +270,21 @@
     "aboutAuthor": "关于作者",
     "rss": "订阅 RSS",
     "articles": "文章"
+  },
+  "markdown": {
+    "published": "发布日期",
+    "updated": "更新日期",
+    "original": "原文",
+    "notFound": "内容不存在或尚未发布"
+  },
+  "apiErrors": {
+    "VALIDATION_ERROR": "请求参数不合法",
+    "INTERNAL_ERROR": "服务暂时不可用",
+    "NOT_FOUND": "内容不存在或尚未发布",
+    "IDENTITY_UNAVAILABLE": "账号服务尚未配置",
+    "UNAUTHORIZED": "请先登录",
+    "FORBIDDEN": "没有执行此操作的权限",
+    "INVALID_ORIGIN": "请求来源不合法"
   },
   "notes": {
     "title": "日子的副本",

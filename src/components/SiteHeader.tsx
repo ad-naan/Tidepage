@@ -188,11 +188,11 @@ export function SiteHeader({
                     </span>
                     <span className="living-status">
                       <span>
-                        此刻 <span>正在</span>
+                        {t("now")} <span>{t("doing")}</span>
                       </span>
                       <strong>
                         <Code2 size={13} />
-                        写代码
+                        {t("coding")}
                         <span className="status-type-caret" />
                       </strong>
                     </span>
@@ -213,7 +213,7 @@ export function SiteHeader({
             <button
               className={`sky-mobile-activity ${open && panel === "activity" ? "selected" : ""}`}
               onClick={() => show("activity")}
-              aria-label="查看作者实时状态"
+              aria-label={t("activityLabel")}
               aria-expanded={open && panel === "activity"}
               aria-controls="header-panel"
             >
@@ -284,7 +284,7 @@ export function SiteHeader({
             {article && (
               <motion.button
                 className={`living-focus-button ${immersive ? "active" : ""}`}
-                aria-label={immersive ? "退出专注阅读" : "进入专注阅读"}
+                aria-label={immersive ? t("focusExit") : t("focusEnter")}
                 aria-pressed={immersive}
                 onClick={onImmersiveChange}
                 whileTap={{ scale: 0.9 }}
@@ -295,7 +295,7 @@ export function SiteHeader({
             <LoginTrigger />
             <button
               className="living-menu-button"
-              aria-label="切换光轨导航"
+              aria-label={t("toggleNav")}
               aria-expanded={menuOpen}
               onClick={onMenuToggle}
             >
@@ -318,7 +318,7 @@ export function SiteHeader({
                 <motion.div
                   key={panel}
                   className={`living-panel living-panel-${panel}`}
-                  data-custom-scroll="页头内容"
+                  data-custom-scroll={t("scrollRegion")}
                   data-scroll-axis="vertical"
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -326,22 +326,13 @@ export function SiteHeader({
                   transition={{ duration: reduce ? 0 : 0.15 }}
                 >
                   <div className="living-panel-heading">
-                    <span>
-                      {
-                        {
-                          activity: "此刻，在做什么",
-                          search: "在这里找一找",
-                          music: "给下一页一点背景声",
-                          stats: "在光阴里相遇",
-                        }[panel]
-                      }
-                    </span>
+                    <span>{t(`panels.${panel}`)}</span>
                     <button
                       onClick={() => {
                         setOpen(false);
                         trigger.current?.focus();
                       }}
-                      aria-label="收起页头面板"
+                      aria-label={t("collapsePanel")}
                     >
                       <X size={16} />
                     </button>
@@ -361,14 +352,14 @@ export function SiteHeader({
                         <Search size={20} />
                         <input
                           ref={input}
-                          aria-label="搜索文章内容"
-                          placeholder="文章、话题，或一个关键词…"
+                          aria-label={t("searchContent")}
+                          placeholder={t("searchPlaceholder")}
                           value={query}
                           onChange={(e) => setQuery(e.target.value)}
                         />
                         {query && (
                           <button
-                            aria-label="清除搜索"
+                            aria-label={t("clearSearch")}
                             onClick={() => {
                               setQuery("");
                               input.current?.focus();

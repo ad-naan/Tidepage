@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { ZodError } from "zod";
 import { AppError } from "./errors";
 import { log } from "../observability/logger";
+import { getCatalog, requestLocale } from "../i18n/messages";
 
 export function jsonData<T>(
   data: T,
@@ -47,11 +48,12 @@ export function defineRoute<
         : error instanceof AppError
           ? error.code
           : "INTERNAL_ERROR";
-      const message = validation
-        ? "请求参数不合法"
+      const messages = (await getCatalog(requestLocale(request))).apiErrors;
+      const message = Object.hasOwn(messages, code)
+        ? messages[code as keyof typeof messages]
         : error instanceof AppError
           ? error.message
-          : "服务暂时不可用";
+          : messages.INTERNAL_ERROR;
       const details = validation
         ? error.issues.map((i) => ({
             path: i.path.join("."),

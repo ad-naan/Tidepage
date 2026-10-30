@@ -19,6 +19,31 @@
     "description": "That's alright. Follow the way you came, back to a familiar page.",
     "back": "Back to home →"
   },
+  "sky": {
+    "toggleClock": "Switch between the current time and time spent here",
+    "moment": "A moment",
+    "minutes": "{count, plural, one {# minute} other {# minutes}}",
+    "now": "Right now",
+    "stay": "Time on this page",
+    "boat": "Let the paper boat bring a thought",
+    "pick": "Pick a thought",
+    "keepLabel": "Keep the thought you found",
+    "keep": "Keep this page",
+    "lines": [
+      "It's alright to write this page a little slower.",
+      "Give the past a place to stay, and tomorrow a little hope.",
+      "At the end of this stretch, you can begin again.",
+      "Staying a moment is a way forward too."
+    ]
+  },
+  "sketch": {
+    "coast": "Hand-drawn coast: an otter on a rock watches the sunset and distant mountains",
+    "page": "This page,",
+    "slow": "take it slow.",
+    "greet": "Say hello to the little otter",
+    "greeting": "This page, we'll watch the sunset.",
+    "next": "Next page, we'll keep walking together ♡"
+  },
   "ui": {
     "scroll": {
       "page": "Page",
@@ -117,6 +142,25 @@
     "wordmark": "adnaan · Tidepage, home",
     "reading": "Now reading",
     "backToArticles": "Back to articles"
+,
+    "now": "Right now",
+    "doing": "working on",
+    "coding": "Code",
+    "activityLabel": "View the author's activity preview",
+    "focusEnter": "Enter focused reading",
+    "focusExit": "Exit focused reading",
+    "toggleNav": "Toggle light trail navigation",
+    "scrollRegion": "Header content",
+    "collapsePanel": "Fold the header panel",
+    "searchContent": "Search article content",
+    "searchPlaceholder": "Articles, topics, or a keyword…",
+    "clearSearch": "Clear search",
+    "panels": {
+      "activity": "What's happening now",
+      "search": "Find something here",
+      "music": "Background sound for the next page",
+      "stats": "Meeting along the way"
+    }
   },
   "celestial": {
     "label": "Light trail navigation",
@@ -226,6 +270,21 @@
     "aboutAuthor": "About the author",
     "rss": "Subscribe via RSS",
     "articles": "Articles"
+  },
+  "markdown": {
+    "published": "Published",
+    "updated": "Updated",
+    "original": "Original",
+    "notFound": "This content doesn't exist or hasn't been published"
+  },
+  "apiErrors": {
+    "VALIDATION_ERROR": "Invalid request parameters",
+    "INTERNAL_ERROR": "The service is temporarily unavailable",
+    "NOT_FOUND": "This content doesn't exist or hasn't been published",
+    "IDENTITY_UNAVAILABLE": "The account service isn't configured yet",
+    "UNAUTHORIZED": "Please sign in first",
+    "FORBIDDEN": "You don't have permission to perform this action",
+    "INVALID_ORIGIN": "Invalid request origin"
   },
   "notes": {
     "title": "Copies of ordinary days",

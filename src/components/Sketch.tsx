@@ -4,6 +4,7 @@ import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { softSpring } from "@/shared/lib/motion";
 import { AboutLetter } from "./AboutLetter";
 import { OtterDrawing } from "./OtterDrawing";
+import { useTranslations } from "next-intl";
 
 export function Tree({
   x = 0,
@@ -134,6 +135,7 @@ export function MiniSketch({
 }
 
 export function HeroSketch({ quiet = false }: { quiet?: boolean }) {
+  const t = useTranslations("sketch");
   const uid = useId().replaceAll(":", "");
   const [greeting, setGreeting] = useState(false);
   const reduce = useReducedMotion();
@@ -141,7 +143,7 @@ export function HeroSketch({ quiet = false }: { quiet?: boolean }) {
     <div className="hero-art">
       <svg
         viewBox="0 0 700 390"
-        aria-label="手绘海岸：水獭坐在礁石上，看着落日与远山"
+        aria-label={t("coast")}
         role="img"
         fill="none"
       >
@@ -304,7 +306,7 @@ export function HeroSketch({ quiet = false }: { quiet?: boolean }) {
           className="svg-hand"
           transform="rotate(-12 40 292)"
         >
-          这一页，
+          {t("page")}
         </text>
         <text
           x="59"
@@ -312,14 +314,14 @@ export function HeroSketch({ quiet = false }: { quiet?: boolean }) {
           className="svg-hand"
           transform="rotate(-12 59 315)"
         >
-          慢慢写。
+          {t("slow")}
         </text>
         <path d="m90 328 28-8" stroke="var(--accent)" />
       </svg>
       <AboutLetter />
       <button
         className="otter-hit"
-        aria-label="和小水獭打个招呼"
+        aria-label={t("greet")}
         onClick={() => setGreeting((v) => !v)}
       />
       <AnimatePresence>
@@ -331,7 +333,7 @@ export function HeroSketch({ quiet = false }: { quiet?: boolean }) {
             exit={{ opacity: 0, scale: 0.5 }}
             transition={softSpring}
           >
-            这一页，陪你看日落。<span>下一页，一起继续走 ♡</span>
+            {t("greeting")}<span>{t("next")}</span>
           </motion.div>
         )}
       </AnimatePresence>

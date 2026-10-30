@@ -3,12 +3,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { softSpring, spring } from "@/shared/lib/motion";
 
-const foundLines = [
-  "这一页写得慢一点，也没有关系。",
-  "让过去有处安放，让明天仍有期待。",
-  "走完这一段，仍然可以重新出发。",
-  "此刻的停留，也算一种前进。",
-];
+import { useLocale, useMessages, useTranslations } from "next-intl";
 export function SkyPlayground({
   expanded,
   onPlay,
@@ -16,6 +11,9 @@ export function SkyPlayground({
   expanded: boolean;
   onPlay: () => void;
 }) {
+  const locale = useLocale();
+  const t = useTranslations("sky");
+  const foundLines = useMessages().sky.lines;
   const [clock, setClock] = useState("");
   const [minutes, setMinutes] = useState(0);
   const [showStay, setShowStay] = useState(false);
@@ -24,7 +22,7 @@ export function SkyPlayground({
     const started = performance.now();
     const update = () => {
       setClock(
-        new Intl.DateTimeFormat("zh-CN", {
+        new Intl.DateTimeFormat(locale, {
           timeZone: "Asia/Shanghai",
           hour: "2-digit",
           minute: "2-digit",
@@ -36,7 +34,7 @@ export function SkyPlayground({
     update();
     const timer = setInterval(update, 15000);
     return () => clearInterval(timer);
-  }, []);
+  }, [locale]);
   useEffect(() => {
     if (expanded) setFound(null);
   }, [expanded]);
@@ -75,7 +73,7 @@ export function SkyPlayground({
       </svg>
       <motion.button
         className={`sky-clock ${showStay ? "showing-stay" : ""}`}
-        aria-label="切换此刻时间与本次停留时长"
+        aria-label={t("toggleClock")}
         onClick={() => setShowStay((v) => !v)}
         whileHover={{ y: -2 }}
         whileTap={{ scale: 0.94 }}
@@ -90,12 +88,12 @@ export function SkyPlayground({
             transition={{ duration: 0.15 }}
           >
             {showStay
-              ? `${minutes < 1 ? "片刻" : `${minutes} 分钟`}`
-              : clock || "此刻"}
+              ? minutes < 1 ? t("moment") : t("minutes", { count: minutes })
+              : clock || t("now")}
           </motion.span>
         </AnimatePresence>
         <span className="sky-clock-caption">
-          {showStay ? "在这页停留" : "此刻"}
+          {showStay ? t("stay") : t("now")}
         </span>
       </motion.button>
       <motion.button
@@ -104,7 +102,7 @@ export function SkyPlayground({
         dragSnapToOrigin
         dragConstraints={{ left: -10, right: 22 }}
         dragElastic={0.2}
-        aria-label="让纸船带来一句话"
+        aria-label={t("boat")}
         onClick={() => {
           onPlay();
           setFound((v) => (v === null ? 0 : (v + 1) % foundLines.length));
@@ -132,7 +130,7 @@ export function SkyPlayground({
             opacity=".4"
           />
         </svg>
-        <span>拾一句话</span>
+        <span>{t("pick")}</span>
       </motion.button>
       <AnimatePresence mode="wait">
         {found !== null && (
@@ -146,8 +144,8 @@ export function SkyPlayground({
           >
             <span>“</span>
             <p>{foundLines[found]}</p>
-            <button aria-label="收好拾到的话" onClick={() => setFound(null)}>
-              收好这页 <span>↗</span>
+            <button aria-label={t("keepLabel")} onClick={() => setFound(null)}>
+              {t("keep")} <span>↗</span>
             </button>
           </motion.div>
         )}
