@@ -43,7 +43,7 @@ export function CelestialNav({
   onNavigate: () => void;
   immersive?: boolean;
 }) {
-  const t=useTranslations("nav"),footer=useTranslations("footer");
+  const t=useTranslations("nav"),footer=useTranslations("footer"),sky=useTranslations("celestial");
   const locale=useLocale();
   const pathname = usePathname();
   const [compact, setCompact] = useState(false);
@@ -74,11 +74,11 @@ export function CelestialNav({
   return (
     <aside
       className={`celestial-sidebar ${mobileOpen ? "is-open" : ""} ${expanded ? "sky-expanded" : "sky-folded"} ${theme === "dark" ? "sky-night" : "sky-day"}`}
-      aria-label="光轨导航"
+      aria-label={sky("label")}
     >
       <button
         className="sky-mobile-close"
-        aria-label="收起光轨导航"
+        aria-label={sky("collapse")}
         onClick={onNavigate}
       >
         <X size={20} />
@@ -185,8 +185,8 @@ export function CelestialNav({
           onClick={() => {
             if (!dragging.current) setRevealed(!expanded);
           }}
-          title="拉动日月，让光线轻轻回弹"
-          aria-label={expanded ? "收起光轨导航" : "展开光轨导航"}
+          title={sky("drag")}
+          aria-label={expanded ? sky("collapse") : sky("expand")}
           aria-expanded={expanded}
           aria-controls="sky-destinations"
           whileHover={{ scale: 1.08 }}
@@ -259,7 +259,7 @@ export function CelestialNav({
             <nav
               id="sky-destinations"
               className="sky-destinations"
-              aria-label="主导航"
+              aria-label={sky("main")}
               key="expanded"
             >
               {destinations.map((d, i) => (

@@ -4,6 +4,33 @@
     "description": "adnaan 的潮页。记录技术、产品与生活，走进一片可以探索的光阴海岸。",
     "skip": "跳到主要内容"
   },
+  "common": {
+    "loading": "正在翻开新的一页…",
+    "close": "关闭"
+  },
+  "error": {
+    "title": "这一页暂时没有打开",
+    "description": "可以重新尝试，或先回到首页。",
+    "retry": "重新尝试",
+    "home": "回到首页"
+  },
+  "notFound": {
+    "title": "好像漂到了未知的海域。",
+    "description": "没关系，沿着来时的路，翻回熟悉的那一页。",
+    "back": "回到首页 →"
+  },
+  "ui": {
+    "scroll": {
+      "page": "页面",
+      "content": "内容",
+      "vertical": "{region}纵向滚动条",
+      "horizontal": "{region}横向滚动条"
+    },
+    "dialog": {
+      "region": "弹窗",
+      "close": "关闭弹窗"
+    }
+  },
   "nav": {
     "home": "首页",
     "articles": "文章",
@@ -53,7 +80,26 @@
     "minutes": "{count} 分钟阅读",
     "toc": "这篇文章里",
     "demo": "本文为博客示例内容，用于展示阅读体验。",
-    "continue": "下一篇，接着逛逛"
+    "continue": "下一篇，接着逛逛",
+    "save": "收藏这篇文章",
+    "saved": "已收藏",
+    "share": "分享文章",
+    "copied": "链接已复制",
+    "copyFallback": "请复制浏览器地址栏中的链接"
+  },
+  "articleDemo": {
+    "calloutTitle": "写在页边",
+    "calloutIntro": "真正值得优化的，也许不是每一分钟的产出，而是",
+    "calloutMark": "我们和时间相处的方式",
+    "calloutOutro": "。给想法留一点生长的空间。",
+    "quote1": "空白不是浪费，",
+    "quote2": "它是让想法长出根的地方。",
+    "cite": "— 这篇文章里，我最想留给你的话",
+    "codeTitle": "给生活留一点余地.ts",
+    "copy": "复制代码",
+    "codeRegion": "代码示例",
+    "footnotes": "注释与延伸",
+    "footnote": "这里展示正文高亮、旁注、引用、脚注与代码块的排版样式。选中正文中的一段文字，还可以预览标注与引用评论。"
   },
   "header": {
     "search": "搜索文章",
@@ -66,7 +112,88 @@
     "empty": "没有找到相关内容，试试其他关键词。",
     "light": "切换浅色模式",
     "dark": "切换深色模式",
-    "explore": "走进光阴海岸"
+    "explore": "走进光阴海岸",
+    "tools": "{label}页面工具",
+    "wordmark": "adnaan · 光阴副本，首页",
+    "reading": "正在阅读",
+    "backToArticles": "返回文章列表"
+  },
+  "celestial": {
+    "label": "光轨导航",
+    "collapse": "收起光轨导航",
+    "expand": "展开光轨导航",
+    "drag": "拉动日月，让光线轻轻回弹",
+    "main": "主导航"
+  },
+  "player": {
+    "region": "光阴声景播放器",
+    "panel": "给下一页一点背景声",
+    "panelRegion": "播放器",
+    "collapse": "收起播放器",
+    "progress": "播放进度",
+    "previous": "上一首",
+    "next": "下一首",
+    "play": "播放音乐",
+    "pause": "暂停音乐",
+    "volume": "音量",
+    "queue": "查看播放列表",
+    "import": "导入本地音乐",
+    "localArtist": "本地音乐 · 仅本次浏览有效",
+    "dockOpen": "展开音乐播放器",
+    "dockClose": "收起音乐播放器",
+    "dockPanelClose": "关闭播放器面板",
+    "dockPlay": "播放",
+    "dockPause": "暂停",
+    "playing": "正在播放",
+    "idle": "听一点，慢一点",
+    "playError": "暂时无法播放这首音乐。",
+    "loadError": "音频加载失败，请稍后重试。",
+    "sourceError": "暂时无法加载音频，可导入本地音乐。",
+    "tracks": {
+      "coast": {
+        "title": "海边的空白",
+        "artist": "光阴声景 · 原创环境音"
+      },
+      "afternoon": {
+        "title": "慢下来的午后",
+        "artist": "光阴声景 · 原创环境音"
+      }
+    }
+  },
+  "stats": {
+    "open": "查看站点访客统计",
+    "faces": ["山", "木", "云"],
+    "reading": " 位在读",
+    "nowIntro": "此刻，有 ",
+    "nowFriends": "8 位朋友",
+    "nowOutro": " 和你一起翻开这一页。",
+    "today": "今日相遇",
+    "views": "累计浏览",
+    "friends": "到访的朋友",
+    "trend": "最近七天",
+    "caption": "每一次驻足，都留下了回声。",
+    "trendAria": "最近七日访问趋势演示",
+    "thanks": "谢谢你，成为这份光阴的一部分。",
+    "demo": "统计样式 · 演示数据"
+  },
+  "activity": {
+    "current": "正在打磨博客里的小细节",
+    "focus": "已经专注 ",
+    "focusDuration": "42 分钟",
+    "caption": "正在创造，也在慢慢打磨。",
+    "debug": "调试一个小交互",
+    "listen": "听《海边的空白》",
+    "coffee": "离开屏幕，喝杯咖啡",
+    "note": "活动流样式演示",
+    "noteSub": "尚未连接监控"
+  },
+  "letter": {
+    "open": "水獭身边有一封信，打开自述扉页",
+    "discovery": "有一封信",
+    "eyebrow": "光阴副本 · 扉页",
+    "close": "收好这封信",
+    "body": "水獭替我保管着这封信。这里写着我为什么记录，又想把怎样的自己，留在这些文字里。",
+    "link": "翻开我的自述"
   },
   "journey": {
     "title": "走过的，留在这里",
@@ -80,7 +207,25 @@
     "coast": "回到海岸",
     "rss": "订阅 RSS",
     "contact": "联系与留言",
-    "heart": "留下一份心意"
+    "heart": "留下一份心意",
+    "gratitude": "这一页收到你的心意。愿下一页，也有人与你同行。"
+  },
+  "contact": {
+    "title": "你好，很高兴遇见你",
+    "heading": "让好想法发生连接",
+    "body1": "这里为站主预留了联系入口。",
+    "body2": "配置真实邮箱后，就可以收到读者来信。",
+    "link": "读我的自述"
+  },
+  "feed": {
+    "title": "adnaan · 数字花园",
+    "description": "关于技术、产品与生活的手记"
+  },
+  "llms": {
+    "site": "站点",
+    "aboutAuthor": "关于作者",
+    "rss": "订阅 RSS",
+    "articles": "文章"
   },
   "notes": {
     "title": "日子的副本",
@@ -93,7 +238,18 @@
     "savedLabel": "已收藏",
     "remember": "记在心里",
     "empty": "点击手记里的爱心，收藏打动你的片段。",
-    "end": "— 记住这一刻，然后继续生活。—"
+    "end": "— 记住这一刻，然后继续生活。—",
+    "replies": {
+      "open": "聊聊这个瞬间",
+      "collapse": "收起讨论",
+      "sampleName": "木木",
+      "sampleText": "小事也值得被认真记住。",
+      "sampleMeta": "示例评论",
+      "justNow": "刚刚 · 本地预览",
+      "input": "回复手记",
+      "placeholder": "交换一点想法…",
+      "submit": "发表手记回复"
+    }
   },
   "quotes": {
     "title": "留给下一页的话",
@@ -122,20 +278,274 @@
     "drag": "拖动这颗小太阳，再轻轻松手。",
     "demo": "这是博客的示例项目展示，暂未提供真实应用或源码链接。"
   },
+  "gallery": {
+    "description": "记录沿途的风景与日常。",
+    "title": "这一刻，值得留下",
+    "subtitle": "给走过的光阴留一张底片。再看见时，也能想起当时的自己。",
+    "tabs": {
+      "all": "全部",
+      "daily": "日常",
+      "nature": "自然",
+      "travel": "在路上"
+    },
+    "upload": "添加照片",
+    "uploadAria": "添加本地照片",
+    "sizeError": "请选择小于 15 MB 的图片。",
+    "notice": "照片只在本次浏览中展示，不会上传。",
+    "defaultCaption": "刚刚留下的一片光。",
+    "myPhotos": "我的相片",
+    "count": "{count} 个被收藏的瞬间",
+    "source": "生成摄影素材 · 样式预览",
+    "closeNotice": "关闭提示",
+    "like": "喜欢《{title}》",
+    "unlike": "取消喜欢《{title}》",
+    "ending": "把瞬间留下，让生活继续。",
+    "previous": "上一张照片",
+    "next": "下一张照片",
+    "items": {
+      "sea": {
+        "title": "海风替我写了一封信",
+        "caption": "什么都不做，只是看着海，时间也会变得柔软。",
+        "place": "海边"
+      },
+      "coffee": {
+        "title": "把下午留给一杯咖啡",
+        "caption": "光落在纸上，是今天最温柔的事情。",
+        "place": "窗边咖啡馆"
+      },
+      "meadow": {
+        "title": "走进一片不着急的绿",
+        "caption": "草木不说话，却把很多事情告诉了我。",
+        "place": "山野之间"
+      },
+      "light": {
+        "title": "光的形状",
+        "caption": "同一个午后，换一个角度看光。",
+        "place": "窗边 · 局部"
+      },
+      "flowers": {
+        "title": "把风装进口袋",
+        "caption": "沿途的野花，都是不期而遇的礼物。",
+        "place": "草地 · 局部"
+      },
+      "horizon": {
+        "title": "远处，还是远处",
+        "caption": "看过海的人，总会在心里留一片蓝。",
+        "place": "海岸 · 局部"
+      }
+    }
+  },
+  "identity": {
+    "title": "在这里，留下你的回声",
+    "titleLoggedIn": "你的阅读身份",
+    "postmark1": "给每一个",
+    "postmark2": "认真生活的人",
+    "welcome": "欢迎翻开这一页",
+    "welcomeBack": "很高兴又见到你",
+    "intro": "用熟悉的身份，收藏喜欢的文章，\n和有趣的灵魂交换想法。",
+    "introLoggedIn": "已切换到登录后的界面预览。",
+    "guest": "演示访客 · GitHub",
+    "continue": "使用 GitHub 继续",
+    "notice": "当前为样式预览，尚未连接 GitHub 授权。",
+    "save": "收藏灵感",
+    "discuss": "参与讨论",
+    "trace": "留下足迹",
+    "exitDemo": "退出演示状态",
+    "previewLogin": "预览登录后的效果",
+    "disclaimer": "界面演示 · 不会获取或上传账号信息",
+    "viewAccount": "查看演示账号",
+    "login": "登录",
+    "guestName": "演示访客",
+    "guestBadge": "访"
+  },
+  "discussion": {
+    "reactionsTitle": "这篇文章，让你想到了什么？",
+    "reactionsSub": "留下一个小小的回应。",
+    "inspired": "有启发",
+    "resonate": "有共鸣",
+    "love": "喜欢",
+    "echo": "留下回声",
+    "echoSub": "从我写下，到我们相遇。",
+    "editorTitle": "以你的名字，留下想法",
+    "editorHint": "登录后参与讨论，也让好想法被看见。",
+    "editorHintLoggedIn": "已登录状态预览",
+    "githubLogin": "GitHub 登录",
+    "cancelContext": "取消引用或回复",
+    "replyTo": "回复 {name}，交换一点想法…",
+    "placeholder": "读到这里，有没有什么想说的？",
+    "contentLabel": "评论内容",
+    "emoji": "添加表情",
+    "counter": "支持引用段落",
+    "submit": "发表想法",
+    "all": "所有回声",
+    "hot": "热度",
+    "new": "最新",
+    "author": "作者",
+    "like": "点赞 {name} 的评论",
+    "reply": "回复",
+    "justNow": "刚刚 · 本地预览",
+    "demo": "评论及互动数量为界面演示，新增内容只在当前页面预览。",
+    "samples": {
+      "mountain": {
+        "name": "山间来信",
+        "text": "“空白不是浪费，它是让想法长出根的地方。” 读到这里停了一会儿。最近也一直在反思，到底是在生活，还是在完成清单。",
+        "time": "2 小时前"
+      },
+      "reply": {
+        "text": "能一起慢下来就很好。也在学习给自己留一点无用、但很快乐的时间。",
+        "time": "1 小时前"
+      },
+      "mumu": {
+        "name": "木木",
+        "text": "读完想合上电脑去散步了，谢谢这篇温柔的提醒 🌿",
+        "time": "35 分钟前"
+      }
+    },
+    "mark": "标注",
+    "quote": "引用评论",
+    "marked": "刚刚划下的一句",
+    "markPreview": "本页标注预览",
+    "closeMark": "关闭标注"
+  },
   "about": {
     "title": "我的自述",
     "description": "关于我，也关于这份仍在更新的潮页。",
     "byline": "写给来到这里的你",
-    "status": "这一页，还在继续"
+    "status": "这一页，还在继续",
+    "motto1": "让记忆有处安放，",
+    "motto2": "让明天仍有期待。",
+    "marginLabel": "关于这份副本",
+    "signature": "把这一页留好，下一页继续。",
+    "nextLabel": "故事没有写完",
+    "nextText": "最近的想法，放在手记里。",
+    "nextLink": "去读下一页",
+    "sections": [
+      {
+        "title": "给正在发生的生活，留一份副本",
+        "paragraphs": [
+          "我是 adnaan，欢迎来到我的博客。这里放着我写下的文章、随手记的念头、正在尝试的项目，以及那些想要留下的日常。",
+          "我想记录创造的过程：一个想法怎样开始，一个问题怎样被拆开，哪些尝试走了弯路，又有哪些瞬间让我愿意继续。等到以后回头看，这些记录能告诉我，自己是怎样一点点走到这里的。"
+        ]
+      },
+      {
+        "title": "一边做东西，一边认识自己",
+        "paragraphs": [
+          "代码是我表达想法的一种方式。把模糊的念头变成可以触碰的东西，把一个小细节慢慢打磨顺，这些过程本身就值得记录。",
+          "我也想给技术以外的生活留一些位置。一张照片、一段音乐、一个还没想明白的问题，都可以出现在这里。它们和代码一起，组成更完整的我。"
+        ]
+      },
+      {
+        "title": "把过去放好，再翻一页",
+        "paragraphs": [
+          "这个博客以林俊杰的《光阴副本》（Turn of the Page）为主题。对我而言，它关乎时间、与自己和解，以及在一段旅程结束之后，仍然愿意重新出发。",
+          "我希望这份「副本」能保存值得留下的东西，也提醒自己：走过的路已经成为一部分，不必一直困在同一页。可以慢一点，可以暂时停下来，但仍然可以继续写。"
+        ]
+      },
+      {
+        "title": "从我写下，到我们相遇",
+        "paragraphs": [
+          "写在这里的想法，可能还不完整。我愿意把它们打开，听到不同的经历和答案。也许一次交流，就能让一个原本独自面对的问题，有了新的出口。",
+          "如果某一段文字、某个小作品，刚好和你的生活发生了一点联系，欢迎留下回声。谢谢你来过，也谢谢你参与这份仍在更新的光阴。"
+        ]
+      }
+    ]
   },
   "world": {
     "name": "光阴海岸",
-    "description": "驾船探索海岸，寻找灯芯，发现星光下的隐秘海湾。"
+    "description": "驾船探索海岸，寻找灯芯，发现星光下的隐秘海湾。",
+    "ui": {
+      "region": "光阴海岸探索世界",
+      "exit": "离开海岸，回到首页",
+      "home": "回到首页",
+      "guide": "航行指南",
+      "soundOn": "开启海浪声",
+      "soundOff": "关闭海浪声",
+      "sunset": "看一场日落",
+      "stars": "等星星亮起来",
+      "pause": "暂停航行",
+      "resume": "继续航行",
+      "loading": "海风正在抵达…",
+      "fallback": "这台设备暂时无法绘制海岸。",
+      "quest": "{objective}，已找到 {count} 枚灯芯",
+      "onboarding": "点击海面启航 · 拖动环顾 · WASD 航行",
+      "closeHint": "关闭操作提示",
+      "paused": "已暂停",
+      "guidePanel": "航行指南面板",
+      "collapseGuide": "收起航行指南",
+      "guideIntro": "海上的灯塔熄灭了。找到三枚灯芯，让光重新穿过夜色。",
+      "sail": "航行",
+      "sailHint": "点击海面或岛屿，也可用 WASD / 方向键。",
+      "look": "观察",
+      "lookHint": "拖动环顾，滚轮调整距离；I / K 仰俯，J / L 转向。",
+      "explore": "探索",
+      "exploreHint": "靠岸后按 E，或点击出现的交互提示。",
+      "clue": "漂流瓶、小屋的窗边、工坊的木箱里……有光在等你。",
+      "routes": "辅助航线",
+      "sailTo": "驶往",
+      "reward": "已发现星落湾。你可以继续自由航行。",
+      "restart": "重新开始航程",
+      "progressNote": "进度保存在此浏览器。音效默认关闭。",
+      "viewBeacon": "查看灯塔",
+      "lightBeacon": "点亮灯塔",
+      "touchStars": "触碰星光",
+      "findFragment": "寻找灯芯",
+      "lookAround": "看看这里",
+      "objectiveDiscovered": "星落湾 · 已发现",
+      "objectiveGlow": "夜里，跟随蓝色微光",
+      "objectiveBeacon": "回到灯塔，点亮它",
+      "objectiveFragments": "寻找散落的灯芯"
+    },
+    "notices": {
+      "kept": "这里的灯芯已经收好了。",
+      "found": "找到一枚灯芯 · {count} / 3",
+      "complete": "三枚灯芯齐了。回灯塔，把光送出去。",
+      "beaconDark": "灯塔熄灭了。漂流瓶、小屋窗边、工坊里，藏着三枚灯芯。",
+      "beaconLit": "灯塔亮了。等到夜晚，跟随海上的蓝色微光。",
+      "secret": "你找到了星落湾。抬头，星星正在回应。",
+      "otter": "水獭望向远处的灯塔，好像在等它重新亮起来。",
+      "wind": "风从西北吹来。夜里，那边的海似乎会发光。",
+      "restart": "新的航程，从码头开始。",
+      "soundFail": "当前无法播放声音，可以继续探索。"
+    },
+    "places": {
+      "articles": {
+        "name": "灯塔",
+        "kind": "文章",
+        "description": "那些反复想过的问题，在这里亮着灯。"
+      },
+      "notes": {
+        "name": "海边小屋",
+        "kind": "手记",
+        "description": "推开窗，有一些还没有写成文章的日常。"
+      },
+      "projects": {
+        "name": "造物工坊",
+        "kind": "项目",
+        "description": "好奇心在这里动手，把小念头做成真的。"
+      },
+      "quotes": {
+        "name": "漂流湾",
+        "kind": "一言",
+        "description": "海浪送来一句话。也许刚好是你今天需要的。"
+      },
+      "gallery": {
+        "name": "观景台",
+        "kind": "照片",
+        "description": "让风停一会儿，看看那些值得留下的瞬间。"
+      },
+      "about": {
+        "name": "来信码头",
+        "kind": "自述",
+        "description": "有一封写给来访者的信，水獭替我保管着。"
+      },
+      "secret": {
+        "name": "星落湾",
+        "kind": "秘境",
+        "description": "星光落下聚集的地方。"
+      }
+    }
   },
   "language": {
     "label": "语言"
-  },
-  "gallery": {
-    "description": "记录沿途的风景与日常。"
   }
 }

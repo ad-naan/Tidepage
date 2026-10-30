@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@/shared/i18n/navigation";
+import { useMessages, useTranslations } from "next-intl";
 import { useReducedMotion } from "motion/react";
 import {
   ArrowLeft,
@@ -22,11 +23,15 @@ import {
   restoreJourney,
   type Journey,
   type JourneyId,
+  type JourneyNotice,
 } from "@/modules/world/domain/coast-journey";
 import type { VoyageControls } from "../runtime/createCoastScene";
 import styles from "./coast.module.css";
 
 export function CoastalExperience() {
+  const ui = useTranslations("world.ui");
+  const notices = useTranslations("world.notices");
+  const places = useMessages().world.places;
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [night, setNight] = useState(false);
@@ -49,7 +54,7 @@ export function CoastalExperience() {
     if (!nearby || paused || help) return;
     const result = interactJourney(journey, nearby, night);
     setJourney(result.journey);
-    setNotice(result.message);
+    setNotice(journeyNotice(result.notice));
   };
   useEffect(() => {
     try {
@@ -129,44 +134,65 @@ export function CoastalExperience() {
       await audio.current.setEnabled(!sound);
       setSound(!sound);
     } catch {
-      setNotice("当前无法播放声音，可以继续探索。");
+      setNotice(notices("soundFail"));
+    }
+  }
+  /** Domain notices carry keys; map them onto the message catalog. */
+  function journeyNotice(notice: JourneyNotice) {
+    switch (notice.key) {
+      case "found":
+        return notices("found", { count: notice.count ?? 0 });
+      case "complete":
+        return notices("complete");
+      case "beaconDark":
+        return notices("beaconDark");
+      case "beaconLit":
+        return notices("beaconLit");
+      case "secret":
+        return notices("secret");
+      case "otter":
+        return notices("otter");
+      case "wind":
+        return notices("wind");
+      default:
+        return notices("kept");
     }
   }
   const location = journeyStops.find((p) => p.id === nearby);
   const objective = journey.discovered
-    ? "星落湾 · 已发现"
+    ? ui("objectiveDiscovered")
     : journey.beacon
-      ? "夜里，跟随蓝色微光"
+      ? ui("objectiveGlow")
       : journey.fragments.length === 3
-        ? "回到灯塔，点亮它"
-        : "寻找散落的灯芯";
+        ? ui("objectiveBeacon")
+        : ui("objectiveFragments");
   const action =
     nearby === "articles"
       ? journey.beacon
-        ? "查看灯塔"
-        : "点亮灯塔"
+        ? ui("viewBeacon")
+        : ui("lightBeacon")
       : nearby === "secret"
-        ? "触碰星光"
+        ? ui("touchStars")
         : ["quotes", "notes", "projects"].includes(nearby || "")
-          ? "寻找灯芯"
-          : "看看这里";
+          ? ui("findFragment")
+          : ui("lookAround");
   return (
     <main
       id="main-content"
       className={`${styles.world} ${night ? styles.night : ""}`}
-      aria-label="光阴海岸探索世界"
+      aria-label={ui("region")}
     >
       <div ref={host} className={styles.canvas} />
       <div className={styles.vignette} aria-hidden="true" />
       <div className={styles.tools}>
-        <Link href="/" aria-label="离开海岸，回到首页" title="回到首页">
+        <Link href="/" aria-label={ui("exit")} title={ui("home")}>
           <ArrowLeft size={18} />
         </Link>
         <button
           onClick={() => setHelp(!help)}
           aria-expanded={help}
-          aria-label="航行指南"
-          title="航行指南"
+          aria-label={ui("guide")}
+          title={ui("guide")}
         >
           <Compass size={19} />
         </button>
@@ -174,20 +200,20 @@ export function CoastalExperience() {
       <div className={styles.settings}>
         <button
           onClick={toggleSound}
-          aria-label={sound ? "关闭海浪声" : "开启海浪声"}
+          aria-label={sound ? ui("soundOff") : ui("soundOn")}
           aria-pressed={sound}
         >
           {sound ? <Volume2 size={18} /> : <VolumeX size={18} />}
         </button>
         <button
           onClick={() => setNight(!night)}
-          aria-label={night ? "看一场日落" : "等星星亮起来"}
+          aria-label={night ? ui("sunset") : ui("stars")}
         >
           {night ? <Sun size={18} /> : <Moon size={18} />}
         </button>
         <button
           onClick={() => setPaused(!paused)}
-          aria-label={paused ? "继续航行" : "暂停航行"}
+          aria-label={paused ? ui("resume") : ui("pause")}
           aria-pressed={paused}
         >
           {paused ? <Play size={17} /> : <Pause size={17} />}
@@ -196,20 +222,23 @@ export function CoastalExperience() {
       {!ready && !failed && (
         <div className={styles.loading} role="status">
           <i />
-          海风正在抵达…
+          {ui("loading")}
         </div>
       )}
       {failed && (
         <div className={styles.fallback}>
-          <p>这台设备暂时无法绘制海岸。</p>
-          <Link href="/">回到首页</Link>
+          <p>{ui("fallback")}</p>
+          <Link href="/">{ui("home")}</Link>
         </div>
       )}
       {ready && !failed && (
         <>
           <div
             className={styles.quest}
-            aria-label={`${objective}，已找到 ${journey.fragments.length} 枚灯芯`}
+            aria-label={ui("quest", {
+              objective,
+              count: journey.fragments.length,
+            })}
           >
             <span className={styles.fragments} aria-hidden="true">
               {[0, 1, 2].map((i) => (
@@ -220,9 +249,9 @@ export function CoastalExperience() {
           </div>
           {onboarding && !help && !nearby && (
             <div className={styles.onboarding}>
-              点击海面启航 · 拖动环顾 · WASD 航行
+              {ui("onboarding")}
               <button
-                aria-label="关闭操作提示"
+                aria-label={ui("closeHint")}
                 onClick={() => setOnboarding(false)}
               >
                 <X size={13} />
@@ -241,32 +270,30 @@ export function CoastalExperience() {
               </strong>
             </button>
           )}
-          {paused && <div className={styles.paused}>已暂停</div>}
+          {paused && <div className={styles.paused}>{ui("paused")}</div>}
           {help && (
-            <section className={styles.guide} aria-label="航行指南面板">
+            <section className={styles.guide} aria-label={ui("guidePanel")}>
               <div>
                 <Compass size={20} />
-                <h1>航行指南</h1>
+                <h1>{ui("guide")}</h1>
                 <button
                   onClick={() => setHelp(false)}
-                  aria-label="收起航行指南"
+                  aria-label={ui("collapseGuide")}
                 >
                   <X size={18} />
                 </button>
               </div>
-              <p>海上的灯塔熄灭了。找到三枚灯芯，让光重新穿过夜色。</p>
+              <p>{ui("guideIntro")}</p>
               <dl>
-                <dt>航行</dt>
-                <dd>点击海面或岛屿，也可用 WASD / 方向键。</dd>
-                <dt>观察</dt>
-                <dd>拖动环顾，滚轮调整距离；I / K 仰俯，J / L 转向。</dd>
-                <dt>探索</dt>
-                <dd>靠岸后按 E，或点击出现的交互提示。</dd>
+                <dt>{ui("sail")}</dt>
+                <dd>{ui("sailHint")}</dd>
+                <dt>{ui("look")}</dt>
+                <dd>{ui("lookHint")}</dd>
+                <dt>{ui("explore")}</dt>
+                <dd>{ui("exploreHint")}</dd>
               </dl>
-              <p className={styles.clue}>
-                漂流瓶、小屋的窗边、工坊的木箱里……有光在等你。
-              </p>
-              <nav aria-label="辅助航线">
+              <p className={styles.clue}>{ui("clue")}</p>
+              <nav aria-label={ui("routes")}>
                 {journeyStops
                   .filter((p) => p.id !== "secret" || (journey.beacon && night))
                   .map((p) => (
@@ -277,15 +304,15 @@ export function CoastalExperience() {
                         setHelp(false);
                       }}
                     >
-                      {p.name}
-                      <span>驶往</span>
+                      {places[p.id].name}
+                      <span>{ui("sailTo")}</span>
                     </button>
                   ))}
               </nav>
               {journey.discovered && (
                 <p className={styles.reward}>
                   <Sparkles size={16} />
-                  已发现星落湾。你可以继续自由航行。
+                  {ui("reward")}
                 </p>
               )}
               <button
@@ -293,14 +320,14 @@ export function CoastalExperience() {
                 onClick={() => {
                   setJourney(emptyJourney);
                   setNight(false);
-                  setNotice("新的航程，从码头开始。");
+                  setNotice(notices("restart"));
                   controls.current?.restart();
                   setHelp(false);
                 }}
               >
-                重新开始航程
+                {ui("restart")}
               </button>
-              <small>进度保存在此浏览器。音效默认关闭。</small>
+              <small>{ui("progressNote")}</small>
             </section>
           )}
         </>

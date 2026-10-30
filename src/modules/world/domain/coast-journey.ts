@@ -16,12 +16,11 @@ export const emptyJourney: Journey = {
 export const journeyStops = [
   ...coastPlaces.map((p) => ({
     id: p.id as JourneyId,
-    name: p.name,
     x: p.position[0],
     z: p.position[2],
     radius: p.id === "quotes" ? 2 : 3.5,
   })),
-  { id: "secret" as JourneyId, name: "星落湾", x: -24, z: -30, radius: 4.5 },
+  { id: "secret" as JourneyId, x: -24, z: -30, radius: 4.5 },
 ];
 export function restoreJourney(value: unknown): Journey {
   if (!value || typeof value !== "object") return emptyJourney;
@@ -36,44 +35,51 @@ export function restoreJourney(value: unknown): Journey {
     discovered: beacon && data.discovered === true,
   };
 }
+/** Notice keys map to the "world.notices" message catalog; the UI renders them. */
+export type JourneyNotice = {
+  key:
+    | "kept"
+    | "found"
+    | "complete"
+    | "beaconDark"
+    | "beaconLit"
+    | "secret"
+    | "otter"
+    | "wind";
+  count?: number;
+};
 export function interactJourney(
   journey: Journey,
   id: JourneyId,
   night: boolean,
-): { journey: Journey; message: string } {
+): { journey: Journey; notice: JourneyNotice } {
   if (fragments.includes(id as Fragment)) {
     if (journey.fragments.includes(id as Fragment))
-      return { journey, message: "这里的灯芯已经收好了。" };
+      return { journey, notice: { key: "kept" } };
     const found = [...journey.fragments, id as Fragment];
     return {
       journey: { ...journey, fragments: found },
-      message:
-        found.length === 3
-          ? "三枚灯芯齐了。回灯塔，把光送出去。"
-          : `找到一枚灯芯 · ${found.length} / 3`,
+      notice: {
+        key: found.length === 3 ? "complete" : "found",
+        count: found.length,
+      },
     };
   }
   if (id === "articles") {
     if (journey.fragments.length < 3)
-      return {
-        journey,
-        message: "灯塔熄灭了。漂流瓶、小屋窗边、工坊里，藏着三枚灯芯。",
-      };
+      return { journey, notice: { key: "beaconDark" } };
     return {
       journey: { ...journey, beacon: true },
-      message: "灯塔亮了。等到夜晚，跟随海上的蓝色微光。",
+      notice: { key: "beaconLit" },
     };
   }
   if (id === "secret" && journey.beacon && night)
     return {
       journey: { ...journey, discovered: true },
-      message: "你找到了星落湾。抬头，星星正在回应。",
+      notice: { key: "secret" },
     };
   return {
     journey,
-    message:
-      id === "about"
-        ? "水獭望向远处的灯塔，好像在等它重新亮起来。"
-        : "风从西北吹来。夜里，那边的海似乎会发光。",
+    notice: { key: id === "about" ? "otter" : "wind" },
   };
 }

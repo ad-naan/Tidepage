@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, type ReactNode } from "react";
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { X, ArrowUpRight } from "lucide-react";
 import { spring } from "@/shared/lib/motion";
 
@@ -61,6 +62,7 @@ export function Dialog({
   wide?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const t = useTranslations("ui.dialog");
   useEffect(() => {
     const dialog = ref.current;
     const previous = document.activeElement as HTMLElement;
@@ -76,7 +78,7 @@ export function Dialog({
   return (
     <dialog
       ref={ref}
-      data-custom-scroll="弹窗"
+      data-custom-scroll={t("region")}
       className={`dialog ${wide ? "dialog-wide" : ""}`}
       onCancel={onClose}
       onClick={(e) => {
@@ -94,7 +96,7 @@ export function Dialog({
           <span>{title}</span>
           <SpringButton
             className="icon-button"
-            label="关闭弹窗"
+            label={t("close")}
             onClick={onClose}
           >
             <X size={19} />

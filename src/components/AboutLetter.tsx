@@ -1,19 +1,21 @@
 "use client";
 import { Link } from "@/shared/i18n/navigation";
 import { AnimatePresence, motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { ArrowRight, X } from "lucide-react";
 import { useDisclosure } from "@/shared/hooks/useDisclosure";
-import { profile } from "@/shared/config/profile";
 import { softSpring, spring } from "@/shared/lib/motion";
 
 /** A discoverable foreword, kept away from the homepage's primary reading action. */
 export function AboutLetter() {
   const { open, toggle, setOpen, ref } = useDisclosure("about-letter");
+  const t = useTranslations("letter");
+  const greeting = useTranslations("home");
   return (
     <div className="about-letter-anchor" ref={ref}>
       <motion.button
         className={`shore-envelope ${open ? "is-open" : ""}`}
-        aria-label="水獭身边有一封信，打开自述扉页"
+        aria-label={t("open")}
         aria-expanded={open}
         aria-controls="about-foreword"
         onClick={toggle}
@@ -42,7 +44,7 @@ export function AboutLetter() {
           />
           <circle cx="22" cy="20" r="3" fill="var(--accent)" opacity=".8" />
         </svg>
-        <span className="envelope-discovery">有一封信</span>
+        <span className="envelope-discovery">{t("discovery")}</span>
       </motion.button>
       <AnimatePresence>
         {open && (
@@ -56,18 +58,16 @@ export function AboutLetter() {
           >
             <div className="letter-paper-fold" aria-hidden="true" />
             <div className="letter-topline">
-              <span>光阴副本 · 扉页</span>
-              <button aria-label="收好这封信" onClick={() => setOpen(false)}>
+              <span>{t("eyebrow")}</span>
+              <button aria-label={t("close")} onClick={() => setOpen(false)}>
                 <X size={15} />
               </button>
             </div>
-            <h2>{profile.greeting}</h2>
-            <p>
-              水獭替我保管着这封信。这里写着我为什么记录，又想把怎样的自己，留在这些文字里。
-            </p>
+            <h2>{greeting("greeting")}</h2>
+            <p>{t("body")}</p>
             <span className="letter-signature">adnaan</span>
             <Link href="/about" onClick={() => setOpen(false)}>
-              翻开我的自述 <ArrowRight size={15} />
+              {t("link")} <ArrowRight size={15} />
             </Link>
           </motion.aside>
         )}

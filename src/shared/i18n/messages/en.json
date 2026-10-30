@@ -4,6 +4,33 @@
     "description": "Code, products and everyday life by adnaan. Step into an explorable coast of stories.",
     "skip": "Skip to main content"
   },
+  "common": {
+    "loading": "Turning to a new page…",
+    "close": "Close"
+  },
+  "error": {
+    "title": "This page didn't open",
+    "description": "You can try again, or head back home first.",
+    "retry": "Try again",
+    "home": "Back to home"
+  },
+  "notFound": {
+    "title": "Looks like you drifted into unknown waters.",
+    "description": "That's alright. Follow the way you came, back to a familiar page.",
+    "back": "Back to home →"
+  },
+  "ui": {
+    "scroll": {
+      "page": "Page",
+      "content": "Content",
+      "vertical": "Vertical scrollbar: {region}",
+      "horizontal": "Horizontal scrollbar: {region}"
+    },
+    "dialog": {
+      "region": "Dialog",
+      "close": "Close dialog"
+    }
+  },
   "nav": {
     "home": "Home",
     "articles": "Articles",
@@ -53,7 +80,26 @@
     "minutes": "{count} min read",
     "toc": "On this page",
     "demo": "This sample article demonstrates the reading experience.",
-    "continue": "Continue with the next story"
+    "continue": "Continue with the next story",
+    "save": "Save this article",
+    "saved": "Saved",
+    "share": "Share article",
+    "copied": "Link copied",
+    "copyFallback": "Please copy the link from your browser's address bar"
+  },
+  "articleDemo": {
+    "calloutTitle": "From the margin",
+    "calloutIntro": "What's worth optimizing may not be the output of every minute, but ",
+    "calloutMark": "how we spend time with it",
+    "calloutOutro": ". Leave ideas a little room to grow.",
+    "quote1": "Blank space isn't waste —",
+    "quote2": "it's where ideas take root.",
+    "cite": "— the one line I'd most like to leave you with",
+    "codeTitle": "leave-some-room.ts",
+    "copy": "Copy code",
+    "codeRegion": "Code sample",
+    "footnotes": "Notes & further reading",
+    "footnote": "This block demonstrates the typography for highlights, margin notes, quotes, footnotes and code. Select a passage to preview annotation and quote-to-comment."
   },
   "header": {
     "search": "Search articles",
@@ -66,7 +112,88 @@
     "empty": "No matching articles. Try another keyword.",
     "light": "Switch to light mode",
     "dark": "Switch to dark mode",
-    "explore": "Explore the coast"
+    "explore": "Explore the coast",
+    "tools": "{label} tools",
+    "wordmark": "adnaan · Tidepage, home",
+    "reading": "Now reading",
+    "backToArticles": "Back to articles"
+  },
+  "celestial": {
+    "label": "Light trail navigation",
+    "collapse": "Fold the light trail navigation",
+    "expand": "Expand the light trail navigation",
+    "drag": "Drag the sun and moon, and watch the light gently bounce back",
+    "main": "Primary navigation"
+  },
+  "player": {
+    "region": "Ambient soundscape player",
+    "panel": "A little background music for the next page",
+    "panelRegion": "Player",
+    "collapse": "Fold the player",
+    "progress": "Playback progress",
+    "previous": "Previous track",
+    "next": "Next track",
+    "play": "Play music",
+    "pause": "Pause music",
+    "volume": "Volume",
+    "queue": "View the playlist",
+    "import": "Import local music",
+    "localArtist": "Local file · this session only",
+    "dockOpen": "Expand the music player",
+    "dockClose": "Fold the music player",
+    "dockPanelClose": "Close the player panel",
+    "dockPlay": "Play",
+    "dockPause": "Pause",
+    "playing": "Now playing",
+    "idle": "Slow down, just a little",
+    "playError": "This track can't be played right now.",
+    "loadError": "Audio failed to load. Please try again later.",
+    "sourceError": "Audio is unavailable. You can import a local file.",
+    "tracks": {
+      "coast": {
+        "title": "The Blank Space by the Sea",
+        "artist": "Tidepage Soundscapes · original ambience"
+      },
+      "afternoon": {
+        "title": "A Slower Afternoon",
+        "artist": "Tidepage Soundscapes · original ambience"
+      }
+    }
+  },
+  "stats": {
+    "open": "View visitor statistics",
+    "faces": ["a", "d", "n"],
+    "reading": " reading now",
+    "nowIntro": "Right now, ",
+    "nowFriends": "8 friends",
+    "nowOutro": " are on this page with you.",
+    "today": "Met today",
+    "views": "Total views",
+    "friends": "Visitors",
+    "trend": "Last seven days",
+    "caption": "Every stop leaves an echo behind.",
+    "trendAria": "Seven-day visit trend (demo)",
+    "thanks": "Thank you for being part of this story.",
+    "demo": "Demo data · visual preview"
+  },
+  "activity": {
+    "current": "Polishing small blog details",
+    "focus": "Focused for ",
+    "focusDuration": "42 minutes",
+    "caption": "Creating, and slowly refining.",
+    "debug": "Debugging a small interaction",
+    "listen": "Listening to “The Blank Space by the Sea”",
+    "coffee": "Stepping away for coffee",
+    "note": "Activity feed demo",
+    "noteSub": "not connected to tracking yet"
+  },
+  "letter": {
+    "open": "There's a letter by the otter. Open the foreword",
+    "discovery": "A letter",
+    "eyebrow": "Tidepage · Foreword",
+    "close": "Tuck the letter away",
+    "body": "The otter keeps this letter for me. It's about why I write, and the person I'd like to leave behind in these words.",
+    "link": "Read my story"
   },
   "journey": {
     "title": "Places along the way",
@@ -80,7 +207,25 @@
     "coast": "Back to the coast",
     "rss": "Subscribe via RSS",
     "contact": "Contact",
-    "heart": "Leave a little kindness"
+    "heart": "Leave a little kindness",
+    "gratitude": "Your kindness reached this page. May someone walk with you on the next one."
+  },
+  "contact": {
+    "title": "Hello, glad you're here",
+    "heading": "Let good ideas connect",
+    "body1": "This contact entry is reserved for the site owner.",
+    "body2": "Once a real inbox is configured, reader letters will arrive here.",
+    "link": "Read my story"
+  },
+  "feed": {
+    "title": "adnaan · digital garden",
+    "description": "Notes on code, products and everyday life"
+  },
+  "llms": {
+    "site": "Site",
+    "aboutAuthor": "About the author",
+    "rss": "Subscribe via RSS",
+    "articles": "Articles"
   },
   "notes": {
     "title": "Copies of ordinary days",
@@ -93,7 +238,18 @@
     "savedLabel": "Saved",
     "remember": "Keep this moment",
     "empty": "Tap a heart to keep a note here.",
-    "end": "— Remember this moment, then keep living. —"
+    "end": "— Remember this moment, then keep living. —",
+    "replies": {
+      "open": "Talk about this moment",
+      "collapse": "Hide the thread",
+      "sampleName": "Mumu",
+      "sampleText": "Small things deserve to be taken seriously too.",
+      "sampleMeta": "Sample comment",
+      "justNow": "Just now · local preview",
+      "input": "Reply to this note",
+      "placeholder": "Share a thought…",
+      "submit": "Post this reply"
+    }
   },
   "quotes": {
     "title": "For the next page",
@@ -122,20 +278,274 @@
     "drag": "Drag the little sun, then let go.",
     "demo": "This is a sample project. No live application or source repository is linked yet."
   },
+  "gallery": {
+    "description": "Places and small moments worth keeping.",
+    "title": "Moments worth keeping",
+    "subtitle": "A negative for the time you've walked through. Seeing it again, you'll remember who you were then.",
+    "tabs": {
+      "all": "All",
+      "daily": "Daily",
+      "nature": "Nature",
+      "travel": "On the road"
+    },
+    "upload": "Add photos",
+    "uploadAria": "Add local photos",
+    "sizeError": "Please choose images smaller than 15 MB.",
+    "notice": "Photos are shown for this session only and never uploaded.",
+    "defaultCaption": "A little light, just captured.",
+    "myPhotos": "My photos",
+    "count": "{count} kept moments",
+    "source": "Generated photography · visual preview",
+    "closeNotice": "Dismiss the notice",
+    "like": "Like “{title}”",
+    "unlike": "Unlike “{title}”",
+    "ending": "Keep the moment, keep living.",
+    "previous": "Previous photo",
+    "next": "Next photo",
+    "items": {
+      "sea": {
+        "title": "The sea breeze wrote me a letter",
+        "caption": "Doing nothing but watching the sea — even time turns soft.",
+        "place": "By the sea"
+      },
+      "coffee": {
+        "title": "Give the afternoon to a cup of coffee",
+        "caption": "Light falling on paper — the gentlest thing today.",
+        "place": "Café by the window"
+      },
+      "meadow": {
+        "title": "Into a green that isn't in a hurry",
+        "caption": "The plants say nothing, yet they told me so much.",
+        "place": "Between hills and fields"
+      },
+      "light": {
+        "title": "The shape of light",
+        "caption": "Same afternoon, another angle on the light.",
+        "place": "Window · detail"
+      },
+      "flowers": {
+        "title": "Pocket the wind",
+        "caption": "Wildflowers along the way — gifts you never planned for.",
+        "place": "Meadow · detail"
+      },
+      "horizon": {
+        "title": "Far away, still far away",
+        "caption": "Anyone who has seen the sea keeps a patch of blue inside.",
+        "place": "Coast · detail"
+      }
+    }
+  },
+  "identity": {
+    "title": "Leave your echo here",
+    "titleLoggedIn": "Your reading identity",
+    "postmark1": "For everyone",
+    "postmark2": "who lives earnestly",
+    "welcome": "Welcome to this page",
+    "welcomeBack": "Good to see you again",
+    "intro": "Use a familiar identity to save articles you like\nand trade ideas with interesting souls.",
+    "introLoggedIn": "Switched to the signed-in interface preview.",
+    "guest": "Demo guest · GitHub",
+    "continue": "Continue with GitHub",
+    "notice": "This is a visual preview. GitHub authorization isn't connected yet.",
+    "save": "Save ideas",
+    "discuss": "Join discussions",
+    "trace": "Leave a trace",
+    "exitDemo": "Exit the demo state",
+    "previewLogin": "Preview the signed-in view",
+    "disclaimer": "Interface demo · no account data is read or uploaded",
+    "viewAccount": "View the demo account",
+    "login": "Sign in",
+    "guestName": "Demo guest",
+    "guestBadge": "G"
+  },
+  "discussion": {
+    "reactionsTitle": "What did this piece bring to mind?",
+    "reactionsSub": "Leave a small response.",
+    "inspired": "Inspiring",
+    "resonate": "Resonates",
+    "love": "Love it",
+    "echo": "Leave an echo",
+    "echoSub": "From my writing, to our meeting.",
+    "editorTitle": "Leave a thought under your name",
+    "editorHint": "Sign in to join the discussion and let good ideas be seen.",
+    "editorHintLoggedIn": "Signed-in state preview",
+    "githubLogin": "Sign in with GitHub",
+    "cancelContext": "Cancel quote or reply",
+    "replyTo": "Reply to {name}, share a thought…",
+    "placeholder": "Read this far? Anything you'd like to say?",
+    "contentLabel": "Comment",
+    "emoji": "Add an emoji",
+    "counter": "quotes supported",
+    "submit": "Post thought",
+    "all": "All echoes",
+    "hot": "Top",
+    "new": "Newest",
+    "author": "Author",
+    "like": "Like {name}'s comment",
+    "reply": "Reply",
+    "justNow": "Just now · local preview",
+    "demo": "Comments and counts are interface demos. New entries only preview on this page.",
+    "samples": {
+      "mountain": {
+        "name": "Letter from the Hills",
+        "text": "“Blank space isn't waste — it's where ideas take root.” I paused right there. Lately I keep asking myself: am I living, or just finishing a checklist?",
+        "time": "2 hours ago"
+      },
+      "reply": {
+        "text": "It's enough to slow down together. I'm learning to keep a little useless-but-happy time for myself too.",
+        "time": "1 hour ago"
+      },
+      "mumu": {
+        "name": "Mumu",
+        "text": "Finished this and wanted to close the laptop and go for a walk. Thank you for the gentle reminder 🌿",
+        "time": "35 minutes ago"
+      }
+    },
+    "mark": "Highlight",
+    "quote": "Quote to comment",
+    "marked": "A line you just marked",
+    "markPreview": "Highlight preview for this page",
+    "closeMark": "Close the highlight"
+  },
   "about": {
     "title": "A little about me",
     "description": "About me, and this still-growing Tidepage.",
     "byline": "A note to everyone who stops by",
-    "status": "Still turning the page"
+    "status": "Still turning the page",
+    "motto1": "Give memory a place to stay,",
+    "motto2": "and tomorrow a little hope.",
+    "marginLabel": "About this copy",
+    "signature": "Keep this page well. The next one continues.",
+    "nextLabel": "The story isn't finished",
+    "nextText": "Recent thoughts live in the notes.",
+    "nextLink": "Read the next page",
+    "sections": [
+      {
+        "title": "Keep a copy of the life that's happening",
+        "paragraphs": [
+          "I'm adnaan, welcome to my blog. This is where I keep the articles I've written, stray thoughts, projects in progress, and the everyday moments worth keeping.",
+          "I want to record the process of making: how an idea starts, how a problem gets taken apart, which detours didn't work, and which moments make me want to keep going. Looking back later, these records will show how I got here, little by little."
+        ]
+      },
+      {
+        "title": "Making things, and meeting myself along the way",
+        "paragraphs": [
+          "Code is one way I express ideas. Turning a vague thought into something you can touch, and slowly polishing a small detail until it feels right — the process itself is worth recording.",
+          "I also want room for life beyond code. A photo, a piece of music, a question I haven't figured out yet — all of it can live here. Together with the code, they make a more complete me."
+        ]
+      },
+      {
+        "title": "Set the past in order, then turn the page",
+        "paragraphs": [
+          "This blog takes its theme from JJ Lin's “Turn of the Page”. To me it's about time, making peace with yourself, and still being willing to start again after a journey ends.",
+          "I hope this “copy” keeps what deserves to be kept, and reminds me: the road already walked is part of me now — no need to stay stuck on the same page. Slower is fine, pausing is fine, but I can always keep writing."
+        ]
+      },
+      {
+        "title": "From my writing, to our meeting",
+        "paragraphs": [
+          "The thoughts here may be unfinished. I'm happy to open them up and hear different experiences and answers. One conversation might give a question I faced alone a brand-new way out.",
+          "If a passage or a small project happens to touch your life a little, you're welcome to leave an echo. Thank you for stopping by, and for being part of this still-growing story."
+        ]
+      }
+    ]
   },
   "world": {
     "name": "The Coast",
-    "description": "Sail the coast, find the lost lights, and discover a hidden bay under the stars."
+    "description": "Sail the coast, find the lost lights, and discover a hidden bay under the stars.",
+    "ui": {
+      "region": "The Coast explorable world",
+      "exit": "Leave the coast and return home",
+      "home": "Back to home",
+      "guide": "Sailing guide",
+      "soundOn": "Turn on the waves",
+      "soundOff": "Turn off the waves",
+      "sunset": "Watch a sunset",
+      "stars": "Wait for the stars",
+      "pause": "Pause the voyage",
+      "resume": "Resume the voyage",
+      "loading": "The sea breeze is arriving…",
+      "fallback": "This device can't render the coast right now.",
+      "quest": "{objective} · {count} lights found",
+      "onboarding": "Click the sea to set sail · drag to look around · WASD to sail",
+      "closeHint": "Dismiss the hint",
+      "paused": "Paused",
+      "guidePanel": "Sailing guide panel",
+      "collapseGuide": "Fold the sailing guide",
+      "guideIntro": "The lighthouse has gone dark. Find three wicks of light to carry it back through the night.",
+      "sail": "Sail",
+      "sailHint": "Click the sea or an island, or use WASD / arrow keys.",
+      "look": "Look",
+      "lookHint": "Drag to look around, scroll to zoom; I / K to pitch, J / L to turn.",
+      "explore": "Explore",
+      "exploreHint": "Press E after landing, or click the prompt that appears.",
+      "clue": "A drift bottle, the cottage window, the workshop crate… light is waiting for you.",
+      "routes": "Assisted routes",
+      "sailTo": "Sail to",
+      "reward": "Starfall Bay discovered. You can keep sailing freely.",
+      "restart": "Restart the voyage",
+      "progressNote": "Progress is saved in this browser. Sound is off by default.",
+      "viewBeacon": "View the lighthouse",
+      "lightBeacon": "Light the lighthouse",
+      "touchStars": "Touch the starlight",
+      "findFragment": "Find a wick of light",
+      "lookAround": "Take a look",
+      "objectiveDiscovered": "Starfall Bay · discovered",
+      "objectiveGlow": "At night, follow the blue glow",
+      "objectiveBeacon": "Return to the lighthouse and light it",
+      "objectiveFragments": "Find the scattered wicks"
+    },
+    "notices": {
+      "kept": "The wick here has already been collected.",
+      "found": "Found a wick · {count} / 3",
+      "complete": "All three wicks. Back to the lighthouse — send the light out.",
+      "beaconDark": "The lighthouse is dark. A drift bottle, the cottage window, the workshop — three wicks are hidden there.",
+      "beaconLit": "The lighthouse is lit. At night, follow the blue glow at sea.",
+      "secret": "You found Starfall Bay. Look up — the stars are answering.",
+      "otter": "The otter gazes at the distant lighthouse, as if waiting for it to shine again.",
+      "wind": "Wind from the northwest. At night, that part of the sea seems to glow.",
+      "restart": "A new voyage begins at the pier.",
+      "soundFail": "Sound can't play right now. Feel free to keep exploring."
+    },
+    "places": {
+      "articles": {
+        "name": "The Lighthouse",
+        "kind": "Articles",
+        "description": "Questions thought over again and again, keeping a light on here."
+      },
+      "notes": {
+        "name": "Seaside Cottage",
+        "kind": "Notes",
+        "description": "Push the window open — everyday life not yet written into articles."
+      },
+      "projects": {
+        "name": "Maker's Workshop",
+        "kind": "Projects",
+        "description": "Curiosity rolls up its sleeves here, turning small ideas real."
+      },
+      "quotes": {
+        "name": "Drift Bay",
+        "kind": "Quotes",
+        "description": "The waves deliver a sentence. Maybe it's the one you needed today."
+      },
+      "gallery": {
+        "name": "The Lookout",
+        "kind": "Gallery",
+        "description": "Let the wind rest a while, and see the moments worth keeping."
+      },
+      "about": {
+        "name": "Letter Pier",
+        "kind": "About",
+        "description": "A letter for every visitor — the otter keeps it for me."
+      },
+      "secret": {
+        "name": "Starfall Bay",
+        "kind": "Secret",
+        "description": "Where fallen starlight gathers."
+      }
+    }
   },
   "language": {
     "label": "Language"
-  },
-  "gallery": {
-    "description": "Places and small moments worth keeping."
   }
 }

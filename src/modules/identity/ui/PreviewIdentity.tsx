@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useContext, useState, type ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { Github, ArrowRight, Check, LogOut, UserRound } from "lucide-react";
 import { Dialog, SpringButton } from "@/shared/ui/primitives";
 const IdentityContext = createContext({ loggedIn: false, openLogin: () => {} });
@@ -7,6 +8,7 @@ export function usePreviewIdentity() {
   return useContext(IdentityContext);
 }
 export function PreviewIdentityProvider({ children }: { children: ReactNode }) {
+  const t = useTranslations("identity");
   const [open, setOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [notice, setNotice] = useState(false);
@@ -23,7 +25,7 @@ export function PreviewIdentityProvider({ children }: { children: ReactNode }) {
       {children}
       {open && (
         <Dialog
-          title={loggedIn ? "你的阅读身份" : "在这里，留下你的回声"}
+          title={loggedIn ? t("titleLoggedIn") : t("title")}
           onClose={() => setOpen(false)}
         >
           <div className="login-illustration">
@@ -31,43 +33,39 @@ export function PreviewIdentityProvider({ children }: { children: ReactNode }) {
               a<span>✳</span>
             </span>
             <span className="postmark">
-              给每一个
+              {t("postmark1")}
               <br />
-              认真生活的人
+              {t("postmark2")}
             </span>
           </div>
           <div className="login-content">
-            <h2>{loggedIn ? "很高兴又见到你" : "欢迎翻开这一页"}</h2>
-            <p>
-              {loggedIn
-                ? "已切换到登录后的界面预览。"
-                : "用熟悉的身份，收藏喜欢的文章，\n和有趣的灵魂交换想法。"}
-            </p>
+            <h2>{loggedIn ? t("welcomeBack") : t("welcome")}</h2>
+            <p>{loggedIn ? t("introLoggedIn") : t("intro")}</p>
             <SpringButton
               className="github-button"
               onClick={() => setNotice(true)}
             >
               <Github size={19} />
-              {loggedIn ? "演示访客 · GitHub" : "使用 GitHub 继续"}
+              {loggedIn ? t("guest") : t("continue")}
               <ArrowRight size={16} />
             </SpringButton>
             {notice && (
               <div className="login-notice" role="status">
-                当前为样式预览，尚未连接 GitHub 授权。
+                {t("notice")}
               </div>
             )}
             <div className="login-privileges">
               <span>
                 <Check size={12} />
-                收藏灵感
+                {t("save")}
               </span>
               <span>
                 <Check size={12} />
-                参与讨论
+                {t("discuss")}
               </span>
               <span>
                 <Check size={12} />
-                留下足迹
+                {t("trace")}
               </span>
             </div>
             <button
@@ -80,15 +78,15 @@ export function PreviewIdentityProvider({ children }: { children: ReactNode }) {
               {loggedIn ? (
                 <>
                   <LogOut size={13} />
-                  退出演示状态
+                  {t("exitDemo")}
                 </>
               ) : (
                 <>
-                  预览登录后的效果 <ArrowRight size={13} />
+                  {t("previewLogin")} <ArrowRight size={13} />
                 </>
               )}
             </button>
-            <small>界面演示 · 不会获取或上传账号信息</small>
+            <small>{t("disclaimer")}</small>
           </div>
         </Dialog>
       )}
@@ -97,18 +95,19 @@ export function PreviewIdentityProvider({ children }: { children: ReactNode }) {
 }
 export function LoginTrigger() {
   const { loggedIn, openLogin } = usePreviewIdentity();
+  const t = useTranslations("identity");
   return (
     <SpringButton
       className={`login-trigger ${loggedIn ? "logged-in" : ""}`}
-      label={loggedIn ? "查看演示账号" : "登录"}
+      label={loggedIn ? t("viewAccount") : t("login")}
       onClick={openLogin}
     >
       {loggedIn ? (
-        <span className="mini-avatar">访</span>
+        <span className="mini-avatar">{t("guestBadge")}</span>
       ) : (
         <>
           <UserRound size={15} />
-          <span>登录</span>
+          <span>{t("login")}</span>
         </>
       )}
     </SpringButton>

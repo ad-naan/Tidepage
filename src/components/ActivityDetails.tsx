@@ -1,8 +1,10 @@
 "use client";
 import { motion, useReducedMotion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { Code2, Coffee, Headphones, Terminal } from "lucide-react";
 import { spring } from "@/shared/lib/motion";
 export function ActivityDetails() {
+  const t = useTranslations("activity");
   const reduce = useReducedMotion();
   return (
     <div className="activity-details">
@@ -13,12 +15,13 @@ export function ActivityDetails() {
           </span>
           <div>
             <strong>Visual Studio Code</strong>
-            <p>正在打磨博客里的小细节</p>
+            <p>{t("current")}</p>
           </div>
         </div>
         <div className="focus-duration">
           <span>
-            已经专注 <strong>42 分钟</strong>
+            {t("focus")}
+            <strong>{t("focusDuration")}</strong>
           </span>
           <span className="focus-dots">
             {Array.from({ length: 8 }, (_, i) => (
@@ -33,14 +36,14 @@ export function ActivityDetails() {
         </div>
         <p className="activity-now-caption">
           <span className="live-dot" />
-          正在创造，也在慢慢打磨。
+          {t("caption")}
         </p>
       </div>
       <div className="activity-history">
         {[
-          { icon: Terminal, title: "调试一个小交互", time: "14:20" },
-          { icon: Headphones, title: "听《海边的空白》", time: "13:45" },
-          { icon: Coffee, title: "离开屏幕，喝杯咖啡", time: "13:10" },
+          { icon: Terminal, title: t("debug"), time: "14:20" },
+          { icon: Headphones, title: t("listen"), time: "13:45" },
+          { icon: Coffee, title: t("coffee"), time: "13:10" },
         ].map((item, i) => (
           <motion.div
             key={item.time}
@@ -55,7 +58,8 @@ export function ActivityDetails() {
         ))}
       </div>
       <div className="presence-note">
-        活动流样式演示<span>尚未连接监控</span>
+        {t("note")}
+        <span>{t("noteSub")}</span>
       </div>
     </div>
   );

@@ -116,7 +116,7 @@ export function SiteHeader({
     <div className="header-slot" ref={ref}>
       <motion.header
         layout
-        aria-label={`${label}页面工具`}
+        aria-label={t("tools", { label })}
         className={`living-header ${condensed ? "is-compact" : "is-resting"} ${open ? "is-expanded" : ""} ${reading ? "is-reading" : ""}`}
         data-state={
           open ? panel : reading ? "reading" : condensed ? "compact" : "resting"
@@ -128,7 +128,7 @@ export function SiteHeader({
           <Link
             href="/"
             className={`header-wordmark ${condensed ? "wordmark-condensed" : ""}`}
-            aria-label="adnaan · 光阴副本，首页"
+            aria-label={t("wordmark")}
           >
             <AnimatePresence mode="wait" initial={false}>
               <motion.span
@@ -157,12 +157,12 @@ export function SiteHeader({
                   <Link
                     href="/articles"
                     className="header-back"
-                    aria-label="返回文章列表"
+                    aria-label={t("backToArticles")}
                   >
                     <ArrowLeft size={17} />
                   </Link>
                   <div>
-                    <span>正在阅读</span>
+                    <span>{t("reading")}</span>
                     <strong>{article.title}</strong>
                   </div>
                 </motion.div>

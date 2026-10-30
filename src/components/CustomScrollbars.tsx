@@ -9,6 +9,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import { createPortal } from "react-dom";
+import { useTranslations } from "next-intl";
 
 type Axis = "vertical" | "horizontal";
 type Geometry = {
@@ -41,6 +42,7 @@ const empty: Geometry = {
 /** Overlay rails never change the scroll host's width or participate in its layout. */
 function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
   const vertical = axis === "vertical";
+  const t = useTranslations("ui.scroll");
   const [geometry, setGeometry] = useState<Geometry>(empty);
   const [dragging, setDragging] = useState(false);
   const rail = useRef<HTMLDivElement>(null);
@@ -265,7 +267,12 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
       <div
         className="custom-scrollbar-thumb"
         role="scrollbar"
-        aria-label={`${isPage ? "页面" : host.getAttribute("data-custom-scroll") || "内容"}${vertical ? "纵向" : "横向"}滚动条`}
+        aria-label={t(vertical ? "vertical" : "horizontal", {
+          region: isPage
+            ? t("page")
+            : (host?.getAttribute("data-custom-scroll") ?? t("content")) ||
+              t("content"),
+        })}
         aria-orientation={vertical ? "vertical" : "horizontal"}
         aria-valuemin={0}
         aria-valuemax={Math.max(

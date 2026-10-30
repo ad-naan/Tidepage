@@ -1,10 +1,13 @@
 "use client";
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { MessageCircle, Send } from "lucide-react";
 import { usePreviewIdentity } from "@/modules/identity/ui/PreviewIdentity";
 import { softSpring } from "@/shared/lib/motion";
 export function NoteReplies() {
+  const t = useTranslations("notes.replies");
+  const identity = useTranslations("identity");
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [reply, setReply] = useState("");
@@ -17,7 +20,7 @@ export function NoteReplies() {
         aria-expanded={open}
       >
         <MessageCircle size={14} />
-        {open ? "收起讨论" : "聊聊这个瞬间"}
+        {open ? t("collapse") : t("open")}
         <span>{reply ? 2 : 1}</span>
       </button>
       <AnimatePresence>
@@ -30,19 +33,20 @@ export function NoteReplies() {
             transition={softSpring}
           >
             <div className="note-reply-item">
-              <span>木</span>
+              <span>{t("sampleName")[0]}</span>
               <p>
-                <strong>木木</strong>小事也值得被认真记住。
-                <small>示例评论</small>
+                <strong>{t("sampleName")}</strong>
+                {t("sampleText")}
+                <small>{t("sampleMeta")}</small>
               </p>
             </div>
             {reply && (
               <div className="note-reply-item">
-                <span>访</span>
+                <span>{identity("guestBadge")}</span>
                 <p>
-                  <strong>演示访客</strong>
+                  <strong>{identity("guestName")}</strong>
                   {reply}
-                  <small>刚刚 · 本地预览</small>
+                  <small>{t("justNow")}</small>
                 </p>
               </div>
             )}
@@ -62,10 +66,10 @@ export function NoteReplies() {
                 value={text}
                 maxLength={300}
                 onChange={(e) => setText(e.target.value)}
-                aria-label="回复手记"
-                placeholder="交换一点想法…"
+                aria-label={t("input")}
+                placeholder={t("placeholder")}
               />
-              <button aria-label="发表手记回复" disabled={!text.trim()}>
+              <button aria-label={t("submit")} disabled={!text.trim()}>
                 <Send size={14} />
               </button>
             </form>

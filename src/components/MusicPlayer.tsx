@@ -15,22 +15,9 @@ import {
   X,
 } from "lucide-react";
 import { softSpring } from "@/shared/lib/motion";
+import { useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
 type Track = { title: string; artist: string; source: string; cover: string };
-const initialTracks: Track[] = [
-  {
-    title: "海边的空白",
-    artist: "光阴声景 · 原创环境音",
-    source: "/audio/coast.wav",
-    cover: "/images/coast.png",
-  },
-  {
-    title: "慢下来的午后",
-    artist: "光阴声景 · 原创环境音",
-    source: "/audio/afternoon.wav",
-    cover: "/images/window.png",
-  },
-];
 const time = (n: number) =>
   `${Math.floor(n / 60)}:${String(Math.floor(n % 60)).padStart(2, "0")}`;
 export function MusicPlayer({
@@ -42,9 +29,23 @@ export function MusicPlayer({
   onExpandedChange: (open: boolean) => void;
   panelContainer: HTMLElement | null;
 }) {
+  const t = useTranslations("player");
   const audio = useRef<HTMLAudioElement>(null);
   const uploads = useRef<string[]>([]);
-  const [tracks, setTracks] = useState(initialTracks);
+  const [tracks, setTracks] = useState<Track[]>(() => [
+    {
+      title: t("tracks.coast.title"),
+      artist: t("tracks.coast.artist"),
+      source: "/audio/coast.wav",
+      cover: "/images/coast.png",
+    },
+    {
+      title: t("tracks.afternoon.title"),
+      artist: t("tracks.afternoon.artist"),
+      source: "/audio/afternoon.wav",
+      cover: "/images/window.png",
+    },
+  ]);
   const [index, setIndex] = useState(0);
   const playerRef = useRef<HTMLDivElement>(null);
   const togglePanel = () => setOpen(!open);
@@ -67,7 +68,7 @@ export function MusicPlayer({
     if (playing)
       audio.current?.play().catch(() => {
         setPlaying(false);
-        setError("暂时无法播放这首音乐。");
+        setError(t("playError"));
       });
   }, [index]); // Preserve playback intent when changing tracks.
   useEffect(
@@ -85,7 +86,7 @@ export function MusicPlayer({
         await audio.current.play();
         setPlaying(true);
       } catch {
-        setError("音频加载失败，请稍后重试。");
+        setError(t("loadError"));
       }
     }
   }
@@ -111,7 +112,7 @@ export function MusicPlayer({
           onEnded={() => change(1)}
           onError={() => {
             setPlaying(false);
-            setError("暂时无法加载音频，可导入本地音乐。");
+            setError(t("sourceError"));
           }}
         />
         {panelContainer &&
@@ -121,21 +122,21 @@ export function MusicPlayer({
                 <motion.section
                   layout
                   className="music-panel integrated"
-                  data-custom-scroll="播放器"
+                  data-custom-scroll={t("panelRegion")}
                   initial={{ opacity: 0, y: 15, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 15, scale: 0.95 }}
                   transition={softSpring}
-                  aria-label="光阴声景播放器"
+                  aria-label={t("region")}
                 >
                   <div className="music-panel-top">
                     <span>
                       <Headphones size={13} />
-                      给下一页一点背景声
+                      {t("panel")}
                     </span>
                     <button
                       className="icon-button"
-                      aria-label="收起播放器"
+                      aria-label={t("collapse")}
                       onClick={() => setOpen(false)}
                     >
                       <ChevronDown size={17} />
@@ -165,7 +166,7 @@ export function MusicPlayer({
                   <div className="music-progress">
                     <input
                       type="range"
-                      aria-label="播放进度"
+                      aria-label={t("progress")}
                       min={0}
                       max={duration || 1}
                       step={0.1}
@@ -184,14 +185,14 @@ export function MusicPlayer({
                   <div className="player-controls">
                     <button
                       className="icon-button"
-                      aria-label="上一首"
+                      aria-label={t("previous")}
                       onClick={() => change(-1)}
                     >
                       <SkipBack size={18} />
                     </button>
                     <motion.button
                       className="player-play"
-                      aria-label={playing ? "暂停音乐" : "播放音乐"}
+                      aria-label={playing ? t("pause") : t("play")}
                       onClick={toggle}
                       whileTap={{ scale: 0.9 }}
                     >
@@ -203,7 +204,7 @@ export function MusicPlayer({
                     </motion.button>
                     <button
                       className="icon-button"
-                      aria-label="下一首"
+                      aria-label={t("next")}
                       onClick={() => change(1)}
                     >
                       <SkipForward size={18} />
@@ -217,23 +218,23 @@ export function MusicPlayer({
                       max={1}
                       step={0.01}
                       value={volume}
-                      aria-label="音量"
+                      aria-label={t("volume")}
                       onChange={(e) => setVolume(Number(e.target.value))}
                     />
                     <button
                       className="icon-button"
-                      aria-label="查看播放列表"
+                      aria-label={t("queue")}
                       onClick={() => setQueue((v) => !v)}
                     >
                       <ListMusic size={17} />
                     </button>
                     <label
                       className="icon-button upload-music"
-                      title="导入本地音乐"
+                      title={t("import")}
                     >
                       <Upload size={15} />
                       <input
-                        aria-label="导入本地音乐"
+                        aria-label={t("import")}
                         type="file"
                         accept="audio/*"
                         onChange={(e) => {
@@ -245,7 +246,7 @@ export function MusicPlayer({
                             ...v,
                             {
                               title: file.name.replace(/\.[^.]+$/, ""),
-                              artist: "本地音乐 · 仅本次浏览有效",
+                              artist: t("localArtist"),
                               source: url,
                               cover: "/images/window.png",
                             },
@@ -292,7 +293,7 @@ export function MusicPlayer({
         <div className="music-dock">
           <button
             className="music-open"
-            aria-label={open ? "收起音乐播放器" : "展开音乐播放器"}
+            aria-label={open ? t("dockClose") : t("dockOpen")}
             onClick={togglePanel}
           >
             <span className="record-dock-slot">
@@ -304,12 +305,12 @@ export function MusicPlayer({
             </span>
             <span>
               {track.title}
-              <small>{playing ? "正在播放" : "听一点，慢一点"}</small>
+              <small>{playing ? t("playing") : t("idle")}</small>
             </span>
           </button>
           <button
             className="dock-play"
-            aria-label={playing ? "暂停" : "播放"}
+            aria-label={playing ? t("dockPause") : t("dockPlay")}
             onClick={toggle}
           >
             {playing ? <Pause size={14} /> : <Play size={14} />}
@@ -317,7 +318,7 @@ export function MusicPlayer({
           {open && (
             <button
               className="dock-close"
-              aria-label="关闭播放器面板"
+              aria-label={t("dockPanelClose")}
               onClick={() => setOpen(false)}
             >
               <X size={12} />

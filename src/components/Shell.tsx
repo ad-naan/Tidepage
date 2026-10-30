@@ -22,7 +22,7 @@ export function Shell({
   children: ReactNode;
   articles: ArticleSummary[];
 }) {
-  const t=useTranslations("nav"),footer=useTranslations("footer");
+  const t=useTranslations("nav"),footer=useTranslations("footer"),ui=useTranslations("common"),contactT=useTranslations("contact");
   const locale=useLocale();
   const pathname = usePathname();
   const [theme, setTheme] = useLocalState<"light" | "dark">(
@@ -70,18 +70,9 @@ export function Shell({
         {menu && (
           <button
             className="mobile-scrim"
-            aria-label="关闭导航"
+            aria-label={ui("close")}
             onClick={() => setMenu(false)}
-          />
-        )}
-        <div className="main-wrap">
-          <main id="main-content">
-            <motion.div
-              key={pathname}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={spring}
-            >
+          >
               {children}
             </motion.div>
           </main>
@@ -93,13 +84,13 @@ export function Shell({
           <footer className="page-footer">
             <div className="footer-identity">
               <span>© 2026 adnaan</span>
-              <button aria-label="留下一份心意" onClick={() => setSecret(true)}>
+              <button aria-label={footer("heart")} onClick={() => setSecret(true)}>
                 <Heart size={14} />
               </button>
               <a href={`/feed.xml?locale=${locale}`} aria-label={footer("rss")}>
                 <Rss size={14} />
               </a>
-              <button aria-label="联系与留言" onClick={() => setContact(true)}>
+              <button aria-label={footer("contact")} onClick={() => setContact(true)}>
                 <Mail size={14} />
               </button>
             </div>
@@ -109,21 +100,24 @@ export function Shell({
           </footer>
         </div>
         {contact && (
-          <Dialog title="你好，很高兴遇见你" onClose={() => setContact(false)}>
+          <Dialog
+            title={contactT("title")}
+            onClose={() => setContact(false)}
+          >
             <div className="contact-card">
               <Mail size={32} />
-              <h2>让好想法发生连接</h2>
+              <h2>{contactT("heading")}</h2>
               <p>
-                这里为站主预留了联系入口。
+                {contactT("body1")}
                 <br />
-                配置真实邮箱后，就可以收到读者来信。
+                {contactT("body2")}
               </p>
               <Link
                 href="/about"
                 onClick={() => setContact(false)}
                 className="button-outline"
               >
-                读我的自述 <ArrowRight size={16} />
+                {contactT("link")} <ArrowRight size={16} />
               </Link>
             </div>
           </Dialog>
@@ -137,7 +131,7 @@ export function Shell({
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 80, opacity: 0 }}
             >
-              这一页收到你的心意。愿下一页，也有人与你同行。
+              {footer("gratitude")}
               <Heart size={17} fill="currentColor" />
               <X size={14} />
             </motion.button>

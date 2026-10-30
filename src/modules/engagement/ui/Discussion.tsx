@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import {
   ArrowUpRight,
   Check,
@@ -27,43 +28,44 @@ type Comment = {
   reply?: string;
   quote?: string;
 };
-const sampleComments: Comment[] = [
-  {
-    id: 1,
-    name: "山间来信",
-    color: "sage",
-    text: "“空白不是浪费，它是让想法长出根的地方。” 读到这里停了一会儿。最近也一直在反思，到底是在生活，还是在完成清单。",
-    time: "2 小时前",
-    likes: 12,
-  },
-  {
-    id: 2,
-    name: "adnaan",
-    color: "peach",
-    text: "能一起慢下来就很好。也在学习给自己留一点无用、但很快乐的时间。",
-    time: "1 小时前",
-    likes: 5,
-    author: true,
-    reply: "山间来信",
-  },
-  {
-    id: 3,
-    name: "木木",
-    color: "sand",
-    text: "读完想合上电脑去散步了，谢谢这篇温柔的提醒 🌿",
-    time: "35 分钟前",
-    likes: 8,
-  },
-];
 export function Discussion({ compact = false }: { compact?: boolean }) {
   const { loggedIn, openLogin } = usePreviewIdentity();
-  const [comments, setComments] = useState(sampleComments);
+  const t = useTranslations("discussion");
+  const identity = useTranslations("identity");
+  const [comments, setComments] = useState<Comment[]>(() => [
+    {
+      id: 1,
+      name: t("samples.mountain.name"),
+      color: "sage",
+      text: t("samples.mountain.text"),
+      time: t("samples.mountain.time"),
+      likes: 12,
+    },
+    {
+      id: 2,
+      name: "adnaan",
+      color: "peach",
+      text: t("samples.reply.text"),
+      time: t("samples.reply.time"),
+      likes: 5,
+      author: true,
+      reply: t("samples.mountain.name"),
+    },
+    {
+      id: 3,
+      name: t("samples.mumu.name"),
+      color: "sand",
+      text: t("samples.mumu.text"),
+      time: t("samples.mumu.time"),
+      likes: 8,
+    },
+  ]);
   const [text, setText] = useState("");
   const [reply, setReply] = useState("");
   const [quote, setQuote] = useState("");
   const [liked, setLiked] = useState<number[]>([]);
   const [reaction, setReaction] = useState("");
-  const [sort, setSort] = useState("热度");
+  const [sort, setSort] = useState<"hot" | "new">("hot");
   const field = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
     function quoteHandler(e: Event) {
@@ -77,8 +79,13 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
     return () => window.removeEventListener("article-quote", quoteHandler);
   }, []);
   const sorted = [...comments].sort((a, b) =>
-    sort === "最新" ? b.id - a.id : a.id - b.id,
+    sort === "new" ? b.id - a.id : a.id - b.id,
   );
+  const reactions = [
+    { emoji: "🌱", key: "inspired", count: 24 },
+    { emoji: "☕", key: "resonate", count: 18 },
+    { emoji: "✦", key: "love", count: 32 },
+  ] as const;
   return (
     <section
       id="discussion"
@@ -87,24 +94,20 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
       {!compact && (
         <div className="article-reactions">
           <div>
-            <h3>这篇文章，让你想到了什么？</h3>
-            <p>留下一个小小的回应。</p>
+            <h3>{t("reactionsTitle")}</h3>
+            <p>{t("reactionsSub")}</p>
           </div>
           <div className="reaction-options">
-            {[
-              ["🌱", "有启发", "24"],
-              ["☕", "有共鸣", "18"],
-              ["✦", "喜欢", "32"],
-            ].map(([emoji, label, count]) => (
+            {reactions.map(({ emoji, key, count }) => (
               <motion.button
-                key={label}
-                className={reaction === label ? "chosen" : ""}
-                onClick={() => setReaction(reaction === label ? "" : label)}
+                key={key}
+                className={reaction === key ? "chosen" : ""}
+                onClick={() => setReaction(reaction === key ? "" : key)}
                 whileTap={{ scale: 0.9 }}
               >
                 <span>{emoji}</span>
-                {label}
-                <small>{Number(count) + (reaction === label ? 1 : 0)}</small>
+                {t(key)}
+                <small>{count + (reaction === key ? 1 : 0)}</small>
               </motion.button>
             ))}
           </div>
@@ -112,35 +115,35 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
       )}
       <div className="discussion-heading">
         <h2>
-          留下回声 <span>{comments.length}</span>
+          {t("echo")} <span>{comments.length}</span>
         </h2>
-        <span>从我写下，到我们相遇。</span>
+        <span>{t("echoSub")}</span>
       </div>
       <div className="comment-editor">
         <div className="editor-top">
           <span className="comment-avatar">
-            {loggedIn ? "访" : <Github size={18} />}
+            {loggedIn ? identity("guestBadge") : <Github size={18} />}
           </span>
           <div>
-            <strong>{loggedIn ? "演示访客" : "以你的名字，留下想法"}</strong>
+            <strong>
+              {loggedIn ? identity("guestName") : t("editorTitle")}
+            </strong>
             <p>
-              {loggedIn
-                ? "已登录状态预览"
-                : "登录后参与讨论，也让好想法被看见。"}
+              {loggedIn ? t("editorHintLoggedIn") : t("editorHint")}
             </p>
           </div>
           {!loggedIn && (
             <button onClick={openLogin}>
-              GitHub 登录 <ArrowUpRight size={13} />
+              {t("githubLogin")} <ArrowUpRight size={13} />
             </button>
           )}
         </div>
         {(quote || reply) && (
           <div className="reply-context">
             <Quote size={13} />
-            <span>{quote || `回复 @${reply}`}</span>
+            <span>{quote || `@${reply}`}</span>
             <button
-              aria-label="取消引用或回复"
+              aria-label={t("cancelContext")}
               onClick={() => {
                 setQuote("");
                 setReply("");
@@ -154,19 +157,15 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
           ref={field}
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder={
-            reply
-              ? `回复 ${reply}，交换一点想法…`
-              : "读到这里，有没有什么想说的？"
-          }
+          placeholder={reply ? t("replyTo", { name: reply }) : t("placeholder")}
           rows={3}
           maxLength={1000}
-          aria-label="评论内容"
+          aria-label={t("contentLabel")}
         />
         <div className="editor-footer">
           <button
             className="emoji-button"
-            aria-label="添加表情"
+            aria-label={t("emoji")}
             onClick={() => {
               setText((v) => `${v} 🌿`);
               field.current?.focus();
@@ -175,7 +174,7 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
             <Smile size={17} />
           </button>
           <span>
-            {text.length}/1000 <i>·</i> 支持引用段落
+            {text.length}/1000 <i>·</i> {t("counter")}
           </span>
           <SpringButton
             className="comment-submit"
@@ -189,10 +188,10 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
                 ...v,
                 {
                   id: Date.now(),
-                  name: "演示访客",
+                  name: identity("guestName"),
                   color: "sage",
                   text: text.trim(),
-                  time: "刚刚 · 本地预览",
+                  time: t("justNow"),
                   likes: 0,
                   reply: reply || undefined,
                   quote: quote || undefined,
@@ -201,24 +200,24 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
               setText("");
               setReply("");
               setQuote("");
-              setSort("最新");
+              setSort("new");
             }}
           >
             <Send size={13} />
-            发表想法
+            {t("submit")}
           </SpringButton>
         </div>
       </div>
       <div className="comments-toolbar">
-        <span>所有回声</span>
+        <span>{t("all")}</span>
         <div>
-          {["热度", "最新"].map((s) => (
+          {(["hot", "new"] as const).map((s) => (
             <button
               className={sort === s ? "active" : ""}
               key={s}
               onClick={() => setSort(s)}
             >
-              {s}
+              {t(s)}
             </button>
           ))}
         </div>
@@ -235,7 +234,7 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
             <div className="comment-body">
               <div className="comment-meta">
                 <strong>{c.name}</strong>
-                {c.author && <span className="author-badge">作者</span>}
+                {c.author && <span className="author-badge">{t("author")}</span>}
                 <time>{c.time}</time>
               </div>
               {c.quote && <blockquote>{c.quote}</blockquote>}
@@ -246,7 +245,7 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
               <div className="comment-actions">
                 <button
                   className={liked.includes(c.id) ? "liked" : ""}
-                  aria-label={`点赞 ${c.name} 的评论`}
+                  aria-label={t("like", { name: c.name })}
                   onClick={() =>
                     setLiked((v) =>
                       v.includes(c.id)
@@ -272,20 +271,19 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
                   }}
                 >
                   <MessageCircle size={13} />
-                  回复
+                  {t("reply")}
                 </button>
               </div>
             </div>
           </motion.article>
         ))}
       </div>
-      <p className="discussion-demo">
-        评论及互动数量为界面演示，新增内容只在当前页面预览。
-      </p>
+      <p className="discussion-demo">{t("demo")}</p>
     </section>
   );
 }
 export function ReadingAnnotations() {
+  const t = useTranslations("discussion");
   const [selection, setSelection] = useState("");
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [marked, setMarked] = useState("");
@@ -337,7 +335,7 @@ export function ReadingAnnotations() {
               }}
             >
               <Highlighter size={13} />
-              标注
+              {t("mark")}
             </button>
             <button
               onClick={() => {
@@ -348,7 +346,7 @@ export function ReadingAnnotations() {
               }}
             >
               <Quote size={13} />
-              引用评论
+              {t("quote")}
             </button>
           </motion.div>
         )}
@@ -357,11 +355,11 @@ export function ReadingAnnotations() {
         <div className="annotation-note">
           <span>
             <Highlighter size={14} />
-            刚刚划下的一句
+            {t("marked")}
           </span>
           <p>{marked}</p>
-          <small>本页标注预览</small>
-          <button aria-label="关闭标注" onClick={() => setMarked("")}>
+          <small>{t("markPreview")}</small>
+          <button aria-label={t("closeMark")} onClick={() => setMarked("")}>
             <X size={13} />
           </button>
         </div>
@@ -370,6 +368,7 @@ export function ReadingAnnotations() {
   );
 }
 export function RichArticleDetails() {
+  const t = useTranslations("articleDemo");
   const [copied, setCopied] = useState(false);
   const snippet =
     'const life = {\n  curiosity: Infinity,\n  pace: "your own",\n  roomForWonder: true\n};';
@@ -378,10 +377,11 @@ export function RichArticleDetails() {
       <aside className="article-callout">
         <span>✳</span>
         <div>
-          <strong>写在页边</strong>
+          <strong>{t("calloutTitle")}</strong>
           <p>
-            真正值得优化的，也许不是每一分钟的产出，而是
-            <mark>我们和时间相处的方式</mark>。给想法留一点生长的空间。
+            {t("calloutIntro")}
+            <mark>{t("calloutMark")}</mark>
+            {t("calloutOutro")}
             <a href="#footnote-1" className="footnote-link">
               [1]
             </a>
@@ -391,17 +391,17 @@ export function RichArticleDetails() {
       <blockquote className="editorial-quote">
         <Quote size={23} />
         <p>
-          空白不是浪费，
+          {t("quote1")}
           <br />
-          它是让想法长出根的地方。
+          {t("quote2")}
         </p>
-        <cite>— 这篇文章里，我最想留给你的话</cite>
+        <cite>{t("cite")}</cite>
       </blockquote>
       <div className="article-code">
         <div>
-          <span>给生活留一点余地.ts</span>
+          <span>{t("codeTitle")}</span>
           <button
-            aria-label="复制代码"
+            aria-label={t("copy")}
             onClick={async () => {
               try {
                 await navigator.clipboard.writeText(snippet);
@@ -412,7 +412,7 @@ export function RichArticleDetails() {
             {copied ? <Check size={14} /> : <Copy size={14} />}
           </button>
         </div>
-        <pre data-custom-scroll="代码示例">
+        <pre data-custom-scroll={t("codeRegion")}>
           <code>
             <span className="code-purple">const</span> life = {"{"}
             {"\n"} curiosity: <span className="code-orange">Infinity</span>,
@@ -424,10 +424,9 @@ export function RichArticleDetails() {
         </pre>
       </div>
       <div className="article-footnotes" id="footnote-1">
-        <span>注释与延伸</span>
+        <span>{t("footnotes")}</span>
         <p>
-          <sup>1</sup>{" "}
-          这里展示正文高亮、旁注、引用、脚注与代码块的排版样式。选中正文中的一段文字，还可以预览标注与引用评论。
+          <sup>1</sup> {t("footnote")}
         </p>
       </div>
     </div>
