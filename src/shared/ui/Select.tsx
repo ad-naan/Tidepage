@@ -84,7 +84,7 @@ export function Select<Value extends string>({
             {icon}
           </span>
         )}
-        <span className={styles.value}>
+        <span className={styles.value} data-select-part="value">
           <SelectPrimitive.Value placeholder={placeholder} />
         </span>
         <SelectPrimitive.Icon className={styles.chevron}>

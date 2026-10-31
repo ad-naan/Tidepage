@@ -42,6 +42,7 @@
   flex: 1;
 }
 .copy .caption {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: 7px;
@@ -73,6 +74,9 @@
   }
   .copy strong {
     font-size: 11px;
+  }
+  .copy {
+    overflow: hidden;
   }
   .copy .caption {
     font-size: 9px;

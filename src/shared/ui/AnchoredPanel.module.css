@@ -1,0 +1,26 @@
+.panel {
+  position: fixed;
+  z-index: 65;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--line);
+  border-radius: 16px 18px 17px 15px;
+  padding: 20px;
+  background: var(--paper);
+  box-shadow:
+    0 12px 42px #28251c14,
+    0 2px 8px #28251c06;
+  transform-origin: top;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+:global([data-theme="dark"]) .panel {
+  box-shadow:
+    0 12px 42px #0003,
+    0 2px 8px #0002;
+}
+@media (max-width: 600px) {
+  .panel {
+    padding: 17px;
+  }
+}

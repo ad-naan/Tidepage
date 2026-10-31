@@ -8,7 +8,13 @@ import { AboutLetter } from "@/components/AboutLetter";
 import { OtterDrawing } from "@/components/OtterDrawing";
 import styles from "./illustration.module.css";
 
-export function HeroSketch({ quiet = false }: { quiet?: boolean }) {
+export function HeroSketch({
+  quiet = false,
+  onWish,
+}: {
+  quiet?: boolean;
+  onWish?: () => void;
+}) {
   const t = useTranslations("sketch");
   const uid = useId().replaceAll(":", "");
   const [greeting, setGreeting] = useState(false);
@@ -23,6 +29,10 @@ export function HeroSketch({ quiet = false }: { quiet?: boolean }) {
   );
   const router = useRouter();
   const reduce = useReducedMotion();
+  function makeWish() {
+    setWish((value) => value + 1);
+    onWish?.();
+  }
   useEffect(() => () => clearTimeout(departure.current), []);
   function water(event: PointerEvent<SVGSVGElement>) {
     if (reduce) return;
@@ -127,7 +137,7 @@ export function HeroSketch({ quiet = false }: { quiet?: boolean }) {
             dragElastic={0.2}
             style={{ cursor: "grab" }}
             whileTap={{ cursor: "grabbing" }}
-            onTap={() => setWish((value) => value + 1)}
+            onTap={makeWish}
           >
             <g className={styles.day}>
               <circle
@@ -332,7 +342,7 @@ export function HeroSketch({ quiet = false }: { quiet?: boolean }) {
       <button
         className={styles.skyHit}
         aria-label={t("skyPlay")}
-        onClick={() => setWish((value) => value + 1)}
+        onClick={makeWish}
       />
       <Link
         href="/explore"

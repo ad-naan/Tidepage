@@ -1,0 +1,84 @@
+.presence {
+  position: relative;
+  justify-self: center;
+}
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  padding: 6px 0;
+  font: 400 10px/1.6 var(--ui-font);
+  white-space: nowrap;
+}
+.trigger:hover,
+.trigger[aria-expanded="true"] {
+  color: var(--accent);
+}
+.trigger:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 4px;
+}
+.live {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #899b78;
+  box-shadow: 0 0 7px #899b7822;
+}
+.panel {
+  position: absolute;
+  bottom: calc(100% + 15px);
+  left: auto;
+  right: 0;
+  translate: 0;
+  width: min(390px, calc(100vw - 40px));
+  padding: 19px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 12px 45px #11182715;
+  z-index: 70;
+  text-align: start;
+}
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 19px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.top > button {
+  padding: 3px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+.panel :global(.header-stats-intro) {
+  font-size: 11px;
+  margin-bottom: 19px;
+  line-height: 1.9;
+}
+.panel :global(.header-stats-metrics) {
+  gap: 13px;
+}
+.panel :global(.header-stats-metrics > div > strong) {
+  font-size: 21px;
+}
+.panel :global(.header-stats-metrics > div > span),
+.panel :global(.header-visits-chart > div),
+.panel :global(.presence-note) {
+  font-size: 10px;
+}
+@media (max-width: 600px) {
+  .presence {
+    justify-self: end;
+  }
+  .panel {
+    left: auto;
+    right: 0;
+    translate: 0 0;
+  }
+}

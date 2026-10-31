@@ -186,7 +186,7 @@ input {
   color: var(--accent);
   transform: rotate(12deg);
 }
-nav {
+.sidebar nav {
   margin-top: 51px;
   display: flex;
   flex-direction: column;

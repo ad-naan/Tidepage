@@ -34,6 +34,7 @@
   background: var(--paper);
 }
 .linkText {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 3px;

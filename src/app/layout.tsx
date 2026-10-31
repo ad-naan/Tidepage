@@ -7,6 +7,7 @@ import { localeRegistry } from "@/shared/i18n/config";
 import { locales, type Locale } from "@/shared/i18n/config";
 import { catalogs } from "@/i18n/catalogs";
 import { NavigationFeedback } from "@/shared/ui/navigation/NavigationFeedback";
+import { PencilDefinitions } from "@/shared/ui/PencilDefinitions";
 import "../styles/globals.css";
 import "../styles/refinements.css";
 import "../styles/chrome.css";
@@ -19,6 +20,7 @@ import "../styles/playground.css";
 import "../styles/atmosphere.css";
 import "@fontsource-variable/noto-sans-sc";
 import "../styles/layout.css";
+import "../styles/sky-header.css";
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   const t = await getTranslations("site");
@@ -63,6 +65,7 @@ export default async function RootLayout({
       data-scroll-behavior="smooth"
     >
       <body>
+        <PencilDefinitions />
         <a href="#main-content" className="skip-link">
           {t("skip")}
         </a>

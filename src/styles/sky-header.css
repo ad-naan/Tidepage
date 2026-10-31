@@ -1,0 +1,746 @@
+/* The first state blends into the page; a cut sky edge appears only after scrolling. */
+.site-shell > .header-slot,
+.site-shell[data-page="inner"] > .header-slot {
+  position: fixed;
+  inset: 0 0 auto;
+  width: 100%;
+  height: var(--site-header-height);
+  padding-inline: 0;
+}
+.site-shell
+  > .header-slot
+  > .sky-header:is(.is-resting, .is-compact, .is-expanded) {
+  width: var(--site-content-width);
+  max-width: var(--site-content-max);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.sky-header {
+  transform: translateY(12px);
+  --sky-rose: #e8a18c73;
+  --sky-gold: #f2c27b80;
+  --sky-paper: color-mix(in srgb, var(--paper) 92%, #edceb0);
+  --sky-shadow: #b98a5b;
+  --header-cut: url(#header-sky-cut);
+}
+.sky-header::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -32px;
+  bottom: -26px;
+  left: calc(50% - 50vw);
+  width: 100vw;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 35% 88% at 18% 13%,
+      var(--sky-rose),
+      transparent 78%
+    ),
+    radial-gradient(ellipse 38% 95% at 77% 2%, var(--sky-gold), transparent 80%);
+}
+.sky-header.is-resting::before {
+  mask-image: linear-gradient(#000 45%, transparent);
+}
+.sky-header.is-compact::before {
+  clip-path: var(--header-cut);
+  backdrop-filter: blur(12px);
+  background:
+    radial-gradient(
+      ellipse 35% 88% at 18% 13%,
+      var(--sky-rose),
+      transparent 78%
+    ),
+    radial-gradient(
+      ellipse 38% 95% at 77% 2%,
+      var(--sky-gold),
+      transparent 80%
+    ),
+    linear-gradient(
+      var(--sky-paper),
+      color-mix(in srgb, var(--sky-paper) 96%, transparent)
+    );
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 2%,
+    #000 98%,
+    transparent
+  );
+}
+.header-sky-shadow {
+  position: absolute;
+  z-index: -2;
+  top: -32px;
+  bottom: -26px;
+  left: calc(50% - 50vw);
+  width: 100vw;
+  translate: 0 7px;
+  filter: blur(9px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.is-compact .header-sky-shadow {
+  opacity: 0.14;
+}
+.header-sky-shadow > span {
+  position: absolute;
+  inset: 0;
+  background: var(--sky-shadow);
+  clip-path: var(--header-cut);
+}
+.header-sky {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  color: var(--accent);
+}
+.header-sky > svg {
+  position: absolute;
+  bottom: -20px;
+  left: -32px;
+  width: calc(100% + 64px);
+  height: 100px;
+  overflow: visible;
+}
+.header-clouds path {
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  filter: url(#tidepage-pencil);
+  opacity: 0.3;
+}
+.header-clouds path + path {
+  opacity: 0.13;
+}
+.header-sky-specks {
+  fill: currentColor;
+  opacity: 0.08;
+}
+.header-dusk-streak {
+  position: absolute;
+  height: 9px;
+  width: 180px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, var(--sky-gold), transparent 70%);
+  opacity: 0.8;
+  transform: rotate(-3deg);
+}
+.header-dusk-streak-one {
+  left: 12%;
+  top: 5px;
+}
+.header-dusk-streak-two {
+  right: 8%;
+  bottom: -2px;
+  width: 250px;
+  transform: rotate(2deg);
+}
+[data-theme="dark"] .sky-header {
+  --sky-rose: #849ac24a;
+  --sky-gold: #aac5f361;
+  --sky-shadow: #080f20;
+  --sky-paper: color-mix(in srgb, var(--paper) 91%, #405276);
+}
+[data-theme="dark"] .header-sky {
+  color: #a5badb;
+}
+[data-theme="dark"] .header-sky-specks {
+  opacity: 0.4;
+}
+.site-shell .sky-header .living-header-row,
+.site-shell .sky-header.is-compact .living-header-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  height: 52px;
+  padding: 0;
+  gap: 24px;
+}
+.sky-header .living-context {
+  flex: 0 1 auto;
+  display: flex;
+  min-width: 0;
+}
+.sky-header .header-navigation {
+  flex: 1;
+  min-width: 195px;
+  align-self: center;
+}
+.sky-header .header-atmosphere-context {
+  display: flex;
+  align-items: center;
+}
+.sky-header .living-actions {
+  gap: 15px;
+}
+.sky-header .header-widget-divider,
+.sky-header .living-search-trigger kbd,
+.sky-header .header-music .dock-play {
+  display: none;
+}
+.sky-header .living-search-trigger .search-text,
+.sky-header .header-music .music-open > span:last-child,
+.sky-header .login-trigger:not(.logged-in) > span {
+  display: block;
+}
+.sky-header .living-search-trigger {
+  padding: 5px 0;
+}
+.sky-header .reading-context {
+  width: 175px;
+  max-width: 100%;
+}
+.sky-header .header-sky {
+  opacity: 1;
+}
+.site-shell[data-page="inner"] .main-wrap {
+  min-height: calc(100svh - 80px);
+}
+@media (max-width: 900px) {
+  .sky-header .living-header-row,
+  .sky-header.is-compact .living-header-row {
+    gap: 16px;
+  }
+  .sky-header .living-activity-trigger > .living-status {
+    display: none;
+  }
+  .sky-header .living-activity-trigger > svg {
+    display: none;
+  }
+  .sky-header .living-avatar {
+    display: block;
+    width: 25px;
+    height: 25px;
+  }
+  .sky-header .living-activity-trigger {
+    padding: 0;
+  }
+}
+@media (max-width: 700px) {
+  .site-shell > .header-slot,
+  .site-shell[data-page="inner"] > .header-slot {
+    padding-inline: 0;
+    height: 76px;
+  }
+  .sky-header .living-header-row,
+  .sky-header.is-compact .living-header-row {
+    height: 48px;
+    gap: 13px;
+  }
+  .sky-header .header-navigation {
+    min-width: 0;
+  }
+  .sky-header .living-context,
+  .sky-header:not(.is-reading) .living-context {
+    display: flex;
+  }
+  .sky-header .living-actions {
+    gap: 13px;
+  }
+  .sky-header .login-trigger {
+    display: none;
+  }
+  .sky-header.is-reading .living-context {
+    min-width: 32px;
+    flex: 0 0 32px;
+    overflow: visible;
+  }
+  .sky-header .reading-context {
+    width: 32px;
+    gap: 0;
+  }
+  .sky-header .reading-context > div {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .header-sky > svg {
+    left: -20px;
+    width: calc(100% + 40px);
+  }
+  .site-shell[data-page="inner"] .main-wrap {
+    min-height: calc(100svh - 76px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .header-sky-shadow {
+    transition: none;
+  }
+}
+
+/* Each tool opens its own anchored surface; the header never expands around it. */
+.header-popover .living-panel {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  max-height: none;
+}
+.header-popover .living-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 17px;
+  font: 400 11px/1.6 var(--ui-font);
+  color: var(--muted);
+}
+.header-popover .living-panel-heading > button {
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  padding: 3px;
+}
+.header-popover .living-panel-heading > button:hover {
+  color: var(--ink);
+}
+.header-popover-activity .activity-details {
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+.header-popover-activity .activity-now > .current-activity {
+  margin: 0 0 15px;
+}
+.header-popover-activity .activity-details > .activity-history {
+  padding: 9px 0 0;
+  border-left: 0;
+  border-top: 1px solid var(--line);
+}
+.header-popover-activity .activity-details > .activity-history > div {
+  padding: 8px 0;
+}
+.header-popover-activity .activity-details > .presence-note {
+  margin-top: 0;
+}
+.header-popover-search .living-search-field {
+  padding: 0 0 12px;
+  gap: 10px;
+}
+.header-popover-search .living-search-field > input {
+  font-size: 15px;
+}
+.header-popover-search .living-search-meta {
+  padding: 13px 0 3px;
+  font-size: 11px;
+}
+.header-popover-search .living-search-results a {
+  padding: 10px 3px;
+  gap: 10px;
+}
+.header-popover-search .living-search-results strong {
+  font-size: 13px;
+}
+.header-popover-search .living-search-results a > div > span {
+  font-size: 11px;
+}
+.header-popover .music-panel.integrated {
+  grid-template-columns: 174px minmax(0, 1fr);
+  column-gap: 22px;
+}
+.header-popover .music-panel.integrated .player-track-info h3 {
+  font-size: 19px;
+}
+@media (max-width: 600px) {
+  .header-popover .music-panel.integrated {
+    grid-template-columns: 105px minmax(0, 1fr);
+    column-gap: 14px;
+  }
+  .header-popover .music-panel.integrated .record-stage {
+    width: 105px;
+  }
+  .header-popover .music-panel.integrated .player-track-info h3 {
+    font-size: 16px;
+  }
+}
+
+.header-sky-definition {
+  position: absolute;
+  pointer-events: none;
+}
+@media (max-width: 700px) {
+  .site-shell .sky-header .living-header-row,
+  .site-shell .sky-header.is-compact .living-header-row {
+    height: 48px;
+  }
+}
+
+/* The horizon settles into the toolbar when scrolling: warm dusk, rising moonlight. */
+.header-orb-halo {
+  fill: var(--sky-gold);
+  opacity: 0.45;
+  filter: blur(9px);
+}
+.header-sunset-orb {
+  transform: translate(430px, 48px);
+  transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.header-orb-disc {
+  fill: #f6cd8d;
+  stroke: #d79655;
+  stroke-width: 1.1;
+  opacity: 0.75;
+}
+.header-orb-pencil {
+  stroke: #bc874b;
+  stroke-width: 0.7;
+  opacity: 0.35;
+  filter: url(#tidepage-pencil);
+}
+.is-compact .header-sunset-orb {
+  transform: translate(430px, 76px);
+}
+.header-moon-orb {
+  display: none;
+  transform: translate(430px, 75px);
+  transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.header-moon-orb > path {
+  fill: #d0dded;
+  stroke: #afc6e3;
+  stroke-width: 1.1;
+}
+[data-theme="dark"] .header-sunset-orb {
+  display: none;
+}
+[data-theme="dark"] .header-moon-orb {
+  display: block;
+}
+[data-theme="dark"] .is-compact .header-moon-orb {
+  transform: translate(430px, 44px);
+}
+.header-pencil-skyline {
+  color: #a57e5b;
+  opacity: 0.12;
+  transition: opacity 0.7s;
+}
+.header-skyline-coast {
+  stroke: currentColor;
+  stroke-width: 1.65;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transition: stroke-dashoffset 1.15s ease;
+}
+.header-skyline-echo {
+  stroke: currentColor;
+  stroke-width: 0.8;
+  opacity: 0.45;
+}
+.header-skyline-hatching {
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.5;
+}
+.is-compact .header-pencil-skyline {
+  opacity: 0.55;
+}
+.is-compact .header-skyline-coast {
+  stroke-dashoffset: 0;
+}
+[data-theme="dark"] .header-pencil-skyline {
+  color: #9cb3cf;
+}
+.sky-header .living-activity-trigger {
+  position: relative;
+  gap: 9px;
+  padding: 3px 0;
+  border-radius: 0;
+}
+.sky-header .living-avatar {
+  width: 31px;
+  height: 31px;
+  background: transparent;
+}
+.sky-header .living-avatar > img {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.sky-header .living-status > span {
+  display: block;
+  color: var(--muted);
+  font: 400 9px/1.35 var(--ui-font);
+  letter-spacing: 0.03em;
+}
+.sky-header .living-status > span > span {
+  margin-left: 3px;
+  font-size: inherit;
+}
+.sky-header .living-status > strong {
+  font-size: 11px;
+  line-height: 1.55;
+}
+.sky-header .living-activity-trigger > svg {
+  opacity: 0.5;
+}
+.sky-header .status-type-caret {
+  display: none;
+}
+.sky-header .header-music .music-open > span:last-child {
+  width: 84px;
+  max-width: 84px;
+  font-size: 11px;
+}
+.sky-header .living-search-trigger .search-text,
+.sky-header .login-trigger:not(.logged-in) > span {
+  font-size: 11px;
+}
+.sky-header .living-search-trigger {
+  gap: 6px;
+}
+.sky-header .living-search-trigger:hover,
+.sky-header .login-trigger:hover {
+  color: var(--accent);
+}
+@media (max-width: 1050px) {
+  .sky-header .living-search-trigger .search-text,
+  .sky-header .login-trigger:not(.logged-in) > span {
+    display: none;
+  }
+}
+@media (max-width: 900px) {
+  .sky-header .living-status {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  .sky-header .header-music .music-open > span:last-child {
+    display: none;
+  }
+  .header-sunset-orb,
+  [data-theme="dark"] .header-moon-orb {
+    display: none;
+  }
+  .sky-header .living-avatar {
+    width: 25px;
+    height: 25px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .header-sunset-orb,
+  .header-moon-orb,
+  .header-pencil-skyline,
+  .header-skyline-coast {
+    transition: none;
+  }
+}
+
+/* Scroll state: a smaller, translucent horizon suspended over the page. */
+.site-shell > .header-slot > .sky-header {
+  transition:
+    width 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.site-shell > .header-slot > .sky-header.is-compact {
+  width: min(1080px, calc(100% - var(--site-gutter) * 2 - 28px));
+  max-width: 1080px;
+  transform: translateY(16px);
+}
+.sky-header.is-compact::before {
+  left: -20px;
+  width: calc(100% + 40px);
+  top: -5px;
+  bottom: -26px;
+  backdrop-filter: blur(22px) saturate(1.18);
+  background:
+    radial-gradient(
+      ellipse 42% 130% at 12% 0%,
+      color-mix(in srgb, var(--sky-rose) 75%, transparent),
+      transparent 80%
+    ),
+    radial-gradient(
+      ellipse 48% 140% at 80% 10%,
+      color-mix(in srgb, var(--sky-gold) 65%, transparent),
+      transparent 80%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--paper) 68%, transparent),
+      color-mix(in srgb, var(--paper) 43%, transparent)
+    );
+  mask-image:
+    linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent),
+    linear-gradient(180deg, transparent, #000 14%, #000 92%, transparent);
+  mask-composite: intersect;
+}
+.is-compact .header-sky-shadow {
+  left: -22px;
+  width: calc(100% + 44px);
+  top: -3px;
+  bottom: -23px;
+  filter: blur(15px);
+  opacity: 0.12;
+}
+.sky-header.is-compact .header-sky > svg {
+  opacity: 0.85;
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-shell > .header-slot > .sky-header {
+    transition: none;
+  }
+}
+
+/* One identity: signature at the shore, an engraved mark and a live spark while floating. */
+.header-identity-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 14px;
+}
+.sky-header .living-state-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 24px;
+  flex: 0 0 20px;
+}
+.living-state-mark > svg {
+  position: absolute;
+  inset: 0;
+  width: 24px;
+  height: 24px;
+  stroke: #849275;
+  stroke-width: 1.3;
+  filter: url(#tidepage-pencil);
+  opacity: 0.55;
+}
+.living-state-mark > i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #91a17d;
+  box-shadow: 0 0 10px #91a17d55;
+}
+.compact-activity-hint {
+  display: none;
+}
+.sky-header.is-compact .living-status,
+.sky-header.is-compact .living-activity-trigger > .lucide-chevron-down {
+  display: none;
+}
+.sky-header.is-compact .header-identity-group {
+  gap: 9px;
+}
+.sky-header.is-compact .living-activity-trigger {
+  padding: 3px;
+}
+.sky-header.is-compact .compact-activity-hint {
+  position: absolute;
+  display: block;
+  width: max-content;
+  top: calc(100% + 5px);
+  left: 50%;
+  translate: -50% 0;
+  font: 400 10px/1.5 var(--ui-font);
+  color: var(--muted);
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+.sky-header.is-compact .living-activity-trigger:hover .compact-activity-hint,
+.sky-header.is-compact
+  .living-activity-trigger:focus-visible
+  .compact-activity-hint {
+  opacity: 1;
+}
+.header-floating-wash {
+  position: absolute;
+  z-index: -1;
+  top: -5px;
+  bottom: -26px;
+  left: -20px;
+  width: calc(100% + 40px);
+  height: calc(100% + 31px);
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.55s;
+}
+.header-wash-rose {
+  stop-color: #eab8a8;
+  stop-opacity: 0.53;
+}
+.header-wash-milk {
+  stop-color: #f7ecdc;
+  stop-opacity: 0.48;
+}
+.header-wash-gold {
+  stop-color: #eac78a;
+  stop-opacity: 0.55;
+}
+[data-theme="dark"] .header-wash-rose {
+  stop-color: #637c9f;
+  stop-opacity: 0.4;
+}
+[data-theme="dark"] .header-wash-milk {
+  stop-color: #354761;
+  stop-opacity: 0.52;
+}
+[data-theme="dark"] .header-wash-gold {
+  stop-color: #7894be;
+  stop-opacity: 0.42;
+}
+.sky-header.is-compact .header-floating-wash {
+  opacity: 1;
+}
+.sky-header.is-compact::before {
+  background: none;
+  mask-image: none;
+}
+@media (max-width: 700px) {
+  .header-identity-group {
+    gap: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .header-floating-wash,
+  .compact-activity-hint {
+    transition: none;
+  }
+}
+
+/* The live indicator belongs to the author's avatar, rather than a second badge. */
+.sky-header.is-compact:not(.is-reading) .header-identity-group {
+  gap: 0;
+}
+.sky-header.is-compact:not(.is-reading)
+  .header-identity-group
+  > .living-context {
+  position: absolute;
+  right: -7px;
+  bottom: 2px;
+  width: 22px;
+  min-width: 0;
+  overflow: visible;
+}
+.sky-header.is-compact:not(.is-reading) .living-activity-trigger {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+}
+.sky-header.is-compact:not(.is-reading) .living-state-mark {
+  width: 16px;
+  height: 16px;
+  flex-basis: 16px;
+}
+.sky-header.is-compact:not(.is-reading) .living-state-mark > svg {
+  display: none;
+}
+.sky-header.is-compact:not(.is-reading) .living-state-mark > i {
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--paper);
+  box-shadow: 0 0 8px #91a17d44;
+}

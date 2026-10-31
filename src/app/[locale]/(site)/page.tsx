@@ -1,7 +1,8 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/shared/i18n/navigation";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
-import { HeroSketch, MiniSketch } from "@/components/Sketch";
+import { MiniSketch } from "@/components/Sketch";
+import { HomeHero } from "@/components/HomeHero";
 import { Journey } from "@/components/Journey";
 import { ArticleList } from "@/modules/content/ui/ArticleList";
 import { getArticles, getNotes } from "@/modules/content/server";
@@ -18,36 +19,7 @@ export default async function Home() {
   ]);
   return (
     <div className={styles.home}>
-      <section className="hero">
-        <div className="hero-copy">
-          <div className="hero-greeting">
-            {t("greeting")}
-            <span>✳</span>
-          </div>
-          <h1>
-            {t("line1")}
-            <br />
-            <span className="hand-title">
-              {t("line2")}
-              <svg viewBox="0 0 430 30" fill="none" aria-hidden="true">
-                <path
-                  d="M3 22Q167-9 424 10M111 27l49-22-17 16 57-16"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
-          </h1>
-          <div className="hero-introduction" aria-label={t("greeting")}>
-            <p>{t("intro")}</p>
-          </div>
-          <Link className="explore-link" href="/articles">
-            {t("articles")} <ArrowRight size={22} />
-          </Link>
-        </div>
-        <HeroSketch quiet />
-      </section>
+      <HomeHero />
       <section className="home-middle">
         <Journey />
         <div className="latest">

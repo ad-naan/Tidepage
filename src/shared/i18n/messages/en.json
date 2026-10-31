@@ -68,7 +68,27 @@
     "quotes": "Quotes",
     "gallery": "Gallery",
     "about": "About",
-    "elsewhere": "Explore"
+    "elsewhere": "Explore",
+    "more": "More",
+    "browse": "Browse",
+    "preview": {
+      "articles": {
+        "title": "The reading room · Recent pages",
+        "open": "Open the archive"
+      },
+      "notes": {
+        "title": "Tidal notes · A recent moment",
+        "open": "See the everyday moments"
+      },
+      "projects": {
+        "title": "The workbench · Small experiments",
+        "open": "Visit the workbench"
+      },
+      "more": {
+        "title": "Along the coast"
+      },
+      "empty": "Another page is on its way."
+    }
   },
   "categories": {
     "all": "All",
@@ -77,10 +97,6 @@
     "life": "Life"
   },
   "home": {
-    "greeting": "Hello, I'm adnaan.",
-    "line1": "Keep a little time,",
-    "line2": "write your own story.",
-    "intro": "I build ideas with code and keep track of change through words. Notes on technology, products, everyday life, and starting again.",
     "articles": "Explore the writing",
     "coast": "Step into the coast",
     "world": "Explore the world",
@@ -90,7 +106,23 @@
     "count": "{count} entries along the way",
     "note": "A recent moment",
     "quote": "Give the past a place, and the future a little hope.",
-    "next": "For the next page"
+    "next": "For the next page",
+    "hero": {
+      "greeting": "Nice to meet you here.",
+      "intro": {
+        "line1": "I'm adnaan.",
+        "line2": "I build, write & explore.",
+        "description": "I turn ideas into small projects, and share notes on code, products, and everyday life."
+      },
+      "reveal": "Follow the little spark",
+      "restore": "Back to the introduction",
+      "theme": {
+        "line1": "Keep a little time,",
+        "line2": "write your own story.",
+        "description": "I build ideas with code and keep track of change through words. Notes on technology, products, everyday life, and starting again."
+      }
+    },
+    "greeting": "Hello, I'm adnaan."
   },
   "articles": {
     "title": "Written along the way",
@@ -162,7 +194,8 @@
       "activity": "What's happening now",
       "search": "Find something here",
       "music": "Background sound for the next page",
-      "stats": "Meeting along the way"
+      "stats": "Meeting along the way",
+      "navigation": "The coastal constellation"
     },
     "readingProgress": "Article reading progress"
   },
@@ -210,11 +243,7 @@
   },
   "stats": {
     "open": "View visitor statistics",
-    "faces": [
-      "a",
-      "d",
-      "n"
-    ],
+    "faces": ["a", "d", "n"],
     "reading": " reading now",
     "nowIntro": "Right now, ",
     "nowFriends": "8 friends",
@@ -226,7 +255,9 @@
     "caption": "Every stop leaves an echo behind.",
     "trendAria": "Seven-day visit trend (demo)",
     "thanks": "Thank you for being part of this story.",
-    "demo": "Demo data · visual preview"
+    "demo": "Demo data · visual preview",
+    "readers": "{count, plural, one {# reading now} other {# reading now}}",
+    "presenceTitle": "Here, at the same moment"
   },
   "activity": {
     "current": "Polishing small blog details",

@@ -1,53 +1,9 @@
 "use client";
 import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
-import { ArrowUpRight, Users } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { AnimatedNumber } from "./AnimatedNumber";
-import { spring } from "@/shared/lib/motion";
-export function HeaderStatsTrigger({
-  open,
-  onClick,
-}: {
-  open: boolean;
-  onClick: () => void;
-}) {
-  const t = useTranslations("stats");
-  return (
-    <motion.button
-      className={`header-visitors-trigger ${open ? "selected" : ""}`}
-      onClick={onClick}
-      aria-label={t("open")}
-      aria-expanded={open}
-      aria-controls="header-panel"
-      whileHover="hover"
-      initial="rest"
-      animate="rest"
-      whileTap={{ scale: 0.96 }}
-    >
-      <span className="header-visitor-faces" aria-hidden="true">
-        {t.raw("faces").map((c: string, i: number) => (
-          <motion.i
-            key={c}
-            variants={{
-              rest: { x: 0, y: 0 },
-              hover: { x: (i - 1) * 2, y: i === 1 ? -3 : -1 },
-            }}
-            transition={spring}
-          >
-            {c}
-          </motion.i>
-        ))}
-      </span>
-      <Users className="header-visitors-icon" size={16} />
-      <span>
-        <strong>8</strong>
-        {t("reading")}
-      </span>
-      <i className="live-dot" />
-    </motion.button>
-  );
-}
-export function HeaderStatsPanel() {
+export function VisitorStatsPanel() {
   const t = useTranslations("stats");
   return (
     <div className="header-stats-panel">

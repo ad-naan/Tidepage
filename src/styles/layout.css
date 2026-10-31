@@ -3,6 +3,13 @@
   --ui-font:
     "Noto Sans SC Variable", system-ui, -apple-system, "PingFang SC",
     "Microsoft YaHei", sans-serif;
+  --site-content-max: 1320px;
+  --site-header-height: 80px;
+  --site-gutter: clamp(20px, 4vw, 56px);
+  --site-content-width: min(
+    var(--site-content-max),
+    calc(100% - var(--site-gutter) * 2)
+  );
 }
 body {
   font-family: var(--ui-font);
@@ -12,14 +19,12 @@ body {
 }
 .site-shell {
   max-width: none;
+  padding-top: var(--site-header-height);
 }
 .site-shell .main-wrap {
-  width: min(1040px, calc(100% - 112px));
+  width: var(--site-content-width);
   margin-inline: auto;
   padding-inline: 0;
-}
-.site-shell[data-page="home"] .main-wrap {
-  width: min(1320px, calc(100% - 112px));
 }
 .site-shell[data-page="inner"] > .header-slot {
   height: 86px;
@@ -36,13 +41,6 @@ body {
 }
 .site-shell[data-page="inner"] main > div {
   min-height: 0;
-}
-.site-shell[data-page="inner"] .page-footer {
-  font-size: 10px;
-  padding: 20px 0;
-}
-.site-shell[data-page="inner"] .page-footer > span:last-child {
-  font-size: 10px;
 }
 @media (min-width: 701px) {
   .celestial-sidebar {
@@ -72,16 +70,36 @@ body {
     opacity: 0.45;
   }
 }
-@media (max-width: 1100px) {
-  .site-shell .main-wrap,
-  .site-shell[data-page="home"] .main-wrap {
-    width: calc(100% - 104px);
-  }
-}
 @media (max-width: 700px) {
+  :root {
+    --site-header-height: 76px;
+  }
+  .living-header .sky-mobile-activity,
+  .living-header .header-visitors-trigger {
+    display: none;
+  }
+  .living-header .living-actions {
+    gap: 8px;
+  }
+  .living-header .header-wordmark {
+    min-width: 96px;
+  }
+  .living-header .header-wordmark > span {
+    font-size: 30px;
+  }
+  .living-header .language-switch [data-select-part="value"] {
+    display: none;
+  }
+  .living-header.is-reading .header-visitors-trigger,
+  .living-header.is-reading .living-focus-button {
+    display: none;
+  }
+  .living-header.is-reading .living-context {
+    min-width: 110px;
+  }
   .site-shell .main-wrap,
   .site-shell[data-page="home"] .main-wrap {
-    width: calc(100% - 40px);
+    width: var(--site-content-width);
   }
   .site-shell[data-page="inner"] > .header-slot {
     height: 80px;
@@ -90,4 +108,10 @@ body {
   .site-shell[data-page="inner"] .main-wrap {
     min-height: calc(100svh - 80px);
   }
+}
+
+.site-shell .main-wrap .inner-page,
+.site-shell .main-wrap .reading-page {
+  width: 100%;
+  max-width: none;
 }

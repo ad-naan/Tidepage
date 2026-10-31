@@ -1,0 +1,23 @@
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: 0 0 auto;
+  width: max-content;
+  height: auto;
+  padding: 5px 0;
+  color: var(--muted);
+  font: 400 12px/1.6 var(--ui-font);
+  white-space: nowrap;
+}
+.toggle svg {
+  flex-shrink: 0;
+}
+.toggle:hover {
+  color: var(--accent);
+}
+.toggle:focus-visible {
+  outline: 1px dashed var(--accent);
+  outline-offset: 4px;
+  border-radius: 3px;
+}

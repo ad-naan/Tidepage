@@ -59,6 +59,10 @@ export type Quote = {
   text: string;
   author: string;
 };
+export type NavigationOverview = {
+  note: Pick<Note, "mood" | "date" | "text"> | null;
+  projects: Pick<Project, "id" | "name" | "subtitle">[];
+};
 export function summarize({
   sections: _sections,
   ...summary

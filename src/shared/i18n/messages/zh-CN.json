@@ -68,7 +68,27 @@
     "quotes": "一言",
     "gallery": "照片廊",
     "about": "自述",
-    "elsewhere": "随便逛逛"
+    "elsewhere": "随便逛逛",
+    "more": "更多",
+    "browse": "浏览",
+    "preview": {
+      "articles": {
+        "title": "沿岸藏书室 · 最近写下的",
+        "open": "翻开全部文章"
+      },
+      "notes": {
+        "title": "潮汐便笺 · 最近的片段",
+        "open": "看看日子的副本"
+      },
+      "projects": {
+        "title": "造物工作台 · 小小的尝试",
+        "open": "走进工作台"
+      },
+      "more": {
+        "title": "沿着海岸走走"
+      },
+      "empty": "下一页，正在慢慢写。"
+    }
   },
   "categories": {
     "all": "全部",
@@ -77,10 +97,6 @@
     "life": "生活"
   },
   "home": {
-    "greeting": "你好，我是 adnaan。",
-    "line1": "把光阴，",
-    "line2": "写成自己的副本",
-    "intro": "我用代码把想法做出来，也用文字留住自己的变化。这里记录技术、产品与生活，还有每一次重新出发。",
     "articles": "探索文章",
     "coast": "走进这片海岸",
     "world": "空间漫游",
@@ -90,7 +106,23 @@
     "count": "{count} 份光阴的记录",
     "note": "最近留下一页",
     "quote": "让过去有处安放，让明天仍有期待。",
-    "next": "留给下一页"
+    "next": "留给下一页",
+    "hero": {
+      "greeting": "很高兴在这里遇见你。",
+      "intro": {
+        "line1": "我是 adnaan，",
+        "line2": "写代码，也写生活。",
+        "description": "喜欢把想法做成小作品，也在这里分享技术、产品和日常。"
+      },
+      "reveal": "轻触星芒，翻到另一页",
+      "restore": "回到自我介绍",
+      "theme": {
+        "line1": "把光阴，",
+        "line2": "写成自己的副本",
+        "description": "我用代码把想法做出来，也用文字留住自己的变化。这里记录技术、产品与生活，还有每一次重新出发。"
+      }
+    },
+    "greeting": "你好，我是 adnaan。"
   },
   "articles": {
     "title": "写在光阴里",
@@ -162,7 +194,8 @@
       "activity": "此刻，在做什么",
       "search": "在这里找一找",
       "music": "给下一页一点背景声",
-      "stats": "在光阴里相遇"
+      "stats": "在光阴里相遇",
+      "navigation": "海岸星图"
     },
     "readingProgress": "文章阅读进度"
   },
@@ -210,11 +243,7 @@
   },
   "stats": {
     "open": "查看站点访客统计",
-    "faces": [
-      "山",
-      "木",
-      "云"
-    ],
+    "faces": ["山", "木", "云"],
     "reading": " 位在读",
     "nowIntro": "此刻，有 ",
     "nowFriends": "8 位朋友",
@@ -226,7 +255,9 @@
     "caption": "每一次驻足，都留下了回声。",
     "trendAria": "最近七日访问趋势演示",
     "thanks": "谢谢你，成为这份光阴的一部分。",
-    "demo": "统计样式 · 演示数据"
+    "demo": "统计样式 · 演示数据",
+    "readers": "{count} 位在读",
+    "presenceTitle": "在光阴里相遇"
   },
   "activity": {
     "current": "正在打磨博客里的小细节",
