@@ -2,9 +2,9 @@
   display: flex;
   align-items: center;
   gap: 22px;
-  padding: 10px 0 18px;
+  padding: var(--space-2) 0 var(--space-4);
   border-bottom: 1px solid var(--line);
-  margin-bottom: 18px;
+  margin-bottom: var(--space-4);
 }
 .identity {
   display: flex;
@@ -33,7 +33,7 @@
 }
 .heading h1 {
   margin: 0;
-  font: 500 20px/1.5 var(--ui-font);
+  font: 500 var(--text-title)/var(--leading-heading) var(--font-editorial);
   color: var(--ink);
   letter-spacing: -0.02em;
 }
@@ -76,7 +76,7 @@
     margin-bottom: 14px;
   }
   .heading h1 {
-    font-size: 19px;
+    font-size: 20px;
   }
   .heading > p {
     flex-basis: 100%;

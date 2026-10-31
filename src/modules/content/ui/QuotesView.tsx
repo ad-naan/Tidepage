@@ -1,4 +1,5 @@
 "use client";
+import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import { RoomHeading } from "@/components/RoomHeading";
 import styles from "@/components/rooms.module.css";
 
@@ -14,6 +15,7 @@ import { softSpring } from "@/shared/lib/motion";
 
 export function QuotesView({ quotes }: { quotes: Quote[] }) {
   const t = useTranslations("quotes");
+  const { notify } = useNotice();
   const [index, setIndex] = useState(0);
   const [saved, setSaved] = useLocalState<number[]>("adnaan-quotes", []);
   const [copied, setCopied] = useState(false);
@@ -23,10 +25,12 @@ export function QuotesView({ quotes }: { quotes: Quote[] }) {
     try {
       await navigator.clipboard.writeText(`${quote.text}\n—— ${quote.author}`);
       setCopied(true);
+      notify({ title: t("copied"), tone: "success" });
       setCopyFailed(false);
       window.setTimeout(() => setCopied(false), 1800);
     } catch {
       setCopyFailed(true);
+      notify({ title: t("failed"), tone: "error", duration: 6500 });
     }
   }
   if (!quote)

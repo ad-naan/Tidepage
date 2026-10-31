@@ -1,0 +1,108 @@
+.links {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+}
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 7px 9px;
+  color: var(--muted);
+  text-decoration: none;
+  font: 400 var(--text-sm)/1.5 var(--font-ui);
+  white-space: nowrap;
+}
+.link::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 3px -3px 0;
+  background: radial-gradient(
+    ellipse at 40% 70%,
+    color-mix(in srgb, var(--wash) 65%, transparent),
+    transparent 74%
+  );
+  opacity: 0;
+  transition: opacity var(--motion-soft);
+}
+.icon {
+  flex: 0 0 auto;
+}
+.arrow {
+  opacity: 0.3;
+  transform: translate(-1px, 1px);
+  transition:
+    opacity var(--motion-quick),
+    transform var(--motion-quick);
+}
+.mark {
+  position: absolute;
+  bottom: 0;
+  left: 6px;
+  width: calc(100% - 12px);
+  height: 7px;
+  color: var(--accent);
+  opacity: 0;
+}
+.mark path {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transition: stroke-dashoffset var(--motion-soft);
+}
+.link:hover,
+.link:focus-visible {
+  color: var(--ink);
+}
+.link:hover::before,
+.link:focus-visible::before {
+  opacity: 1;
+}
+.link:hover .arrow,
+.link:focus-visible .arrow {
+  opacity: 0.8;
+  transform: none;
+}
+.link:hover .mark,
+.link:focus-visible .mark {
+  opacity: 0.75;
+}
+.link:hover .mark path,
+.link:focus-visible .mark path {
+  stroke-dashoffset: 0;
+}
+.link:focus-visible {
+  outline: 1px dashed var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+.hint {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 7px;
+  width: max-content;
+  max-width: 210px;
+  color: var(--muted);
+  opacity: 0;
+  visibility: hidden;
+  font: 400 var(--text-xxs)/1.5 var(--font-ui);
+  pointer-events: none;
+  transition: opacity var(--motion-quick);
+}
+.link:hover .hint,
+.link:focus-visible .hint {
+  opacity: 0.85;
+  visibility: visible;
+}
+@media (prefers-reduced-motion: reduce) {
+  .link::before,
+  .arrow,
+  .mark path,
+  .hint {
+    transition: none;
+  }
+}

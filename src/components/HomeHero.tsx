@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/shared/i18n/navigation";
 import { HeroSketch } from "@/modules/world/ui/CoastIllustration";
+import { ProfileLinks } from "./ProfileLinks";
 import styles from "./HomeHero.module.css";
 
 const modes = ["intro", "theme"] as const;
@@ -110,10 +111,16 @@ export function HomeHero() {
             ))}
           </div>
         </div>
-        <Link className="explore-link" href="/articles">
-          {t("articles")}
-          <ArrowRight size={22} />
-        </Link>
+        <div className={styles.connections}>
+          <Link className={styles.writingLink} href="/articles">
+            {t("articles")}
+            <ArrowRight size={15} />
+          </Link>
+          <span className={styles.connectionDivider} aria-hidden="true">
+            /
+          </span>
+          <ProfileLinks />
+        </div>
       </div>
       <HeroSketch quiet onWish={() => setMode("theme")} />
     </section>

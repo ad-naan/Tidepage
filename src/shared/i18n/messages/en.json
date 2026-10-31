@@ -108,11 +108,11 @@
     "quote": "Give the past a place, and the future a little hope.",
     "next": "For the next page",
     "hero": {
-      "greeting": "Nice to meet you here.",
+      "greeting": "Hello, glad you found this little coast.",
       "intro": {
-        "line1": "I'm adnaan.",
-        "line2": "I build, write & explore.",
-        "description": "I turn ideas into small projects, and share notes on code, products, and everyday life."
+        "line1": "adnaan.",
+        "line2": "Full-stack engineer · UI & UX enthusiast",
+        "description": "I build things and care about how they feel. Small sparks of creativity become useful, playful little projects."
       },
       "reveal": "Follow the little spark",
       "restore": "Back to the introduction",
@@ -122,7 +122,22 @@
         "description": "I build ideas with code and keep track of change through words. Notes on technology, products, everyday life, and starting again."
       }
     },
-    "greeting": "Hello, I'm adnaan."
+    "greeting": "Hello, I'm adnaan.",
+    "social": {
+      "label": "Find me elsewhere",
+      "github": {
+        "name": "GitHub",
+        "hint": "Code and small open-source projects"
+      },
+      "gitee": {
+        "name": "Gitee",
+        "hint": "More footprints in code"
+      },
+      "spark": {
+        "name": "Inspiration",
+        "hint": "Spark Relics · open-source ideas"
+      }
+    }
   },
   "articles": {
     "title": "Written along the way",
@@ -197,7 +212,8 @@
       "stats": "Meeting along the way",
       "navigation": "The coastal constellation"
     },
-    "readingProgress": "Article reading progress"
+    "readingProgress": "Article reading progress",
+    "statusLine": "Writing code"
   },
   "celestial": {
     "label": "Light trail navigation",
@@ -692,5 +708,16 @@
     "copy": "Copy code",
     "copied": "Copied",
     "failed": "Could not copy. Try again."
+  },
+  "feedback": {
+    "dismiss": "Dismiss this note",
+    "copyFailed": "Could not copy yet",
+    "saved": "Saved for later",
+    "removed": "Removed from saved items",
+    "tones": {
+      "info": "A margin note",
+      "success": "Noted",
+      "error": "One more try"
+    }
   }
 }

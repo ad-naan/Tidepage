@@ -1,0 +1,37 @@
+/* Tidepage's shared type, spacing and drawing vocabulary. */
+:root {
+  --font-ui: "Inter Variable", "Noto Sans SC Variable", system-ui, sans-serif;
+  --font-editorial: "Noto Serif SC Variable", "Songti SC", Georgia, serif;
+  --font-code: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  --ui-font: var(--font-ui);
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --text-xxs: 10px;
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-body: 14px;
+  --text-reading: 16px;
+  --text-subtitle: 18px;
+  --text-title: 22px;
+  --text-display: 38px;
+  --leading-ui: 1.55;
+  --leading-body: 1.8;
+  --leading-reading: 1.95;
+  --leading-heading: 1.5;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --stroke-ui: 1px;
+  --stroke-pencil: 1.35;
+  --stroke-pencil-strong: 1.8;
+  --radius-control: 6px;
+  --motion-quick: 180ms;
+  --motion-soft: 380ms;
+}

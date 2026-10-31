@@ -36,3 +36,10 @@ export const profile = {
     },
   ],
 };
+
+/** Verified public destinations; adding another profile never changes the hero layout code. */
+export const profileLinks = [
+  { key: "github", href: "https://github.com/ad-naan" },
+  { key: "gitee", href: "https://gitee.com/adnaan" },
+  { key: "spark", href: "https://spark-relics.github.io/" },
+] as const;

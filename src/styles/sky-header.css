@@ -744,3 +744,53 @@
   border: 2px solid var(--paper);
   box-shadow: 0 0 8px #91a17d44;
 }
+
+/* Quiet status at rest; the floating state's controls stay inside the painted contour. */
+.sky-header:not(.is-compact) .living-activity-trigger {
+  gap: 7px;
+  padding: 4px 0;
+}
+.sky-header:not(.is-compact) .living-state-mark {
+  width: 6px;
+  height: 12px;
+  flex-basis: 6px;
+}
+.sky-header:not(.is-compact) .living-state-mark > i {
+  width: 4px;
+  height: 4px;
+  box-shadow: 0 0 7px #91a17d44;
+}
+.sky-header:not(.is-compact) .living-status > strong {
+  font: 400 11px/1.5 var(--ui-font);
+  color: var(--muted);
+}
+.sky-header:not(.is-compact) .living-activity-trigger > .lucide-chevron-down {
+  width: 9px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.sky-header:not(.is-compact)
+  .living-activity-trigger:hover
+  > .lucide-chevron-down,
+.sky-header:not(.is-compact)
+  .living-activity-trigger:focus-visible
+  > .lucide-chevron-down {
+  opacity: 0.55;
+}
+.site-shell .sky-header.is-compact .living-header-row {
+  padding-inline: 28px 40px;
+}
+.sky-header .living-actions {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+.sky-header .header-music .music-open > span:last-child {
+  max-width: 84px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 700px) {
+  .site-shell .sky-header.is-compact .living-header-row {
+    padding-inline: 16px 22px;
+  }
+}

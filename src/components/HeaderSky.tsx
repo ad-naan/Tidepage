@@ -51,25 +51,6 @@ export function HeaderSky() {
       </div>
       <div className="header-sky" aria-hidden="true">
         <svg viewBox="0 0 1440 100" fill="none" preserveAspectRatio="none">
-          <defs>
-            <clipPath id="header-sky-orb-window">
-              <rect x="390" y="0" width="90" height="82" />
-            </clipPath>
-          </defs>
-          <g clipPath="url(#header-sky-orb-window)">
-            <g className="header-sunset-orb">
-              <circle className="header-orb-halo" r="25" />
-              <circle className="header-orb-disc" r="12" />
-              <path
-                className="header-orb-pencil"
-                d="M-9 4 5-10M-7 8 9-8M-3 10 11-4M-11 0-2-10M1 11 11 2"
-              />
-            </g>
-            <g className="header-moon-orb">
-              <circle className="header-orb-halo" r="25" />
-              <path d="M5-11A12 12 0 1 0 11 6 10 10 0 0 1 5-11Z" />
-            </g>
-          </g>
           <g className="header-pencil-skyline" filter="url(#tidepage-pencil)">
             <path
               className="header-skyline-coast"

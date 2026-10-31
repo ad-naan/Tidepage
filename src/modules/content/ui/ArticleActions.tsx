@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import { useTranslations } from "next-intl";
 import { Copy, Heart } from "lucide-react";
 import { useLocalState } from "@/shared/hooks/useLocalState";
@@ -14,24 +14,35 @@ export function ArticleActions({
 }) {
   const t = useTranslations("articles");
   const [saved, setSaved] = useLocalState<string[]>("adnaan-articles", []);
-  const [message, setMessage] = useState("");
+  const { notify } = useNotice();
+  const feedback = useTranslations("feedback");
   async function share() {
     try {
       await navigator.clipboard.writeText(`${title}\n${window.location.href}`);
-      setMessage(t("copied"));
+      notify({ title: t("copied"), tone: "success" });
     } catch {
-      setMessage(t("copyFallback"));
+      notify({
+        title: feedback("copyFailed"),
+        detail: t("copyFallback"),
+        tone: "error",
+        duration: 6500,
+      });
     }
   }
   return (
     <div className="article-actions">
       <SpringButton
         className={`button-outline ${saved.includes(slug) ? "liked" : ""}`}
-        onClick={() =>
-          setSaved((v) =>
-            v.includes(slug) ? v.filter((s) => s !== slug) : [...v, slug],
-          )
-        }
+        onClick={() => {
+          const removing = saved.includes(slug);
+          setSaved((value) =>
+            removing ? value.filter((item) => item !== slug) : [...value, slug],
+          );
+          notify({
+            title: feedback(removing ? "removed" : "saved"),
+            tone: "success",
+          });
+        }}
       >
         <Heart
           size={16}
@@ -43,7 +54,6 @@ export function ArticleActions({
         <Copy size={15} />
         {t("share")}
       </SpringButton>
-      <span role="status">{message}</span>
     </div>
   );
 }

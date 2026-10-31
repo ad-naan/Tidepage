@@ -108,11 +108,11 @@
     "quote": "让过去有处安放，让明天仍有期待。",
     "next": "留给下一页",
     "hero": {
-      "greeting": "很高兴在这里遇见你。",
+      "greeting": "你好，很高兴在这里遇见你。",
       "intro": {
-        "line1": "我是 adnaan，",
-        "line2": "写代码，也写生活。",
-        "description": "喜欢把想法做成小作品，也在这里分享技术、产品和日常。"
+        "line1": "adnaan.",
+        "line2": "全栈工程师 · UI/UX 爱好者",
+        "description": "写代码，也打磨体验。喜欢把灵光一现的小创意，做成有用、也有趣的作品。"
       },
       "reveal": "轻触星芒，翻到另一页",
       "restore": "回到自我介绍",
@@ -122,7 +122,22 @@
         "description": "我用代码把想法做出来，也用文字留住自己的变化。这里记录技术、产品与生活，还有每一次重新出发。"
       }
     },
-    "greeting": "你好，我是 adnaan。"
+    "greeting": "你好，我是 adnaan。",
+    "social": {
+      "label": "在其他地方找到我",
+      "github": {
+        "name": "GitHub",
+        "hint": "代码与开源小作品"
+      },
+      "gitee": {
+        "name": "Gitee",
+        "hint": "另一份代码足迹"
+      },
+      "spark": {
+        "name": "灵感收藏",
+        "hint": "Spark Relics · 开源创意"
+      }
+    }
   },
   "articles": {
     "title": "写在光阴里",
@@ -197,7 +212,8 @@
       "stats": "在光阴里相遇",
       "navigation": "海岸星图"
     },
-    "readingProgress": "文章阅读进度"
+    "readingProgress": "文章阅读进度",
+    "statusLine": "正在写代码"
   },
   "celestial": {
     "label": "光轨导航",
@@ -692,5 +708,16 @@
     "copy": "复制代码",
     "copied": "已复制",
     "failed": "复制失败，请重试"
+  },
+  "feedback": {
+    "dismiss": "收起这条提醒",
+    "copyFailed": "还没有复制成功",
+    "saved": "已记在心里",
+    "removed": "已取消收藏",
+    "tones": {
+      "info": "页边批注",
+      "success": "已经记下",
+      "error": "需要再试一次"
+    }
   }
 }

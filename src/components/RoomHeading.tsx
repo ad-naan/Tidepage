@@ -1,6 +1,8 @@
 "use client";
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
+import { usePageNotice } from "@/shared/ui/feedback/NoticeProvider";
+import { Text } from "@/shared/ui/typography/Text";
 import styles from "./RoomHeading.module.css";
 
 type Room = "archive" | "notes" | "projects" | "quotes" | "gallery" | "about";
@@ -98,12 +100,15 @@ export function RoomHeading({
   description: string;
 }) {
   const t = useTranslations("rooms");
+  usePageNotice({ key: room, title, eyebrow: t(`${room}.label`) });
   return (
     <header className={styles.heading} data-room={room}>
       <div className={styles.identity}>
         <span className={styles.number}>{numbers[room]}</span>
         <div>
-          <span className={styles.eyebrow}>{t(`${room}.label`)}</span>
+          <Text variant="caption" tone="muted" className={styles.eyebrow}>
+            {t(`${room}.label`)}
+          </Text>
           <h1>{title}</h1>
         </div>
       </div>

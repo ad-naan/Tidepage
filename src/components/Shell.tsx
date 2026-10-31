@@ -4,12 +4,13 @@ import { navigationItems } from "@/shared/config/site";
 import { useEffect, useState, type ReactNode } from "react";
 import { Link } from "@/shared/i18n/navigation";
 import { usePathname } from "@/shared/i18n/navigation";
-import { AnimatePresence, MotionConfig, motion } from "motion/react";
+import { MotionConfig, motion } from "motion/react";
 import { Mail, X, Heart, ArrowRight } from "lucide-react";
 import { useLocalState } from "@/shared/hooks/useLocalState";
 import { Dialog } from "@/shared/ui/primitives";
 import { spring } from "@/shared/lib/motion";
 import { SiteHeader } from "./SiteHeader";
+import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import { SiteFooter } from "./SiteFooter";
 
 import type {
@@ -37,7 +38,7 @@ export function Shell({
   );
   const [immersive, setImmersive] = useState(false);
   const [contact, setContact] = useState(false);
-  const [secret, setSecret] = useState(false);
+  const { notify } = useNotice();
   const [visitedCoast, setVisitedCoast] = useState(false);
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -84,7 +85,9 @@ export function Shell({
             theme={theme}
             onThemeChange={() => setTheme(theme === "light" ? "dark" : "light")}
             onContact={() => setContact(true)}
-            onHeart={() => setSecret(true)}
+            onHeart={() =>
+              notify({ title: footer("gratitude"), tone: "success" })
+            }
           />
         </div>
         {contact && (
@@ -107,21 +110,6 @@ export function Shell({
             </div>
           </Dialog>
         )}
-        <AnimatePresence>
-          {secret && (
-            <motion.button
-              className="secret-toast"
-              onClick={() => setSecret(false)}
-              initial={{ y: 80, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 80, opacity: 0 }}
-            >
-              {footer("gratitude")}
-              <Heart size={17} fill="currentColor" />
-              <X size={14} />
-            </motion.button>
-          )}
-        </AnimatePresence>
       </div>
     </MotionConfig>
   );

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { catalogs } from "@/i18n/catalogs";
+import { NoticeProvider } from "@/shared/ui/feedback/NoticeProvider";
 import { DocumentLanguage } from "@/shared/i18n/DocumentLanguage";
 import { JsonLd } from "@/server/seo/JsonLd";
 import { siteGraph } from "@/server/seo/structured-data";
@@ -31,7 +32,7 @@ export default async function LocaleLayout({
           description: messages.site.description,
         })}
       />
-      {children}
+      <NoticeProvider>{children}</NoticeProvider>
     </NextIntlClientProvider>
   );
 }

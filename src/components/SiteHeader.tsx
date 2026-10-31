@@ -1,5 +1,6 @@
 "use client";
 import { useTranslations } from "next-intl";
+import { NoticeDock } from "@/shared/ui/feedback/NoticeProvider";
 import { AnchoredPanel } from "@/shared/ui/AnchoredPanel";
 import { OverlayScope } from "@/shared/ui/OverlayScope";
 
@@ -147,63 +148,33 @@ export function SiteHeader({
             <div className="header-identity-group">
               <HeaderBrand compact={condensed} />
               <div className="living-context">
-                <AnimatePresence mode="wait" initial={false}>
-                  {reading ? (
-                    <motion.div
-                      className="reading-context"
-                      key="reading"
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -6 }}
-                      transition={spring}
-                    >
-                      <ReadingProgress
-                        key={article.slug}
-                        title={article.title}
-                      />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      className="header-idle-context header-atmosphere-context"
-                      key="idle"
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -6 }}
-                      transition={spring}
-                    >
-                      <motion.button
-                        className={`living-activity-trigger ${open && panel === "activity" ? "selected" : ""}`}
-                        onClick={() => show("activity")}
-                        aria-label={t("activityLabel")}
-                        aria-expanded={open && panel === "activity"}
-                        aria-controls="header-panel"
-                        whileTap={{ scale: 0.97 }}
-                      >
-                        <span className="living-state-mark" aria-hidden="true">
-                          <svg viewBox="0 0 24 24" fill="none">
-                            <path d="M7 4C-1 9 4 23 14 21M17 3q6 2 5 9" />
-                          </svg>
-                          <i />
-                        </span>
-                        <span className="living-status">
-                          <span>
-                            {t("now")} <span>{t("doing")}</span>
-                          </span>
-                          <strong>
-                            {t("coding")}
-                            <span className="status-type-caret" />
-                          </strong>
-                        </span>
-                        <ChevronDown size={11} />
-                        <span className="compact-activity-hint">
-                          {t("coding")}
-                        </span>
-                      </motion.button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <motion.button
+                  className={`living-activity-trigger ${open && panel === "activity" ? "selected" : ""}`}
+                  onClick={() => show("activity")}
+                  aria-label={t("activityLabel")}
+                  aria-expanded={open && panel === "activity"}
+                  aria-controls="header-panel"
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <span className="living-state-mark" aria-hidden="true">
+                    <i />
+                  </span>
+                  <span className="living-status">
+                    <strong>{t("statusLine")}</strong>
+                  </span>
+                  <ChevronDown size={11} />
+                </motion.button>
               </div>
             </div>
+            <NoticeDock
+              context={
+                article && (
+                  <div className="reading-context">
+                    <ReadingProgress key={article.slug} title={article.title} />
+                  </div>
+                )
+              }
+            />
             <div className="header-navigation">
               <SiteNavigation
                 articles={articles}
@@ -213,6 +184,14 @@ export function SiteHeader({
               />
             </div>
             <div className="living-actions">
+              <svg
+                className="header-tool-separator"
+                viewBox="0 0 12 28"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path d="M7 3Q3 12 5 25M9 5l-3 2m2 13-3 2" />
+              </svg>
               <MusicPlayer
                 expanded={open && panel === "music"}
                 onExpandedChange={(value) => {
