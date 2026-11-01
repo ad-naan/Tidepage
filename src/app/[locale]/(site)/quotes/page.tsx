@@ -1,4 +1,4 @@
-import { getLocale, getTranslations } from "next-intl/server";
+import { getLocale } from "next-intl/server";
 import { QuotesView } from "@/modules/content/ui/quotes/QuotesView";
 import { getQuotes } from "@/modules/content/server";
 import { getPageMetadata } from "@/server/seo/metadata";

@@ -5,7 +5,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Link } from "@/shared/i18n/navigation";
 import { usePathname } from "@/shared/i18n/navigation";
 import { MotionConfig, motion } from "motion/react";
-import { Mail, X, ArrowRight } from "lucide-react";
+import { Mail, ArrowRight } from "lucide-react";
 import { useLocalState } from "@/shared/hooks/useLocalState";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { spring } from "@/shared/lib/motion";

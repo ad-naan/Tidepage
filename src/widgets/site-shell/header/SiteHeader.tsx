@@ -19,7 +19,6 @@ import {
 import {
   ArrowRight,
   ChevronDown,
-  Code2,
   Command,
   Focus,
   Search,

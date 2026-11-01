@@ -96,8 +96,7 @@ export function createCoastScene(options: SceneOptions) {
     roof = mat(0x53696d),
     wood = mat(0x665447);
   const rock = mat(0x647678),
-    sand = mat(0xb7ae92),
-    grass = mat(0x697b58);
+    sand = mat(0xb7ae92);
   const pine = mat(0x2e594b),
     pineLight = mat(0x4e7656),
     orange = mat(0xa26749);
