@@ -4,5 +4,8 @@
     "editor.formatOnSave": true
   },
   "prettier.requireConfig": true,
-  "npm.packageManager": "pnpm"
+  "npm.packageManager": "pnpm",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  }
 }

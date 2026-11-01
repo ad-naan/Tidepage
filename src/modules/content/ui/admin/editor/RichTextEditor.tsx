@@ -17,7 +17,7 @@ import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { Input } from "@/shared/ui/field/Input";
 import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import { MediaPicker } from "@/modules/media/ui/admin/MediaPicker";
-import { localImageUploader } from "@/modules/media/ui/admin/local-assets";
+import type { ImageUploader } from "@/modules/media/domain/assets";
 import { EditorToolbar } from "./EditorToolbar";
 import { blockCommands, type BlockCommand } from "./block-commands";
 import {
@@ -34,6 +34,7 @@ export function RichTextEditor({
   onReady,
   onDirty,
   onUploading,
+  uploader,
   readOnly = false,
   active = true,
 }: {
@@ -43,6 +44,7 @@ export function RichTextEditor({
   onUploading?: (busy: boolean) => void;
   readOnly?: boolean;
   active?: boolean;
+  uploader?: ImageUploader;
 }) {
   const t = useTranslations("admin.editor");
   const { notify } = useNotice();
@@ -59,8 +61,8 @@ export function RichTextEditor({
   const slashList = useRef<HTMLDivElement>(null);
   const slashRange = useRef<{ from: number; to: number } | null>(null);
   const dismissed = useRef<number | null>(null);
-  const syncSlash = useRef<(e: Editor) => void>(() => {});
-  const linkAction = useRef<() => void>(() => {});
+  const syncSlash = useRef<(e: Editor) => void>(() => { });
+  const linkAction = useRef<() => void>(() => { });
   const [slashIndex, setSlashIndex] = useState(0);
   const root = useRef<HTMLDivElement>(null);
   const [slashPosition, setSlashPosition] = useState({ left: 0, top: 0 });
@@ -72,7 +74,7 @@ export function RichTextEditor({
   uploadCallback.current = onUploading;
   const slashRef = useRef<string | null>(null);
   slashRef.current = slash;
-  const actionRef = useRef<(key: BlockCommand) => void>(() => {});
+  const actionRef = useRef<(key: BlockCommand) => void>(() => { });
   const filtered = blockCommands.filter((item) =>
     `${t(`blocks.${item.key}`)} ${item.keywords}`
       .toLocaleLowerCase()
@@ -85,6 +87,10 @@ export function RichTextEditor({
   async function insertFiles(files: File[], position?: number) {
     const e = editorRef.current;
     if (!e || readOnly) return;
+    if (!uploader) {
+      notify({ title: t("uploadFailed"), tone: "error" });
+      return;
+    }
     for (const file of files) {
       const task = new AbortController();
       uploads.current.add(task);
@@ -104,9 +110,9 @@ export function RichTextEditor({
         })
         .run();
       try {
-        const asset = await localImageUploader.upload(file, {
+        const asset = await uploader.upload(file, {
           signal: task.signal,
-          onProgress: () => {},
+          onProgress: () => { },
         });
         if (e.isDestroyed || task.signal.aborted) continue;
         let pos: number | undefined;
