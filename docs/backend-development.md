@@ -123,7 +123,7 @@ Next.js App Router 的 Route Handler **无法挂 WebSocket 升级**，所以 Soc
 ## 提交前检查清单
 
 ```sh
-npm run check   # 架构边界 + Next 类型生成 + tsc + 测试，一条命令全查
+npm run check   # 格式 + 架构边界 + Next 类型生成 + tsc + 测试，一条命令全查
 npm run build   # 需要验证生产构建时
 ```
 

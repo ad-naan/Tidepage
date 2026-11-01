@@ -231,7 +231,7 @@ npm run check
 npm run build
 ```
 
-`check` 验证目录依赖、基础组件使用、类型和测试；`build` 验证生产构建。之后在浏览器亲自点一次修改过的功能，检查窄屏、英文和深色模式，自动检查不能判断排版是否好看。
+`check` 验证代码格式、目录依赖、基础组件使用、类型和测试；`build` 验证生产构建。格式检查失败时执行 `npm run format`，也可用 `npm run format:check` 单独检查。VS Code 安装工作区推荐的 Prettier 扩展后，保存文件会按项目配置自动格式化。之后在浏览器亲自点一次修改过的功能，检查窄屏、英文和深色模式，自动检查不能判断排版是否好看。
 
 架构报错 `use the shared UI primitive`：写了原生控件，改用统一组件。报错 `co-locate CSS Modules`：样式文件没有放到所属组件旁边。
 

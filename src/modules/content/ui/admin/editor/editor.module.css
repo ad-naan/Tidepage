@@ -4,7 +4,7 @@
 }
 .toolbar {
   position: sticky;
-  top: 64px;
+  top: var(--editor-header-height, 64px);
   z-index: 5;
   display: flex;
   flex-wrap: wrap;

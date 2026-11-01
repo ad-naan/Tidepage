@@ -90,4 +90,4 @@ import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 
 `npm run check:architecture` 会检查分层、客户端/服务端依赖、旧目录，以及原生控件的归属。业务和组合层不能直接写 `button`、`motion.button`、`input`、`textarea`、`select`、`a`、`dialog`、`details/summary`，必须使用统一出口。原生标签只允许出现在它自己的基础实现中；不能另建一个“临时基础组件”绕过检查。
 
-`tests/ui-architecture.test.mjs` 使用合法与违规样例验证这些规则。`npm run check` 执行架构、类型和测试；生产构建另执行 `npm run build`。字体、间距与笔触见 [设计基础](design-system.md)。
+`tests/ui-architecture.test.mjs` 使用合法与违规样例验证这些规则。`npm run check` 执行格式、架构、类型和测试；生产构建另执行 `npm run build`。字体、间距与笔触见 [设计基础](design-system.md)。

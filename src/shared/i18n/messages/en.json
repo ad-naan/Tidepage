@@ -282,11 +282,7 @@
   },
   "stats": {
     "open": "View visitor statistics",
-    "faces": [
-      "a",
-      "d",
-      "n"
-    ],
+    "faces": ["a", "d", "n"],
     "reading": " reading now",
     "nowIntro": "Right now, ",
     "nowFriends": "8 friends",

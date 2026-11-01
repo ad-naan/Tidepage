@@ -12,6 +12,10 @@
   background: var(--paper);
   font-family: var(--font-ui);
 }
+.workspace {
+  --editor-header-height: 64px;
+  min-width: 0;
+}
 .identity,
 .actions {
   display: flex;
@@ -72,7 +76,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: start;
-  min-height: calc(100dvh - 132px);
+  min-height: calc(100dvh - 68px - var(--editor-header-height));
 }
 .layout[data-panel="true"] {
   grid-template-columns: minmax(0, 1fr) 304px;
@@ -126,8 +130,8 @@
 }
 .aside {
   position: sticky;
-  top: 64px;
-  height: calc(100dvh - 132px);
+  top: var(--editor-header-height);
+  height: calc(100dvh - 68px - var(--editor-header-height));
   overflow: auto;
   overscroll-behavior: contain;
   border-left: 1px solid var(--line);
@@ -209,10 +213,10 @@
   .aside {
     position: fixed;
     z-index: 20;
-    top: 196px;
+    top: calc(68px + var(--editor-header-height));
     right: 0;
     width: 320px;
-    height: calc(100dvh - 196px);
+    height: calc(100dvh - 68px - var(--editor-header-height));
     box-shadow: -12px 12px 32px color-mix(in srgb, var(--ink) 6%, transparent);
   }
 }

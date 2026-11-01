@@ -1,7 +1,14 @@
 node_modules
 .next
 .npm-cache
+.cache
+out
+build
+dist
+coverage
 public
 artifacts
 drizzle/meta
 package-lock.json
+next-env.d.ts
+*.tsbuildinfo

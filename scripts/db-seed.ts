@@ -23,7 +23,7 @@ try {
       .insert(articlesTable)
       .values(
         seedArticles.map((a) => ({
-          locale:a.locale,
+          locale: a.locale,
           slug: a.slug,
           title: a.title,
           excerpt: a.excerpt,

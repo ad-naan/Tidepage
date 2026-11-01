@@ -37,9 +37,13 @@ npm run dev
 
 ```powershell
 npm run dev       # 开发和热更新
-npm run check     # 架构、类型、自动测试
+npm run format    # 统一格式化代码、样式、配置和文档
+npm run format:check # 只检查格式，不修改文件
+npm run check     # 格式、架构、类型、自动测试
 npm run build     # 确认可构建生产版本
 ```
+
+格式使用 Prettier，规则统一在 `.prettierrc.json`：2 空格缩进、双引号、分号、80 列换行参考宽度和 LF 换行。`.editorconfig` 同步基础编辑规则；使用 VS Code 时安装工作区推荐的 Prettier 扩展，保存即可自动格式化。生成文件、缓存、静态资源和锁文件通过 `.prettierignore` 排除。CI 的 `npm run check` 包含格式检查，提示格式问题时先执行 `npm run format`。
 
 基础控件用现成的 `Button`、`Input`、`FilterTabs`、`Dialog` 等；文案使用语言包。可复制的例子见 [开发上手](docs/onboarding.md)。
 

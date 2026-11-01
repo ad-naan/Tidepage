@@ -112,7 +112,7 @@ GEO 采用可抓取 HTML、清晰作者、稳定引用、同源 Markdown 正文�
 
 实时多人（Socket.IO / 世界空间陪伴）走独立网关进程，不在 Route Handler 中挂 WebSocket：握手复用数据库会话校验，跨实例广播复用 `realtime/pubsub`，事件频率用 `http/rate-limit` 约束；接入步骤见上手指南。
 
-CI 执行架构检查、类型检查、规则与查询测试、生产构建。PG 查询测试使用运行真实 PostgreSQL 引擎的 PGlite，并执行仓库中的初始 SQL；它不替代部署前对 TCP 连接池、Redis、TLS 和目标 PostgreSQL 服务的联调。
+CI 执行格式检查、架构检查、类型检查、规则与查询测试、生产构建。PG 查询测试使用运行真实 PostgreSQL 引擎的 PGlite，并执行仓库中的初始 SQL；它不替代部署前对 TCP 连接池、Redis、TLS 和目标 PostgreSQL 服务的联调。
 
 ## 国际化与基础组件
 

@@ -1,5 +1,12 @@
 "use client";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   ArrowLeft,
   Eye,
@@ -54,6 +61,22 @@ export function ArticleEditorView({
   const uiLocale = useLocale();
   const { notify } = useNotice();
   const [draft, setDraft] = useState<ArticleDraft | null>(null);
+  const workspace = useRef<HTMLDivElement>(null);
+  const header = useRef<HTMLElement>(null);
+  const loaded = !!draft;
+  useLayoutEffect(() => {
+    const element = header.current;
+    if (!element) return;
+    const measure = () =>
+      workspace.current?.style.setProperty(
+        "--editor-header-height",
+        `${element.getBoundingClientRect().height}px`,
+      );
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [loaded]);
   const draftRef = useRef<ArticleDraft | null>(null);
   const [locale, setLocale] = useState<Locale>(uiLocale);
   const [dirty, setDirty] = useState(false);
@@ -268,8 +291,8 @@ export function ArticleEditorView({
   const translation = translationOf(draft, locale);
   const issues = publicationIssues(snapshot() ?? draft, locale);
   return (
-    <>
-      <header className={styles.header}>
+    <div className={styles.workspace} ref={workspace}>
+      <header className={styles.header} ref={header}>
         <div className={styles.identity}>
           <Link
             href="/admin/articles"
@@ -651,6 +674,6 @@ export function ArticleEditorView({
           </Button>
         </Dialog>
       )}
-    </>
+    </div>
   );
 }
