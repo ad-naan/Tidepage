@@ -124,7 +124,9 @@
   box-shadow: 0 12px 40px #11182712;
 }
 .srOnly {
-  position: absolute;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 1px;
   height: 1px;
   padding: 0;

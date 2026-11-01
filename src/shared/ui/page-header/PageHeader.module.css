@@ -1,0 +1,23 @@
+.header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.header h1 {
+  font: 500 var(--text-title)/1.5 var(--font-editorial);
+}
+.header p {
+  font: 400 var(--text-sm)/1.8 var(--font-ui);
+  color: var(--muted);
+  margin-top: 8px;
+  max-width: 65ch;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}

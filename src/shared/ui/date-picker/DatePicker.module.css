@@ -1,0 +1,72 @@
+.trigger {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  justify-content: flex-start;
+  text-align: start;
+  min-height: 42px;
+}
+.trigger > span {
+  flex: 1;
+}
+.calendar {
+  max-width: 360px;
+  margin: 0 auto;
+}
+.month {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.month strong {
+  font: 500 var(--text-body)/1.6 var(--font-ui);
+}
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 3px;
+}
+.week > [role="columnheader"] {
+  text-align: center;
+  padding: 8px 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+.day {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  min-height: 36px;
+  font-size: var(--text-sm);
+}
+.day[aria-pressed="true"] {
+  background: var(--wash);
+  color: var(--accent);
+  border-radius: 35% 8% 30% 5%;
+}
+.today {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--accent);
+  bottom: 3px;
+}
+.time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.time small {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}

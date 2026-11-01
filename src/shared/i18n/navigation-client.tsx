@@ -9,6 +9,7 @@ import {
 } from "react";
 import { navigation } from "./navigation-core";
 import { useNavigationFeedback } from "@/shared/ui/navigation/NavigationFeedback";
+import { isQuietNavigationPath } from "@/shared/config/navigation";
 
 export const Link = forwardRef<
   HTMLAnchorElement,
@@ -19,6 +20,12 @@ export const Link = forwardRef<
   return (
     <navigation.Link
       {...props}
+      scroll={
+        props.scroll ??
+        (isQuietNavigationPath(typeof props.href === "string" ? props.href : "")
+          ? false
+          : undefined)
+      }
       ref={(element) => {
         anchor.current = element;
         if (typeof ref === "function") ref(element);

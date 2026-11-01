@@ -1,0 +1,68 @@
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.heading h1 {
+  font: 500 var(--text-title)/1.5 var(--font-editorial);
+}
+.heading p {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  margin-top: 8px;
+}
+.actions a {
+  font-size: var(--text-sm);
+  color: var(--accent);
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.stats > div {
+  position: relative;
+  isolation: isolate;
+  padding: 20px;
+}
+.stats strong {
+  display: block;
+  font: 400 30px/1.5 var(--font-editorial);
+}
+.stats span {
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+.section {
+  margin-top: 32px;
+}
+.section h2 {
+  font: 500 var(--text-subtitle)/1.5 var(--font-editorial);
+}
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+}
+.list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--line);
+  padding: 16px 0;
+}
+.list h3 {
+  font: 500 var(--text-body)/1.7 var(--font-editorial);
+}
+.list a {
+  color: var(--accent);
+  font-size: var(--text-sm);
+}
+.empty {
+  color: var(--muted);
+  padding: 32px 0;
+  font-size: var(--text-sm);
+}

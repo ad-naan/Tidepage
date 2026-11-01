@@ -35,7 +35,6 @@ export function Dialog({
   return (
     <dialog
       ref={ref}
-      data-custom-scroll={t("region")}
       className={`${styles.dialog} ${wide ? styles.wide : ""}`}
       onCancel={onClose}
       onClick={(e) => {
@@ -62,7 +61,9 @@ export function Dialog({
             <X size={19} />
           </IconButton>
         </div>
-        {children}
+        <div className={styles.content} data-custom-scroll={t("region")}>
+          {children}
+        </div>
       </motion.div>
     </dialog>
   );

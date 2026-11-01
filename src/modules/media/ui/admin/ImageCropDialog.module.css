@@ -1,0 +1,43 @@
+.layout {
+  display: grid;
+  gap: 16px;
+}
+.help {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  line-height: 1.8;
+}
+.canvas {
+  height: 340px;
+  position: relative;
+  background: var(--soft);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: center;
+}
+.controls label {
+  font-size: var(--text-sm);
+}
+.controls input {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+}
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+@media (max-width: 600px) {
+  .canvas {
+    height: 250px;
+  }
+  .controls {
+    grid-template-columns: 1fr;
+  }
+}

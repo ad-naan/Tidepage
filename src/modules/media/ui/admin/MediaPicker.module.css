@@ -1,0 +1,45 @@
+.upload {
+  display: grid;
+  gap: 12px;
+  padding: 16px 0;
+}
+.actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.mediaGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+.mediaItem {
+  position: relative;
+  isolation: isolate;
+  padding: 14px;
+  min-width: 0;
+}
+.mediaItem img {
+  width: 100%;
+  height: 130px;
+  object-fit: contain;
+}
+.mediaItem p {
+  overflow-wrap: anywhere;
+  font-size: var(--text-sm);
+  margin-top: 10px;
+}
+.mediaItem small {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+.empty {
+  padding: 32px 8px;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+.error {
+  color: var(--accent);
+  font-size: var(--text-sm);
+}

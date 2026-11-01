@@ -13,6 +13,7 @@ import {
 import { usePathname, useSearchParams } from "next/navigation";
 import { defaultLocale, isLocale, type Locale } from "@/shared/i18n/config";
 import styles from "./navigation.module.css";
+import { isQuietNavigationPath } from "@/shared/config/navigation";
 
 type Copy = { label: string; lines: string[] };
 type Feedback = {
@@ -45,6 +46,7 @@ export function NavigationFeedback({
   const segment = path.split("/")[1];
   const locale = isLocale(segment) ? segment : defaultLocale;
   const words = copy[locale];
+  const quiet = isQuietNavigationPath(path);
   const [visible, setVisible] = useState(false);
   const [line, setLine] = useState(0);
   const active = useRef(false);
@@ -55,8 +57,17 @@ export function NavigationFeedback({
   const committed = useRef("");
   const count = useRef(words.lines.length);
   count.current = words.lines.length;
+  useEffect(() => {
+    if (!quiet) return;
+    clearTimeout(exit.current);
+    active.current = false;
+    setVisible(false);
+    delete document.documentElement.dataset.navigating;
+    document.documentElement.style.removeProperty("--route-content-height");
+  }, [quiet]);
 
   const begin = useCallback(() => {
+    if (isQuietNavigationPath(location.pathname)) return;
     clearTimeout(exit.current);
     if (active.current) return;
     active.current = true;
@@ -134,8 +145,8 @@ export function NavigationFeedback({
       </Suspense>
       <div
         className={styles.veil}
-        data-visible={visible}
-        aria-hidden={!visible}
+        data-visible={visible && !quiet}
+        aria-hidden={!visible || quiet}
       >
         <div
           className={styles.composition}

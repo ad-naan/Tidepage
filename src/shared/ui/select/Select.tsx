@@ -2,7 +2,7 @@
 
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp, LoaderCircle } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { useOverlayOwner } from "@/shared/ui/overlay/OverlayScope";
 import styles from "./Select.module.css";
 
@@ -28,6 +28,8 @@ type SelectProps<Value extends string> = {
   required?: boolean;
   invalid?: boolean;
   describedBy?: string;
+  "aria-describedby"?: string;
+  "aria-invalid"?: boolean | "true" | "false" | "grammar" | "spelling";
   dir?: "ltr" | "rtl";
   variant?: "surface" | "ghost";
   className?: string;
@@ -48,16 +50,25 @@ export function Select<Value extends string>({
   required = false,
   invalid = false,
   describedBy,
+  "aria-describedby": nativeDescription,
+  "aria-invalid": nativeInvalid,
   dir = "ltr",
   variant = "surface",
   className = "",
 }: SelectProps<Value>) {
   const [open, setOpen] = useState(false);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const [portalContainer, setPortalContainer] = useState<
+    HTMLElement | undefined
+  >();
   const owner = useOverlayOwner();
   return (
     <SelectPrimitive.Root
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={(next) => {
+        setPortalContainer(trigger.current?.closest("dialog") ?? undefined);
+        setOpen(next);
+      }}
       value={value}
       onValueChange={(next) => {
         const option = options.find(
@@ -71,11 +82,12 @@ export function Select<Value extends string>({
       dir={dir}
     >
       <SelectPrimitive.Trigger
+        ref={trigger}
         id={id}
         aria-label={label}
         aria-busy={busy}
-        aria-invalid={invalid || undefined}
-        aria-describedby={describedBy}
+        aria-invalid={nativeInvalid ?? (invalid || undefined)}
+        aria-describedby={nativeDescription ?? describedBy}
         title={label}
         className={`${styles.trigger} ${styles[variant]} ${className}`}
       >
@@ -95,7 +107,7 @@ export function Select<Value extends string>({
           )}
         </SelectPrimitive.Icon>
       </SelectPrimitive.Trigger>
-      <SelectPrimitive.Portal>
+      <SelectPrimitive.Portal container={portalContainer}>
         <SelectPrimitive.Content
           className={styles.content}
           position="popper"

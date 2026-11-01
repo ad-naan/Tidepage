@@ -1,0 +1,34 @@
+import {
+  Heading2,
+  Heading3,
+  List,
+  ListOrdered,
+  ListTodo,
+  Quote,
+  Code2,
+  Table,
+  Image,
+  Film,
+  Music2,
+  Globe2,
+  Minus,
+  MessageSquare,
+} from "lucide-react";
+
+export const blockCommands = [
+  { key: "heading", icon: Heading2, keywords: "heading title h2 标题" },
+  { key: "subheading", icon: Heading3, keywords: "heading h3 子标题" },
+  { key: "bullet", icon: List, keywords: "bullet list ul 列表" },
+  { key: "ordered", icon: ListOrdered, keywords: "ordered list ol 数字" },
+  { key: "tasks", icon: ListTodo, keywords: "task todo checkbox 待办" },
+  { key: "quote", icon: Quote, keywords: "quote blockquote 引用" },
+  { key: "callout", icon: MessageSquare, keywords: "callout note 提示" },
+  { key: "code", icon: Code2, keywords: "code block 代码" },
+  { key: "divider", icon: Minus, keywords: "divider hr 分割线" },
+  { key: "table", icon: Table, keywords: "table 表格" },
+  { key: "image", icon: Image, keywords: "image picture photo 图片" },
+  { key: "web", icon: Globe2, keywords: "web link bookmark 网页" },
+  { key: "movie", icon: Film, keywords: "movie film video 电影" },
+  { key: "music", icon: Music2, keywords: "music audio 音乐" },
+] as const;
+export type BlockCommand = (typeof blockCommands)[number]["key"];

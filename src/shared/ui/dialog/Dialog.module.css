@@ -6,7 +6,7 @@
   max-height: 88dvh;
   color: var(--ink);
   background: none;
-  overflow: auto;
+  overflow: visible;
 }
 .dialog::backdrop {
   background: #171c283b;
@@ -19,11 +19,21 @@
   position: relative;
   isolation: isolate;
   padding: 24px;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(88dvh - 16px);
+}
+.content {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 2px 12px 4px 2px;
 }
 .paper {
   --paper-opacity: 1;
 }
 .heading {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -35,6 +45,7 @@
 @media (max-width: 700px) {
   .inner {
     padding: 18px;
+    max-height: calc(90dvh - 16px);
   }
   .dialog {
     width: calc(100vw - 24px);

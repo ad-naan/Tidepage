@@ -42,6 +42,8 @@ src/
 | ------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | 操作按钮      | `shared/ui/button/Button`                         | Button、IconButton；默认 button 类型、busy/disabled、焦点、按压动效、原生属性与 ref               |
 | 表单输入      | `shared/ui/field/Input`、`Textarea`、`Field`      | Input、FileInput、RangeSlider、Textarea；输入语义、键盘焦点、无效与禁用状态，Field 组合标签和说明 |
+| 可见文件选择  | `shared/ui/field/UploadField`                     | 统一按钮与隐藏文件输入；业务层负责文件处理、进度与取消，不能直接显示浏览器默认文件控件            |
+| 日期与时间    | `shared/ui/date-picker/DatePicker`                | 日历、方向键跨月、确认 / 清除、可选小时与分钟；不使用可见原生日期控件                             |
 | 路由链接      | `shared/i18n/navigation`                          | 保留 locale、路由 loading 生命周期                                                                |
 | 普通/外部链接 | `shared/ui/link/Anchor`                           | Anchor 用于页内、邮件等；ExternalLink 统一新标签页的安全 rel                                      |
 | 选择器        | `shared/ui/select/Select`                         | Radix 仅在内部使用；Portal、键盘、typeahead、选中态与 busy                                        |
