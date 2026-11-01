@@ -8,7 +8,7 @@ import {
   articleSchema,
   summarize,
 } from "../../src/modules/content/domain/models";
-import { seedArticles } from "../../src/modules/content/infrastructure/demo-repository";
+import { articleFixtures } from "../fixtures/content";
 import { articleMarkdown } from "../../src/modules/content/application/markdown";
 
 test("rich content validates external links, image sources, and bounded metadata", () => {
@@ -48,8 +48,8 @@ test("rich content validates external links, image sources, and bounded metadata
 test("rich article blocks survive publishing but stay out of list summaries", () => {
   for (const locale of ["zh-CN", "en"] as const) {
     const article = articleSchema.parse(
-      seedArticles.find(
-        (a) => a.locale === locale && a.slug === "the-productivity-paradox",
+      articleFixtures.find(
+        (a) => a.locale === locale && a.slug === "fixture-article",
       ),
     );
     const markdown = articleMarkdown(article, "https://example.com/article", {
@@ -57,7 +57,7 @@ test("rich article blocks survive publishing but stay out of list summaries", ()
       updated: "Updated",
       original: "Original",
     });
-    assert.match(markdown, /https:\/\/www.sonyclassics.com\/theredturtle\//);
+    assert.match(markdown, /https:\/\/example.com\/movie/);
     assert.equal("sections" in summarize(article), false);
   }
   const code = blockMarkdown({

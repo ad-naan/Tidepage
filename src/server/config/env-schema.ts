@@ -10,8 +10,7 @@ export const envSchema = z
       .enum(["development", "test", "production"])
       .default("development"),
     SITE_URL: z.url().default("http://localhost:3000"),
-    CONTENT_SOURCE: z.enum(["demo", "postgres"]).default("demo"),
-    DATABASE_URL: optionalUrl,
+    DATABASE_URL: z.url(),
     DATABASE_POOL_MAX: z.coerce.number().int().min(1).max(50).default(10),
     REDIS_URL: optionalUrl,
     CACHE_NAMESPACE: z
@@ -31,12 +30,6 @@ export const envSchema = z
     } catch {
       /* z.url reports the invalid value. */
     }
-    if (env.CONTENT_SOURCE === "postgres" && !env.DATABASE_URL)
-      context.addIssue({
-        code: "custom",
-        path: ["DATABASE_URL"],
-        message: "Required when CONTENT_SOURCE=postgres",
-      });
     if (
       !/^https?:\/\//.test(env.SITE_URL) ||
       !origin ||
@@ -63,15 +56,11 @@ export const envSchema = z
         path: ["REDIS_URL"],
         message: "Use redis:// or rediss://",
       });
-    if (
-      env.INDEXING_ENABLED &&
-      (env.CONTENT_SOURCE !== "postgres" || origin?.protocol !== "https:")
-    )
+    if (env.INDEXING_ENABLED && origin?.protocol !== "https:")
       context.addIssue({
         code: "custom",
         path: ["INDEXING_ENABLED"],
-        message:
-          "Indexing requires PostgreSQL content and an https site origin",
+        message: "Indexing requires an https site origin",
       });
   });
 

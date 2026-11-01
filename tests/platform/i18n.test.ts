@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+process.env.DATABASE_URL = "postgresql://test:test@localhost/test";
 import { catalogs } from "../../src/i18n/catalogs";
 import {
   locales,

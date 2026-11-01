@@ -23,11 +23,10 @@ export function FooterPresence() {
         aria-label={t("open")}
         aria-expanded={open}
         aria-controls={id}
-        title={t("demo")}
+        title={t("label")}
       >
-        <span className={styles.live} aria-hidden="true" />
         <Users size={12} aria-hidden="true" />
-        <span>{t("readers", { count: 8 })}</span>
+        <span>{t("label")}</span>
       </Button>
       <AnimatePresence>
         {open && (

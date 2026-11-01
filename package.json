@@ -14,7 +14,7 @@
     "check": "pnpm run format:check && pnpm run check:architecture && pnpm run typecheck && pnpm test",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node --conditions=react-server --import tsx scripts/db-migrate.ts",
-    "db:seed": "node --conditions=react-server --import tsx scripts/db-seed.ts",
+    "db:check": "node --conditions=react-server --import tsx scripts/db-check.ts",
     "db:studio": "drizzle-kit studio",
     "infra:up": "docker compose up -d",
     "infra:down": "docker compose down",

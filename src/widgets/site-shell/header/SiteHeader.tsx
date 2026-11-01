@@ -31,7 +31,7 @@ import type {
 import { useArticleSearch } from "@/modules/content/ui/articles/useArticleSearch";
 import { spring } from "@/shared/lib/motion";
 import { useDisclosure } from "@/shared/hooks/useDisclosure";
-import { LoginTrigger } from "@/modules/identity/ui/PreviewIdentity";
+import { LoginTrigger } from "@/modules/identity/ui/IdentityProvider";
 import { ActivityDetails } from "./ActivityDetails";
 import { MusicPlayer } from "@/modules/media/ui/player/MusicPlayer";
 import { SiteNavigation } from "@/widgets/site-shell/navigation/SiteNavigation";

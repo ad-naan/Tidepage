@@ -48,7 +48,7 @@ throw tooManyRequestsError(30); // 429 RATE_LIMITED，details 带 retryAfterSeco
 1. schema 放在对应模块的 `infrastructure/` 里，并在 `src/server/db/schema.ts` 汇总。
 2. `pnpm run db:generate` 生成 SQL（`drizzle/`），**SQL 和快照一起提交**。
 3. `pnpm run db:migrate` 显式执行；迁移不在应用启动或请求里自动跑。
-4. 开发示例数据进 `scripts/db-seed.ts`，保持幂等、不覆盖已有行。
+4. 测试夹具只进入独立测试库，不导入业务数据库。
 
 ### 6. 使用缓存
 

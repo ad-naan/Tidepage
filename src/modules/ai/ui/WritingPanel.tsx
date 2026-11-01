@@ -5,16 +5,18 @@ import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/shared/ui/button/Button";
 import { Textarea } from "@/shared/ui/field/Textarea";
-import { createPreviewWritingAgent } from "./writing-agent";
+import type { WritingAgent } from "@/modules/ai/domain/writing";
 import styles from "./WritingPanel.module.css";
 export function WritingPanel({
   editor,
   active = true,
   contentLocale,
+  agent,
 }: {
   editor: Editor;
   active?: boolean;
   contentLocale?: string;
+  agent?: WritingAgent;
 }) {
   const t = useTranslations("admin.ai");
   const uiLocale = useLocale();
@@ -44,6 +46,8 @@ export function WritingPanel({
     if (!active) controller.current?.abort();
   }, [active]);
   async function start() {
+    const writer = agent;
+    if (!writer) return;
     const requestId = ++taskId.current;
     controller.current?.abort();
     const task = new AbortController();
@@ -53,9 +57,9 @@ export function WritingPanel({
     setText("");
     setError("");
     setStatus("running");
-    const agent = createPreviewWritingAgent(t("sample"));
+
     try {
-      for await (const event of agent.stream(
+      for await (const event of writer.stream(
         {
           prompt,
           locale,
@@ -105,11 +109,12 @@ export function WritingPanel({
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
         rows={3}
+        disabled={!agent}
       />
       <div>
         <Button
           variant="quiet"
-          disabled={!prompt.trim() || status === "running"}
+          disabled={!agent || !prompt.trim() || status === "running"}
           onClick={start}
         >
           {t("start")}

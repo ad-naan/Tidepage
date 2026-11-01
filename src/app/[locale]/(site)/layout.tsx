@@ -1,7 +1,8 @@
 import { getLocale } from "next-intl/server";
 import { SiteShell } from "@/widgets/site-shell/SiteShell";
 import { CustomScrollbars } from "@/shared/ui/scroll-area/CustomScrollbars";
-import { PreviewIdentityProvider } from "@/modules/identity/ui/PreviewIdentity";
+import { IdentityProvider } from "@/modules/identity/ui/IdentityProvider";
+import { getCurrentPrincipal } from "@/modules/identity/server";
 import { getArticles, getNotes, getProjects } from "@/modules/content/server";
 // Rendering remains live after database updates; content caching belongs to the service.
 export const dynamic = "force-dynamic";
@@ -12,10 +13,11 @@ export default async function SiteLayout({
   children: React.ReactNode;
 }) {
   const locale = await getLocale();
-  const [articles, notes, projects] = await Promise.all([
+  const [articles, notes, projects, principal] = await Promise.all([
     getArticles(locale),
     getNotes(locale),
     getProjects(locale),
+    getCurrentPrincipal(),
   ]);
   const navigation = {
     note: notes[0]
@@ -26,11 +28,11 @@ export default async function SiteLayout({
       .map(({ id, name, subtitle }) => ({ id, name, subtitle })),
   };
   return (
-    <PreviewIdentityProvider>
+    <IdentityProvider principal={principal}>
       <SiteShell articles={articles} navigation={navigation}>
         {children}
       </SiteShell>
       <CustomScrollbars />
-    </PreviewIdentityProvider>
+    </IdentityProvider>
   );
 }

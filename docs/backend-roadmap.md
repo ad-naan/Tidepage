@@ -37,7 +37,7 @@ Server Component 通过模块 server 入口读取数据，不向自身 HTTP API 
 先做公共基础与真实站主身份，再串起后台草稿、预览、发布和前台读取。下列内容读取检查属于这个完整链路的一部分，不作为当前前端阶段的操作任务。完整步骤见 [工作台设计](admin-console-design.md)。
 
 - 走读 `src/app/api/v1/articles/route.ts` → `src/modules/content/server/index.ts` → application/service → repository → PostgreSQL adapter，并对照文章列表页面理解服务端直读。
-- 检查本地 Node、数据库连接和 CONTENT_SOURCE，解释变量作用；不输出连接密码、不覆盖已有环境文件。
+- 检查本地 Node、数据库连接和迁移状态；不输出连接密码、不覆盖已有环境文件。
 - 启动本地 PostgreSQL，执行已有迁移和开发种子；切换 postgres 并重启，调用 health/ready 与文章列表接口。
 - 用开发文章串起列表、详情、搜索、翻译和未发布过滤，确认数据库与页面一致。
 - 运行 `pnpm run check`、`pnpm run build` 并记录真实服务联调结果；PGlite 测试不能替代 PostgreSQL 连接验证。

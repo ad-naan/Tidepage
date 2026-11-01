@@ -14,7 +14,7 @@ pnpm install --frozen-lockfile
 pnpm run dev
 ```
 
-打开终端显示的地址，通常是 [中文首页](http://localhost:3000/zh-CN) 或 [英文首页](http://localhost:3000/en)。默认 demo 模式不需要 Docker、PostgreSQL 或 Redis。若已有环境文件设置了 `CONTENT_SOURCE=postgres`，先看上手指南的数据库章节。
+打开终端显示的地址，通常是 [中文首页](http://localhost:3000/zh-CN) 或 [英文首页](http://localhost:3000/en)。内容统一读取 PostgreSQL；配置 `DATABASE_URL` 后执行 `pnpm run db:migrate` 和 `pnpm run db:check`。
 
 以后日常开发只运行 `pnpm run dev`，保存文件后自动更新；按 `Ctrl+C` 停止。不要同时开多个开发服务。
 
@@ -22,17 +22,17 @@ pnpm run dev
 
 ## 我要改哪里
 
-| 要改的东西                         | 文件位置                                                        |
-| ---------------------------------- | --------------------------------------------------------------- |
-| 介绍、标题、按钮等界面文字         | `src/shared/i18n/messages/zh-CN.json`、`en.json`                |
-| 首页布局、介绍区                   | `src/modules/home/ui/HomeView.tsx`、`HomeHero.tsx`              |
-| 页头、菜单、页脚                   | `src/widgets/site-shell/`                                       |
-| 文章、手记、项目、一言、照片、自述 | `src/modules/content/ui/` 下对应目录                            |
-| 姓名、头像路径、GitHub 等外链      | `src/shared/config/profile.ts`                                  |
-| 基础按钮、输入、弹窗、筛选、提示   | `src/shared/ui/`                                                |
-| 字体、字号、间距                   | `src/styles/tokens.css`                                         |
-| 演示文章等内容                     | `src/modules/content/infrastructure/demo-data.ts`、`demo-en.ts` |
-| 海岸插画、三维漫游                 | `src/modules/world/ui/`、`runtime/`                             |
+| 要改的东西                         | 文件位置                                                    |
+| ---------------------------------- | ----------------------------------------------------------- |
+| 介绍、标题、按钮等界面文字         | `src/shared/i18n/messages/zh-CN.json`、`en.json`            |
+| 首页布局、介绍区                   | `src/modules/home/ui/HomeView.tsx`、`HomeHero.tsx`          |
+| 页头、菜单、页脚                   | `src/widgets/site-shell/`                                   |
+| 文章、手记、项目、一言、照片、自述 | `src/modules/content/ui/` 下对应目录                        |
+| 姓名、头像路径、GitHub 等外链      | `src/shared/config/profile.ts`                              |
+| 基础按钮、输入、弹窗、筛选、提示   | `src/shared/ui/`                                            |
+| 字体、字号、间距                   | `src/styles/tokens.css`                                     |
+| 文章等内容查询                     | `src/modules/content/infrastructure/postgres-repository.ts` |
+| 海岸插画、三维漫游                 | `src/modules/world/ui/`、`runtime/`                         |
 
 旧 `src/components` 已按职责拆分，不再使用。页面样式通常就在对应组件旁边的 `.module.css` 中。完整路径见 [目录说明](docs/project-map.md)。
 

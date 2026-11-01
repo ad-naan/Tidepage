@@ -35,20 +35,7 @@ export function MusicPlayer({
   const t = useTranslations("player");
   const audio = useRef<HTMLAudioElement>(null);
   const uploads = useRef<string[]>([]);
-  const [tracks, setTracks] = useState<Track[]>(() => [
-    {
-      title: t("tracks.coast.title"),
-      artist: t("tracks.coast.artist"),
-      source: "/audio/coast.wav",
-      cover: "/images/coast.png",
-    },
-    {
-      title: t("tracks.afternoon.title"),
-      artist: t("tracks.afternoon.artist"),
-      source: "/audio/afternoon.wav",
-      cover: "/images/window.png",
-    },
-  ]);
+  const [tracks, setTracks] = useState<Track[]>([]);
   const [index, setIndex] = useState(0);
   const playerRef = useRef<HTMLDivElement>(null);
   const togglePanel = () => setOpen(!open);
@@ -79,7 +66,7 @@ export function MusicPlayer({
     [],
   );
   async function toggle() {
-    if (!audio.current) return;
+    if (!audio.current || !track) return;
     setError("");
     if (playing) {
       audio.current.pause();
@@ -94,7 +81,8 @@ export function MusicPlayer({
     }
   }
   function change(offset: number) {
-    setIndex((v) => (v + offset + tracks.length) % tracks.length);
+    if (tracks.length)
+      setIndex((v) => (v + offset + tracks.length) % tracks.length);
   }
   return (
     <LayoutGroup id="header-player">
@@ -104,7 +92,7 @@ export function MusicPlayer({
       >
         <audio
           ref={audio}
-          src={track.source}
+          src={track?.source}
           preload="metadata"
           onTimeUpdate={() => {
             setProgress(audio.current?.currentTime || 0);
@@ -146,19 +134,19 @@ export function MusicPlayer({
                     </Button>
                   </div>
                   <div className="record-stage">
-                    <RecordDeck playing={playing} cover={track.cover} />
+                    <RecordDeck playing={playing} cover={track?.cover ?? ""} />
                   </div>
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.div
                       className="player-track-info"
-                      key={track.source}
+                      key={track?.source}
                       initial={{ opacity: 0, y: 7 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -7 }}
                       transition={{ duration: 0.18 }}
                     >
-                      <h3>{track.title}</h3>
-                      <p>{track.artist}</p>
+                      <h3>{track?.title ?? t("empty")}</h3>
+                      <p>{track?.artist}</p>
                     </motion.div>
                   </AnimatePresence>
                   <div className="music-progress">
@@ -184,6 +172,7 @@ export function MusicPlayer({
                       className="icon-button"
                       aria-label={t("previous")}
                       onClick={() => change(-1)}
+                      disabled={!tracks.length}
                     >
                       <SkipBack size={18} />
                     </Button>
@@ -191,6 +180,7 @@ export function MusicPlayer({
                       className="player-play"
                       aria-label={playing ? t("pause") : t("play")}
                       onClick={toggle}
+                      disabled={!track}
                       whileTap={{ scale: 0.9 }}
                     >
                       {playing ? (
@@ -203,6 +193,7 @@ export function MusicPlayer({
                       className="icon-button"
                       aria-label={t("next")}
                       onClick={() => change(1)}
+                      disabled={!tracks.length}
                     >
                       <SkipForward size={18} />
                     </Button>
@@ -244,7 +235,7 @@ export function MusicPlayer({
                               title: file.name.replace(/\.[^.]+$/, ""),
                               artist: t("localArtist"),
                               source: url,
-                              cover: "/images/window.png",
+                              cover: "",
                             },
                           ]);
                           setQueue(true);
@@ -294,13 +285,13 @@ export function MusicPlayer({
           >
             <span className="record-dock-slot">
               {!open ? (
-                <PlayerRecord playing={playing} cover={track.cover} />
+                <PlayerRecord playing={playing} cover={track?.cover ?? ""} />
               ) : (
                 <Equalizer playing={playing} />
               )}
             </span>
             <span>
-              {track.title}
+              {track?.title ?? t("empty")}
               <small>{playing ? t("playing") : t("idle")}</small>
             </span>
           </Button>
@@ -308,6 +299,7 @@ export function MusicPlayer({
             className="dock-play"
             aria-label={playing ? t("dockPause") : t("dockPlay")}
             onClick={toggle}
+            disabled={!track}
           >
             {playing ? <Pause size={14} /> : <Play size={14} />}
           </Button>

@@ -80,7 +80,6 @@ export async function ArticleDetail({
             ))}
           </div>
           <ArticleActions slug={article.slug} title={article.title} />
-          <p className="content-note">{t("demo")}</p>
         </div>
         <ArticleContents
           titles={article.sections.map((section) => section.title)}

@@ -6,26 +6,15 @@ import { getCacheStore } from "@/server/cache/redis";
 import { createRemember } from "@/server/cache/remember";
 import { createContentService } from "@/modules/content/application/service";
 import { articleSchema, slugSchema } from "@/modules/content/domain/models";
-import type { ContentRepository } from "@/modules/content/application/repository";
+import { postgresContentRepository } from "@/modules/content/infrastructure/postgres-repository";
 import { defaultLocale, type Locale } from "@/shared/i18n/config";
-let repositoryPromise: Promise<ContentRepository> | undefined;
-async function repository() {
-  return (repositoryPromise ??=
-    getEnv().CONTENT_SOURCE === "postgres"
-      ? import("@/modules/content/infrastructure/postgres-repository").then(
-          (m) => m.postgresContentRepository(),
-        )
-      : import("@/modules/content/infrastructure/demo-repository").then(
-          (m) => m.demoContentRepository,
-        ));
-}
 let remember: ReturnType<typeof createRemember> | undefined;
 function memo() {
   return (remember ??= createRemember(getCacheStore()));
 }
-const service = async () => createContentService(await repository());
+const service = () => createContentService(postgresContentRepository());
 const key = (locale: Locale, resource: string) =>
-  `${getEnv().CONTENT_SOURCE}:${locale}:content:${resource}`;
+  `${locale}:content:${resource}`;
 export const getArticles = cache(async (locale: Locale = defaultLocale) =>
   memo()(
     key(locale, "articles"),

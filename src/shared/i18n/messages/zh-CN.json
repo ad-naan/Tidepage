@@ -130,7 +130,6 @@
     "footnote": "写下这一页，继续往前走。",
     "count": "{count} 份光阴的记录",
     "note": "最近留下一页",
-    "quote": "让过去有处安放，让明天仍有期待。",
     "next": "留给下一页",
     "hero": {
       "greeting": "你好，很高兴在这里遇见你。",
@@ -162,7 +161,8 @@
         "name": "灵感收藏",
         "hint": "Spark Relics · 开源创意"
       }
-    }
+    },
+    "emptyArticles": "还没有已发布的文章。"
   },
   "articles": {
     "title": "写在光阴里",
@@ -180,7 +180,6 @@
     "back": "回到文章",
     "minutes": "{count} 分钟阅读",
     "toc": "这篇文章里",
-    "demo": "本文为博客示例内容，用于展示阅读体验。",
     "continue": "下一篇，接着逛逛",
     "save": "收藏这篇文章",
     "saved": "已收藏",
@@ -188,20 +187,6 @@
     "copied": "链接已复制",
     "copyFallback": "请复制浏览器地址栏中的链接",
     "filterLabel": "按内容分类"
-  },
-  "articleDemo": {
-    "calloutTitle": "写在页边",
-    "calloutIntro": "真正值得优化的，也许不是每一分钟的产出，而是",
-    "calloutMark": "我们和时间相处的方式",
-    "calloutOutro": "。给想法留一点生长的空间。",
-    "quote1": "空白不是浪费，",
-    "quote2": "它是让想法长出根的地方。",
-    "cite": "— 这篇文章里，我最想留给你的话",
-    "codeTitle": "给生活留一点余地.ts",
-    "copy": "复制代码",
-    "codeRegion": "代码示例",
-    "footnotes": "注释与延伸",
-    "footnote": "这里展示正文高亮、旁注、引用、脚注与代码块的排版样式。选中正文中的一段文字，还可以预览标注与引用评论。"
   },
   "header": {
     "search": "搜索文章",
@@ -222,7 +207,7 @@
     "now": "此刻",
     "doing": "正在",
     "coding": "写代码",
-    "activityLabel": "查看作者活动预览",
+    "activityLabel": "查看活动信息",
     "focusEnter": "进入专注阅读",
     "focusExit": "退出专注阅读",
     "toggleNav": "切换光轨导航",
@@ -239,7 +224,7 @@
       "navigation": "海岸星图"
     },
     "readingProgress": "文章阅读进度",
-    "statusLine": "正在写代码"
+    "statusLine": "活动信息未接入"
   },
   "celestial": {
     "label": "光轨导航",
@@ -272,45 +257,16 @@
     "playError": "暂时无法播放这首音乐。",
     "loadError": "音频加载失败，请稍后重试。",
     "sourceError": "暂时无法加载音频，可导入本地音乐。",
-    "tracks": {
-      "coast": {
-        "title": "海边的空白",
-        "artist": "光阴声景 · 原创环境音"
-      },
-      "afternoon": {
-        "title": "慢下来的午后",
-        "artist": "光阴声景 · 原创环境音"
-      }
-    }
+    "empty": "暂无音乐"
   },
   "stats": {
-    "open": "查看站点访客统计",
-    "faces": ["山", "木", "云"],
-    "reading": " 位在读",
-    "nowIntro": "此刻，有 ",
-    "nowFriends": "8 位朋友",
-    "nowOutro": " 和你一起翻开这一页。",
-    "today": "今日相遇",
-    "views": "累计浏览",
-    "friends": "到访的朋友",
-    "trend": "最近七天",
-    "caption": "每一次驻足，都留下了回声。",
-    "trendAria": "最近七日访问趋势演示",
-    "thanks": "谢谢你，成为这份光阴的一部分。",
-    "demo": "统计样式 · 演示数据",
-    "readers": "{count} 位在读",
-    "presenceTitle": "在光阴里相遇"
+    "open": "查看访问统计",
+    "label": "访问统计",
+    "presenceTitle": "访问统计",
+    "unavailable": "访问统计尚未接入，暂无可展示的数据。"
   },
   "activity": {
-    "current": "正在打磨博客里的小细节",
-    "focus": "已经专注 ",
-    "focusDuration": "42 分钟",
-    "caption": "正在创造，也在慢慢打磨。",
-    "debug": "调试一个小交互",
-    "listen": "听《海边的空白》",
-    "coffee": "离开屏幕，喝杯咖啡",
-    "note": "活动流样式演示",
-    "noteSub": "尚未连接监控"
+    "unavailable": "活动信息尚未接入。"
   },
   "letter": {
     "open": "水獭身边有一封信，打开自述扉页",
@@ -328,7 +284,6 @@
     "end": "一步一步，成为更好的自己。"
   },
   "footer": {
-    "demo": "内容与数据为演示",
     "coast": "回到海岸",
     "rss": "订阅 RSS",
     "contact": "联系与留言",
@@ -384,13 +339,11 @@
     "replies": {
       "open": "聊聊这个瞬间",
       "collapse": "收起讨论",
-      "sampleName": "木木",
-      "sampleText": "小事也值得被认真记住。",
-      "sampleMeta": "示例评论",
       "justNow": "刚刚 · 本地预览",
       "input": "回复手记",
       "placeholder": "交换一点想法…",
-      "submit": "发表手记回复"
+      "submit": "发表手记回复",
+      "unavailable": "回应服务尚未接入。"
     }
   },
   "quotes": {
@@ -418,7 +371,6 @@
     "next": "下一页，仍在尝试。",
     "progress": "完成一段，再开始一段。新的想法会继续留在这里。",
     "drag": "拖动这颗小太阳，再轻轻松手。",
-    "demo": "这是博客的示例项目展示，暂未提供真实应用或源码链接。",
     "filterLabel": "按作品分类"
   },
   "gallery": {
@@ -438,70 +390,20 @@
     "defaultCaption": "刚刚留下的一片光。",
     "myPhotos": "我的相片",
     "count": "{count} 个被收藏的瞬间",
-    "source": "生成摄影素材 · 样式预览",
+    "source": "照片管理服务尚未接入",
     "closeNotice": "关闭提示",
     "like": "喜欢《{title}》",
     "unlike": "取消喜欢《{title}》",
     "ending": "把瞬间留下，让生活继续。",
     "previous": "上一张照片",
     "next": "下一张照片",
-    "items": {
-      "sea": {
-        "title": "海风替我写了一封信",
-        "caption": "什么都不做，只是看着海，时间也会变得柔软。",
-        "place": "海边"
-      },
-      "coffee": {
-        "title": "把下午留给一杯咖啡",
-        "caption": "光落在纸上，是今天最温柔的事情。",
-        "place": "窗边咖啡馆"
-      },
-      "meadow": {
-        "title": "走进一片不着急的绿",
-        "caption": "草木不说话，却把很多事情告诉了我。",
-        "place": "山野之间"
-      },
-      "light": {
-        "title": "光的形状",
-        "caption": "同一个午后，换一个角度看光。",
-        "place": "窗边 · 局部"
-      },
-      "flowers": {
-        "title": "把风装进口袋",
-        "caption": "沿途的野花，都是不期而遇的礼物。",
-        "place": "草地 · 局部"
-      },
-      "horizon": {
-        "title": "远处，还是远处",
-        "caption": "看过海的人，总会在心里留一片蓝。",
-        "place": "海岸 · 局部"
-      }
-    },
     "filterLabel": "按照片分类",
     "added": "照片已放入这一页"
   },
   "identity": {
-    "title": "在这里，留下你的回声",
-    "titleLoggedIn": "你的阅读身份",
-    "postmark1": "给每一个",
-    "postmark2": "认真生活的人",
-    "welcome": "欢迎翻开这一页",
-    "welcomeBack": "很高兴又见到你",
-    "intro": "用熟悉的身份，收藏喜欢的文章，\n和有趣的灵魂交换想法。",
-    "introLoggedIn": "已切换到登录后的界面预览。",
-    "guest": "演示访客 · GitHub",
-    "continue": "使用 GitHub 继续",
-    "notice": "当前为样式预览，尚未连接 GitHub 授权。",
-    "save": "收藏灵感",
-    "discuss": "参与讨论",
-    "trace": "留下足迹",
-    "exitDemo": "退出演示状态",
-    "previewLogin": "预览登录后的效果",
-    "disclaimer": "界面演示 · 不会获取或上传账号信息",
-    "viewAccount": "查看演示账号",
     "login": "登录",
-    "guestName": "演示访客",
-    "guestBadge": "访"
+    "title": "阅读账号",
+    "unavailable": "登录服务尚未接入，暂时无法登录。"
   },
   "discussion": {
     "reactionsTitle": "这篇文章，让你想到了什么？",
@@ -529,28 +431,12 @@
     "like": "点赞 {name} 的评论",
     "reply": "回复",
     "justNow": "刚刚 · 本地预览",
-    "demo": "评论及互动数量为界面演示，新增内容只在当前页面预览。",
-    "samples": {
-      "mountain": {
-        "name": "山间来信",
-        "text": "“空白不是浪费，它是让想法长出根的地方。” 读到这里停了一会儿。最近也一直在反思，到底是在生活，还是在完成清单。",
-        "time": "2 小时前"
-      },
-      "reply": {
-        "text": "能一起慢下来就很好。也在学习给自己留一点无用、但很快乐的时间。",
-        "time": "1 小时前"
-      },
-      "mumu": {
-        "name": "木木",
-        "text": "读完想合上电脑去散步了，谢谢这篇温柔的提醒 🌿",
-        "time": "35 分钟前"
-      }
-    },
     "mark": "标注",
     "quote": "引用评论",
     "marked": "刚刚划下的一句",
     "markPreview": "本页标注预览",
-    "closeMark": "关闭标注"
+    "closeMark": "关闭标注",
+    "unavailable": "评论服务尚未接入，暂时无法留言。"
   },
   "about": {
     "title": "我的自述",
@@ -760,7 +646,6 @@
     "eyebrow": "一条链接，一次相遇",
     "directoryTitle": "常去坐坐的地方",
     "count": "{count} 位朋友",
-    "previewCount": "{count} 张示意名片",
     "filterLabel": "友站分类",
     "categories": {
       "all": "全部",
@@ -768,8 +653,6 @@
       "design": "设计",
       "life": "生活"
     },
-    "preview": "这里先放了几张示意名片，等待真实的朋友来信。示意内容不可跳转。",
-    "sampleCard": "示意名片 · 待真实友站入驻",
     "empty": "这一岸还没有来信，给下一位朋友留个位置。",
     "footnote": "不按热度排名，每一处认真记录的角落都值得停留。",
     "exchangeEyebrow": "给彼此留一个坐标",
@@ -795,25 +678,7 @@
       "respect": "尊重原创与隐私，不发布恶意、侵权或伤害他人的内容。"
     },
     "contactHelp": "可以通过 GitHub 主页上的公开联系方式联系我，附上你的站名、网址和一句介绍。这里暂未开放在线申请。",
-    "contact": "前往 adnaan 的 GitHub",
-    "samples": {
-      "tideline": {
-        "name": "潮汐之间",
-        "description": "写代码，也记下那些值得慢一点的时刻。"
-      },
-      "paper": {
-        "name": "纸上风物",
-        "description": "收集界面里的小细节，让想法在纸上慢慢成形。"
-      },
-      "island": {
-        "name": "小岛日常",
-        "description": "散步、阅读、拍照，保存生活里微小的光亮。"
-      },
-      "beacon": {
-        "name": "灯塔日志",
-        "description": "关于开源与独立开发，一些探索，一些新的出发。"
-      }
-    }
+    "contact": "前往 adnaan 的 GitHub"
   },
   "admin": {
     "name": "潮页工作台",
@@ -1024,9 +889,9 @@
     },
     "ai": {
       "title": "写作助手",
-      "preview": "流式交互预览 · 尚未连接 LLM；示例文本不代表模型回答。生成建议不会自动改写正文。",
+      "preview": "尚未连接 LLM 服务，创作功能暂不可用。",
       "prompt": "描述你想继续写、润色或翻译的内容…",
-      "start": "预览流式生成",
+      "start": "开始创作",
       "stop": "停止",
       "insert": "插入到原选区后",
       "replace": "替换原选区",
@@ -1039,8 +904,7 @@
         "done": "建议已生成，请审阅后采纳",
         "stopped": "已停止，可审阅已生成的片段",
         "error": "生成中断"
-      },
-      "sample": "把界面留得轻一点，把内容放得近一点。\n\n一份好的记录，不必急着给出答案。先把细节留下，让想法有地方生长。\n\n这一段是用于检查流式显示、停止和采纳流程的示例内容。"
+      }
     },
     "collection": {
       "description": "按内容语言分别整理字段；公共属性只维护一份。当前保存到本地工作区。",

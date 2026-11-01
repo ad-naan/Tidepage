@@ -13,7 +13,7 @@ import styles from "./GalleryView.module.css";
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
-import { useMessages, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import {
   ArrowLeft,
   ArrowRight,
@@ -38,67 +38,7 @@ const galleryTabs = ["all", "daily", "nature", "travel"] as const;
 type GalleryTab = (typeof galleryTabs)[number];
 export function GalleryView() {
   const t = useTranslations("gallery");
-  const texts = useMessages().gallery.items;
-  const photos: Photo[] = [
-    {
-      id: "sea",
-      src: "/images/coast.png",
-      title: texts.sea.title,
-      caption: texts.sea.caption,
-      place: texts.sea.place,
-      category: "travel",
-      ratio: "3/4",
-    },
-    {
-      id: "coffee",
-      src: "/images/window.png",
-      title: texts.coffee.title,
-      caption: texts.coffee.caption,
-      place: texts.coffee.place,
-      category: "daily",
-      ratio: "4/5",
-    },
-    {
-      id: "meadow",
-      src: "/images/meadow.png",
-      title: texts.meadow.title,
-      caption: texts.meadow.caption,
-      place: texts.meadow.place,
-      category: "nature",
-      ratio: "4/3",
-    },
-    {
-      id: "light",
-      src: "/images/window.png",
-      title: texts.light.title,
-      caption: texts.light.caption,
-      place: texts.light.place,
-      category: "daily",
-      ratio: "1/1",
-      position: "50% 18%",
-    },
-    {
-      id: "flowers",
-      src: "/images/meadow.png",
-      title: texts.flowers.title,
-      caption: texts.flowers.caption,
-      place: texts.flowers.place,
-      category: "nature",
-      ratio: "3/4",
-      position: "20% 80%",
-    },
-    {
-      id: "horizon",
-      src: "/images/coast.png",
-      title: texts.horizon.title,
-      caption: texts.horizon.caption,
-      place: texts.horizon.place,
-      category: "travel",
-      ratio: "4/3",
-      position: "50% 30%",
-    },
-  ];
-  const [displayed, setItems] = useState<Photo[]>(photos);
+  const [displayed, setItems] = useState<Photo[]>([]);
   const [filter, setFilter] = useState<GalleryTab>("all");
   const [selected, setSelected] = useState<Photo | null>(null);
   const [liked, setLiked] = useState<string[]>([]);

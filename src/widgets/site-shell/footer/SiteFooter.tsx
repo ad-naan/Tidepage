@@ -60,7 +60,6 @@ export function SiteFooter({
                 </Link>
               )}
             </span>
-            <small>{t("demo")}</small>
           </div>
           <div className={styles.contact}>
             <Button aria-label={t("heart")} onClick={onHeart}>

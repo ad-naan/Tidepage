@@ -9,19 +9,25 @@ import { serializeJsonLd } from "../../src/server/seo/structured-data";
 import { articleQuerySchema } from "../../src/modules/content/domain/query";
 
 test("configuration validates booleans, service URLs and production indexing", () => {
-  assert.equal(parseEnv({}).CONTENT_SOURCE, "demo");
-  assert.equal(parseEnv({ INDEXING_ENABLED: "false" }).INDEXING_ENABLED, false);
-  assert.throws(() => parseEnv({ CONTENT_SOURCE: "postgres" }), /DATABASE_URL/);
+  assert.throws(() => parseEnv({}), /DATABASE_URL/);
+  const database = { DATABASE_URL: "postgresql://user:pass@localhost/blog" };
+  assert.equal(parseEnv(database).DATABASE_URL, database.DATABASE_URL);
+
+  assert.equal(
+    parseEnv({ ...database, INDEXING_ENABLED: "false" }).INDEXING_ENABLED,
+    false,
+  );
+  assert.throws(() => parseEnv({ DATABASE_URL: "" }), /DATABASE_URL/);
   assert.throws(
     () => parseEnv({ DATABASE_URL: "https://example.test" }),
     /PostgreSQL/,
   );
   assert.throws(
-    () => parseEnv({ SITE_URL: "https://example.test/blog" }),
+    () => parseEnv({ ...database, SITE_URL: "https://example.test/blog" }),
     /SITE_URL/,
   );
   assert.throws(
-    () => parseEnv({ INDEXING_ENABLED: "true" }),
+    () => parseEnv({ ...database, INDEXING_ENABLED: "true" }),
     /INDEXING_ENABLED/,
   );
 });

@@ -7,14 +7,20 @@ import { HomeHero } from "@/modules/home/ui/HomeHero";
 import { Journey } from "@/modules/home/ui/Journey";
 import { ArticleList } from "@/modules/content/ui/articles/ArticleList";
 import styles from "./HomeView.module.css";
-import type { ArticleSummary, Note } from "@/modules/content/domain/models";
+import type {
+  ArticleSummary,
+  Note,
+  Quote,
+} from "@/modules/content/domain/models";
 
 export async function HomeView({
   articles,
   notes,
+  quotes,
 }: {
   articles: ArticleSummary[];
   notes: Note[];
+  quotes: Quote[];
 }) {
   const t = await getTranslations("home");
   return (
@@ -32,6 +38,9 @@ export async function HomeView({
             </Link>
           </div>
           <ArticleList items={articles.slice(0, 5)} lead />
+          {!articles.length && (
+            <p className="empty-state">{t("emptyArticles")}</p>
+          )}
           <div className="writing-footnote">
             {t("footnote")}
             <span>↳ {t("count", { count: articles.length })}</span>
@@ -52,17 +61,19 @@ export async function HomeView({
             </span>
           </Link>
         )}
-        <Link href="/quotes" className="quote-preview">
-          <PencilLine kind="trail" className="quote-preview-fold" />
-          <span className="quote-mark">“</span>
-          <div>
-            <p>{t("quote")}</p>
-            <span>
-              {t("next")} <ArrowRight size={14} />
-            </span>
-          </div>
-          <CoastalVignette kind="boat" />
-        </Link>
+        {quotes[0] && (
+          <Link href="/quotes" className="quote-preview">
+            <PencilLine kind="trail" className="quote-preview-fold" />
+            <span className="quote-mark">“</span>
+            <div>
+              <p>{quotes[0].text}</p>
+              <span>
+                {t("next")} <ArrowRight size={14} />
+              </span>
+            </div>
+            <CoastalVignette kind="boat" />
+          </Link>
+        )}
       </section>
     </div>
   );

@@ -32,26 +32,3 @@ export function createHttpWritingAgent(endpoint: string): WritingAgent {
     },
   };
 }
-export function createPreviewWritingAgent(text: string): WritingAgent {
-  return {
-    async *stream(_input, signal) {
-      for (const piece of text.match(/[\s\S]{1,5}/g) ?? []) {
-        signal.throwIfAborted();
-        await new Promise<void>((resolve, reject) => {
-          const abort = () => {
-            clearTimeout(timer);
-            reject(signal.reason);
-          };
-          const timer = setTimeout(() => {
-            signal.removeEventListener("abort", abort);
-            resolve();
-          }, 35);
-          signal.addEventListener("abort", abort, { once: true });
-        });
-        signal.throwIfAborted();
-        yield { type: "delta", text: piece };
-      }
-      yield { type: "done" };
-    },
-  };
-}

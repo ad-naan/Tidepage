@@ -20,7 +20,7 @@ export const friendLinkSchema = z.object({
   category: friendCategorySchema,
 });
 export type FriendLink = z.infer<typeof friendLinkSchema>;
-export type FriendDirectory = { items: FriendLink[]; preview: boolean };
+export type FriendDirectory = { items: FriendLink[] };
 export type SiteLinkInfo = {
   name: string;
   url: string;

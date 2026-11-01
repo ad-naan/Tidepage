@@ -111,6 +111,8 @@ for (const [file, node] of graph) {
       target = dest.match(/^modules\/([^/]+)\/([^/]+)/);
     const presentationError = presentationImportError(path, dest);
     if (presentationError) errors.push(presentationError);
+    if (dest.startsWith("../tests/"))
+      errors.push(`${path}: application sources must not import test fixtures`);
     if (path.startsWith("shared/") && !dest.startsWith("shared/"))
       errors.push(`${path}: shared must not depend on ${dest}`);
     if (
@@ -139,11 +141,6 @@ for (const [file, node] of graph) {
       !["domain", "ui", "server"].includes(target[2])
     )
       errors.push(`${path}: route bypasses module entry ${dest}`);
-    if (
-      dest.endsWith("demo-data.ts") &&
-      !path.startsWith("modules/content/infrastructure/")
-    )
-      errors.push(`${path}: demo data escaped its adapter`);
   }
   if (node.client) {
     const visited = new Set();

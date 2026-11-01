@@ -12,12 +12,11 @@ import styles from "./ProjectsView.module.css";
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { motion } from "motion/react";
+import { softSpring } from "@/shared/lib/motion";
 import { ArrowUpRight } from "lucide-react";
 import type { Project } from "@/modules/content/domain/models";
 import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
-import { softSpring } from "@/shared/lib/motion";
 
 export function ProjectsView({ projects }: { projects: Project[] }) {
   const t = useTranslations("projects");
@@ -114,29 +113,6 @@ export function ProjectsView({ projects }: { projects: Project[] }) {
                 <span key={s}>{s}</span>
               ))}
             </div>
-            {selected.id === "spring" ? (
-              <div className="spring-demo">
-                <motion.div
-                  className="spring-ball"
-                  drag
-                  dragSnapToOrigin
-                  dragConstraints={{
-                    top: -40,
-                    bottom: 40,
-                    left: -90,
-                    right: 90,
-                  }}
-                  whileDrag={{ scale: 1.15 }}
-                  transition={softSpring}
-                  aria-hidden="true"
-                >
-                  ✳
-                </motion.div>
-                <p>{t("drag")}</p>
-              </div>
-            ) : (
-              <p className="demo-disclaimer">{t("demo")}</p>
-            )}
           </div>
         </Dialog>
       )}

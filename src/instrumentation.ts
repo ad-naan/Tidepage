@@ -3,8 +3,8 @@ export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
     const { getEnv } = await import("@/server/config/env");
     const { log } = await import("@/server/observability/logger");
-    const env = getEnv();
-    log("info", "application.configured", { component: env.CONTENT_SOURCE });
+    getEnv();
+    log("info", "application.configured", { component: "postgres" });
   }
 }
 export const onRequestError: Instrumentation.onRequestError = async (error) => {

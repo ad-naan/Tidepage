@@ -57,13 +57,10 @@
 
 ## 文案和内容不是同一个位置
 
-| 要改什么                             | 位置                                                |
-| ------------------------------------ | --------------------------------------------------- |
-| 标题、按钮、提示、个人介绍等界面文字 | `src/shared/i18n/messages/zh-CN.json`、`en.json`    |
-| 中文演示文章、手记、项目、一言       | `src/modules/content/infrastructure/demo-data.ts`   |
-| 英文演示内容                         | `src/modules/content/infrastructure/demo-en.ts`     |
-| 演示文章的网页 / 电影 / 代码内容块   | `src/modules/content/infrastructure/demo-blocks.ts` |
-| PostgreSQL 模式的真实内容            | 数据库；此时修改演示文件不会改变页面                |
+| 要改什么                             | 位置                                             |
+| ------------------------------------ | ------------------------------------------------ |
+| 标题、按钮、提示、个人介绍等界面文字 | `src/shared/i18n/messages/zh-CN.json`、`en.json` |
+| PostgreSQL 模式的真实内容            | 数据库；此时修改演示文件不会改变页面             |
 
 例如首页身份文字是 `home.hero.intro.line2`，不是 profile.ts。`profile.ts` 只保留姓名、头像路径与外链，避免两份介绍混淆。
 

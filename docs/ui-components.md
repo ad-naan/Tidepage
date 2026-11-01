@@ -75,7 +75,7 @@ Loading 开始前保留正文高度，加载时隐藏页脚，避免正文被 fa
 
 内容块存放在 section 的可选 `blocks` 数组中，与段落一起存入 PostgreSQL 的 sections JSONB。旧正文无需迁移，API 列表摘要仍不包含正文。`ArticleBlocks` 使用 React 渲染已验证的结构，禁止直接注入任意 HTML。链接限 HTTP(S)，外部图片限 HTTPS；Markdown 发布端输出相同的引用和代码。
 
-示例见 `infrastructure/demo-blocks.ts`，使用 locale 注册表映射各语言正文数据。网站卡片使用作者提供、发布时保存的元数据；当前没有任意 URL 抓取接口，也不承诺每个外站都允许 iframe 嵌入。未来的编辑器和 Agent 应写入同一 schema，元数据抓取放在服务端发布流程中，做好目标主机、重定向、超时和缓存边界。
+内容块校验位于 `content/domain/blocks.ts`。网站卡片使用作者提供、发布时保存的元数据；当前没有任意 URL 抓取接口，也不承诺每个外站都允许 iframe 嵌入。编辑器和 Agent 应写入同一 schema，元数据抓取放在服务端发布流程中。
 
 ## 首页介绍与主题彩蛋
 

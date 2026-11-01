@@ -21,8 +21,6 @@ Node 应为 24.x，pnpm 应为 12.16.1；全局安装 pnpm 只需执行一次。
 
 打开终端显示的地址，通常是 `http://localhost:3000/zh-CN`；英文为 `/en`。终端保持运行，改文件并保存后浏览器会自动更新。按 `Ctrl+C` 停止。
 
-**只改页面，不用安装数据库。** 无环境文件时默认用 demo 内容。如果已有 `.env` / `.env.local`，检查 `CONTENT_SOURCE`：只做演示开发设为 `demo`。修改环境配置后重启开发服务。
-
 首次需要环境文件时，把 `.env.example` 复制为 `.env`；已有文件就编辑它，不要覆盖。
 
 ## 2. 第一次修改，先改首页介绍
@@ -44,8 +42,7 @@ Node 应为 24.x，pnpm 应为 12.16.1；全局安装 pnpm 只需执行一次。
 1. `src/modules/content/ui/quotes/QuotesView.tsx`：结构与交互。
 2. 同目录 `QuotesView.module.css`：这一页的排版和样式。
 3. 语言包的 `quotes`：标题、按钮、提示文字。
-4. `demo-data.ts` / `demo-en.ts`：demo 模式下的一言内容，不是界面文案。
-5. 保存后检查桌面、窄屏、英文和深色模式。
+4. 保存后检查桌面、窄屏、英文和深色模式。
 
 其他页面查 [页面对应表](project-map.md#页面在哪里)。通常不用先改 app 中的路由文件，也不要一上来就向 globals.css 添加覆盖规则。
 
@@ -195,33 +192,28 @@ export default function Page() {
 
 ## 6. 改文章内容前，确认数据来源
 
-| 配置                      | 来源                  | 改哪里                       |
-| ------------------------- | --------------------- | ---------------------------- |
-| `CONTENT_SOURCE=demo`     | 代码内演示数据        | `demo-data.ts`、`demo-en.ts` |
-| `CONTENT_SOURCE=postgres` | PostgreSQL 已发布记录 | 数据库或后续的内容管理功能   |
-
-正文在文章的 `sections` 中。网页、电影、代码内容块的演示在 `demo-blocks.ts`。参照现有记录修改，保留 slug、分类、日期等字段类型。
+| 配置 | 来源 | 改哪里 |
+| ---- | ---- | ------ |
 
 前台视图不要直接导入 demo 文件；路由仍调用 `modules/content/server` 取数据。数据库模式下改演示文件不会生效。
 
-目前还没有内容管理后台，“预览登录”也不等于真实发布权限。
+管理后台当前保存本地工作副本，“预览登录”不等于真实发布权限。
 
 ## 7. 需要存真实内容时，再接数据库
 
-只改页面可以跳过这一节。
+已有 PostgreSQL 时直接填写 `DATABASE_URL` 并执行下面的检查，不需要 Docker。需要另起本地数据库时才使用 Compose。
 
 1. 安装并启动 Docker Desktop。
 2. 复制 `.env.example` 为 `.env`，已有文件不要覆盖。设置本地 `POSTGRES_PASSWORD`。
 3. 执行 `pnpm run infra:up`，等待 PostgreSQL 和 Redis 正常启动。
-4. 取消 `.env` 中 `DATABASE_URL` 的注释，把连接串中的密码改成同一个本地密码。
-5. 执行迁移；需要开发示例时才执行 seed。
+4. 配置 `.env` 中的 `DATABASE_URL`，把连接串中的密码改成同一个本地密码。
+5. 执行迁移和只读检查；正常开发不导入示例数据。
 
 ```powershell
 pnpm run db:migrate
-pnpm run db:seed
+pnpm run db:check
 ```
 
-6. 设置 `CONTENT_SOURCE=postgres`。需要缓存时再取消 `REDIS_URL` 的注释。
 7. 停止并重启 `pnpm run dev`，查看文章页。
 
 `pnpm run infra:down` 停止服务并保留数据卷。`.env.local` 会覆盖 Next 和数据库脚本的 `.env` 配置，但 Docker Compose 默认读取 `.env`。入门时建议把这些连接配置统一放在 `.env`，避免两份密码不一致。

@@ -23,7 +23,7 @@ export function PlayerRecord({
       >
         <span
           className="record-label"
-          style={{ backgroundImage: `url(${cover})` }}
+          style={cover ? { backgroundImage: `url(${cover})` } : undefined}
         />
       </span>
     </motion.span>

@@ -130,7 +130,6 @@
     "footnote": "Write another page. Keep moving.",
     "count": "{count} entries along the way",
     "note": "A recent moment",
-    "quote": "Give the past a place, and the future a little hope.",
     "next": "For the next page",
     "hero": {
       "greeting": "Hello, glad you found this little coast.",
@@ -162,7 +161,8 @@
         "name": "Inspiration",
         "hint": "Spark Relics · open-source ideas"
       }
-    }
+    },
+    "emptyArticles": "No articles have been published yet."
   },
   "articles": {
     "title": "Written along the way",
@@ -180,7 +180,6 @@
     "back": "Back to articles",
     "minutes": "{count} min read",
     "toc": "On this page",
-    "demo": "This sample article demonstrates the reading experience.",
     "continue": "Continue with the next story",
     "save": "Save this article",
     "saved": "Saved",
@@ -188,20 +187,6 @@
     "copied": "Link copied",
     "copyFallback": "Please copy the link from your browser's address bar",
     "filterLabel": "Filter writing"
-  },
-  "articleDemo": {
-    "calloutTitle": "From the margin",
-    "calloutIntro": "What's worth optimizing may not be the output of every minute, but ",
-    "calloutMark": "how we spend time with it",
-    "calloutOutro": ". Leave ideas a little room to grow.",
-    "quote1": "Blank space isn't waste —",
-    "quote2": "it's where ideas take root.",
-    "cite": "— the one line I'd most like to leave you with",
-    "codeTitle": "leave-some-room.ts",
-    "copy": "Copy code",
-    "codeRegion": "Code sample",
-    "footnotes": "Notes & further reading",
-    "footnote": "This block demonstrates the typography for highlights, margin notes, quotes, footnotes and code. Select a passage to preview annotation and quote-to-comment."
   },
   "header": {
     "search": "Search articles",
@@ -222,7 +207,7 @@
     "now": "Right now",
     "doing": "working on",
     "coding": "Code",
-    "activityLabel": "View the author's activity preview",
+    "activityLabel": "View activity information",
     "focusEnter": "Enter focused reading",
     "focusExit": "Exit focused reading",
     "toggleNav": "Toggle light trail navigation",
@@ -239,7 +224,7 @@
       "navigation": "The coastal constellation"
     },
     "readingProgress": "Article reading progress",
-    "statusLine": "Writing code"
+    "statusLine": "Activity not connected"
   },
   "celestial": {
     "label": "Light trail navigation",
@@ -272,45 +257,16 @@
     "playError": "This track can't be played right now.",
     "loadError": "Audio failed to load. Please try again later.",
     "sourceError": "Audio is unavailable. You can import a local file.",
-    "tracks": {
-      "coast": {
-        "title": "The Blank Space by the Sea",
-        "artist": "Tidepage Soundscapes · original ambience"
-      },
-      "afternoon": {
-        "title": "A Slower Afternoon",
-        "artist": "Tidepage Soundscapes · original ambience"
-      }
-    }
+    "empty": "No music selected"
   },
   "stats": {
     "open": "View visitor statistics",
-    "faces": ["a", "d", "n"],
-    "reading": " reading now",
-    "nowIntro": "Right now, ",
-    "nowFriends": "8 friends",
-    "nowOutro": " are on this page with you.",
-    "today": "Met today",
-    "views": "Total views",
-    "friends": "Visitors",
-    "trend": "Last seven days",
-    "caption": "Every stop leaves an echo behind.",
-    "trendAria": "Seven-day visit trend (demo)",
-    "thanks": "Thank you for being part of this story.",
-    "demo": "Demo data · visual preview",
-    "readers": "{count, plural, one {# reading now} other {# reading now}}",
-    "presenceTitle": "Here, at the same moment"
+    "label": "Visitor statistics",
+    "presenceTitle": "Visitor statistics",
+    "unavailable": "Visitor statistics are not connected yet."
   },
   "activity": {
-    "current": "Polishing small blog details",
-    "focus": "Focused for ",
-    "focusDuration": "42 minutes",
-    "caption": "Creating, and slowly refining.",
-    "debug": "Debugging a small interaction",
-    "listen": "Listening to “The Blank Space by the Sea”",
-    "coffee": "Stepping away for coffee",
-    "note": "Activity feed demo",
-    "noteSub": "not connected to tracking yet"
+    "unavailable": "Activity information is not connected yet."
   },
   "letter": {
     "open": "There's a letter by the otter. Open the foreword",
@@ -328,7 +284,6 @@
     "end": "One step, then another."
   },
   "footer": {
-    "demo": "Sample content and data",
     "coast": "Back to the coast",
     "rss": "Subscribe via RSS",
     "contact": "Contact",
@@ -384,13 +339,11 @@
     "replies": {
       "open": "Talk about this moment",
       "collapse": "Hide the thread",
-      "sampleName": "Mumu",
-      "sampleText": "Small things deserve to be taken seriously too.",
-      "sampleMeta": "Sample comment",
       "justNow": "Just now · local preview",
       "input": "Reply to this note",
       "placeholder": "Share a thought…",
-      "submit": "Post this reply"
+      "submit": "Post this reply",
+      "unavailable": "Replies are not connected yet."
     }
   },
   "quotes": {
@@ -418,7 +371,6 @@
     "next": "The next page is still taking shape.",
     "progress": "Finish one experiment, then begin another.",
     "drag": "Drag the little sun, then let go.",
-    "demo": "This is a sample project. No live application or source repository is linked yet.",
     "filterLabel": "Filter projects"
   },
   "gallery": {
@@ -438,70 +390,20 @@
     "defaultCaption": "A little light, just captured.",
     "myPhotos": "My photos",
     "count": "{count} kept moments",
-    "source": "Generated photography · visual preview",
+    "source": "Photo management is not connected yet",
     "closeNotice": "Dismiss the notice",
     "like": "Like “{title}”",
     "unlike": "Unlike “{title}”",
     "ending": "Keep the moment, keep living.",
     "previous": "Previous photo",
     "next": "Next photo",
-    "items": {
-      "sea": {
-        "title": "The sea breeze wrote me a letter",
-        "caption": "Doing nothing but watching the sea — even time turns soft.",
-        "place": "By the sea"
-      },
-      "coffee": {
-        "title": "Give the afternoon to a cup of coffee",
-        "caption": "Light falling on paper — the gentlest thing today.",
-        "place": "Café by the window"
-      },
-      "meadow": {
-        "title": "Into a green that isn't in a hurry",
-        "caption": "The plants say nothing, yet they told me so much.",
-        "place": "Between hills and fields"
-      },
-      "light": {
-        "title": "The shape of light",
-        "caption": "Same afternoon, another angle on the light.",
-        "place": "Window · detail"
-      },
-      "flowers": {
-        "title": "Pocket the wind",
-        "caption": "Wildflowers along the way — gifts you never planned for.",
-        "place": "Meadow · detail"
-      },
-      "horizon": {
-        "title": "Far away, still far away",
-        "caption": "Anyone who has seen the sea keeps a patch of blue inside.",
-        "place": "Coast · detail"
-      }
-    },
     "filterLabel": "Filter photographs",
     "added": "Photos added to this page"
   },
   "identity": {
-    "title": "Leave your echo here",
-    "titleLoggedIn": "Your reading identity",
-    "postmark1": "For everyone",
-    "postmark2": "who lives earnestly",
-    "welcome": "Welcome to this page",
-    "welcomeBack": "Good to see you again",
-    "intro": "Use a familiar identity to save articles you like\nand trade ideas with interesting souls.",
-    "introLoggedIn": "Switched to the signed-in interface preview.",
-    "guest": "Demo guest · GitHub",
-    "continue": "Continue with GitHub",
-    "notice": "This is a visual preview. GitHub authorization isn't connected yet.",
-    "save": "Save ideas",
-    "discuss": "Join discussions",
-    "trace": "Leave a trace",
-    "exitDemo": "Exit the demo state",
-    "previewLogin": "Preview the signed-in view",
-    "disclaimer": "Interface demo · no account data is read or uploaded",
-    "viewAccount": "View the demo account",
     "login": "Sign in",
-    "guestName": "Demo guest",
-    "guestBadge": "G"
+    "title": "Reader account",
+    "unavailable": "Sign-in is not connected yet."
   },
   "discussion": {
     "reactionsTitle": "What did this piece bring to mind?",
@@ -529,28 +431,12 @@
     "like": "Like {name}'s comment",
     "reply": "Reply",
     "justNow": "Just now · local preview",
-    "demo": "Comments and counts are interface demos. New entries only preview on this page.",
-    "samples": {
-      "mountain": {
-        "name": "Letter from the Hills",
-        "text": "“Blank space isn't waste — it's where ideas take root.” I paused right there. Lately I keep asking myself: am I living, or just finishing a checklist?",
-        "time": "2 hours ago"
-      },
-      "reply": {
-        "text": "It's enough to slow down together. I'm learning to keep a little useless-but-happy time for myself too.",
-        "time": "1 hour ago"
-      },
-      "mumu": {
-        "name": "Mumu",
-        "text": "Finished this and wanted to close the laptop and go for a walk. Thank you for the gentle reminder 🌿",
-        "time": "35 minutes ago"
-      }
-    },
     "mark": "Highlight",
     "quote": "Quote to comment",
     "marked": "A line you just marked",
     "markPreview": "Highlight preview for this page",
-    "closeMark": "Close the highlight"
+    "closeMark": "Close the highlight",
+    "unavailable": "Comments are not connected yet."
   },
   "about": {
     "title": "A little about me",
@@ -760,7 +646,6 @@
     "eyebrow": "A LINK, AN ENCOUNTER",
     "directoryTitle": "Places to stop by",
     "count": "{count} friends",
-    "previewCount": "{count} sample cards",
     "filterLabel": "Filter friend sites",
     "categories": {
       "all": "All",
@@ -768,8 +653,6 @@
       "design": "Design",
       "life": "Life"
     },
-    "preview": "A few sample cards while we wait for real friends. These previews have no outgoing links.",
-    "sampleCard": "Sample card · awaiting a real friend",
     "empty": "No letters on this shore yet. A place is waiting for the next friend.",
     "footnote": "No popularity rankings. Every thoughtfully kept corner deserves a visit.",
     "exchangeEyebrow": "LEAVE EACH OTHER A COORDINATE",
@@ -795,25 +678,7 @@
       "respect": "Respect original work and privacy. Keep harmful and infringing content away."
     },
     "contactHelp": "You can reach me through the public contact details on my GitHub profile. Include your site name, URL and a short introduction. Online applications are not open yet.",
-    "contact": "Visit adnaan on GitHub",
-    "samples": {
-      "tideline": {
-        "name": "Between Tides",
-        "description": "Writing code and remembering the moments worth slowing down for."
-      },
-      "paper": {
-        "name": "Paper & Wind",
-        "description": "Collecting little interface details and giving ideas room to take shape."
-      },
-      "island": {
-        "name": "Island Days",
-        "description": "Walking, reading and taking photos of the small lights in everyday life."
-      },
-      "beacon": {
-        "name": "Beacon Log",
-        "description": "Open source, independent projects, explorations and fresh departures."
-      }
-    }
+    "contact": "Visit adnaan on GitHub"
   },
   "admin": {
     "name": "Tidepage studio",
@@ -1024,9 +889,9 @@
     },
     "ai": {
       "title": "Writing assistant",
-      "preview": "Streaming preview · No LLM connected. Sample text is not a model response. Suggestions never edit your document automatically.",
+      "preview": "The LLM service is not connected. AI writing is unavailable.",
       "prompt": "Describe what to continue, refine or translate…",
-      "start": "Preview streaming",
+      "start": "Start writing",
       "stop": "Stop",
       "insert": "Insert after original selection",
       "replace": "Replace original selection",
@@ -1039,8 +904,7 @@
         "done": "Suggestion ready for review",
         "stopped": "Stopped. Review the partial suggestion.",
         "error": "Generation interrupted"
-      },
-      "sample": "Keep the interface light and the content close.\n\nA thoughtful note does not need to rush toward an answer. Save the details, and give ideas room to grow.\n\nThis sample tests streaming, cancellation and accepting a suggestion."
+      }
     },
     "collection": {
       "description": "Edit each translation separately and keep shared properties together. Changes stay in the local workspace.",

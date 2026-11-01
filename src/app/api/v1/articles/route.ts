@@ -1,6 +1,3 @@
-import { listArticles } from "@/modules/content/server";
-import { defineRoute, jsonData } from "@/server/http/route";
-export const GET = defineRoute(async (request, { requestId }) => {
-  const query = Object.fromEntries(new URL(request.url).searchParams);
-  return jsonData(await listArticles(query), requestId);
-});
+import { getArticle, listArticles } from "@/modules/content/server";
+import { createArticleReadRoutes } from "@/modules/content/server/http";
+export const GET = createArticleReadRoutes({ getArticle, listArticles }).list;

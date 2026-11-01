@@ -61,7 +61,7 @@ tests/platform/                配置、HTTP、缓存和真实 PG 查询语义�
 
 ## 内容与发布
 
-`ContentRepository` 是内容查询契约，`createContentService` 负责输入规则。`CONTENT_SOURCE=demo` 使用隔离在内容模块基础设施中的示例；`CONTENT_SOURCE=postgres` 使用真实数据库。两者切换需要重启服务。PostgreSQL 模式绝不因连接失败而回退示例。
+`ContentRepository` 是内容查询契约，`createContentService` 负责输入规则。内容统一读取 PostgreSQL；空库返回空结果，连接失败向上传递，不使用示例内容回填。
 
 文章、手记、项目和一言都只有 `visibility=published` 且 `published_at` 不晚于当前时间时可见。文章列表只查询摘要列，详情才查询正文。搜索通过绑定参数执行，分页有上限，结果使用发布日期与 slug 稳定排序；总数和结果在同一个只读事务快照中读取。
 
@@ -71,7 +71,7 @@ tests/platform/                配置、HTTP、缓存和真实 PG 查询语义�
 
 PG 连接池惰性创建并在开发热更新中复用，设有连接、查询和空闲超时。生产 SSL 由部署环境提供的 `DATABASE_URL` 指定，代码不关闭证书验证。数据库迁移是独立发布步骤，不在页面请求或应用启动时自动执行。
 
-`db:generate` 从模块 schema 生成 SQL，`db:migrate` 执行已提交迁移。提交 schema 修改时同时提交 SQL 与快照。`db:seed` 只导入开发示例、使用事务、重复运行不覆盖已有内容，且禁止在 production 环境运行。生产内容通过后续编辑业务录入。
+`db:generate` 从模块 schema 生成 SQL，`db:migrate` 执行已提交迁移，`db:check` 只读检查连接和迁移。提交 schema 修改时同时提交 SQL 与快照。业务内容通过管理功能录入，测试夹具仅存在于 `tests/fixtures`。
 
 Redis 无配置时不启用缓存，不自动启动进程内缓存。文章摘要集合和详情使用 cache-aside，包含环境命名空间、内容来源与 TTL；缓存值先校验，并合并同一进程的并发未命中。Redis 出错时继续读取数据源，源数据错误向上传递。手记、项目、一言和搜索目前直接查询，避免过早缓存任意组合条件。
 

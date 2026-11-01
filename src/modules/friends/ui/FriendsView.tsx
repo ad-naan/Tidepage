@@ -67,9 +67,7 @@ export function FriendsView({
               <h2 id="friends-directory-title">{t("directoryTitle")}</h2>
             </div>
             <span className={styles.count}>
-              {t(directory.preview ? "previewCount" : "count", {
-                count: directory.items.length,
-              })}
+              {t("count", { count: directory.items.length })}
             </span>
           </div>
           <FilterTabs
@@ -84,16 +82,9 @@ export function FriendsView({
               ).length,
             }))}
           />
-          {directory.preview && (
-            <p className={styles.preview}>{t("preview")}</p>
-          )}
           <ul className={styles.grid} aria-label={t("directoryTitle")}>
             {visible.map((friend) => (
-              <FriendCard
-                key={friend.id}
-                friend={friend}
-                preview={directory.preview}
-              />
+              <FriendCard key={friend.id} friend={friend} />
             ))}
           </ul>
           {!visible.length && (
