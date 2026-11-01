@@ -28,6 +28,7 @@
 | `/zh-CN/quotes`            | `(site)/quotes/page.tsx`               | `src/modules/content/ui/quotes/QuotesView.tsx`      |
 | `/zh-CN/gallery`           | `(site)/gallery/page.tsx`              | `src/modules/content/ui/gallery/GalleryView.tsx`    |
 | `/zh-CN/about`             | `(site)/about/page.tsx`                | `src/modules/content/ui/about/AboutView.tsx`        |
+| `/zh-CN/friends`           | `(site)/friends/page.tsx`              | `src/modules/friends/ui/FriendsView.tsx`            |
 | `/zh-CN/explore`           | `(immersive)/explore/page.tsx`         | `src/modules/world/ui/CoastalExperience.tsx`        |
 
 样式在视图旁边，例如 `QuotesView.module.css`。文章列表行使用 `ArticleList.tsx`，它被首页和归档复用，改完两处都看一下。

@@ -88,7 +88,8 @@
         "title": "沿着海岸走走"
       },
       "empty": "下一页，正在慢慢写。"
-    }
+    },
+    "friends": "友联"
   },
   "categories": {
     "all": "全部",
@@ -703,6 +704,10 @@
     "about": {
       "label": "一封未完的信",
       "aside": "寄给偶然路过这里的你"
+    },
+    "friends": {
+      "label": "友联",
+      "aside": "一只纸船，连接彼此的小岛"
     }
   },
   "articleBlocks": {
@@ -724,5 +729,66 @@
       "error": "需要再试一次"
     },
     "thanks": "谢谢你来过"
+  },
+  "friends": {
+    "title": "沿岸的朋友",
+    "description": "在各自的小岛写作，借一条链接，听见彼此的潮声。",
+    "eyebrow": "一条链接，一次相遇",
+    "directoryTitle": "常去坐坐的地方",
+    "count": "{count} 位朋友",
+    "previewCount": "{count} 张示意名片",
+    "filterLabel": "友站分类",
+    "categories": {
+      "all": "全部",
+      "technology": "技术",
+      "design": "设计",
+      "life": "生活"
+    },
+    "preview": "这里先放了几张示意名片，等待真实的朋友来信。示意内容不可跳转。",
+    "sampleCard": "示意名片 · 待真实友站入驻",
+    "empty": "这一岸还没有来信，给下一位朋友留个位置。",
+    "footnote": "不按热度排名，每一处认真记录的角落都值得停留。",
+    "exchangeEyebrow": "给彼此留一个坐标",
+    "exchangeTitle": "要不要，做个邻居？",
+    "exchangeDescription": "如果你也有一处认真打理的小天地，欢迎来交换链接，让这片海岸再热闹一点。",
+    "exchange": "交换友联",
+    "siteInfoTitle": "本站名片",
+    "copy": "复制本站信息",
+    "copied": "本站信息已复制",
+    "copyFailed": "暂时无法复制",
+    "copyHelp": "可以展开本站名片，手动选择并复制内容。",
+    "fields": {
+      "name": "站点名称",
+      "url": "站点地址",
+      "avatar": "头像地址",
+      "description": "一句话介绍"
+    },
+    "signoff": "互联网很大，能在自己的小角落相遇，就很好。",
+    "invitation": "比起交换流量，更想认识链接另一端认真生活的人。",
+    "guidelines": {
+      "original": "有自己的原创内容，记录技术、设计或生活都好。",
+      "available": "站点可以正常访问，愿意持续打理，也愿意互相走动。",
+      "respect": "尊重原创与隐私，不发布恶意、侵权或伤害他人的内容。"
+    },
+    "contactHelp": "可以通过 GitHub 主页上的公开联系方式联系我，附上你的站名、网址和一句介绍。这里暂未开放在线申请。",
+    "contact": "前往 adnaan 的 GitHub",
+    "samples": {
+      "tideline": {
+        "name": "潮汐之间",
+        "description": "写代码，也记下那些值得慢一点的时刻。"
+      },
+      "paper": {
+        "name": "纸上风物",
+        "description": "收集界面里的小细节，让想法在纸上慢慢成形。"
+      },
+      "island": {
+        "name": "小岛日常",
+        "description": "散步、阅读、拍照，保存生活里微小的光亮。"
+      },
+      "beacon": {
+        "name": "灯塔日志",
+        "description": "关于开源与独立开发，一些探索，一些新的出发。"
+      }
+    }
   }
 }

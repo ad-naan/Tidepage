@@ -7,7 +7,8 @@ import { HanddrawnMark } from "@/shared/ui/drawing/HanddrawnMark";
 import { PencilLine } from "@/shared/ui/drawing/CoastalMarks";
 import styles from "./ContentHeading.module.css";
 
-type Room = "archive" | "notes" | "projects" | "quotes" | "gallery" | "about";
+type Room =
+  "archive" | "notes" | "projects" | "quotes" | "gallery" | "about" | "friends";
 const numbers: Record<Room, string> = {
   archive: "01",
   notes: "02",
@@ -15,8 +16,22 @@ const numbers: Record<Room, string> = {
   quotes: "04",
   gallery: "05",
   about: "06",
+  friends: "07",
 };
 const drawings: Record<Room, ReactNode> = {
+  friends: (
+    <>
+      <path d="M35 93q35-10 63 0t62 0 62 0 47-2M62 82l26-25 26 25m-45-7v15m38-15v15M190 80l21-28 23 28m-37-17v27m31-24v24M128 63l26 8 24-9-21 22-29-21Zm26 8 3 13" />
+      <path
+        d="M91 50q40-34 98-6M61 105l39-1m87 1 45-2"
+        className={styles.faint}
+      />
+      <path
+        d="m143 33 4-7 4 7m89-5 2 8 8 2-8 3-2 8-3-8-8-3 8-2Z"
+        className={styles.accent}
+      />
+    </>
+  ),
   archive: (
     <>
       <path d="M28 100h244M38 106h224M58 98V40h18v58m5 0V31h24v67m6 0V47h14v51m12-1-9-55 16-3 10 58m17 1V35h28v63m6 0V49h18v49m5-1 13-49 17 5-12 45" />

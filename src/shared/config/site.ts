@@ -13,8 +13,14 @@ export const navigationItems = [
   { href: "/quotes", key: "quotes" },
   { href: "/gallery", key: "gallery" },
   { href: "/about", key: "about" },
+  { href: "/friends", key: "friends" },
 ] as const;
 export const publicPages = [
+  {
+    path: "/friends",
+    title: "友联",
+    description: "沿岸的朋友，在各自的小岛听见彼此的潮声。",
+  },
   { path: "/", title: "首页", description: site.description },
   {
     path: "/articles",

@@ -45,8 +45,10 @@ export function Dialog({
     >
       <motion.div
         className={styles.inner}
-        initial={{ opacity: 0, y: 16, scale: 0.97 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
+        // Transforms here expand the scroll host during entry and can leave a
+        // custom rail measured against that temporary overflow. Fade in place.
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={spring}
       >
         <PencilFrame className={styles.paper} />

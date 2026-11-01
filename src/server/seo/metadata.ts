@@ -72,6 +72,7 @@ export function pageMetadata(
   };
 }
 const pages = {
+  "/friends": { title: "nav.friends", description: "friends.description" },
   "/": { title: "site.name", description: "site.description" },
   "/articles": { title: "nav.articles", description: "articles.description" },
   "/notes": { title: "nav.notes", description: "notes.description" },

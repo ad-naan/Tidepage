@@ -24,6 +24,7 @@ src/
     media/ui/player/             音乐播放器、唱片与唱臂
     engagement/ui/               评论、手记回应、阅读批注
     identity/ui/                 身份预览与登录展示
+    friends/domain/ server/ ui/   友联协议、数据入口、友站名片与交换说明
     world/                       海岸插画、交互世界、运行时与玩法规则
   shared/
     ui/                          无业务含义的基础组件

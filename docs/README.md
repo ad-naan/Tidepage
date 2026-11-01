@@ -10,6 +10,7 @@
 | 调字体、间距、手绘线条与动画     | [设计基础](design-system.md)                   |
 | 查语言切换、浮层、loading 细节   | [交互组件约定](ui-components.md)               |
 | 开发 API、数据库、缓存、多人网关 | [后端开发](backend-development.md)             |
+| 按模块学习后端开发与前后端联调   | [模块开发路线](backend-roadmap.md)             |
 | 查数据发布、权限、SEO 与系统分层 | [系统架构](architecture.md)                    |
 | 开发探索世界与玩法               | [海岸交互设计](interaction-design.md)          |
 | 查素材来源                       | [素材说明](../ASSETS.md)                       |

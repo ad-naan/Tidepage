@@ -88,7 +88,8 @@
         "title": "Along the coast"
       },
       "empty": "Another page is on its way."
-    }
+    },
+    "friends": "Friends"
   },
   "categories": {
     "all": "All",
@@ -703,6 +704,10 @@
     "about": {
       "label": "AN UNFINISHED LETTER",
       "aside": "For you, who happened to stop by"
+    },
+    "friends": {
+      "label": "FRIENDS",
+      "aside": "Little islands connected by a paper boat"
     }
   },
   "articleBlocks": {
@@ -724,5 +729,66 @@
       "error": "One more try"
     },
     "thanks": "Thank you for stopping by"
+  },
+  "friends": {
+    "title": "Friends along the shore",
+    "description": "Writing on our own little islands, sharing a link to hear each other’s tide.",
+    "eyebrow": "A LINK, AN ENCOUNTER",
+    "directoryTitle": "Places to stop by",
+    "count": "{count} friends",
+    "previewCount": "{count} sample cards",
+    "filterLabel": "Filter friend sites",
+    "categories": {
+      "all": "All",
+      "technology": "Technology",
+      "design": "Design",
+      "life": "Life"
+    },
+    "preview": "A few sample cards while we wait for real friends. These previews have no outgoing links.",
+    "sampleCard": "Sample card · awaiting a real friend",
+    "empty": "No letters on this shore yet. A place is waiting for the next friend.",
+    "footnote": "No popularity rankings. Every thoughtfully kept corner deserves a visit.",
+    "exchangeEyebrow": "LEAVE EACH OTHER A COORDINATE",
+    "exchangeTitle": "Shall we be neighbours?",
+    "exchangeDescription": "If you have a little corner you care for, let’s exchange links and bring another voice to this shore.",
+    "exchange": "Exchange links",
+    "siteInfoTitle": "This site’s card",
+    "copy": "Copy site details",
+    "copied": "Site details copied",
+    "copyFailed": "Could not copy",
+    "copyHelp": "Expand the site card and select the details to copy them manually.",
+    "fields": {
+      "name": "Site name",
+      "url": "Site URL",
+      "avatar": "Avatar URL",
+      "description": "Introduction"
+    },
+    "signoff": "The internet is vast. It’s lovely to meet in our own little corners.",
+    "invitation": "More than sharing traffic, I’d like to meet the person behind the link.",
+    "guidelines": {
+      "original": "Publish your own writing about technology, design or everyday life.",
+      "available": "Keep your site accessible, tend to it over time and stop by occasionally.",
+      "respect": "Respect original work and privacy. Keep harmful and infringing content away."
+    },
+    "contactHelp": "You can reach me through the public contact details on my GitHub profile. Include your site name, URL and a short introduction. Online applications are not open yet.",
+    "contact": "Visit adnaan on GitHub",
+    "samples": {
+      "tideline": {
+        "name": "Between Tides",
+        "description": "Writing code and remembering the moments worth slowing down for."
+      },
+      "paper": {
+        "name": "Paper & Wind",
+        "description": "Collecting little interface details and giving ideas room to take shape."
+      },
+      "island": {
+        "name": "Island Days",
+        "description": "Walking, reading and taking photos of the small lights in everyday life."
+      },
+      "beacon": {
+        "name": "Beacon Log",
+        "description": "Open source, independent projects, explorations and fresh departures."
+      }
+    }
   }
 }
