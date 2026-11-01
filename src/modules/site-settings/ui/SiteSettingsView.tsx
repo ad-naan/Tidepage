@@ -1,4 +1,5 @@
 "use client";
+import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
 import { useEffect, useState } from "react";
 import { useLocale, useMessages, useTranslations } from "next-intl";
 import { z } from "zod";
@@ -133,7 +134,7 @@ export function SiteSettingsView() {
         }))}
       />
       {error && <p role="alert">{error}</p>}
-      {!value && !error && <p role="status">{t("loading")}</p>}
+      {!value && !error && <LoadingSkeleton variant="rows" />}
       {value && (
         <div className={styles.fields}>
           <Select

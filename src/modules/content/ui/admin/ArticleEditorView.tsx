@@ -1,4 +1,5 @@
 "use client";
+import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
 import {
   useCallback,
   useEffect,
@@ -283,10 +284,12 @@ export function ArticleEditorView({
     return () => window.removeEventListener("keydown", keyboard);
   });
   if (!draft)
-    return (
-      <div role={error ? "alert" : "status"}>
-        <p>{error || t("loading")}</p>
-      </div>
+    return error ? (
+      <p className={styles.error} role="alert">
+        {error}
+      </p>
+    ) : (
+      <LoadingSkeleton />
     );
   const translation = translationOf(draft, locale);
   const issues = publicationIssues(snapshot() ?? draft, locale);

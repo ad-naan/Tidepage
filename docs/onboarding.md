@@ -9,11 +9,15 @@
 ```powershell
 cd E:\26Project\adnaan-blog
 node --version
-npm ci
-npm run dev
+npm install --global pnpm@12.16.1
+pnpm --version
+pnpm install --frozen-lockfile
+pnpm run dev
 ```
 
-Node 应为 24.x。`npm ci` 只在第一次、依赖更新或依赖损坏时执行。日常启动只用 `npm run dev`。
+Node 应为 24.x，pnpm 应为 12.16.1；全局安装 pnpm 只需执行一次。`pnpm install --frozen-lockfile` 只在第一次、拉取到锁文件更新或依赖损坏时执行。日常启动只用 `pnpm run dev`。
+
+新增运行依赖用 `pnpm add 包名`，开发依赖用 `pnpm add -D 包名`，移除依赖用 `pnpm remove 包名`。修改依赖后一起提交 `package.json` 和 `pnpm-lock.yaml`。CI 使用同一个 pnpm 版本并执行冻结锁文件安装。`pnpm-workspace.yaml` 中放行现有原生工具（`@parcel/watcher`、esbuild、sharp）的依赖构建脚本；`@swc/core` 的安装脚本关闭，因为 `next.config.ts` 已绕过 next-intl 的可选原生文案提取器。新增确实需要构建的依赖时，通过 `pnpm approve-builds` 审核并提交配置变化。
 
 打开终端显示的地址，通常是 `http://localhost:3000/zh-CN`；英文为 `/en`。终端保持运行，改文件并保存后浏览器会自动更新。按 `Ctrl+C` 停止。
 
@@ -208,30 +212,30 @@ export default function Page() {
 
 1. 安装并启动 Docker Desktop。
 2. 复制 `.env.example` 为 `.env`，已有文件不要覆盖。设置本地 `POSTGRES_PASSWORD`。
-3. 执行 `npm run infra:up`，等待 PostgreSQL 和 Redis 正常启动。
+3. 执行 `pnpm run infra:up`，等待 PostgreSQL 和 Redis 正常启动。
 4. 取消 `.env` 中 `DATABASE_URL` 的注释，把连接串中的密码改成同一个本地密码。
 5. 执行迁移；需要开发示例时才执行 seed。
 
 ```powershell
-npm run db:migrate
-npm run db:seed
+pnpm run db:migrate
+pnpm run db:seed
 ```
 
 6. 设置 `CONTENT_SOURCE=postgres`。需要缓存时再取消 `REDIS_URL` 的注释。
-7. 停止并重启 `npm run dev`，查看文章页。
+7. 停止并重启 `pnpm run dev`，查看文章页。
 
-`npm run infra:down` 停止服务并保留数据卷。`.env.local` 会覆盖 Next 和数据库脚本的 `.env` 配置，但 Docker Compose 默认读取 `.env`。入门时建议把这些连接配置统一放在 `.env`，避免两份密码不一致。
+`pnpm run infra:down` 停止服务并保留数据卷。`.env.local` 会覆盖 Next 和数据库脚本的 `.env` 配置，但 Docker Compose 默认读取 `.env`。入门时建议把这些连接配置统一放在 `.env`，避免两份密码不一致。
 
 数据库连接失败会报告错误，不会悄悄切回 demo。更多 API、数据表、缓存和多人扩展见 [后端开发](backend-development.md)。
 
 ## 8. 改完如何确认没坏
 
 ```powershell
-npm run check
-npm run build
+pnpm run check
+pnpm run build
 ```
 
-`check` 验证代码格式、目录依赖、基础组件使用、类型和测试；`build` 验证生产构建。格式检查失败时执行 `npm run format`，也可用 `npm run format:check` 单独检查。VS Code 安装工作区推荐的 Prettier 扩展后，保存文件会按项目配置自动格式化。之后在浏览器亲自点一次修改过的功能，检查窄屏、英文和深色模式，自动检查不能判断排版是否好看。
+`check` 验证代码格式、目录依赖、基础组件使用、类型和测试；`build` 验证生产构建。格式检查失败时执行 `pnpm run format`，也可用 `pnpm run format:check` 单独检查。VS Code 安装工作区推荐的 Prettier 扩展后，保存文件会按项目配置自动格式化。之后在浏览器亲自点一次修改过的功能，检查窄屏、英文和深色模式，自动检查不能判断排版是否好看。
 
 架构报错 `use the shared UI primitive`：写了原生控件，改用统一组件。报错 `co-locate CSS Modules`：样式文件没有放到所属组件旁边。
 

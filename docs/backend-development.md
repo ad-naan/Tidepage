@@ -46,8 +46,8 @@ throw tooManyRequestsError(30); // 429 RATE_LIMITED，details 带 retryAfterSeco
 ### 5. 新增 / 修改数据表
 
 1. schema 放在对应模块的 `infrastructure/` 里，并在 `src/server/db/schema.ts` 汇总。
-2. `npm run db:generate` 生成 SQL（`drizzle/`），**SQL 和快照一起提交**。
-3. `npm run db:migrate` 显式执行；迁移不在应用启动或请求里自动跑。
+2. `pnpm run db:generate` 生成 SQL（`drizzle/`），**SQL 和快照一起提交**。
+3. `pnpm run db:migrate` 显式执行；迁移不在应用启动或请求里自动跑。
 4. 开发示例数据进 `scripts/db-seed.ts`，保持幂等、不覆盖已有行。
 
 ### 6. 使用缓存
@@ -115,7 +115,7 @@ Next.js App Router 的 Route Handler **无法挂 WebSocket 升级**，所以 Soc
 
 ### 最小落地顺序
 
-1. `compose.yaml` 保持现状（Redis 已有）；`npm i socket.io socket.io-client`。
+1. `compose.yaml` 保持现状（Redis 已有）；`pnpm add socket.io socket.io-client`。
 2. 方案 A：建独立网关进程入口，握手时用现有 Cookie 会话校验（未登录允许游客身份也可，看产品决策）。
 3. 先做 presence（谁在线、位置广播），再叠加互动动作（打招呼、同乘），最后做持久化世界状态。
 4. 事件 payload 全部走 zod 校验（放 `src/modules/world/domain`），与服务端 API 同一标准。
@@ -123,8 +123,8 @@ Next.js App Router 的 Route Handler **无法挂 WebSocket 升级**，所以 Soc
 ## 提交前检查清单
 
 ```sh
-npm run check   # 格式 + 架构边界 + Next 类型生成 + tsc + 测试，一条命令全查
-npm run build   # 需要验证生产构建时
+pnpm run check   # 格式 + 架构边界 + Next 类型生成 + tsc + 测试，一条命令全查
+pnpm run build   # 需要验证生产构建时
 ```
 
 - [ ] 所有已注册语言包 key 同步

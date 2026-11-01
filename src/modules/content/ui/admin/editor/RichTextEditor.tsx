@@ -1,4 +1,5 @@
 "use client";
+import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
 import { useEffect, useId, useRef, useState } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
@@ -338,7 +339,7 @@ export function RichTextEditor({
     document.addEventListener("pointerdown", outside);
     return () => document.removeEventListener("pointerdown", outside);
   }, []);
-  if (!editor) return <p role="status">{t("loading")}</p>;
+  if (!editor) return <LoadingSkeleton variant="document" />;
   return (
     <div className={styles.root} ref={root}>
       {!readOnly && (

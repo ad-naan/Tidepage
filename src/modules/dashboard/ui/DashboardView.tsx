@@ -1,4 +1,5 @@
 "use client";
+import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/shared/i18n/navigation";
@@ -71,7 +72,7 @@ export function DashboardView() {
           </section>
         </>
       ) : (
-        <p role="status">{t("loading")}</p>
+        <LoadingSkeleton variant="cards" />
       )}
     </>
   );

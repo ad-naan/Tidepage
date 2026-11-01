@@ -55,6 +55,7 @@ src/
 | 文字与数值    | `shared/ui/typography`                            | Text 的语义字号；AnimatedNumber 的数字过渡                                                        |
 | 手绘材料      | `shared/ui/drawing`、`illustration`               | 铅笔滤镜、选中笔迹、纸边、潮痕、贝壳等符号与海岸小稿                                              |
 | 全局导航反馈  | `shared/ui/navigation/NavigationFeedback`         | 路由加载、随机文案、页面高度和页脚稳定                                                            |
+| 内容加载占位  | `shared/ui/loading/LoadingSkeleton`               | 页面 / 列表 / 正文 / 卡片骨架；延迟显现、降低动态效果、延迟读屏播报，避免短请求闪字               |
 | 站点偏好      | `shared/ui/preferences`                           | 语言与主题控件；状态仍由路由 / SiteShell 持有                                                     |
 | 滚动条        | `shared/ui/scroll-area/CustomScrollbars`          | 公共滚动区域与刷新通知                                                                            |
 
@@ -88,6 +89,6 @@ import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 
 ## 自动执行
 
-`npm run check:architecture` 会检查分层、客户端/服务端依赖、旧目录，以及原生控件的归属。业务和组合层不能直接写 `button`、`motion.button`、`input`、`textarea`、`select`、`a`、`dialog`、`details/summary`，必须使用统一出口。原生标签只允许出现在它自己的基础实现中；不能另建一个“临时基础组件”绕过检查。
+`pnpm run check:architecture` 会检查分层、客户端/服务端依赖、旧目录，以及原生控件的归属。业务和组合层不能直接写 `button`、`motion.button`、`input`、`textarea`、`select`、`a`、`dialog`、`details/summary`，必须使用统一出口。原生标签只允许出现在它自己的基础实现中；不能另建一个“临时基础组件”绕过检查。
 
-`tests/ui-architecture.test.mjs` 使用合法与违规样例验证这些规则。`npm run check` 执行格式、架构、类型和测试；生产构建另执行 `npm run build`。字体、间距与笔触见 [设计基础](design-system.md)。
+`tests/ui-architecture.test.mjs` 使用合法与违规样例验证这些规则。`pnpm run check` 执行格式、架构、类型和测试；生产构建另执行 `pnpm run build`。字体、间距与笔触见 [设计基础](design-system.md)。

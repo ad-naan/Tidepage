@@ -1,0 +1,6 @@
+allowBuilds:
+  "@parcel/watcher": true
+  # next.config.ts bypasses next-intl's optional native message extractor.
+  "@swc/core": false
+  esbuild: true
+  sharp: true

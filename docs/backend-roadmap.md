@@ -40,6 +40,6 @@ Server Component 通过模块 server 入口读取数据，不向自身 HTTP API 
 - 检查本地 Node、数据库连接和 CONTENT_SOURCE，解释变量作用；不输出连接密码、不覆盖已有环境文件。
 - 启动本地 PostgreSQL，执行已有迁移和开发种子；切换 postgres 并重启，调用 health/ready 与文章列表接口。
 - 用开发文章串起列表、详情、搜索、翻译和未发布过滤，确认数据库与页面一致。
-- 运行 `npm run check`、`npm run build` 并记录真实服务联调结果；PGlite 测试不能替代 PostgreSQL 连接验证。
+- 运行 `pnpm run check`、`pnpm run build` 并记录真实服务联调结果；PGlite 测试不能替代 PostgreSQL 连接验证。
 
 操作参考：[后端开发约定](backend-development.md)、[系统架构](architecture.md)、[开发上手](onboarding.md)。[友联模块说明](friends-integration.md)仅在推进到友联阶段时使用。

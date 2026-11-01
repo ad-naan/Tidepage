@@ -79,6 +79,9 @@
       "help": "Leaving will discard changes that have not been saved.",
       "stay": "Keep editing",
       "leave": "Discard and leave"
+    },
+    "loading": {
+      "label": "Loading content, please wait"
     }
   },
   "nav": {

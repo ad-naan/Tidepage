@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "packageManager": "pnpm@12.16.1",
   "scripts": {
     "dev": "next dev --hostname 0.0.0.0",
     "build": "next build",
@@ -10,7 +11,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "check:architecture": "node scripts/check-boundaries.mjs",
     "test": "node --conditions=react-server --import tsx --test tests/platform/*.test.ts tests/*.test.mjs",
-    "check": "npm run format:check && npm run check:architecture && npm run typecheck && npm test",
+    "check": "pnpm run format:check && pnpm run check:architecture && pnpm run typecheck && pnpm test",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node --conditions=react-server --import tsx scripts/db-migrate.ts",
     "db:seed": "node --conditions=react-server --import tsx scripts/db-seed.ts",
@@ -62,6 +63,7 @@
     "typescript": "~5.7.2"
   },
   "engines": {
-    "node": ">=24 <25"
+    "node": ">=24 <25",
+    "pnpm": ">=12.16.1 <13"
   }
 }

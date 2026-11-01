@@ -44,4 +44,4 @@ Agent 可成为水獭的行为与对话来源，了解已经发现的线索，�
 
 ## 验证入口
 
-运行 `npm run typecheck`、`node --test tests/coast-journey.test.mjs` 和 `npm run build`。规则测试覆盖解锁条件、重复收集、损坏存档，以及所有停泊点之间不穿岸的航线。浏览器检查覆盖完整航程、昼夜、隐藏地点、暂停和手机布局；画面效果仍需通过实际 WebGL 截图判断。
+运行 `pnpm run typecheck`、`node --test tests/coast-journey.test.mjs` 和 `pnpm run build`。规则测试覆盖解锁条件、重复收集、损坏存档，以及所有停泊点之间不穿岸的航线。浏览器检查覆盖完整航程、昼夜、隐藏地点、暂停和手机布局；画面效果仍需通过实际 WebGL 截图判断。

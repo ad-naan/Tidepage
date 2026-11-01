@@ -79,6 +79,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 <Link
                   key={key}
                   href={href}
+                  prefetch
                   aria-current={
                     (
                       href === "/admin"

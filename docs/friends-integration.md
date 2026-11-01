@@ -17,7 +17,7 @@
 
 现有项目已经采用 Next Route Handler、PostgreSQL / Drizzle、统一 API envelope；先沿用这套基础设施。下面是待开发约定，不是已经存在的接口。
 
-1. 启动环境：按 `onboarding.md` 配置本地 `.env`，运行 `npm run infra:up`，检查 `GET /api/v1/health/ready`。不要覆盖已有环境文件或对生产库试验。
+1. 启动环境：按 `onboarding.md` 配置本地 `.env`，运行 `pnpm run infra:up`，检查 `GET /api/v1/health/ready`。不要覆盖已有环境文件或对生产库试验。
 2. 在 friends/application 定义 `FriendsRepository.listPublished(locale)` 和读取用例；在 friends/infrastructure 增加 Drizzle 表与 PostgreSQL 适配器，最后由 friends/server 组装。路由、UI 不直接访问数据库。
 3. 建议表：`friend_links` 保存 id、url、category、status（draft / published / archived）、sort_order、created_at、updated_at；`friend_link_translations` 保存 friend_id、locale、name、description，以 (friend_id, locale) 为唯一键。先使用纸面符号作为头像，不引入远程图片加载。
 4. 用现有 `db:generate` 生成 SQL 和快照，审查后执行 `db:migrate`。种子脚本幂等写入自己确认的真实友站，示意名片不导入数据库。
@@ -44,7 +44,7 @@
 }
 ```
 
-验收：数据库新增、调整排序、归档分别能反映到列表；中英文按翻译读取；空分类显示空态；非法 locale 返回 400；数据库错误走统一错误管道；草稿与归档绝不出现在公开响应。为这些行为添加 repository/API 测试，运行 `npm run check` 和 `npm run build`。
+验收：数据库新增、调整排序、归档分别能反映到列表；中英文按翻译读取；空分类显示空态；非法 locale 返回 400；数据库错误走统一错误管道；草稿与归档绝不出现在公开响应。为这些行为添加 repository/API 测试，运行 `pnpm run check` 和 `pnpm run build`。
 
 ## 第二阶段：站主维护，再开放访客申请
 

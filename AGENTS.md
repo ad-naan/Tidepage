@@ -18,6 +18,6 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Co-locate view-specific CSS Modules. Keep routes focused on data, validation, SEO and view composition.
 - UI components must not import widgets or routes. Shared must not import business modules. Do not mix server and client exports in a global UI barrel.
 - All visible copy uses registered locale catalogs; never inline locale ternaries. Preserve reduced-motion and keyboard/focus behavior.
-- Run `npm run check` and `npm run build` after structural changes; verify affected interactions in the browser.
+- Run `pnpm run check` and `pnpm run build` after structural changes; verify affected interactions in the browser.
 
 <!-- END:tidepage-ui-rules -->

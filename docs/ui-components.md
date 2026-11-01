@@ -36,7 +36,7 @@
 1. 在 `src/shared/i18n/config.ts` 的 `localeRegistry` 注册名称、hreflang、Open Graph locale 和阅读方向。
 2. 添加独立 JSON 词典，在 `src/i18n/catalogs.ts` 注册加载函数；编译器与测试检查词条结构。
 3. 发布带对应 locale 的内容。相同 slug 的不同语言是独立记录，缺失翻译不冒充已有正文。
-4. 运行 `npm run check`，检查页面切换、选中态、文本方向与 SEO 替代链接。
+4. 运行 `pnpm run check`，检查页面切换、选中态、文本方向与 SEO 替代链接。
 
 不在组件中添加按语言二选一的内嵌表达式。接口、缓存、内容主键和 SEO 均携带 locale；扩展语言不需要复制业务组件。
 

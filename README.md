@@ -6,16 +6,19 @@ adnaan 的手绘博客与可探索海岸，使用 Next.js、React、TypeScript �
 
 ## 先跑起来
 
-需要 Node.js 24。在项目根目录打开终端：
+需要 Node.js 24 和 pnpm 12.16.1。首次安装 pnpm 后，在项目根目录打开终端：
 
 ```powershell
-npm ci
-npm run dev
+npm install --global pnpm@12.16.1
+pnpm install --frozen-lockfile
+pnpm run dev
 ```
 
 打开终端显示的地址，通常是 [中文首页](http://localhost:3000/zh-CN) 或 [英文首页](http://localhost:3000/en)。默认 demo 模式不需要 Docker、PostgreSQL 或 Redis。若已有环境文件设置了 `CONTENT_SOURCE=postgres`，先看上手指南的数据库章节。
 
-以后日常开发只运行 `npm run dev`，保存文件后自动更新；按 `Ctrl+C` 停止。不要同时开多个开发服务。
+以后日常开发只运行 `pnpm run dev`，保存文件后自动更新；按 `Ctrl+C` 停止。不要同时开多个开发服务。
+
+项目通过 `packageManager` 固定 pnpm 版本，依赖以 `pnpm-lock.yaml` 为准。新增依赖用 `pnpm add 包名`，开发依赖用 `pnpm add -D 包名`，移除依赖用 `pnpm remove 包名`；依赖变更时一起提交 `package.json` 和 `pnpm-lock.yaml`。安装命令中的 npm 仅用于首次安装 pnpm。
 
 ## 我要改哪里
 
@@ -36,14 +39,14 @@ npm run dev
 ## 开发最常用的命令
 
 ```powershell
-npm run dev       # 开发和热更新
-npm run format    # 统一格式化代码、样式、配置和文档
-npm run format:check # 只检查格式，不修改文件
-npm run check     # 格式、架构、类型、自动测试
-npm run build     # 确认可构建生产版本
+pnpm run dev       # 开发和热更新
+pnpm run format    # 统一格式化代码、样式、配置和文档
+pnpm run format:check # 只检查格式，不修改文件
+pnpm run check     # 格式、架构、类型、自动测试
+pnpm run build     # 确认可构建生产版本
 ```
 
-格式使用 Prettier，规则统一在 `.prettierrc.json`：2 空格缩进、双引号、分号、80 列换行参考宽度和 LF 换行。`.editorconfig` 同步基础编辑规则；使用 VS Code 时安装工作区推荐的 Prettier 扩展，保存即可自动格式化。生成文件、缓存、静态资源和锁文件通过 `.prettierignore` 排除。CI 的 `npm run check` 包含格式检查，提示格式问题时先执行 `npm run format`。
+格式使用 Prettier，规则统一在 `.prettierrc.json`：2 空格缩进、双引号、分号、80 列换行参考宽度和 LF 换行。`.editorconfig` 同步基础编辑规则；使用 VS Code 时安装工作区推荐的 Prettier 扩展，保存即可自动格式化。生成文件、缓存、静态资源和锁文件通过 `.prettierignore` 排除。CI 的 `pnpm run check` 包含格式检查，提示格式问题时先执行 `pnpm run format`。
 
 基础控件用现成的 `Button`、`Input`、`FilterTabs`、`Dialog` 等；文案使用语言包。可复制的例子见 [开发上手](docs/onboarding.md)。
 

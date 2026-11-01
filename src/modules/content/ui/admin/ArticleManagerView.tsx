@@ -1,4 +1,5 @@
 "use client";
+import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/shared/i18n/navigation";
@@ -90,7 +91,7 @@ export function ArticleManagerView({
           },
         ]}
       />
-      {state === "loading" && <p role="status">{t("loading")}</p>}
+      {state === "loading" && <LoadingSkeleton variant="rows" />}
       {state === "error" && (
         <div role="alert">
           <p>{t("storageError")}</p>

@@ -57,7 +57,7 @@ tests/platform/                配置、HTTP、缓存和真实 PG 查询语义�
 
 依赖方向为路由 → 模块服务端入口 → 应用服务 → 仓储接口。基础设施实现仓储接口，由模块入口选择。客户端只接收可序列化 DTO 或调用 `/api/v1`，服务端页面直接调用服务，避免先经过自己的 HTTP API。
 
-`shared` 不依赖业务模块。`domain` 不依赖应用层、UI 或数据库；`application` 不依赖适配器。跨模块使用公开的 `server`、`domain` 或 UI 入口。服务端代码标记 `server-only`。`npm run check:architecture` 检查这些规则，并沿客户端导入链检查是否带入服务端代码。
+`shared` 不依赖业务模块。`domain` 不依赖应用层、UI 或数据库；`application` 不依赖适配器。跨模块使用公开的 `server`、`domain` 或 UI 入口。服务端代码标记 `server-only`。`pnpm run check:architecture` 检查这些规则，并沿客户端导入链检查是否带入服务端代码。
 
 ## 内容与发布
 

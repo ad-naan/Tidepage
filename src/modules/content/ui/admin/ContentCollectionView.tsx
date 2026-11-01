@@ -1,4 +1,5 @@
 "use client";
+import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
 import { useEffect, useState } from "react";
 import { useLocale, useMessages, useTranslations } from "next-intl";
 import { z } from "zod";
@@ -191,7 +192,7 @@ export function ContentCollectionView({ kind }: { kind: Collection }) {
           ]}
         />
       )}
-      {!ready && !error && <p role="status">{t("loading")}</p>}
+      {!ready && !error && <LoadingSkeleton variant="rows" />}
       {!value && (
         <ul className={styles.list}>
           {items
