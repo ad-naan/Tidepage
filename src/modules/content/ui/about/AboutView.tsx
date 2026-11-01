@@ -12,7 +12,10 @@ import { getTranslations } from "next-intl/server";
 
 export async function AboutView() {
   const t = await getTranslations("about");
-  const sections = t.raw("sections") as typeof profile.about;
+  const sections = t.raw("sections") as Array<{
+    title: string;
+    paragraphs: string[];
+  }>;
   return (
     <div className={`inner-page memoir-page ${styles.about}`}>
       <ContentHeading

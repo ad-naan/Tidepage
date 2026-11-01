@@ -1,6 +1,7 @@
 "use client";
 import { useTranslations } from "next-intl";
 import { Link } from "@/shared/i18n/navigation";
+import { profile } from "@/shared/config/profile";
 import styles from "./HeaderBrand.module.css";
 
 export function HeaderBrand({ compact }: { compact: boolean }) {
@@ -13,7 +14,7 @@ export function HeaderBrand({ compact }: { compact: boolean }) {
       aria-label={t("wordmark")}
     >
       <span className={styles.signature} aria-hidden="true">
-        adnaan
+        {profile.name}
         <svg className={styles.arrow} viewBox="0 0 22 16" fill="none">
           <path
             d="m2 6 8 4-4-7 13 6-5 2"
@@ -26,7 +27,7 @@ export function HeaderBrand({ compact }: { compact: boolean }) {
       </span>
       <span className={styles.symbol} aria-hidden="true">
         <img
-          src="/images/author-avatar.png"
+          src={profile.avatar}
           width="38"
           height="38"
           alt=""

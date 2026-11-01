@@ -17,6 +17,8 @@ src/
     feed.xml/ llms.txt/        与页面同源的机器可读输出
     sitemap.ts robots.ts      索引控制
   modules/
+    home/ui/                   首页介绍、布局和外链
+    media/ui/player/           播放器与唱片
     content/
       domain/                  实体、DTO、校验规则，不依赖数据库或框架
       application/             用例、仓储接口、正文序列化
@@ -47,9 +49,6 @@ src/
     http/                      浏览器请求客户端
     hooks/ ui/ lib/            无业务依赖的基础组件与工具
   widgets/site-shell/          页头、导航、页脚等站点组合；依赖业务 UI 与 shared
-  modules/home/ui/             首页介绍、旅程与外链
-  modules/media/ui/player/     播放器
-  shared/ui/                   无业务含义的基础控件与手绘材料
   styles/                      现有全局视觉系统
 drizzle/                       可审阅的 SQL 迁移与快照
 scripts/                       迁移、种子、边界检查与开发工具

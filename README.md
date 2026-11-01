@@ -1,80 +1,63 @@
 # Tidepage · 潮页
 
-手绘博客与可探索海岸，基于 Next.js App Router、React、TypeScript、Three.js。后端采用模块化单体，已封装 PostgreSQL、Redis、内容服务、版本化 API、会话读取与 SEO / GEO 输出。
+adnaan 的手绘博客与可探索海岸，使用 Next.js、React、TypeScript 和 Three.js。页面和后端在同一个项目中。
 
-## 本地启动
+**第一次开发，先看 [开发上手](docs/onboarding.md)。找不到文件，查 [按任务找文件](docs/project-map.md)。** 不需要先读完数据库和所有架构说明。
 
-使用 Node.js 24。
+## 先跑起来
 
-```sh
+需要 Node.js 24。在项目根目录打开终端：
+
+```powershell
 npm ci
 npm run dev
 ```
 
-默认 http://localhost:3000。无外部服务时使用明确的 `CONTENT_SOURCE=demo`，可以查看现有页面与互动海岸。作者文案在 `src/shared/config/profile.ts`，开发示例内容在 `src/modules/content/infrastructure/demo-data.ts`。
+打开终端显示的地址，通常是 [中文首页](http://localhost:3000/zh-CN) 或 [英文首页](http://localhost:3000/en)。默认 demo 模式不需要 Docker、PostgreSQL 或 Redis。若已有环境文件设置了 `CONTENT_SOURCE=postgres`，先看上手指南的数据库章节。
 
-## 接入 PostgreSQL 与 Redis
+以后日常开发只运行 `npm run dev`，保存文件后自动更新；按 `Ctrl+C` 停止。不要同时开多个开发服务。
 
-1. 将 `.env.example` 复制为 `.env`，设置本地 `POSTGRES_PASSWORD`。Docker Compose 读取 `.env`，Next 与数据库脚本同时支持 `.env.local` 覆盖。
-2. 启动 Docker Desktop，然后执行 `npm run infra:up`。数据库端口只绑定 localhost，数据使用命名卷。
-3. 在 `.env` 中启用匹配密码的 `DATABASE_URL`；需要缓存时启用 `REDIS_URL`。
-4. 执行迁移，可选导入开发内容。
+## 我要改哪里
 
-```sh
-npm run db:migrate
-npm run db:seed
+| 要改的东西                         | 文件位置                                                        |
+| ---------------------------------- | --------------------------------------------------------------- |
+| 介绍、标题、按钮等界面文字         | `src/shared/i18n/messages/zh-CN.json`、`en.json`                |
+| 首页布局、介绍区                   | `src/modules/home/ui/HomeView.tsx`、`HomeHero.tsx`              |
+| 页头、菜单、页脚                   | `src/widgets/site-shell/`                                       |
+| 文章、手记、项目、一言、照片、自述 | `src/modules/content/ui/` 下对应目录                            |
+| 姓名、头像路径、GitHub 等外链      | `src/shared/config/profile.ts`                                  |
+| 基础按钮、输入、弹窗、筛选、提示   | `src/shared/ui/`                                                |
+| 字体、字号、间距                   | `src/styles/tokens.css`                                         |
+| 演示文章等内容                     | `src/modules/content/infrastructure/demo-data.ts`、`demo-en.ts` |
+| 海岸插画、三维漫游                 | `src/modules/world/ui/`、`runtime/`                             |
+
+旧 `src/components` 已按职责拆分，不再使用。页面样式通常就在对应组件旁边的 `.module.css` 中。完整路径见 [目录说明](docs/project-map.md)。
+
+## 开发最常用的命令
+
+```powershell
+npm run dev       # 开发和热更新
+npm run check     # 架构、类型、自动测试
+npm run build     # 确认可构建生产版本
 ```
 
-5. 设置 `CONTENT_SOURCE=postgres`，重新启动开发服务。迁移不会自动执行；PG 故障不会回退示例内容。
+基础控件用现成的 `Button`、`Input`、`FilterTabs`、`Dialog` 等；文案使用语言包。可复制的例子见 [开发上手](docs/onboarding.md)。
 
-`npm run infra:down` 停止服务并保留数据卷。生产数据库应使用受管理的凭据、TLS 和独立迁移步骤，不直接照搬本地 Compose。
+## 文档怎么读
 
-## 目录入口
+1. [开发上手](docs/onboarding.md)：启动、改文字、改样式、新增页面、接数据库。
+2. [按任务找文件](docs/project-map.md)：目录用途、真实文件位置、旧名称对应新名称。
+3. [前端架构与组件清单](docs/frontend-architecture.md)：组件放哪、怎样命名、公共控件怎么用。
+4. [设计基础](docs/design-system.md)：字体、间距、笔触和动效标准。
+5. [后端开发](docs/backend-development.md)：需要 API、PG、Redis、多人网关时再看。
+6. [系统架构](docs/architecture.md)：数据来源、发布、缓存、SEO / GEO。
 
-| 目录                            | 责任                                               |
-| ------------------------------- | -------------------------------------------------- |
-| `src/app/[locale]/(site)`       | 文章、手记、项目等阅读页面与布局                   |
-| `src/app/[locale]/(immersive)`  | 独立的海岸体验布局                                 |
-| `src/app/[locale]/(publishing)` | 便于引用的正文文本输出                             |
-| `src/app/api/v1`                | 版本化 HTTP 请求适配                               |
-| `src/modules`                   | content、identity、engagement、world 业务模块      |
-| `src/server`                    | 配置、PG、Redis、HTTP、日志、SEO、实时广播基础设施 |
-| `src/shared`                    | 基础组件、hooks、DTO、浏览器请求客户端             |
-| `src/components`                | 站点布局、播放器与原创插画                         |
-| `drizzle`                       | SQL 迁移与结构快照                                 |
-| `docs/architecture.md`          | 模块边界、发布规则、会话、缓存与扩展约定           |
+全部文档入口是 [docs/README.md](docs/README.md)。
 
-完整说明见 [架构文档](docs/architecture.md)，互动海岸说明见 [交互设计](docs/interaction-design.md)，接手开发与实时多人接入见 [上手指南](docs/onboarding.md)。
+## 当前功能范围
 
-## 常用命令
+文章、手记、项目、一言已有 demo 与 PostgreSQL 两种来源；数据库接入按上手指南操作。HTTP 接口在 `/api/v1`，存活检查为 `/api/v1/health/live`。
 
-```sh
-npm run check                 # 架构边界 + Next 类型生成 + TS + 测试
-npm run build                 # 生产构建
-npm start                     # 运行生产构建
-npm run db:generate           # 修改 schema 后生成 SQL
-npm run db:migrate            # 显式迁移目标数据库
-npm run db:seed               # 幂等导入开发示例，不覆盖现有行
-npm run db:studio             # 本地数据库查看工具
-npm run format                # 统一格式
-```
+标明“演示”的登录、评论、点赞和人数仍是界面预览。真实 OAuth、内容管理后台、对象存储、Agent 服务尚未实现。照片和音乐导入使用浏览器临时地址，海岸进度保存在当前浏览器。
 
-`GET /api/v1/articles?page=1&pageSize=12&q=AI` 返回分页摘要；详情使用 `/api/v1/articles/:slug`。API 返回请求编号，支持统一校验与错误响应。存活和就绪探针分别为 `/api/v1/health/live` 与 `/api/v1/health/ready`。
-
-## 国际化
-
-语言通过 `src/shared/i18n/config.ts` 统一注册，词典通过 `src/i18n/catalogs.ts` 加载。已提供简体中文和英文，采用 `/zh-CN/…`、`/en/…` 独立路由。内容、缓存键、canonical 与 hreflang 均包含 locale。后续语言按注册表扩展，不在组件中写语言二选一分支。
-
-语言切换和通用选择器的封装说明见 [基础组件约定](docs/ui-components.md)。
-
-## SEO 与 GEO
-
-统一配置 `SITE_URL`。支持 canonical、Open Graph 分享图、Twitter Card、作者与文章 JSON-LD、面包屑、RSS、sitemap、robots、`llms.txt` 与 `/articles/:slug/text` Markdown 引用。
-
-开发与预览默认不开放索引。使用正式 HTTPS 域名和 PostgreSQL 内容后，显式设置 `INDEXING_ENABLED=true` 再部署。GEO 输出帮助内容被读取与引用，不保证搜索或 AI 排名。
-
-## 当前业务范围
-
-文章、手记、项目和一言已具备真实 PG 查询适配器；演示账号、评论与点赞仍保留明确的本地预览行为。真实会话读取和权限校验已具备，OAuth、后台编辑、对象存储与 Agent 服务尚未实现。照片和音乐导入仍使用浏览器临时 URL；海岸进度保存在当前浏览器。
-
-海岸支持驾船、线索收集、灯塔解锁、隐藏海湾、日夜、水面反射和声音。页面保留原有手绘视觉与动效。素材说明见 [ASSETS.md](ASSETS.md)。
+开发默认关闭索引；正式发布前配置真实 `SITE_URL`、数据库内容和 `INDEXING_ENABLED`。素材来源见 [ASSETS.md](ASSETS.md)。

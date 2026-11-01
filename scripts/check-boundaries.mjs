@@ -84,6 +84,18 @@ for (const file of files(root)) {
     ts.forEachChild(node, dynamic);
   }
   dynamic(source);
+  for (const name of imports) {
+    if (!name.endsWith(".module.css")) continue;
+    const css = name.startsWith("@/")
+      ? resolve(root, name.slice(2))
+      : resolve(dirname(file), name);
+    if (!existsSync(css))
+      errors.push(`${normalized(file)}: missing CSS Module ${name}`);
+    else if (dirname(css) !== dirname(file))
+      errors.push(
+        `${normalized(file)}: co-locate CSS Modules with the owning component (${name})`,
+      );
+  }
   graph.set(file, {
     client,
     server,

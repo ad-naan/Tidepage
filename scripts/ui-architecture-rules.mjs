@@ -23,6 +23,20 @@ export function inspectUiSource(source, path) {
         errors.push(
           `${path}: <${tag}> must use the shared UI primitive (${owner})`,
         );
+      if (tag === "Input") {
+        for (const attribute of node.attributes.properties) {
+          if (
+            ts.isJsxAttribute(attribute) &&
+            attribute.name.text === "type" &&
+            attribute.initializer &&
+            ts.isStringLiteral(attribute.initializer) &&
+            ["range", "file"].includes(attribute.initializer.text)
+          )
+            errors.push(
+              `${path}: use RangeSlider or FileInput instead of Input type=${attribute.initializer.text}`,
+            );
+        }
+      }
     }
     ts.forEachChild(node, visit);
   }

@@ -1,169 +1,251 @@
-# 上手指南
+# 开发上手：从改一个页面开始
 
-这份文档面向接下来在这个脚手架上亲手开发的人：先建立三条心智模型，然后按任务查阅 Cookbook，最后是实时多人（Socket.IO / 世界空间）的接入路线图。架构边界与决策原因见 [architecture.md](architecture.md)。
+先看这一份就能开始。找不到文件时查 [目录说明](project-map.md)，遇到组件放置问题再查 [前端架构](frontend-architecture.md)。数据库和多人扩展不用一开始就学。
 
-## 三条心智模型
+## 1. 启动项目
 
-1. **模块化单体**：所有能力都在一个 Next.js 进程里。业务按模块组织在 `src/modules/<name>/`，基础设施（数据库、缓存、HTTP、日志）统一在 `src/server/`。页面直接调用模块服务端入口，不绕自己的 HTTP API。
-2. **依赖方向固定**：`app → modules/*/server → application → domain`；`infrastructure` 实现 `application` 定义的仓储接口。`shared` 不依赖任何业务，`domain` 不依赖任何框架。`npm run check:architecture` 会机器检查这些规则，改坏方向会直接挂。
-3. **环境即开关**：`CONTENT_SOURCE=demo|postgres` 显式切换内容来源；`REDIS_URL` 可选，配了才有缓存；`INDEXING_ENABLED` 默认关。任何外部服务缺失都不会静默回退成假数据（demo 是显式声明，不是回退）。
+在项目目录打开 PowerShell：
 
-## 目录速查
-
-| 想做什么          | 去哪里                                                                       |
-| ----------------- | ---------------------------------------------------------------------------- |
-| 加页面 / 改路由   | `src/app/[locale]/(site)` 阅读、`(immersive)` 海岸、`(publishing)` 纯文本    |
-| 加 API            | `src/app/api/v1/**/route.ts` + `src/shared/contracts/api.ts`                 |
-| 加业务功能        | `src/modules/<模块>/`（domain / application / infrastructure / server / ui） |
-| 改文案 / 加翻译   | `src/shared/i18n/messages/zh-CN.json` 与 `en.json` 同步加 key                |
-| 加表 / 改表       | `src/modules/*/infrastructure/` 的 schema + `npm run db:generate`            |
-| 用缓存            | `src/server/cache/`（`createRemember` + `invalidate`）                       |
-| 抛业务错误        | `src/server/http/errors.ts` 的错误工厂                                       |
-| 限流              | `src/server/http/rate-limit.ts`                                              |
-| 实时广播 / PubSub | `src/server/realtime/pubsub.ts`                                              |
-| 日志              | `src/server/observability/logger.ts` 的 `log()`                              |
-
-## Cookbook
-
-### 1. 新增或修改文案（i18n）
-
-所有已注册语言包必须同步改；当前文件为：`src/shared/i18n/messages/zh-CN.json` 和 `en.json`，key 结构一致。组件里用 `useTranslations("<命名空间>")`，服务端用 `getTranslations`。API 错误文案放在顶层 `apiErrors` 命名空间，key 就是错误 code（见下文错误处理）。
-
-检查残留硬编码文案：全局搜中文字符或英文句子，确认是否应进语言包。
-
-### 2. 新增一个页面
-
-1. 在 `src/app/[locale]/(site)/<名称>/page.tsx` 建页面，调用模块服务端入口取数（如 `getArticles(locale)`）。
-2. 文案进语言包；SEO 用 `src/server/seo/metadata.ts` 的辅助函数，canonical 基于统一 `SITE_URL`。
-3. 需要进导航就改 `src/widgets/site-shell/header/SiteHeader.tsx` / `src/widgets/site-shell/navigation/SiteNavigation.tsx`（文案同样走 i18n）。
-
-### 3. 新增一个 API 接口
-
-```ts
-// src/app/api/v1/<资源>/route.ts
-import { listSomething } from "@/modules/<模块>/server";
-import { defineRoute, jsonData } from "@/server/http/route";
-import { enforceRateLimit } from "@/server/http/rate-limit";
-
-export const GET = defineRoute(async (request, { requestId }) => {
-  await enforceRateLimit(request, "<资源>:list", 60, 60); // 可选
-  const query = Object.fromEntries(new URL(request.url).searchParams);
-  return jsonData(await listSomething(query), requestId);
-});
+```powershell
+cd E:\26Project\adnaan-blog
+node --version
+npm ci
+npm run dev
 ```
 
-约定：
+Node 应为 24.x。`npm ci` 只在第一次、依赖更新或依赖损坏时执行。日常启动只用 `npm run dev`。
 
-- 成功 `{ data, meta: { requestId } }`，失败 `{ error: { code, message, details? }, meta }`——`defineRoute` 自动处理，不要手写 Response.json 错误分支。
-- 输入校验用 zod schema（参考 `src/modules/content/domain/query.ts` 的有界分页写法），校验失败自动 400。
-- 变更接口（POST 等）：需要登录的调用 `requirePrincipal`，Cookie 鉴权的同时调用 `requireSameOrigin(request)`。
-- 返回类型加到 `src/shared/contracts/api.ts`，浏览器侧用 `src/shared/http/client.ts` 的 `apiGet` / `apiSend`。
+打开终端显示的地址，通常是 `http://localhost:3000/zh-CN`；英文为 `/en`。终端保持运行，改文件并保存后浏览器会自动更新。按 `Ctrl+C` 停止。
 
-### 4. 错误处理
+**只改页面，不用安装数据库。** 无环境文件时默认用 demo 内容。如果已有 `.env` / `.env.local`，检查 `CONTENT_SOURCE`：只做演示开发设为 `demo`。修改环境配置后重启开发服务。
 
-业务代码只抛 `AppError`，用 `src/server/http/errors.ts` 的工厂：
+首次需要环境文件时，把 `.env.example` 复制为 `.env`；已有文件就编辑它，不要覆盖。
 
-```ts
-import {
-  notFoundError,
-  conflictError,
-  tooManyRequestsError,
-} from "@/server/http/errors";
-throw notFoundError(); // 404 NOT_FOUND
-throw conflictError(); // 409 CONFLICT
-throw tooManyRequestsError(30); // 429 RATE_LIMITED，details 带 retryAfterSeconds
+## 2. 第一次修改，先改首页介绍
+
+1. 按 `Ctrl+P` 打开 `src/shared/i18n/messages/zh-CN.json`。
+2. 找到 `home → hero → intro`。
+3. 修改 `line2` 或 `description`，保留原来的 key 和 JSON 格式。
+4. 打开 `en.json`，同步调整对应英文。两份 JSON 的 key 结构必须一致。
+5. 保存，查看首页；再打开 `/en` 看英文。
+
+这里控制文字。要改介绍区结构、链接排列、星芒彩蛋，打开 `src/modules/home/ui/HomeHero.tsx`；要改它的排版，打开旁边的 `HomeHero.module.css`。
+
+姓名、头像路径、GitHub 等链接在 `src/shared/config/profile.ts`。个人介绍文字仍在语言包里。
+
+## 3. 改现有页面，按这个顺序找
+
+以一言页为例：
+
+1. `src/modules/content/ui/quotes/QuotesView.tsx`：结构与交互。
+2. 同目录 `QuotesView.module.css`：这一页的排版和样式。
+3. 语言包的 `quotes`：标题、按钮、提示文字。
+4. `demo-data.ts` / `demo-en.ts`：demo 模式下的一言内容，不是界面文案。
+5. 保存后检查桌面、窄屏、英文和深色模式。
+
+其他页面查 [页面对应表](project-map.md#页面在哪里)。通常不用先改 app 中的路由文件，也不要一上来就向 globals.css 添加覆盖规则。
+
+### 调字体、字号和间距
+
+只影响一个页面，改它旁边的 CSS Module。希望统一影响全站，改 `src/styles/tokens.css` 的公共变量。
+
+```css
+.section {
+  display: grid;
+  gap: var(--space-4);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+}
 ```
 
-新错误 code 要在所有语言包的 `apiErrors` 里补 key，否则回退到抛出时传入的 message。日志用 `log(level, "事件名", { component })`，禁止记录请求体、Cookie、SQL 和原始异常消息。
+`--space-4` 是 16px，`--text-body` 是 14px。其他尺度见 [设计基础](design-system.md)。避免每页各自定义一套字号。
 
-### 5. 新增 / 修改数据表
+## 4. 使用已有基础组件
 
-1. schema 放在对应模块的 `infrastructure/` 里，并在 `src/server/db/schema.ts` 汇总。
-2. `npm run db:generate` 生成 SQL（`drizzle/`），**SQL 和快照一起提交**。
-3. `npm run db:migrate` 显式执行；迁移不在应用启动或请求里自动跑。
-4. 开发示例数据进 `scripts/db-seed.ts`，保持幂等、不覆盖已有行。
+| 需要什么               | 导入位置                                    |
+| ---------------------- | ------------------------------------------- |
+| 按钮 / 图标按钮        | `@/shared/ui/button/Button`                 |
+| 输入框、文件选择、滑块 | `@/shared/ui/field/Input`                   |
+| 文本域                 | `@/shared/ui/field/Textarea`                |
+| 选择器                 | `@/shared/ui/select/Select`                 |
+| 分类筛选               | `@/shared/ui/filter-tabs/FilterTabs`        |
+| 对话框                 | `@/shared/ui/dialog/Dialog`                 |
+| 操作提醒               | `@/shared/ui/feedback/NoticeProvider`       |
+| 站内链接、路由         | `@/shared/i18n/navigation`                  |
+| 外部链接               | `@/shared/ui/link/Anchor` 的 `ExternalLink` |
+| 铅笔线、纸边           | `@/shared/ui/drawing/CoastalMarks`          |
 
-### 6. 使用缓存
+`Button` 默认 `bare` 外观，适合已有定制布局；新按钮可选 `variant="quiet"` 或 `"primary"`。`busy={saving}` 可禁用重复操作。表单提交按钮必须显式写 `type="submit"`。
 
-```ts
-import { getCacheStore } from "@/server/cache/redis";
-import { createRemember } from "@/server/cache/remember";
+输入框默认有统一外观；旧布局完全定制时用 `appearance="bare"`。控件原生属性和 ref 都可以传入，不要再包一层临时按钮或临时输入框。
 
-const remember = createRemember(getCacheStore());
-const value = await remember(
-  `${source}:${locale}:<资源>:<键>`, // key 带来源与语言前缀
-  ttlSeconds,
-  z.array(itemSchema), // zod schema，缓存值先校验再用
-  () => loadFromDatabase(),
-);
+## 5. 新增一个小页面：完整例子
+
+以 `/zh-CN/playground` 为例。**这是开发示例，项目没有额外添加这个页面。** 按以下顺序创建，不需要先建数据库表，也不用创建一套空的后端目录。
+
+### 第一步：给语言包增加文案
+
+把 `playground` 作为一个新顶层属性加到现有 JSON 中，不要覆盖整个文件。
+
+中文 `zh-CN.json`：
+
+```json
+{
+  "playground": {
+    "title": "创意小试验",
+    "description": "把一个小想法，先做出来。",
+    "action": "试一下",
+    "done": "这个小交互已经生效"
+  }
+}
 ```
 
-写操作在事务提交后调用 `invalidate*(...)`；缓存失败只降级不报错。参考 `src/modules/content/server/index.ts`。
+英文 `en.json`：
 
-### 7. 新增一个业务模块
-
-照抄 `content` 模块的结构：
-
-```text
-src/modules/<name>/
-  domain/           实体、DTO、zod 校验；不 import 框架和数据库
-  application/      用例函数 + Repository 接口定义
-  infrastructure/   PostgreSQL / demo 适配器、表 schema
-  server/index.ts   依赖组装与缓存包装，页面只从这里 import
-  ui/               React 视图
+```json
+{
+  "playground": {
+    "title": "Little experiments",
+    "description": "Give a small idea a place to begin.",
+    "action": "Try it",
+    "done": "The interaction is working"
+  }
+}
 ```
 
-边界脚本会强制：app 只能碰模块的 `server` / `domain` / `ui` 入口；跨模块不能 import 别人的 `application` / `infrastructure`。
+示例外层的大括号表示 JSON 文件的根对象；实际编辑时只把新的属性合进去。注意前后属性之间的逗号，JSON 不支持注释或末尾多余逗号。
 
-## 实时多人路线图（Socket.IO / 世界空间）
+### 第二步：创建视图与样式
 
-你要做的世界空间实时互动陪伴，基建已经预留了这些件：
+文件 `src/modules/playground/ui/PlaygroundView.tsx`：
 
-| 预留件           | 位置                            | 作用                                                                                   |
-| ---------------- | ------------------------------- | -------------------------------------------------------------------------------------- |
-| PubSub 通道      | `src/server/realtime/pubsub.ts` | 配 `REDIS_URL` 自动用 Redis 发布订阅（多实例广播），没配则进程内总线（单实例开发可用） |
-| 限流器           | `src/server/http/rate-limit.ts` | 握手前 / 高频接口的 429 保护                                                           |
-| 错误与 requestId | `src/server/http/`              | WebSocket 握手失败也能走统一的本地化错误管道                                           |
-| 会话校验         | `src/modules/identity/server`   | `requirePrincipal` 可在握手阶段复用，Cookie 鉴权真实会话                               |
-| 世界域模型       | `src/modules/world/domain`      | 航程与解锁规则已是纯函数，多人状态同步可直接复用判定                                   |
+```tsx
+"use client";
 
-### 接入方案选型
+import { useTranslations } from "next-intl";
+import { Button } from "@/shared/ui/button/Button";
+import { Text } from "@/shared/ui/typography/Text";
+import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
+import styles from "./PlaygroundView.module.css";
 
-Next.js App Router 的 Route Handler **无法挂 WebSocket 升级**，所以 Socket.IO 不能直接写在 `src/app/api` 里。两条路：
-
-- **方案 A（推荐起步）：独立实时网关进程**
-  新建 `src/modules/world/realtime/`（或独立 `realtime/` 服务目录），用 `node --import tsx` 起一个独立进程，复用 `getPubSub()`、`getEnv()`、identity 会话校验。Next 页面通过环境变量 `NEXT_PUBLIC_REALTIME_URL` 连接。优点：不动 Next 的启动链路，`next dev` 热更新不受影响；缺点：多一个进程要管（compose 里加一个 service 即可）。
-- **方案 B：自定义 server**
-  用 `server.ts` 自己 `const app = next({ dev }); const server = http.createServer(app);` 再挂 Socket.IO。优点：单进程；缺点：放弃 `next dev` 的部分能力（如自动 Turbopack 特性），dev 体验变差，部署脚本全要改。
-
-单人项目先用 A，等实时逻辑稳定再评估合并。
-
-### 世界空间同步建议（踩坑提示）
-
-- **房间即区域**：Socket.IO room 对应世界区域（海岸 / 海湾 / 灯塔），跨区切换 = leave + join，天然隔离广播范围。
-- **服务端权威 + 客户端插值**：客户端只上报意图（输入 / 位置采样 10–15Hz），服务端按 tick 广播快照或增量，客户端在两个快照间插值。不要把 Three.js 的对象直接序列化传输，传 DTO。
-- **PubSub 分层**：单实例内 Socket.IO 自身的 `io.emit` 就够；**只有**多实例部署时才需要 `getPubSub()` 把事件从实例 A 广播到实例 B 的 socket。第一天不要为它增加复杂度，但通道已经就位。
-- **presence 用心跳**：进房 join、掉线（`disconnect` 事件）即离场；Redis 配置后可把 presence 写进带 TTL 的 key，天然容错。
-- **位置/互动事件限流**：`checkRateLimit` 可直接用于事件频率上限（如每秒最多 N 次位置上报），防止客户端刷屏。
-
-### 最小落地顺序
-
-1. `compose.yaml` 保持现状（Redis 已有）；`npm i socket.io socket.io-client`。
-2. 方案 A：建独立网关进程入口，握手时用现有 Cookie 会话校验（未登录允许游客身份也可，看产品决策）。
-3. 先做 presence（谁在线、位置广播），再叠加互动动作（打招呼、同乘），最后做持久化世界状态。
-4. 事件 payload 全部走 zod 校验（放 `src/modules/world/domain`），与服务端 API 同一标准。
-
-## 提交前检查清单
-
-```sh
-npm run check   # 架构边界 + Next 类型生成 + tsc + 测试，一条命令全查
-npm run build   # 需要验证生产构建时
+export function PlaygroundView() {
+  const t = useTranslations("playground");
+  const { notify } = useNotice();
+  return (
+    <section className={styles.view}>
+      <Text as="h1" variant="title">
+        {t("title")}
+      </Text>
+      <Text as="p" tone="muted">
+        {t("description")}
+      </Text>
+      <Button
+        variant="quiet"
+        onClick={() => notify({ title: t("done"), tone: "success" })}
+      >
+        {t("action")}
+      </Button>
+    </section>
+  );
+}
 ```
 
-- [ ] 所有已注册语言包 key 同步
-- [ ] 新 SQL 迁移与快照一起提交
-- [ ] 错误 code 进了 `apiErrors`
-- [ ] 没有绕过模块入口直接 import 适配器
-- [ ] 日志不含敏感信息
+同目录创建 `PlaygroundView.module.css`：
 
-新增语言与选择器封装：见 [基础组件约定](ui-components.md)。切换语言时不要改写全局词典状态，也不要用按语言二选一的组件分支。
+```css
+.view {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-4);
+  padding-block: var(--space-6);
+}
+```
+
+这里需要点击和 hook，所以文件开头有 `"use client"`。没有状态、浏览器操作或事件的服务端展示组件不必加。
+
+### 第三步：创建网址入口
+
+文件 `src/app/[locale]/(site)/playground/page.tsx`：
+
+```tsx
+import { getLocale, getTranslations } from "next-intl/server";
+import { pageMetadata } from "@/server/seo/metadata";
+import { PlaygroundView } from "@/modules/playground/ui/PlaygroundView";
+
+export async function generateMetadata() {
+  const locale = await getLocale();
+  const t = await getTranslations("playground");
+  return pageMetadata("/playground", t("title"), t("description"), locale);
+}
+
+export default function Page() {
+  return <PlaygroundView />;
+}
+```
+
+打开 `/zh-CN/playground`。放在 `(site)` 下的页面自动获得页头、页脚、语言和全局提醒。不要再在视图里重复加 SiteShell。
+
+已有页面使用 `getPageMetadata("/quotes")` 等登记入口。新路径尚未登记时用上面的 `pageMetadata`，不要直接把新路径传给只接受已有路径的 `getPageMetadata`。
+
+想加进菜单：在 `src/shared/config/site.ts` 的 `navigationItems` 添加 `{ href: "/playground", key: "playground" }`，并在各语言包的 `nav` 下补名称。默认进入“更多”；要成为主要栏目，再改 `SiteNavigation.tsx` 的 `primaryKeys`。准备正式索引时再登记 `publicPages`。
+
+## 6. 改文章内容前，确认数据来源
+
+| 配置                      | 来源                  | 改哪里                       |
+| ------------------------- | --------------------- | ---------------------------- |
+| `CONTENT_SOURCE=demo`     | 代码内演示数据        | `demo-data.ts`、`demo-en.ts` |
+| `CONTENT_SOURCE=postgres` | PostgreSQL 已发布记录 | 数据库或后续的内容管理功能   |
+
+正文在文章的 `sections` 中。网页、电影、代码内容块的演示在 `demo-blocks.ts`。参照现有记录修改，保留 slug、分类、日期等字段类型。
+
+前台视图不要直接导入 demo 文件；路由仍调用 `modules/content/server` 取数据。数据库模式下改演示文件不会生效。
+
+目前还没有内容管理后台，“预览登录”也不等于真实发布权限。
+
+## 7. 需要存真实内容时，再接数据库
+
+只改页面可以跳过这一节。
+
+1. 安装并启动 Docker Desktop。
+2. 复制 `.env.example` 为 `.env`，已有文件不要覆盖。设置本地 `POSTGRES_PASSWORD`。
+3. 执行 `npm run infra:up`，等待 PostgreSQL 和 Redis 正常启动。
+4. 取消 `.env` 中 `DATABASE_URL` 的注释，把连接串中的密码改成同一个本地密码。
+5. 执行迁移；需要开发示例时才执行 seed。
+
+```powershell
+npm run db:migrate
+npm run db:seed
+```
+
+6. 设置 `CONTENT_SOURCE=postgres`。需要缓存时再取消 `REDIS_URL` 的注释。
+7. 停止并重启 `npm run dev`，查看文章页。
+
+`npm run infra:down` 停止服务并保留数据卷。`.env.local` 会覆盖 Next 和数据库脚本的 `.env` 配置，但 Docker Compose 默认读取 `.env`。入门时建议把这些连接配置统一放在 `.env`，避免两份密码不一致。
+
+数据库连接失败会报告错误，不会悄悄切回 demo。更多 API、数据表、缓存和多人扩展见 [后端开发](backend-development.md)。
+
+## 8. 改完如何确认没坏
+
+```powershell
+npm run check
+npm run build
+```
+
+`check` 验证目录依赖、基础组件使用、类型和测试；`build` 验证生产构建。之后在浏览器亲自点一次修改过的功能，检查窄屏、英文和深色模式，自动检查不能判断排版是否好看。
+
+架构报错 `use the shared UI primitive`：写了原生控件，改用统一组件。报错 `co-locate CSS Modules`：样式文件没有放到所属组件旁边。
+
+## 9. 常见问题
+
+| 现象                   | 先查什么                                                       |
+| ---------------------- | -------------------------------------------------------------- |
+| 改个人介绍没变化       | 是否改了 `home.hero.intro`？是不是被星芒切到了主题文案？       |
+| 改文章没变化           | 当前是 demo 还是 postgres？是不是在看另一个语言？              |
+| 中文正常、英文报错     | 两份 JSON 是否都有新增 key？运行 check 查看缺失项              |
+| 不知道样式在哪         | 找视图旁的 `.module.css`；页头天空效果另在 `sky-header.css`    |
+| 定制输入框突然有大边框 | 是否需要 `appearance="bare"`？                                 |
+| 端口变成 3001          | 已有服务占用了 3000；看终端地址，不要反复启动多个服务          |
+| 改环境配置没生效       | 重启 dev；检查 `.env.local` 是否覆盖 `.env`                    |
+| 不知道要建多少目录     | 只有前端需求就只建 `ui`，不必提前建空的 domain、数据库和服务层 |
+
+建议先完成“改首页介绍”，再亲手做一遍“新增小页面”。这两件事跑通后，再进入 API 和数据库开发。
