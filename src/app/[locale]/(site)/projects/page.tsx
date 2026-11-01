@@ -1,5 +1,5 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { ProjectsView } from "@/modules/content/ui/ProjectsView";
+import { ProjectsView } from "@/modules/content/ui/projects/ProjectsView";
 import { getProjects } from "@/modules/content/server";
 import { getPageMetadata } from "@/server/seo/metadata";
 export const generateMetadata = () => getPageMetadata("/projects");

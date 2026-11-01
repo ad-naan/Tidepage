@@ -18,13 +18,20 @@ function escapeXml(value: string) {
   );
 }
 export const GET = defineRoute(async (request) => {
-  const locale = localeQuerySchema.parse(new URL(request.url).searchParams.get("locale") ?? undefined);
-  const [articles, messages] = await Promise.all([getArticles(locale), getCatalog(locale)]);
+  const locale = localeQuerySchema.parse(
+    new URL(request.url).searchParams.get("locale") ?? undefined,
+  );
+  const [articles, messages] = await Promise.all([
+    getArticles(locale),
+    getCatalog(locale),
+  ]);
   const origin = escapeXml(localizedUrl(locale, "/"));
-  const items = articles.map((article) => {
-    const url = escapeXml(localizedUrl(locale, `/articles/${article.slug}`));
-    return `<item><title>${escapeXml(article.title)}</title><link>${url}</link><guid>${url}</guid><description>${escapeXml(article.excerpt)}</description><pubDate>${new Date(article.date).toUTCString()}</pubDate></item>`;
-  }).join("");
+  const items = articles
+    .map((article) => {
+      const url = escapeXml(localizedUrl(locale, `/articles/${article.slug}`));
+      return `<item><title>${escapeXml(article.title)}</title><link>${url}</link><guid>${url}</guid><description>${escapeXml(article.excerpt)}</description><pubDate>${new Date(article.date).toUTCString()}</pubDate></item>`;
+    })
+    .join("");
   const xml = `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${escapeXml(messages.feed.title)}</title><link>${origin}</link><description>${escapeXml(messages.feed.description)}</description><language>${locale}</language>${items}</channel></rss>`;
   return new Response(xml, {
     headers: {

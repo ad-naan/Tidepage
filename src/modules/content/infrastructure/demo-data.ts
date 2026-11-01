@@ -1,6 +1,8 @@
-import type { Article } from "../domain/models";
+import type { Article } from "@/modules/content/domain/models";
 
-export const articles: (Omit<Article, "updatedAt" | "locale" | "category"> & { category: string })[] = [
+export const articles: (Omit<Article, "updatedAt" | "locale" | "category"> & {
+  category: string;
+})[] = [
   {
     slug: "the-productivity-paradox",
     title: "AI 时代的效率悖论：当生产力提升反而带来疲惫",

@@ -1,4 +1,4 @@
-import type { ApiFailure, ApiResponse } from "../contracts/api";
+import type { ApiFailure, ApiResponse } from "@/shared/contracts/api";
 export class ApiClientError extends Error {
   constructor(
     public readonly code: string,

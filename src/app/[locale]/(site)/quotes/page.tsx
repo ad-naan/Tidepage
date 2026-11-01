@@ -1,5 +1,5 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { QuotesView } from "@/modules/content/ui/QuotesView";
+import { QuotesView } from "@/modules/content/ui/quotes/QuotesView";
 import { getQuotes } from "@/modules/content/server";
 import { getPageMetadata } from "@/server/seo/metadata";
 export const generateMetadata = () => getPageMetadata("/quotes");

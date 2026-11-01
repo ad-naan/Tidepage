@@ -161,7 +161,8 @@
     "saved": "Saved",
     "share": "Share article",
     "copied": "Link copied",
-    "copyFallback": "Please copy the link from your browser's address bar"
+    "copyFallback": "Please copy the link from your browser's address bar",
+    "filterLabel": "Filter writing"
   },
   "articleDemo": {
     "calloutTitle": "From the margin",
@@ -392,7 +393,8 @@
     "next": "The next page is still taking shape.",
     "progress": "Finish one experiment, then begin another.",
     "drag": "Drag the little sun, then let go.",
-    "demo": "This is a sample project. No live application or source repository is linked yet."
+    "demo": "This is a sample project. No live application or source repository is linked yet.",
+    "filterLabel": "Filter projects"
   },
   "gallery": {
     "description": "Places and small moments worth keeping.",
@@ -449,7 +451,9 @@
         "caption": "Anyone who has seen the sea keeps a patch of blue inside.",
         "place": "Coast · detail"
       }
-    }
+    },
+    "filterLabel": "Filter photographs",
+    "added": "Photos added to this page"
   },
   "identity": {
     "title": "Leave your echo here",
@@ -718,6 +722,7 @@
       "info": "A margin note",
       "success": "Noted",
       "error": "One more try"
-    }
+    },
+    "thanks": "Thank you for stopping by"
   }
 }

@@ -1,9 +1,9 @@
 import "server-only";
 import { EventEmitter } from "node:events";
 import type { Redis } from "ioredis";
-import { getEnv } from "../config/env";
-import { log } from "../observability/logger";
-import { getRedis } from "../cache/redis";
+import { getEnv } from "@/server/config/env";
+import { log } from "@/server/observability/logger";
+import { getRedis } from "@/server/cache/redis";
 
 /**
  * 跨实例实时消息通道，为 Socket.IO / 世界空间多人互动预留。

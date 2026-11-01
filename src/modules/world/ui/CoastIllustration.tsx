@@ -1,11 +1,12 @@
 "use client";
+import { Button } from "@/shared/ui/button/Button";
 import { useEffect, useId, useRef, useState, type PointerEvent } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/shared/i18n/navigation";
 import { softSpring } from "@/shared/lib/motion";
-import { AboutLetter } from "@/components/AboutLetter";
-import { OtterDrawing } from "@/components/OtterDrawing";
+import { CoastLetter } from "./CoastLetter";
+import { OtterDrawing } from "./OtterDrawing";
 import styles from "./illustration.module.css";
 
 export function HeroSketch({
@@ -339,7 +340,7 @@ export function HeroSketch({
         </text>
         <path d="m90 328 28-8" stroke="var(--accent)" />
       </svg>
-      <button
+      <Button
         className={styles.skyHit}
         aria-label={t("skyPlay")}
         onClick={makeWish}
@@ -410,8 +411,8 @@ export function HeroSketch({
       <span className={styles.whisper} role="status">
         {boarding ? t("departing") : ""}
       </span>
-      <AboutLetter />
-      <button
+      <CoastLetter />
+      <Button
         className="otter-hit"
         aria-label={t("greet")}
         onClick={() => setGreeting((v) => !v)}

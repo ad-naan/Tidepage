@@ -2,8 +2,8 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { ZodError } from "zod";
 import { AppError } from "./errors";
-import { log } from "../observability/logger";
-import { getCatalog, requestLocale } from "../i18n/messages";
+import { log } from "@/server/observability/logger";
+import { getCatalog, requestLocale } from "@/server/i18n/messages";
 
 export function jsonData<T>(
   data: T,

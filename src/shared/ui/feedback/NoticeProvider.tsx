@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/shared/ui/button/Button";
 import {
   createContext,
   useCallback,
@@ -212,18 +213,18 @@ function NoticeCard({ notice }: { notice: Notice }) {
         />
         <div className={styles.words}>
           <span className={styles.eyebrow}>{t(`tones.${notice.tone}`)}</span>
-          <strong>{notice.title}</strong>
+          <strong title={notice.title}>{notice.title}</strong>
           {notice.detail && (
             <span className={styles.detail}>{notice.detail}</span>
           )}
         </div>
-        <button
+        <Button
           className={styles.dismiss}
           aria-label={t("dismiss")}
           onClick={() => dismiss(notice.id)}
         >
           <X size={12} />
-        </button>
+        </Button>
       </Annotation>
     </div>
   );

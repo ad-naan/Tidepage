@@ -2,7 +2,8 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Github, ArrowRight, Check, LogOut, UserRound } from "lucide-react";
-import { Dialog, SpringButton } from "@/shared/ui/primitives";
+import { Dialog } from "@/shared/ui/dialog/Dialog";
+import { Button } from "@/shared/ui/button/Button";
 const IdentityContext = createContext({ loggedIn: false, openLogin: () => {} });
 export function usePreviewIdentity() {
   return useContext(IdentityContext);
@@ -41,14 +42,11 @@ export function PreviewIdentityProvider({ children }: { children: ReactNode }) {
           <div className="login-content">
             <h2>{loggedIn ? t("welcomeBack") : t("welcome")}</h2>
             <p>{loggedIn ? t("introLoggedIn") : t("intro")}</p>
-            <SpringButton
-              className="github-button"
-              onClick={() => setNotice(true)}
-            >
+            <Button className="github-button" onClick={() => setNotice(true)}>
               <Github size={19} />
               {loggedIn ? t("guest") : t("continue")}
               <ArrowRight size={16} />
-            </SpringButton>
+            </Button>
             {notice && (
               <div className="login-notice" role="status">
                 {t("notice")}
@@ -68,7 +66,7 @@ export function PreviewIdentityProvider({ children }: { children: ReactNode }) {
                 {t("trace")}
               </span>
             </div>
-            <button
+            <Button
               className="preview-login-link"
               onClick={() => {
                 setLoggedIn(!loggedIn);
@@ -85,7 +83,7 @@ export function PreviewIdentityProvider({ children }: { children: ReactNode }) {
                   {t("previewLogin")} <ArrowRight size={13} />
                 </>
               )}
-            </button>
+            </Button>
             <small>{t("disclaimer")}</small>
           </div>
         </Dialog>
@@ -97,9 +95,9 @@ export function LoginTrigger() {
   const { loggedIn, openLogin } = usePreviewIdentity();
   const t = useTranslations("identity");
   return (
-    <SpringButton
+    <Button
       className={`login-trigger ${loggedIn ? "logged-in" : ""}`}
-      label={loggedIn ? t("viewAccount") : t("login")}
+      aria-label={loggedIn ? t("viewAccount") : t("login")}
       onClick={openLogin}
     >
       {loggedIn ? (
@@ -110,6 +108,6 @@ export function LoginTrigger() {
           <span>{t("login")}</span>
         </>
       )}
-    </SpringButton>
+    </Button>
   );
 }

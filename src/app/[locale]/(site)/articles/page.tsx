@@ -1,6 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import { ArticleIndex } from "@/modules/content/ui/ArticleIndex";
+import { ArticlesView } from "@/modules/content/ui/articles/ArticlesView";
 import { listArticles } from "@/modules/content/server";
 import { getPageMetadata } from "@/server/seo/metadata";
 export const generateMetadata = () => getPageMetadata("/articles");
@@ -19,12 +19,18 @@ export default async function Page({
     q: input.q,
     category: input.category,
   });
-  if (!parsed.success) return redirect({href:"/articles",locale});
-  const result = await listArticles({...parsed.data, locale});
+  if (!parsed.success) return redirect({ href: "/articles", locale });
+  const result = await listArticles({ ...parsed.data, locale });
   const t = await getTranslations("common");
   return (
-    <Suspense fallback={<p className="loading" role="status">{t("loading")}</p>}>
-      <ArticleIndex result={result} category={parsed.data.category} />
+    <Suspense
+      fallback={
+        <p className="loading" role="status">
+          {t("loading")}
+        </p>
+      }
+    >
+      <ArticlesView result={result} category={parsed.data.category} />
     </Suspense>
   );
 }

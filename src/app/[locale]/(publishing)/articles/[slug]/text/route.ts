@@ -10,16 +10,21 @@ export async function GET(
   _request: Request,
   { params }: { params: Promise<{ slug: string; locale: string }> },
 ) {
-  const {slug,locale:language}=await params;
-  const locale=localeSchema.parse(language);
+  const { slug, locale: language } = await params;
+  const locale = localeSchema.parse(language);
   const messages = await getCatalog(locale);
   const parsed = slugSchema.safeParse(slug);
-  const article = parsed.success ? await getArticle(parsed.data,locale) : null;
-  if (!article) return new Response(messages.markdown.notFound, {
-    status: 404,
-    headers: { "Content-Type": "text/plain; charset=utf-8", "Content-Language": locale, "Cache-Control": "no-store" },
-  });
-  const canonical = localizedUrl(locale,`/articles/${article.slug}`);
+  const article = parsed.success ? await getArticle(parsed.data, locale) : null;
+  if (!article)
+    return new Response(messages.markdown.notFound, {
+      status: 404,
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Content-Language": locale,
+        "Cache-Control": "no-store",
+      },
+    });
+  const canonical = localizedUrl(locale, `/articles/${article.slug}`);
   return new Response(articleMarkdown(article, canonical, messages.markdown), {
     headers: {
       "Content-Type": "text/markdown; charset=utf-8",

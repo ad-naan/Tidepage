@@ -1,3 +1,4 @@
+import { Anchor } from "@/shared/ui/link/Anchor";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { NextIntlClientProvider } from "next-intl";
@@ -7,24 +8,24 @@ import { localeRegistry } from "@/shared/i18n/config";
 import { locales, type Locale } from "@/shared/i18n/config";
 import { catalogs } from "@/i18n/catalogs";
 import { NavigationFeedback } from "@/shared/ui/navigation/NavigationFeedback";
-import { PencilDefinitions } from "@/shared/ui/PencilDefinitions";
-import "../styles/globals.css";
-import "../styles/refinements.css";
-import "../styles/chrome.css";
-import "../styles/header.css";
-import "../styles/theme.css";
-import "../styles/scrollbars.css";
-import "../styles/celestial.css";
-import "../styles/night.css";
-import "../styles/playground.css";
-import "../styles/atmosphere.css";
+import { PencilDefinitions } from "@/shared/ui/drawing/PencilDefinitions";
+import "@/styles/globals.css";
+import "@/styles/refinements.css";
+import "@/styles/chrome.css";
+import "@/styles/header.css";
+import "@/styles/theme.css";
+import "@/styles/scrollbars.css";
+import "@/styles/celestial.css";
+import "@/styles/night.css";
+import "@/styles/playground.css";
+import "@/styles/atmosphere.css";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/noto-sans-sc";
 import "@fontsource-variable/noto-serif-sc";
-import "../styles/layout.css";
-import "../styles/sky-header.css";
-import "../styles/tokens.css";
-import "../styles/design-contract.css";
+import "@/styles/layout.css";
+import "@/styles/sky-header.css";
+import "@/styles/tokens.css";
+import "@/styles/design-contract.css";
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   const t = await getTranslations("site");
@@ -70,9 +71,9 @@ export default async function RootLayout({
     >
       <body>
         <PencilDefinitions />
-        <a href="#main-content" className="skip-link">
+        <Anchor href="#main-content" className="skip-link">
           {t("skip")}
-        </a>
+        </Anchor>
         <NextIntlClientProvider
           locale={locale}
           messages={{ error: messages.error, notFound: messages.notFound }}

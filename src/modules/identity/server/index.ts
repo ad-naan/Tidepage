@@ -5,8 +5,11 @@ import { and, eq, gt } from "drizzle-orm";
 import { getDb } from "@/server/db/client";
 import { getEnv } from "@/server/config/env";
 import { AppError } from "@/server/http/errors";
-import { sessionsTable, usersTable } from "../infrastructure/schema";
-import type { Principal, Role } from "../domain/principal";
+import {
+  sessionsTable,
+  usersTable,
+} from "@/modules/identity/infrastructure/schema";
+import type { Principal, Role } from "@/modules/identity/domain/principal";
 
 export async function getCurrentPrincipal(): Promise<Principal | null> {
   const token = (await cookies()).get("adnaan_session")?.value;

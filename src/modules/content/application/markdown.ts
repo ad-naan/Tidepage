@@ -1,5 +1,5 @@
-import type { Article } from "../domain/models";
-import { blockMarkdown } from "../domain/blocks";
+import type { Article } from "@/modules/content/domain/models";
+import { blockMarkdown } from "@/modules/content/domain/blocks";
 export function articleMarkdown(
   article: Article,
   canonicalUrl: string,

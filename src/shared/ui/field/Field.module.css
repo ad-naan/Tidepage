@@ -1,0 +1,57 @@
+.input {
+  min-width: 0;
+  font-family: var(--font-ui);
+}
+.surface {
+  width: 100%;
+  padding: 9px 11px;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--paper) 85%, var(--sand));
+  border: 1px solid var(--line);
+  border-radius: 3px 7px 2px 4px;
+  font: 400 var(--text-body)/1.7 var(--font-ui);
+}
+.input:focus-visible,
+.range:focus-visible,
+.file:focus-visible {
+  outline: 1px dashed var(--accent);
+  outline-offset: 3px;
+}
+.input:disabled,
+.range:disabled,
+.file:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.input[aria-invalid="true"] {
+  border-color: #b57560;
+}
+.input::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
+}
+.field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.field > label {
+  font: 500 var(--text-sm)/1.6 var(--font-ui);
+}
+.field > p {
+  margin: 0;
+  font: 400 var(--text-xs)/1.7 var(--font-ui);
+  color: var(--muted);
+}
+.field > .error {
+  color: #b57560;
+}
+.bare {
+  color: inherit;
+}
+.range {
+  accent-color: var(--accent);
+}
+.file {
+  max-width: 100%;
+}

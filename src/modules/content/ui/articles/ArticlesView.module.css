@@ -1,0 +1,189 @@
+/* Scoped to this view; decorative surfaces come from shared/ui. */
+.archive.archive {
+  max-width: none;
+  margin: 10px auto 40px;
+  min-height: 0;
+}
+.archive.archive :global(.filter-bar) {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 16px;
+  padding: 2px 0 14px;
+  border: 0;
+}
+.archive.archive :global(.toolbar-shore) {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+.archive.archive :global(.archive-search) {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 190px;
+  color: var(--muted);
+}
+.archive.archive :global(.archive-search > svg:last-child) {
+  position: absolute;
+  bottom: 0;
+}
+.archive.archive :global(.inline-search) {
+  width: 100%;
+  min-width: 0;
+  padding: 8px 0;
+  border: 0;
+  outline: none;
+  background: none;
+  font: 400 12px/1.7 var(--font-ui);
+}
+.archive.archive :global(.archive-search:focus-within) {
+  color: var(--accent);
+}
+.archive.archive :global(.archive-search:focus-within > svg:last-child) {
+  color: var(--accent);
+}
+.archive.archive :global(.archive-label) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 12px 0 4px;
+  font: 400 11px/1.6 var(--font-ui);
+  letter-spacing: 0;
+  color: var(--muted);
+}
+.archive.archive :global(.article-list > article) {
+  position: relative;
+  border: 0;
+}
+.archive.archive :global(.article-row) {
+  position: relative;
+  isolation: isolate;
+  min-height: 66px;
+  padding: 12px 0;
+  grid-template-columns: 38px minmax(0, 1fr) 64px;
+  gap: 18px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+.archive.archive :global(.article-info) {
+  padding-left: 0;
+  border: 0;
+}
+.archive.archive :global(.article-info h3) {
+  font: 400 14px/1.7 var(--font-ui);
+}
+.archive.archive :global(.article-row time) {
+  width: 38px;
+  border: 0;
+  padding: 0;
+}
+.archive.archive :global(.article-row time > span) {
+  font: 400 21px/1.2 var(--font-editorial);
+}
+.archive.archive :global(.article-row > .mini-sketch) {
+  width: 64px;
+  opacity: 0.7;
+  transition:
+    transform 0.45s,
+    opacity 0.45s;
+}
+.archive.archive :global(.article-row:hover > .mini-sketch),
+.archive.archive :global(.article-row:focus-visible > .mini-sketch) {
+  transform: translate(3px, -2px) rotate(2deg);
+  opacity: 1;
+}
+.archive.archive :global(.article-row::after) {
+  display: none;
+}
+.archive.archive :global(.article-list > article:first-child .article-row) {
+  margin-top: 0;
+  padding: 14px 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+.archive.archive
+  :global(.article-list > article:first-child .article-row)::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 3px -10px 4px 40px;
+  background: radial-gradient(
+    ellipse at 25% 45%,
+    color-mix(in srgb, var(--wash) 35%, transparent),
+    transparent 75%
+  );
+  pointer-events: none;
+}
+.archive.archive :global(.article-list > article:first-child .article-info h3) {
+  font: 500 16px/1.7 var(--font-editorial);
+}
+.archive.archive :global(.article-excerpt) {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 68ch;
+  margin: 5px 0;
+  font: 400 12px/1.8 var(--font-ui);
+  color: var(--muted);
+}
+.archive.archive :global(.article-info .tags) {
+  font: 400 10px/1.6 var(--font-ui);
+  gap: 9px;
+  margin-top: 4px;
+}
+.archive.archive :global(.article-shore) {
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+}
+.archive.archive :global(.article-row:focus-visible) {
+  outline: 1px dashed var(--accent);
+  outline-offset: 4px;
+}
+@media (max-width: 700px) {
+  .archive.archive {
+    margin: 8px auto 30px;
+  }
+  .archive.archive :global(.filter-bar) {
+    flex-wrap: wrap;
+    gap: 6px 12px;
+  }
+  .archive.archive :global(.archive-search) {
+    width: 100%;
+  }
+  .archive.archive :global(.article-row) {
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px 0;
+  }
+  .archive.archive :global(.article-row > .mini-sketch) {
+    display: none;
+  }
+  .archive.archive :global(.article-info h3),
+  .archive.archive
+    :global(.article-list > article:first-child .article-info h3) {
+    font-size: 14px;
+  }
+  .archive.archive :global(.article-list > article:first-child .article-row) {
+    padding: 12px 0;
+  }
+  .archive.archive :global(.archive-label > span:last-child) {
+    font-size: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .archive.archive * {
+    transition: none !important;
+  }
+}
+
+.archive.archive :global(.archive-label > span:first-child) {
+  font: 400 11px/1.6 var(--font-ui);
+}

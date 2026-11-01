@@ -2,8 +2,11 @@ import "server-only";
 import { and, asc, count, desc, eq, ilike, lte, or, sql } from "drizzle-orm";
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import { getDb, type Database } from "@/server/db/client";
-import { articleSchema, type ArticleSummary } from "../domain/models";
-import type { ContentRepository } from "../application/repository";
+import {
+  articleSchema,
+  type ArticleSummary,
+} from "@/modules/content/domain/models";
+import type { ContentRepository } from "@/modules/content/application/repository";
 import {
   articlesTable as a,
   notesTable as n,
@@ -61,7 +64,13 @@ export function postgresContentRepository(
         ? articleSchema.parse({ ...summary(row), sections: row.sections })
         : null;
     },
-    articleLocales: async (slug) => (await db.select({locale:a.locale}).from(a).where(and(published(a),eq(a.slug,slug)))).map(row=>row.locale),
+    articleLocales: async (slug) =>
+      (
+        await db
+          .select({ locale: a.locale })
+          .from(a)
+          .where(and(published(a), eq(a.slug, slug)))
+      ).map((row) => row.locale),
     listArticles: async (query) => {
       const pattern = `%${query.q.replace(/[\\%_]/g, "\\$&")}%`;
       const where = and(
@@ -105,12 +114,16 @@ export function postgresContentRepository(
         await db
           .select()
           .from(n)
-          .where(and(published(n),eq(n.locale,locale)))
+          .where(and(published(n), eq(n.locale, locale)))
           .orderBy(desc(n.publishedOn), asc(n.id))
       ).map((row) => ({
         locale: row.locale,
         id: row.id,
-        date: new Intl.DateTimeFormat(locale,{month:"long",day:"2-digit",timeZone:"UTC"}).format(new Date(row.publishedOn)),
+        date: new Intl.DateTimeFormat(locale, {
+          month: "long",
+          day: "2-digit",
+          timeZone: "UTC",
+        }).format(new Date(row.publishedOn)),
         publishedOn: row.publishedOn,
         mood: row.mood,
         text: row.text,
@@ -122,7 +135,7 @@ export function postgresContentRepository(
         await db
           .select()
           .from(p)
-          .where(and(published(p),eq(p.locale,locale)))
+          .where(and(published(p), eq(p.locale, locale)))
           .orderBy(asc(p.sortOrder), asc(p.id))
       ).map(
         ({
@@ -154,7 +167,7 @@ export function postgresContentRepository(
         await db
           .select()
           .from(q)
-          .where(and(published(q),eq(q.locale,locale)))
+          .where(and(published(q), eq(q.locale, locale)))
           .orderBy(asc(q.sortOrder), asc(q.id))
       ).map(({ id, locale, text, author }) => ({ id, locale, text, author })),
   };

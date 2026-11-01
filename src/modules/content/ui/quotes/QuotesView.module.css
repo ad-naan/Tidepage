@@ -1,0 +1,140 @@
+/* Scoped to this view; decorative surfaces come from shared/ui. */
+.quotes.quotes {
+  max-width: none;
+  margin: 10px auto 40px;
+  min-height: 0;
+}
+.quotes.quotes :global(.quote-stage) {
+  position: relative;
+  max-width: 620px;
+  padding: 0;
+  margin: 20px auto 0;
+  background: none;
+  text-align: start;
+}
+.quotes.quotes :global(.quote-stage)::before {
+  content: none;
+}
+.quotes.quotes :global(.quote-letter) {
+  position: relative;
+  isolation: isolate;
+  padding: 24px 38px 28px;
+  min-height: 230px;
+}
+.quotes.quotes :global(.quote-index) {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font: 400 10px/1.6 var(--font-ui);
+  letter-spacing: 0.06em;
+}
+.quotes.quotes :global(.quote-index svg) {
+  width: 14px;
+  height: 14px;
+}
+.quotes.quotes :global(.big-quote) {
+  position: absolute;
+  top: 63px;
+  left: 18px;
+  height: auto;
+  margin: 0;
+  font: 400 33px/1 var(--font-editorial);
+  opacity: 0.45;
+}
+.quotes.quotes :global(.quote-stage blockquote) {
+  max-width: 29ch;
+  min-height: 76px;
+  margin: 20px 0 0;
+  font: 400 22px/1.85 var(--font-editorial);
+  text-align: start;
+  text-wrap: balance;
+}
+.quotes.quotes :global(.quote-stage cite) {
+  display: block;
+  margin-top: 14px;
+  font: 400 11px/1.7 var(--font-ui);
+  text-align: start;
+}
+.quotes.quotes :global(.quote-letter > .mini-sketch) {
+  width: 70px;
+  height: 35px;
+  margin: 0;
+  position: absolute;
+  right: 27px;
+  bottom: 23px;
+  opacity: 0.6;
+}
+.quotes.quotes :global(.quote-actions) {
+  display: flex;
+  justify-content: flex-start;
+  gap: 16px;
+  margin: 12px 0 0 26px;
+}
+.quotes.quotes :global(.quote-actions .button-solid) {
+  position: relative;
+  display: inline-flex;
+  padding: 9px 8px 12px;
+  background: none;
+  color: var(--ink);
+  border: 0;
+  border-radius: 0;
+  font: 400 12px/1.6 var(--font-ui);
+}
+.quotes.quotes :global(.quote-turn-mark) {
+  position: absolute;
+  bottom: 0;
+  left: 30px;
+  width: calc(100% - 34px);
+  height: 8px;
+  color: var(--accent);
+  opacity: 0.65;
+}
+.quotes.quotes :global(.quote-feedback) {
+  margin: 10px 0 0 34px;
+  font: 400 11px/1.7 var(--font-ui);
+}
+.quotes.quotes :global(.saved-quotes) {
+  max-width: 620px;
+  margin: 28px auto 0;
+  padding-top: 0;
+  border: 0;
+}
+.quotes.quotes :global(.saved-quotes h2) {
+  font: 500 15px/1.8 var(--font-editorial);
+  margin: 12px 0;
+}
+.quotes.quotes :global(.saved-quotes > button) {
+  position: relative;
+  border: 0;
+  padding: 12px 0;
+  font: 400 12px/1.8 var(--font-ui);
+}
+.quotes.quotes :global(.saved-quote-fold) {
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+}
+@media (max-width: 700px) {
+  .quotes.quotes {
+    margin: 8px auto 30px;
+  }
+  .quotes.quotes :global(.quote-stage) {
+    margin-top: 14px;
+  }
+  .quotes.quotes :global(.quote-letter) {
+    padding: 22px 25px 55px;
+  }
+  .quotes.quotes :global(.quote-stage blockquote) {
+    font-size: 20px;
+  }
+  .quotes.quotes :global(.big-quote) {
+    left: 7px;
+  }
+  .quotes.quotes :global(.quote-actions) {
+    margin-left: 14px;
+    gap: 12px;
+  }
+  .quotes.quotes :global(.quote-feedback) {
+    margin-left: 22px;
+  }
+}

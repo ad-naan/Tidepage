@@ -6,8 +6,13 @@ export const site = {
     "adnaan 的光阴副本。记录技术、产品与生活，把这一页留好，下一页继续。",
 } as const;
 export const navigationItems = [
-  { href:"/",key:"home" },{ href:"/articles",key:"articles" },{ href:"/notes",key:"notes" },
-  { href:"/projects",key:"projects" },{ href:"/quotes",key:"quotes" },{ href:"/gallery",key:"gallery" },{ href:"/about",key:"about" },
+  { href: "/", key: "home" },
+  { href: "/articles", key: "articles" },
+  { href: "/notes", key: "notes" },
+  { href: "/projects", key: "projects" },
+  { href: "/quotes", key: "quotes" },
+  { href: "/gallery", key: "gallery" },
+  { href: "/about", key: "about" },
 ] as const;
 export const publicPages = [
   { path: "/", title: "首页", description: site.description },

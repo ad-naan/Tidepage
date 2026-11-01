@@ -1,0 +1,111 @@
+/* Scoped to this view; decorative surfaces come from shared/ui. */
+.gallery.gallery {
+  max-width: none;
+  margin: 10px auto 40px;
+  min-height: 0;
+}
+.gallery.gallery :global(.gallery-toolbar) {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 16px;
+  padding: 2px 0 14px;
+  border: 0;
+}
+.gallery.gallery :global(.toolbar-shore) {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+.gallery.gallery :global(.gallery-upload) {
+  margin-left: auto;
+  font-size: 11px;
+}
+.gallery.gallery :global(.gallery-meta) {
+  border: 0;
+  padding: 0;
+  margin: 0 0 18px;
+  font: 400 10px/1.7 var(--font-ui);
+}
+.gallery.gallery :global(.masonry-gallery) {
+  columns: unset;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+.gallery.gallery :global(.masonry-gallery > figure) {
+  position: relative;
+  isolation: isolate;
+  grid-column: auto;
+  margin: 0;
+  padding: 8px 8px 0;
+  border: 0;
+  background: none;
+}
+.gallery.gallery :global(.masonry-gallery > figure:nth-child(3n + 2)) {
+  margin-top: 12px;
+}
+.gallery.gallery :global(.photo-button) {
+  border-radius: 0;
+}
+.gallery.gallery :global(.masonry-gallery figcaption) {
+  position: relative;
+  padding: 12px 5px 14px;
+}
+.gallery.gallery :global(.photo-fold) {
+  position: absolute;
+  top: -4px;
+  left: 0;
+}
+.gallery.gallery :global(.masonry-gallery figcaption h3) {
+  font: 500 14px/1.7 var(--font-editorial);
+}
+.gallery.gallery :global(.masonry-gallery figcaption p) {
+  font: 400 10px/1.7 var(--font-ui);
+  margin-top: 3px;
+}
+.gallery.gallery :global(.gallery-ending) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 28px;
+  font-size: 11px;
+}
+@media (min-width: 1250px) {
+  .gallery.gallery :global(.masonry-gallery) {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+@media (max-width: 1050px) {
+  .gallery.gallery :global(.masonry-gallery) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px 14px;
+  }
+}
+@media (max-width: 700px) {
+  .gallery.gallery {
+    margin: 8px auto 30px;
+  }
+  .gallery.gallery :global(.gallery-toolbar) {
+    flex-wrap: wrap;
+    gap: 6px 12px;
+  }
+  .gallery.gallery :global(.masonry-gallery) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 12px;
+  }
+  .gallery.gallery :global(.masonry-gallery > figure:nth-child(3n + 2)) {
+    margin-top: 0;
+  }
+  .gallery.gallery :global(.masonry-gallery figcaption h3) {
+    font-size: 13px;
+  }
+  .gallery.gallery :global(.gallery-meta > span:last-child) {
+    max-width: 55%;
+    text-align: end;
+  }
+}

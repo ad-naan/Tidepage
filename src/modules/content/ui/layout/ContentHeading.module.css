@@ -1,0 +1,132 @@
+.heading {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 8px 0 22px;
+  margin-bottom: 14px;
+}
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.identity > div {
+  display: grid;
+  gap: 2px;
+}
+.number {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 42px;
+  flex: 0 0 auto;
+  color: var(--accent);
+  font: 400 10px/1 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  transform: rotate(-3deg);
+}
+.number svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.number path {
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.5;
+  filter: url(#tidepage-pencil);
+}
+.eyebrow {
+  display: block;
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+}
+.heading h1 {
+  position: relative;
+  width: fit-content;
+  margin: 0;
+  padding-bottom: 5px;
+  font: 500 22px/1.5 var(--font-editorial);
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+.titleMark {
+  position: absolute;
+  bottom: -2px;
+  left: -2px;
+  width: clamp(45px, 55%, 100px);
+  height: 8px;
+  color: var(--accent);
+  opacity: 0.6;
+}
+.heading > p {
+  max-width: 34ch;
+  margin: 0 0 0 auto;
+  font: 400 11px/1.85 var(--font-ui);
+  color: var(--muted);
+}
+.vignette {
+  width: 94px;
+  height: 44px;
+  color: var(--muted);
+  flex-shrink: 0;
+  opacity: 0.75;
+  transform: rotate(-2deg);
+  transition: transform 0.5s;
+}
+.heading:hover .vignette {
+  transform: rotate(0) translateY(-2px);
+}
+.vignette svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.vignette path,
+.vignette circle {
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: url(#tidepage-pencil);
+}
+.vignette .accent {
+  color: var(--accent);
+}
+.vignette .faint {
+  opacity: 0.35;
+}
+.coast {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+@media (max-width: 700px) {
+  .heading {
+    gap: 8px 14px;
+    flex-wrap: wrap;
+    padding: 6px 0 20px;
+  }
+  .heading h1 {
+    font-size: 20px;
+  }
+  .heading > p {
+    flex-basis: 100%;
+    max-width: none;
+    margin-left: 44px;
+  }
+  .vignette {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vignette {
+    transition: none;
+  }
+}

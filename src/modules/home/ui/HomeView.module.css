@@ -1,0 +1,183 @@
+/* The landing page shares graphite details with the rooms, retaining its coastal scene. */
+.home :global(.otter-hit) {
+  left: 29%;
+  top: 41%;
+  width: 15%;
+  height: 22%;
+}
+.home.home :global(.home-middle) {
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.4fr);
+  gap: 40px;
+  margin-top: 20px;
+}
+.home.home :global(.journey-heading) {
+  margin: 0;
+}
+.home.home :global(.journey-map) {
+  grid-template-columns: 40% 60%;
+  max-width: 310px;
+  height: 288px;
+  margin-top: 16px;
+}
+.home.home :global(.journey-map > svg) {
+  height: 288px;
+}
+.home.home :global(.journey-labels h3) {
+  font: 500 20px/1.5 var(--font-editorial);
+}
+.home.home :global(.journey-labels p) {
+  font: 400 12px/1.8 var(--font-ui);
+}
+.home.home :global(.journey-closing) {
+  display: block;
+  margin: 16px 0 0 15px;
+  font: 400 11px/1.8 var(--font-ui);
+  opacity: 0.8;
+}
+.home.home :global(.section-heading) {
+  margin-bottom: 8px;
+}
+.home.home :global(.section-heading h2) {
+  margin: 0;
+}
+.home.home :global(.section-heading h2 > span) {
+  color: var(--ink);
+}
+.home.home :global(.article-row) {
+  position: relative;
+  grid-template-columns: 38px minmax(0, 1fr) 70px;
+  gap: 16px;
+  min-height: 72px;
+  padding: 12px 0;
+  border: 0;
+}
+.home.home :global(.article-row::after) {
+  display: none;
+}
+.home.home :global(.article-shore) {
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+}
+.home.home :global(.article-row > .mini-sketch) {
+  width: 70px;
+  opacity: 0.7;
+}
+.home.home :global(.article-row:hover > .mini-sketch),
+.home.home :global(.article-row:focus-visible > .mini-sketch) {
+  opacity: 1;
+  transform: translateY(-2px) rotate(2deg);
+}
+.home.home :global(.article-row time) {
+  border: 0;
+  padding: 0;
+}
+.home.home :global(.article-row time span) {
+  font: 400 21px/1.3 var(--font-editorial);
+}
+.home.home :global(.article-lead .article-info h3) {
+  font: 500 16px/1.8 var(--font-editorial);
+}
+.home.home :global(.article-info h3) {
+  font: 400 14px/1.7 var(--font-ui);
+}
+.home.home :global(.article-excerpt) {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 4px 0;
+  font: 400 12px/1.8 var(--font-ui);
+  color: var(--muted);
+}
+.home.home :global(.article-info .tags) {
+  margin-top: 4px;
+  gap: 8px;
+  font-size: 10px;
+}
+.home.home :global(.writing-footnote) {
+  margin-top: 16px;
+  font-size: 11px;
+}
+.home.home :global(.home-bottom) {
+  position: relative;
+  border: 0;
+  margin-top: 24px;
+  padding: 24px 0;
+  gap: 32px;
+}
+.home.home :global(.home-bottom-shore) {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.home.home :global(.note-preview-heading) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.home.home :global(.note-preview-heading > svg) {
+  width: 14px;
+  color: var(--muted);
+}
+.home.home :global(.note-preview > p) {
+  font: 400 13px/1.9 var(--font-ui);
+}
+.home.home :global(.quote-preview) {
+  position: relative;
+  border: 0;
+  padding-left: 24px;
+}
+.home.home :global(.quote-preview-fold) {
+  position: absolute;
+  left: -45px;
+  top: 50%;
+  width: 90px;
+  height: 9px;
+  transform: rotate(90deg);
+}
+.home.home :global(.quote-preview p) {
+  font: 400 17px/1.9 var(--font-editorial);
+}
+@media (max-width: 1050px) {
+  .home.home :global(.home-middle) {
+    grid-template-columns: minmax(0, 0.65fr) minmax(0, 1.35fr);
+    gap: 24px;
+  }
+  .home.home :global(.journey-labels p) {
+    font-size: 11px;
+    white-space: normal;
+  }
+}
+@media (max-width: 900px) {
+  .home.home :global(.article-row) {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 12px;
+  }
+  .home.home :global(.article-row > .mini-sketch) {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  .home.home :global(.home-middle) {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 24px;
+  }
+  .home.home :global(.article-lead .article-info h3) {
+    font-size: 15px;
+  }
+  .home.home :global(.home-bottom) {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .home.home :global(.quote-preview) {
+    padding: 0;
+  }
+  .home.home :global(.quote-preview-fold) {
+    display: none;
+  }
+}

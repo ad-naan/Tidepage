@@ -1,11 +1,11 @@
 import { demoArticleBlocks } from "./demo-blocks";
-import type { ContentRepository } from "../application/repository";
+import type { ContentRepository } from "@/modules/content/application/repository";
 import {
   summarize,
   type Article,
   type Note,
   type Project,
-} from "../domain/models";
+} from "@/modules/content/domain/models";
 import { articles, notes, projects, quotes } from "./demo-data";
 import {
   englishArticles,

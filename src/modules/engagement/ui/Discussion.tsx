@@ -1,4 +1,6 @@
 "use client";
+import { Textarea } from "@/shared/ui/field/Textarea";
+import { Anchor } from "@/shared/ui/link/Anchor";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useTranslations } from "next-intl";
@@ -16,7 +18,7 @@ import {
   X,
 } from "lucide-react";
 import { usePreviewIdentity } from "@/modules/identity/ui/PreviewIdentity";
-import { SpringButton } from "@/shared/ui/primitives";
+import { Button } from "@/shared/ui/button/Button";
 type Comment = {
   id: number;
   name: string;
@@ -99,7 +101,7 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
           </div>
           <div className="reaction-options">
             {reactions.map(({ emoji, key, count }) => (
-              <motion.button
+              <Button
                 key={key}
                 className={reaction === key ? "chosen" : ""}
                 onClick={() => setReaction(reaction === key ? "" : key)}
@@ -108,7 +110,7 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
                 <span>{emoji}</span>
                 {t(key)}
                 <small>{count + (reaction === key ? 1 : 0)}</small>
-              </motion.button>
+              </Button>
             ))}
           </div>
         </div>
@@ -128,21 +130,19 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
             <strong>
               {loggedIn ? identity("guestName") : t("editorTitle")}
             </strong>
-            <p>
-              {loggedIn ? t("editorHintLoggedIn") : t("editorHint")}
-            </p>
+            <p>{loggedIn ? t("editorHintLoggedIn") : t("editorHint")}</p>
           </div>
           {!loggedIn && (
-            <button onClick={openLogin}>
+            <Button onClick={openLogin}>
               {t("githubLogin")} <ArrowUpRight size={13} />
-            </button>
+            </Button>
           )}
         </div>
         {(quote || reply) && (
           <div className="reply-context">
             <Quote size={13} />
             <span>{quote || `@${reply}`}</span>
-            <button
+            <Button
               aria-label={t("cancelContext")}
               onClick={() => {
                 setQuote("");
@@ -150,10 +150,11 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
               }}
             >
               <X size={13} />
-            </button>
+            </Button>
           </div>
         )}
-        <textarea
+        <Textarea
+          appearance="bare"
           ref={field}
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -163,7 +164,7 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
           aria-label={t("contentLabel")}
         />
         <div className="editor-footer">
-          <button
+          <Button
             className="emoji-button"
             aria-label={t("emoji")}
             onClick={() => {
@@ -172,11 +173,11 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
             }}
           >
             <Smile size={17} />
-          </button>
+          </Button>
           <span>
             {text.length}/1000 <i>·</i> {t("counter")}
           </span>
-          <SpringButton
+          <Button
             className="comment-submit"
             disabled={!text.trim()}
             onClick={() => {
@@ -205,20 +206,20 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
           >
             <Send size={13} />
             {t("submit")}
-          </SpringButton>
+          </Button>
         </div>
       </div>
       <div className="comments-toolbar">
         <span>{t("all")}</span>
         <div>
           {(["hot", "new"] as const).map((s) => (
-            <button
+            <Button
               className={sort === s ? "active" : ""}
               key={s}
               onClick={() => setSort(s)}
             >
               {t(s)}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -234,7 +235,9 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
             <div className="comment-body">
               <div className="comment-meta">
                 <strong>{c.name}</strong>
-                {c.author && <span className="author-badge">{t("author")}</span>}
+                {c.author && (
+                  <span className="author-badge">{t("author")}</span>
+                )}
                 <time>{c.time}</time>
               </div>
               {c.quote && <blockquote>{c.quote}</blockquote>}
@@ -243,7 +246,7 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
                 {c.text}
               </p>
               <div className="comment-actions">
-                <button
+                <Button
                   className={liked.includes(c.id) ? "liked" : ""}
                   aria-label={t("like", { name: c.name })}
                   onClick={() =>
@@ -259,8 +262,8 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
                     fill={liked.includes(c.id) ? "currentColor" : "none"}
                   />
                   {c.likes + (liked.includes(c.id) ? 1 : 0)}
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => {
                     setReply(c.name);
                     field.current?.focus();
@@ -272,7 +275,7 @@ export function Discussion({ compact = false }: { compact?: boolean }) {
                 >
                   <MessageCircle size={13} />
                   {t("reply")}
-                </button>
+                </Button>
               </div>
             </div>
           </motion.article>
@@ -328,7 +331,7 @@ export function ReadingAnnotations() {
             exit={{ opacity: 0 }}
             onMouseDown={(e) => e.preventDefault()}
           >
-            <button
+            <Button
               onClick={() => {
                 setMarked(selection);
                 setSelection("");
@@ -336,8 +339,8 @@ export function ReadingAnnotations() {
             >
               <Highlighter size={13} />
               {t("mark")}
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => {
                 window.dispatchEvent(
                   new CustomEvent("article-quote", { detail: selection }),
@@ -347,7 +350,7 @@ export function ReadingAnnotations() {
             >
               <Quote size={13} />
               {t("quote")}
-            </button>
+            </Button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -359,9 +362,9 @@ export function ReadingAnnotations() {
           </span>
           <p>{marked}</p>
           <small>{t("markPreview")}</small>
-          <button aria-label={t("closeMark")} onClick={() => setMarked("")}>
+          <Button aria-label={t("closeMark")} onClick={() => setMarked("")}>
             <X size={13} />
-          </button>
+          </Button>
         </div>
       )}
     </>
@@ -382,9 +385,9 @@ export function RichArticleDetails() {
             {t("calloutIntro")}
             <mark>{t("calloutMark")}</mark>
             {t("calloutOutro")}
-            <a href="#footnote-1" className="footnote-link">
+            <Anchor href="#footnote-1" className="footnote-link">
               [1]
-            </a>
+            </Anchor>
           </p>
         </div>
       </aside>
@@ -400,7 +403,7 @@ export function RichArticleDetails() {
       <div className="article-code">
         <div>
           <span>{t("codeTitle")}</span>
-          <button
+          <Button
             aria-label={t("copy")}
             onClick={async () => {
               try {
@@ -410,7 +413,7 @@ export function RichArticleDetails() {
             }}
           >
             {copied ? <Check size={14} /> : <Copy size={14} />}
-          </button>
+          </Button>
         </div>
         <pre data-custom-scroll={t("codeRegion")}>
           <code>

@@ -1,4 +1,6 @@
 "use client";
+import { Button } from "@/shared/ui/button/Button";
+import { Input } from "@/shared/ui/field/Input";
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useTranslations } from "next-intl";
@@ -14,7 +16,7 @@ export function NoteReplies() {
   const { loggedIn, openLogin } = usePreviewIdentity();
   return (
     <div className="note-replies">
-      <button
+      <Button
         className="note-reply-toggle"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
@@ -22,7 +24,7 @@ export function NoteReplies() {
         <MessageCircle size={14} />
         {open ? t("collapse") : t("open")}
         <span>{reply ? 2 : 1}</span>
-      </button>
+      </Button>
       <AnimatePresence>
         {open && (
           <motion.div
@@ -62,16 +64,21 @@ export function NoteReplies() {
                 setText("");
               }}
             >
-              <input
+              <Input
+                appearance="bare"
                 value={text}
                 maxLength={300}
                 onChange={(e) => setText(e.target.value)}
                 aria-label={t("input")}
                 placeholder={t("placeholder")}
               />
-              <button aria-label={t("submit")} disabled={!text.trim()}>
+              <Button
+                type="submit"
+                aria-label={t("submit")}
+                disabled={!text.trim()}
+              >
                 <Send size={14} />
-              </button>
+              </Button>
             </form>
           </motion.div>
         )}

@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/shared/ui/button/Button";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@/shared/i18n/navigation";
 import { useMessages, useTranslations } from "next-intl";
@@ -25,7 +26,7 @@ import {
   type JourneyId,
   type JourneyNotice,
 } from "@/modules/world/domain/coast-journey";
-import type { VoyageControls } from "../runtime/createCoastScene";
+import type { VoyageControls } from "@/modules/world/runtime/createCoastScene";
 import styles from "./coast.module.css";
 
 export function CoastalExperience() {
@@ -84,9 +85,13 @@ export function CoastalExperience() {
     return () => clearTimeout(timer);
   }, [ready]);
   useEffect(() => {
-    try { sessionStorage.setItem("coast-visited", "true"); } catch { /* Optional navigation hint. */ }
+    try {
+      sessionStorage.setItem("coast-visited", "true");
+    } catch {
+      /* Optional navigation hint. */
+    }
     let cancelled = false;
-    import("../runtime/createCoastScene")
+    import("@/modules/world/runtime/createCoastScene")
       .then(({ createCoastScene }) => {
         if (cancelled || !host.current) return;
         try {
@@ -188,36 +193,36 @@ export function CoastalExperience() {
         <Link href="/" aria-label={ui("exit")} title={ui("home")}>
           <ArrowLeft size={18} />
         </Link>
-        <button
+        <Button
           onClick={() => setHelp(!help)}
           aria-expanded={help}
           aria-label={ui("guide")}
           title={ui("guide")}
         >
           <Compass size={19} />
-        </button>
+        </Button>
       </div>
       <div className={styles.settings}>
-        <button
+        <Button
           onClick={toggleSound}
           aria-label={sound ? ui("soundOff") : ui("soundOn")}
           aria-pressed={sound}
         >
           {sound ? <Volume2 size={18} /> : <VolumeX size={18} />}
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => setNight(!night)}
           aria-label={night ? ui("sunset") : ui("stars")}
         >
           {night ? <Sun size={18} /> : <Moon size={18} />}
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => setPaused(!paused)}
           aria-label={paused ? ui("resume") : ui("pause")}
           aria-pressed={paused}
         >
           {paused ? <Play size={17} /> : <Pause size={17} />}
-        </button>
+        </Button>
       </div>
       {!ready && !failed && (
         <div className={styles.loading} role="status">
@@ -250,16 +255,16 @@ export function CoastalExperience() {
           {onboarding && !help && !nearby && (
             <div className={styles.onboarding}>
               {ui("onboarding")}
-              <button
+              <Button
                 aria-label={ui("closeHint")}
                 onClick={() => setOnboarding(false)}
               >
                 <X size={13} />
-              </button>
+              </Button>
             </div>
           )}
           {location && !help && !paused && (
-            <button
+            <Button
               className={styles.interact}
               onClick={() => interaction.current()}
             >
@@ -268,7 +273,7 @@ export function CoastalExperience() {
                 <kbd>E</kbd>
                 {action}
               </strong>
-            </button>
+            </Button>
           )}
           {paused && <div className={styles.paused}>{ui("paused")}</div>}
           {help && (
@@ -276,12 +281,12 @@ export function CoastalExperience() {
               <div>
                 <Compass size={20} />
                 <h1>{ui("guide")}</h1>
-                <button
+                <Button
                   onClick={() => setHelp(false)}
                   aria-label={ui("collapseGuide")}
                 >
                   <X size={18} />
-                </button>
+                </Button>
               </div>
               <p>{ui("guideIntro")}</p>
               <dl>
@@ -297,7 +302,7 @@ export function CoastalExperience() {
                 {journeyStops
                   .filter((p) => p.id !== "secret" || (journey.beacon && night))
                   .map((p) => (
-                    <button
+                    <Button
                       key={p.id}
                       onClick={() => {
                         controls.current?.sailTo(p.id);
@@ -306,7 +311,7 @@ export function CoastalExperience() {
                     >
                       {places[p.id].name}
                       <span>{ui("sailTo")}</span>
-                    </button>
+                    </Button>
                   ))}
               </nav>
               {journey.discovered && (
@@ -315,7 +320,7 @@ export function CoastalExperience() {
                   {ui("reward")}
                 </p>
               )}
-              <button
+              <Button
                 className={styles.restart}
                 onClick={() => {
                   setJourney(emptyJourney);
@@ -326,7 +331,7 @@ export function CoastalExperience() {
                 }}
               >
                 {ui("restart")}
-              </button>
+              </Button>
               <small>{ui("progressNote")}</small>
             </section>
           )}

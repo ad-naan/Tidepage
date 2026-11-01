@@ -1,0 +1,99 @@
+.tabs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-width: 0;
+}
+.tab {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 9px 8px 11px;
+  min-height: 36px;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-radius: 0;
+  font: 400 var(--text-sm)/1.6 var(--font-ui);
+  cursor: pointer;
+  transition: color var(--motion-quick);
+}
+.tab small {
+  font: 400 9px/1.5 var(--font-ui);
+  opacity: 0.6;
+  font-variant-numeric: tabular-nums;
+}
+.wash {
+  position: absolute;
+  inset: 1px -2px;
+  width: calc(100% + 4px);
+  height: calc(100% - 2px);
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transform: rotate(-2deg) scaleX(0.8);
+  transition:
+    opacity 0.3s,
+    transform 0.38s;
+  filter: blur(1.6px);
+}
+.wash path {
+  fill: var(--wash);
+}
+.mark {
+  position: absolute;
+  bottom: 1px;
+  left: 8px;
+  width: calc(100% - 16px);
+  height: 8px;
+  color: var(--accent);
+  opacity: 0;
+  pointer-events: none;
+}
+.mark path {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transition: stroke-dashoffset 0.42s;
+}
+.tab[aria-pressed="true"] {
+  color: var(--ink);
+}
+.tab[aria-pressed="true"] .wash {
+  opacity: 0.6;
+  transform: rotate(-2deg) scaleX(1);
+}
+.tab[aria-pressed="true"] .mark {
+  opacity: 0.85;
+}
+.tab[aria-pressed="true"] .mark path {
+  stroke-dashoffset: 0;
+}
+.tab:hover {
+  color: var(--accent);
+}
+.tab:hover .wash {
+  opacity: 0.35;
+  transform: none;
+}
+.tab:focus-visible {
+  outline: 1px dashed var(--accent);
+  outline-offset: 2px;
+}
+@media (max-width: 700px) {
+  .tabs {
+    gap: 6px;
+  }
+  .tab {
+    padding-inline: 7px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tab,
+  .wash,
+  .mark path {
+    transition: none;
+  }
+}

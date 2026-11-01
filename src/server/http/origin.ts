@@ -1,6 +1,6 @@
 import "server-only";
 import { AppError } from "./errors";
-import { getEnv } from "../config/env";
+import { getEnv } from "@/server/config/env";
 // Call before every cookie-authenticated mutation; never trust a forwarded host.
 export function requireSameOrigin(request: Request) {
   if (request.headers.get("origin") !== new URL(getEnv().SITE_URL).origin)

@@ -26,7 +26,11 @@ export const envSchema = z
   })
   .superRefine((env, context) => {
     let origin: URL | undefined;
-    try { origin = new URL(env.SITE_URL); } catch { /* z.url reports the invalid value. */ }
+    try {
+      origin = new URL(env.SITE_URL);
+    } catch {
+      /* z.url reports the invalid value. */
+    }
     if (env.CONTENT_SOURCE === "postgres" && !env.DATABASE_URL)
       context.addIssue({
         code: "custom",
@@ -35,7 +39,12 @@ export const envSchema = z
       });
     if (
       !/^https?:\/\//.test(env.SITE_URL) ||
-      !origin || origin.pathname !== "/" || origin.search || origin.hash || origin.username || origin.password
+      !origin ||
+      origin.pathname !== "/" ||
+      origin.search ||
+      origin.hash ||
+      origin.username ||
+      origin.password
     )
       context.addIssue({
         code: "custom",
@@ -56,8 +65,7 @@ export const envSchema = z
       });
     if (
       env.INDEXING_ENABLED &&
-      (env.CONTENT_SOURCE !== "postgres" ||
-        origin?.protocol !== "https:")
+      (env.CONTENT_SOURCE !== "postgres" || origin?.protocol !== "https:")
     )
       context.addIssue({
         code: "custom",

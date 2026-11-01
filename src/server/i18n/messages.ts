@@ -8,6 +8,7 @@ export async function getCatalog(locale: Locale) {
 
 export function requestLocale(request: Request): Locale {
   const url = new URL(request.url);
-  const requested = url.searchParams.get("locale") ?? url.pathname.split("/")[1];
+  const requested =
+    url.searchParams.get("locale") ?? url.pathname.split("/")[1];
   return isLocale(requested) ? requested : defaultLocale;
 }

@@ -1,7 +1,7 @@
 import "server-only";
 import type { z } from "zod";
 import type { CacheStore } from "./store";
-import { log } from "../observability/logger";
+import { log } from "@/server/observability/logger";
 export function createRemember(store: CacheStore) {
   const pending = new Map<string, Promise<unknown>>();
   return async function remember<T>(

@@ -1,8 +1,8 @@
 import "server-only";
 import { Pool } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
-import { getEnv } from "../config/env";
-import { log } from "../observability/logger";
+import { getEnv } from "@/server/config/env";
+import { log } from "@/server/observability/logger";
 import * as schema from "./schema";
 const globalDb = globalThis as unknown as { adnaanPool?: Pool };
 export function getPool(): Pool {

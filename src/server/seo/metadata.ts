@@ -1,7 +1,7 @@
 ﻿import "server-only";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
-import { getEnv } from "../config/env";
+import { getEnv } from "@/server/config/env";
 import { site } from "@/shared/config/site";
 import {
   defaultLocale,

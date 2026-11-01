@@ -1,0 +1,155 @@
+/* Scoped to this view; decorative surfaces come from shared/ui. */
+.reading.reading {
+  max-width: none;
+  margin-inline: auto;
+}
+.reading.reading :global(.back-link) {
+  font-size: 11px;
+  margin-top: 20px;
+}
+.reading.reading :global(.reading-header) {
+  position: relative;
+  text-align: start;
+  margin: 12px 0 24px;
+  padding: 6px 0 24px;
+  border: 0;
+}
+.reading.reading :global(.reading-header h1) {
+  max-width: 34ch;
+  margin: 10px 0 0;
+  font: 500 26px/1.6 var(--font-editorial);
+  text-wrap: balance;
+  letter-spacing: -0.02em;
+}
+.reading.reading :global(.reading-header .eyebrow) {
+  font-size: 11px;
+  letter-spacing: 0.03em;
+}
+.reading.reading :global(.reading-meta) {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  font-size: 11px;
+}
+.reading.reading :global(.reading-excerpt) {
+  max-width: 60ch;
+  margin: 14px 0 0;
+  padding: 0;
+  font: 400 13px/1.9 var(--font-ui);
+}
+.reading.reading :global(.reading-header > .mini-sketch) {
+  display: none;
+}
+.reading.reading :global(.reading-header-shore) {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+.reading.reading :global(.reading-layout) {
+  grid-template-columns: minmax(0, 800px) 200px;
+  justify-content: space-between;
+  gap: 48px;
+}
+.reading.reading :global(.prose h2) {
+  position: relative;
+  width: fit-content;
+  padding-bottom: 10px;
+  font: 500 19px/1.7 var(--font-editorial);
+  margin-bottom: 12px;
+}
+.reading.reading :global(.chapter-mark) {
+  position: absolute;
+  bottom: 0;
+  left: -2px;
+  width: 65px;
+  height: 8px;
+  color: var(--accent);
+  opacity: 0.5;
+}
+.reading.reading :global(.prose p) {
+  font: 400 16px/1.95 var(--font-editorial);
+  margin-top: 12px;
+}
+.reading.reading :global(.prose section) {
+  margin-bottom: 28px;
+}
+.reading.reading :global(.toc) {
+  border: 0;
+  padding-left: 0;
+}
+.reading.reading :global(.toc-heading) {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font: 400 11px/1.8 var(--font-ui);
+}
+.reading.reading :global(.toc nav) {
+  display: grid;
+  gap: 4px;
+  margin-top: 10px;
+}
+.reading.reading :global(.toc a) {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  padding: 6px 0 10px;
+  font: 400 11px/1.8 var(--font-ui);
+  border: 0;
+}
+.reading.reading :global(.toc a small) {
+  font: 400 10px/1.8 var(--font-code);
+  opacity: 0.5;
+}
+.reading.reading :global(.toc a[aria-current]) {
+  color: var(--ink);
+}
+.reading.reading :global(.toc-mark) {
+  position: absolute;
+  bottom: 2px;
+  left: 22px;
+  width: 50px;
+  height: 7px;
+  color: var(--accent);
+  opacity: 0.6;
+}
+.reading.reading :global(.article-end) {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0;
+}
+.reading.reading :global(.article-end > svg) {
+  width: 24px;
+  height: 24px;
+}
+.reading.reading :global(.next-article) {
+  position: relative;
+  padding-top: 24px;
+  border: 0;
+}
+.reading.reading :global(.next-shore) {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+@media (max-width: 1050px) {
+  .reading.reading :global(.reading-layout) {
+    grid-template-columns: minmax(0, 1fr) 170px;
+    gap: 28px;
+  }
+}
+@media (max-width: 700px) {
+  .reading.reading :global(.reading-layout) {
+    grid-template-columns: 1fr;
+  }
+  .reading.reading :global(.toc) {
+    display: none;
+  }
+  .reading.reading :global(.reading-header h1) {
+    font-size: 23px;
+  }
+  .reading.reading :global(.prose p) {
+    font-size: 15px;
+  }
+}

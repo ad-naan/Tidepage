@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/shared/ui/button/Button";
 import { Link } from "@/shared/i18n/navigation";
 import { useTranslations } from "next-intl";
 export default function ErrorPage({
@@ -12,9 +13,9 @@ export default function ErrorPage({
     <main id="main-content" className="not-found">
       <h1>{t("title")}</h1>
       <p>{t("description")}</p>
-      <button className="button-outline" onClick={reset}>
+      <Button className="button-outline" onClick={reset}>
         {t("retry")}
-      </button>
+      </Button>
       <Link href="/">{t("home")}</Link>
     </main>
   );

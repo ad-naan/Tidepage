@@ -1,7 +1,7 @@
 import "server-only";
 import { Redis } from "ioredis";
-import { getEnv } from "../config/env";
-import { log } from "../observability/logger";
+import { getEnv } from "@/server/config/env";
+import { log } from "@/server/observability/logger";
 import { noCache, type CacheStore } from "./store";
 const globalRedis = globalThis as unknown as {
   adnaanRedis?: Redis;

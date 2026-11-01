@@ -11,7 +11,7 @@ import {
   primaryKey,
 } from "drizzle-orm/pg-core";
 import type { Locale } from "@/shared/i18n/config";
-import type { Article, Category } from "../domain/models";
+import type { Article, Category } from "@/modules/content/domain/models";
 const publication = () => ({
   locale: text("locale").$type<Locale>().notNull().default("zh-CN"),
   visibility: text("visibility")

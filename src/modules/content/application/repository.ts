@@ -4,8 +4,8 @@ import type {
   Note,
   Project,
   Quote,
-} from "../domain/models";
-import type { ArticleQuery } from "../domain/query";
+} from "@/modules/content/domain/models";
+import type { ArticleQuery } from "@/modules/content/domain/query";
 import type { Page } from "@/shared/contracts/api";
 import type { Locale } from "@/shared/i18n/config";
 // Every adapter returns only published content, including publication-time checks.

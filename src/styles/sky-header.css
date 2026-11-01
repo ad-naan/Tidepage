@@ -372,50 +372,6 @@
   }
 }
 
-/* The horizon settles into the toolbar when scrolling: warm dusk, rising moonlight. */
-.header-orb-halo {
-  fill: var(--sky-gold);
-  opacity: 0.45;
-  filter: blur(9px);
-}
-.header-sunset-orb {
-  transform: translate(430px, 48px);
-  transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.header-orb-disc {
-  fill: #f6cd8d;
-  stroke: #d79655;
-  stroke-width: 1.1;
-  opacity: 0.75;
-}
-.header-orb-pencil {
-  stroke: #bc874b;
-  stroke-width: 0.7;
-  opacity: 0.35;
-  filter: url(#tidepage-pencil);
-}
-.is-compact .header-sunset-orb {
-  transform: translate(430px, 76px);
-}
-.header-moon-orb {
-  display: none;
-  transform: translate(430px, 75px);
-  transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.header-moon-orb > path {
-  fill: #d0dded;
-  stroke: #afc6e3;
-  stroke-width: 1.1;
-}
-[data-theme="dark"] .header-sunset-orb {
-  display: none;
-}
-[data-theme="dark"] .header-moon-orb {
-  display: block;
-}
-[data-theme="dark"] .is-compact .header-moon-orb {
-  transform: translate(430px, 44px);
-}
 .header-pencil-skyline {
   color: #a57e5b;
   opacity: 0.12;
@@ -515,18 +471,12 @@
   .sky-header .header-music .music-open > span:last-child {
     display: none;
   }
-  .header-sunset-orb,
-  [data-theme="dark"] .header-moon-orb {
-    display: none;
-  }
   .sky-header .living-avatar {
     width: 25px;
     height: 25px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .header-sunset-orb,
-  .header-moon-orb,
   .header-pencil-skyline,
   .header-skyline-coast {
     transition: none;

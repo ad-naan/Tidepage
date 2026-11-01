@@ -1,6 +1,6 @@
 import { getLocale } from "next-intl/server";
-import { Shell } from "@/components/Shell";
-import { CustomScrollbars } from "@/components/CustomScrollbars";
+import { SiteShell } from "@/widgets/site-shell/SiteShell";
+import { CustomScrollbars } from "@/shared/ui/scroll-area/CustomScrollbars";
 import { PreviewIdentityProvider } from "@/modules/identity/ui/PreviewIdentity";
 import { getArticles, getNotes, getProjects } from "@/modules/content/server";
 // Rendering remains live after database updates; content caching belongs to the service.
@@ -27,9 +27,9 @@ export default async function SiteLayout({
   };
   return (
     <PreviewIdentityProvider>
-      <Shell articles={articles} navigation={navigation}>
+      <SiteShell articles={articles} navigation={navigation}>
         {children}
-      </Shell>
+      </SiteShell>
       <CustomScrollbars />
     </PreviewIdentityProvider>
   );

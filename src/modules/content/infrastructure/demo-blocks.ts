@@ -1,5 +1,5 @@
 import type { Locale } from "@/shared/i18n/config";
-import type { ArticleBlock } from "../domain/blocks";
+import type { ArticleBlock } from "@/modules/content/domain/blocks";
 
 export const demoArticleBlocks: Partial<
   Record<Locale, Record<string, ArticleBlock[]>>

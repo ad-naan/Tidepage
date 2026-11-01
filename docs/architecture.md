@@ -7,7 +7,7 @@
 ```text
 src/
   app/                         路由、布局和请求适配，不编写业务查询
-    [locale]/(site)/                    阅读站点，共享 Shell；URL 不带分组名称
+    [locale]/(site)/                    阅读站点，共享 SiteShell；URL 不带分组名称
       articles/[slug]/
       notes/ projects/ quotes/ gallery/ about/
     [locale]/(immersive)/explore/       海岸世界，不加载阅读站点布局或身份预览
@@ -46,7 +46,10 @@ src/
     contracts/                 可在浏览器使用的 API 与分页类型
     http/                      浏览器请求客户端
     hooks/ ui/ lib/            无业务依赖的基础组件与工具
-  components/                  跨页面的站点布局和原创插画
+  widgets/site-shell/          页头、导航、页脚等站点组合；依赖业务 UI 与 shared
+  modules/home/ui/             首页介绍、旅程与外链
+  modules/media/ui/player/     播放器
+  shared/ui/                   无业务含义的基础控件与手绘材料
   styles/                      现有全局视觉系统
 drizzle/                       可审阅的 SQL 迁移与快照
 scripts/                       迁移、种子、边界检查与开发工具
@@ -117,3 +120,7 @@ CI 执行架构检查、类型检查、规则与查询测试、生产构建。PG
 语言配置统一由注册表和词典加载器维护，当前提供简体中文、英文，支持继续注册更多语言及 RTL 方向。路由语言布局提供客户端词典，根布局只保留错误页的最小兜底词条；切换后同步 HTML 的 lang 与 dir。内容表使用 slug/id 与 locale 的复合主键，缓存带 locale，查询和 hreflang 只引用实际发布的翻译。
 
 Select、Portal 归属、语言切换与局部交互约定见 [基础组件文档](ui-components.md)。
+
+## 前端组件层级
+
+当前目录、命名、基础控件清单和自动边界规则以 [前端架构](frontend-architecture.md) 为准。旧 components 汇总目录已拆分，不再作为新增组件入口。

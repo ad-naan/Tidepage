@@ -35,7 +35,7 @@
 
 1. 在 `src/app/[locale]/(site)/<名称>/page.tsx` 建页面，调用模块服务端入口取数（如 `getArticles(locale)`）。
 2. 文案进语言包；SEO 用 `src/server/seo/metadata.ts` 的辅助函数，canonical 基于统一 `SITE_URL`。
-3. 需要进导航就改 `src/components/SiteHeader.tsx` / `CelestialNav.tsx`（文案同样走 i18n）。
+3. 需要进导航就改 `src/widgets/site-shell/header/SiteHeader.tsx` / `src/widgets/site-shell/navigation/SiteNavigation.tsx`（文案同样走 i18n）。
 
 ### 3. 新增一个 API 接口
 

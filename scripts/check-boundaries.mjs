@@ -1,10 +1,18 @@
 import { readdirSync, readFileSync, existsSync } from "node:fs";
 import { resolve, relative, dirname, extname } from "node:path";
 import ts from "typescript";
+import {
+  inspectUiSource,
+  presentationImportError,
+} from "./ui-architecture-rules.mjs";
 const root = resolve("src"),
   graph = new Map(),
   errors = [];
 const normalized = (p) => relative(root, p).replaceAll("\\", "/");
+if (existsSync(resolve(root, "components")))
+  errors.push(
+    "src/components is retired: use shared/ui, a module's ui, or widgets/site-shell",
+  );
 function files(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
     e.isDirectory()
@@ -37,6 +45,7 @@ for (const file of files(root)) {
     true,
   );
   const imports = [];
+  errors.push(...inspectUiSource(source, normalized(file)));
   let client = false,
     server = false;
   for (const node of source.statements) {
@@ -88,6 +97,8 @@ for (const [file, node] of graph) {
   for (const edge of node.edges) {
     const dest = normalized(edge),
       target = dest.match(/^modules\/([^/]+)\/([^/]+)/);
+    const presentationError = presentationImportError(path, dest);
+    if (presentationError) errors.push(presentationError);
     if (path.startsWith("shared/") && !dest.startsWith("shared/"))
       errors.push(`${path}: shared must not depend on ${dest}`);
     if (

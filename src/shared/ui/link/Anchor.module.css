@@ -1,0 +1,4 @@
+.link:focus-visible {
+  outline: 1px dashed var(--accent);
+  outline-offset: 4px;
+}

@@ -3,8 +3,11 @@ import type { Article } from "@/modules/content/domain/models";
 import { site } from "@/shared/config/site";
 import { localizedUrl } from "./metadata";
 import type { Locale } from "@/shared/i18n/config";
-export function siteGraph(locale: Locale, labels: { name: string; description: string }) {
-  const absoluteUrl=(path:string)=>localizedUrl(locale,path);
+export function siteGraph(
+  locale: Locale,
+  labels: { name: string; description: string },
+) {
+  const absoluteUrl = (path: string) => localizedUrl(locale, path);
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -26,8 +29,11 @@ export function siteGraph(locale: Locale, labels: { name: string; description: s
     ],
   };
 }
-export function articleGraph(article: Article, labels: { home: string; articles: string; category: string }) {
-  const absoluteUrl=(path:string)=>localizedUrl(article.locale,path);
+export function articleGraph(
+  article: Article,
+  labels: { home: string; articles: string; category: string },
+) {
+  const absoluteUrl = (path: string) => localizedUrl(article.locale, path);
   const url = absoluteUrl(`/articles/${article.slug}`);
   return {
     "@context": "https://schema.org",

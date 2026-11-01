@@ -52,9 +52,9 @@
 
 `SiteNavigation` 在桌面显示文章、手记、项目和更多；Logo 承担首页入口，次要栏目进入局部浮层。窄屏使用明确的浏览入口，不增加第二行页头。`HanddrawnMark` 用 SVG 曲线和回锋表达选中态与悬停态，禁止改回普通矩形直线。`HeaderBrand` 同时保留签名和头像节点，使用透明度与 transform 过渡，避免等待旧节点卸载后再显示新节点。默认态显示签名与一句状态；收拢态显示用户指定的 GitHub 头像及贴角状态光点，活动入口不使用水獭头像。头像位于 `public/images/author-avatar.png`，从用户提供的 `https://avatars.githubusercontent.com/u/163977012?s=60&v=4` 保存，不依赖运行时远程加载。
 
-`RoomHeading` 是紧凑的栏目栏，序号、栏目名、标题、说明和小幅线稿在同一行内组成层级。禁止重新加入整块居中图标与大标题。`rooms.module.css` 只管理内页的密度与内容布局，不影响首页。
+`ContentHeading` 是紧凑的栏目栏，序号、栏目名、标题、说明和小幅线稿在同一行内组成层级。禁止重新加入整块居中图标与大标题。各视图旁的 `*View.module.css` 只管理内页的密度与内容布局，不影响首页。
 
-界面与正文使用本地托管的 `@fontsource-variable/noto-sans-sc`，按 Unicode 范围加载字体子集。正文为 400，栏目与内容标题为 500；不对正文施加 300 字重或手写字体。手写字保留在品牌与少量场景装饰中。新增其他文字系统时，在全局字体栈中补充对应的本地字体，组件内不判断语言。
+字体角色、字号、间距和笔触以 [design-system.md](design-system.md) 为准：界面使用 Inter + Noto Sans SC，阅读与栏目标题使用 Noto Serif SC；手写字仅用于品牌与少量主题表达。
 
 ## 导航与全局 Loading
 
@@ -87,9 +87,9 @@ Loading 开始前保留正文高度，加载时隐藏页脚，避免正文被 fa
 
 ## 天空页头与页脚偏好
 
-`HeaderSky` 与 `styles/sky-header.css` 管理装饰层：默认 `is-resting` 状态的底色柔和淡出，与页面融合，不绘制边界或投影；滚动超过阈值进入 `is-compact` 后，宽度收至最多 1080px；SVG 用完整封闭曲线定义上沿、两端和下沿，模糊的渐变填色与 22px 背景柔焦共用同一轮廓，不能退回矩形、胶囊或仅下沿裁切。内容区保留独立内边距，右侧操作必须落在可见轮廓内。白天的小太阳向铅笔岸线落下，夜间月亮升起，系统减弱动态时直接切换。展开搜索、音乐或活动面板不会自行触发滚动阴影。昼夜配色使用 CSS 变量，装饰不响应指针，减弱动态偏好会取消阴影过渡。
+`HeaderSky` 与 `styles/sky-header.css` 管理装饰层：默认 `is-resting` 状态的底色柔和淡出，与页面融合，不绘制边界或投影；滚动超过阈值进入 `is-compact` 后，宽度收至最多 1080px；SVG 用完整封闭曲线定义上沿、两端和下沿，模糊的渐变填色与 22px 背景柔焦共用同一轮廓，不能退回矩形、胶囊或仅下沿裁切。内容区保留独立内边距，右侧操作必须落在可见轮廓内。页头不绘制太阳或月亮，避免与首页插画重复；昼夜氛围由晕染和岸线配色表达。展开搜索、音乐或活动面板不会自行触发滚动阴影。昼夜配色使用 CSS 变量，装饰不响应指针，减弱动态偏好会取消阴影过渡。
 
-作者活动保留在页头；`FooterPresence` 承载访客人数和统计浮层，沿用明确标记的演示数据。`FooterPreferences` 组合基础 `LanguageSwitcher` 和 `ThemeToggle`，语言从注册表读取，主题状态由 Shell 持有，控件不另建状态副本。语言选择器使用 Portal，页脚不会裁切选项；切换语言保留路径、查询与锚点。
+作者活动保留在页头；`FooterPresence` 承载访客人数和统计浮层，沿用明确标记的演示数据。`FooterPreferences` 组合基础 `LanguageSwitcher` 和 `ThemeToggle`，语言从注册表读取，主题状态由 SiteShell 持有，控件不另建状态副本。语言选择器使用 Portal，页脚不会裁切选项；切换语言保留路径、查询与锚点。
 
 ## 页头独立浮层
 
@@ -99,7 +99,7 @@ Loading 开始前保留正文高度，加载时隐藏页脚，避免正文被 fa
 
 ## 页头定位与页脚布局
 
-`header-slot` 固定在视口上，Shell 按 `--site-header-height` 保留相同顶部空间。Radix Select 打开时会锁定 body 的滚动，不能使用依赖 body 滚动参照的 sticky 页头，否则滚动到底部打开语言菜单会让页头移出视口。不要移除选择器的滚动锁来掩盖定位问题。
+`header-slot` 固定在视口上，SiteShell 按 `--site-header-height` 保留相同顶部空间。Radix Select 打开时会锁定 body 的滚动，不能使用依赖 body 滚动参照的 sticky 页头，否则滚动到底部打开语言菜单会让页头移出视口。不要移除选择器的滚动锁来掩盖定位问题。
 
 `SiteFooter` 单独封装签名、版权、联系入口与偏好工具，使用同一版心和手绘岸线；窄屏分成清晰的两行。返回海岸是页脚内联入口，不再使用覆盖控件的固定按钮。`ThemeToggle` 使用私有 CSS Module，按内容占宽，不能重新使用旧的全局 `theme-toggle` 类名（它为图标按钮固定了 29px 宽度）。
 
@@ -110,3 +110,13 @@ Loading 开始前保留正文高度，加载时隐藏页脚，避免正文被 fa
 桌面导航经过 200ms 悬停意图延迟后展示局部内容卡片，离开后保留 180ms 跨越间隙时间；鼠标进入卡片会取消关闭。按向下键可打开对应预览并进入链接，Escape 关闭；触屏仍直接导航或点击浏览入口。内容由 locale 站点布局并行读取文章、手记与项目，通过 `NavigationOverview` 传递最新手记摘要及三个项目摘要，避免写死演示文案或传递完整正文。浮层开合不会撑开页头。
 
 `PencilDefinitions` 在根布局定义一次静态 SVG 纸纹与轻微位移，`HanddrawnMark`、页头岸线和页脚手绘线共用纹理。笔触使用重描和颗粒，滤镜噪声不逐帧更新；图像头像不套铅笔滤镜。避免继续给这些装饰叠加普通的 1px CSS 直线。
+
+## 全局提醒与设计变量
+
+`NoticeProvider` 位于 locale 布局内。通过 `useNotice().notify` 反馈操作，`NoticeDock` 在头像右侧呈现铅笔批注；栏目与文章阅读信息共用此区域，短暂提醒结束后恢复。标题保持简短，长句放 `detail`。窄屏在页头下方显示提醒，无页头时使用底部回退。不要再新增各业务自己的胶囊 Toast 或重复的 live region。
+
+`tokens.css` 定义共同变量，`design-contract.css` 应用于现有页面，`Text` 封装文字角色。完整标准和示例见 [设计基础](design-system.md)。首页外部入口由 `ProfileLinks` 与 `shared/config/profile.ts` 组合，显示文案来自各语言词典。
+
+## 目录与统一出口
+
+组件已按职责迁移，旧 `src/components` 与 `primitives.tsx` 已移除。完整放置规则、基础组件清单、命名和检查规则见 [前端架构](frontend-architecture.md)。本文中的组件名均按职责定位：页头页脚在 widgets，业务视图在 modules，基础控件在 shared/ui。
