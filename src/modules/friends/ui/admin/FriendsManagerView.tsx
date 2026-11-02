@@ -2,9 +2,12 @@
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { z } from "zod";
-import { friendLinkSchema } from "@/modules/friends/domain/models";
+import { friendDraftSchema as schema } from "@/modules/friends/domain/models";
 import { locales, localeRegistry, type Locale } from "@/shared/i18n/config";
-import { readLocalRecord, writeLocalRecord } from "@/shared/lib/browser-store";
+import {
+  readWorkbenchRecord,
+  updateWorkbenchRecord,
+} from "@/shared/lib/workbench-store";
 import { PageHeader } from "@/shared/ui/page-header/PageHeader";
 import { Field } from "@/shared/ui/field/Field";
 import { Input } from "@/shared/ui/field/Input";
@@ -15,18 +18,6 @@ import { Button } from "@/shared/ui/button/Button";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import styles from "./FriendsManagerView.module.css";
-const schema = z.object({
-  id: z.string(),
-  revision: z.number(),
-  url: friendLinkSchema.shape.url,
-  category: friendLinkSchema.shape.category,
-  sortOrder: z.number(),
-  deletedAt: z.string().optional(),
-  translations: z.record(
-    z.string(),
-    z.object({ name: z.string().max(60), description: z.string().max(160) }),
-  ),
-});
 type Item = z.infer<typeof schema>;
 export function FriendsManagerView() {
   const t = useTranslations("admin");
@@ -41,7 +32,7 @@ export function FriendsManagerView() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   useEffect(() => {
-    readLocalRecord("friends")
+    readWorkbenchRecord("friends")
       .then((raw) =>
         setItems(raw === undefined ? [] : schema.array().parse(raw)),
       )
@@ -51,19 +42,17 @@ export function FriendsManagerView() {
     setBusy(true);
     try {
       const checked = schema.parse(item);
-      await navigator.locks.request("tidepage:friends", async () => {
-        const raw = await readLocalRecord("friends");
+      const next = await updateWorkbenchRecord("friends", (raw) => {
         const current = raw === undefined ? [] : schema.array().parse(raw);
         const previous = current.find((v) => v.id === checked.id);
         if (previous && previous.revision !== checked.revision)
           throw new Error("CONFLICT");
         const saved = { ...checked, revision: checked.revision + 1 };
-        const next = [saved, ...current.filter((v) => v.id !== saved.id)];
-        await writeLocalRecord("friends", next);
-        setItems(next);
-        setValue(null);
-        setDeleting(null);
+        return [saved, ...current.filter((v) => v.id !== saved.id)];
       });
+      setItems(next);
+      setValue(null);
+      setDeleting(null);
       setError("");
       notify({ title: t("editor.savedLocal"), tone: "success" });
     } catch {

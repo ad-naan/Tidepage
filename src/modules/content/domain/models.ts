@@ -2,9 +2,10 @@ import { z } from "zod";
 import { localeSchema } from "@/shared/i18n/schema";
 import type { Locale } from "@/shared/i18n/config";
 import { articleBlockSchema } from "./blocks";
+import { editorDocumentSchema } from "./editor-document";
+import { categorySchema, sketchSchema } from "./taxonomy";
 
-export const categorySchema = z.enum(["technology", "product", "life"]);
-export const sketchSchema = z.enum(["sun", "mountain", "boat", "tree"]);
+export { categorySchema, sketchSchema } from "./taxonomy";
 export const slugSchema = z
   .string()
   .min(1)
@@ -27,11 +28,13 @@ export const articleSchema = z.object({
   sketch: sketchSchema,
   excerpt: z.string(),
   sections: z.array(sectionSchema),
+  body: editorDocumentSchema.optional(),
 });
 export type Category = z.infer<typeof categorySchema>;
 export type Article = z.infer<typeof articleSchema>;
-export type ArticleSummary = Omit<Article, "sections">;
+export type ArticleSummary = Omit<Article, "sections" | "body">;
 export type Note = {
+  body?: Article["body"];
   locale: Locale;
   id: string;
   date: string;
@@ -42,6 +45,7 @@ export type Note = {
   sketch: z.infer<typeof sketchSchema>;
 };
 export type Project = {
+  body?: Article["body"];
   locale: Locale;
   id: string;
   name: string;
@@ -65,6 +69,7 @@ export type NavigationOverview = {
 };
 export function summarize({
   sections: _sections,
+  body: _body,
   ...summary
 }: Article): ArticleSummary {
   return summary;

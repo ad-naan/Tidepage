@@ -9,15 +9,14 @@ export class ApiClientError extends Error {
     super(message);
   }
 }
-export async function apiGet<T>(
+async function apiRequest<T>(
   path: `/api/v1/${string}`,
-  options: { signal?: AbortSignal } = {},
+  init: RequestInit,
 ): Promise<T> {
   const response = await fetch(path, {
-    method: "GET",
+    ...init,
     credentials: "same-origin",
-    signal: options.signal,
-    headers: { Accept: "application/json" },
+    headers: { Accept: "application/json", ...init.headers },
   });
   const body = (await response.json()) as ApiResponse<T> | ApiFailure;
   if (!response.ok || "error" in body) {
@@ -31,6 +30,12 @@ export async function apiGet<T>(
   }
   return (body as ApiResponse<T>).data;
 }
+export function apiGet<T>(
+  path: `/api/v1/${string}`,
+  options: { signal?: AbortSignal } = {},
+): Promise<T> {
+  return apiRequest(path, { method: "GET", signal: options.signal });
+}
 
 /**
  * 统一的变更请求入口（POST/PUT/PATCH/DELETE）。
@@ -43,25 +48,17 @@ export async function apiSend<T>(
   body?: unknown,
   options: { signal?: AbortSignal } = {},
 ): Promise<T> {
-  const response = await fetch(path, {
+  const multipart = body instanceof FormData;
+  return apiRequest(path, {
     method,
-    credentials: "same-origin",
     signal: options.signal,
     headers: {
-      Accept: "application/json",
-      ...(body === undefined ? {} : { "Content-Type": "application/json" }),
+      ...(body === undefined || multipart
+        ? {}
+        : { "Content-Type": "application/json" }),
     },
-    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+    ...(body === undefined
+      ? {}
+      : { body: multipart ? body : JSON.stringify(body) }),
   });
-  const payload = (await response.json()) as ApiResponse<T> | ApiFailure;
-  if (!response.ok || "error" in payload) {
-    const failure = payload as ApiFailure;
-    throw new ApiClientError(
-      failure.error?.code ?? "HTTP_ERROR",
-      failure.error?.message ?? "请求失败",
-      response.status,
-      failure.meta?.requestId,
-    );
-  }
-  return (payload as ApiResponse<T>).data;
 }

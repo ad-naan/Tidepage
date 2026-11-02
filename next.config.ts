@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 import { resolve } from "node:path";
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  outputFileTracingExcludes: {
+    "/*": ["./storage/**/*", "./backups/**/*", "./.cache/**/*", "./.env*"],
+  },
   // Explicit request-config alias supports both bundlers without the optional
   // native message-extraction compiler; messages are checked in CI instead.
   turbopack: { resolveAlias: { "next-intl/config": "./src/i18n/request.ts" } },

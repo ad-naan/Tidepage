@@ -43,6 +43,7 @@ export const articlesTable = pgTable(
       .$type<Article["sections"]>()
       .notNull()
       .default([]),
+    body: jsonb("body").$type<Article["body"]>(),
     ...publication(),
   },
   (t) => [
@@ -72,6 +73,7 @@ export const notesTable = pgTable(
     publishedOn: date("published_on").notNull(),
     mood: text("mood").notNull(),
     text: text("text").notNull(),
+    body: jsonb("body").$type<Article["body"]>(),
     tag: text("tag").notNull(),
     sketch: text("sketch").$type<Article["sketch"]>().notNull(),
     ...publication(),
@@ -94,6 +96,7 @@ export const projectsTable = pgTable(
     category: text("category").notNull(),
     status: text("status").notNull(),
     description: text("description").notNull(),
+    body: jsonb("body").$type<Article["body"]>(),
     stack: text("stack")
       .array()
       .notNull()

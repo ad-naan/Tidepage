@@ -15,6 +15,20 @@
       "when": 1793342063685,
       "tag": "0001_content_locales",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793628600663,
+      "tag": "0002_unknown_titania",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793630031814,
+      "tag": "0003_damp_storm",
+      "breakpoints": true
     }
   ]
 }

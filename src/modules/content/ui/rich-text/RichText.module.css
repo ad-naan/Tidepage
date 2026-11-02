@@ -1,0 +1,133 @@
+.rich {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font: 400 var(--text-reading)/var(--leading-reading) var(--font-editorial);
+}
+.rich > div,
+.rich > section {
+  min-width: 0;
+}
+.rich p {
+  margin: 12px 0;
+}
+.rich h2,
+.rich h3,
+.rich h4,
+.rich h5,
+.rich h6 {
+  position: relative;
+  margin: 28px 0 12px;
+  font-family: var(--font-editorial);
+  font-weight: 500;
+  line-height: 1.7;
+}
+.rich h2 {
+  font-size: 19px;
+}
+.rich h3 {
+  font-size: 17px;
+}
+.rich h4,
+.rich h5,
+.rich h6 {
+  font-size: 16px;
+}
+.rich ul,
+.rich ol {
+  padding-left: 24px;
+  margin: 12px 0;
+}
+.rich ul {
+  list-style: disc;
+}
+.rich ol {
+  list-style: decimal;
+}
+.rich li {
+  margin: 6px 0;
+}
+.rich li > p {
+  margin: 4px 0;
+}
+.rich strong {
+  font-weight: 600;
+}
+.rich blockquote,
+.callout {
+  margin: 20px 0;
+  padding: 4px 16px;
+  border-left: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--wash) 24%, transparent);
+}
+.rich :not(pre) > code {
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: var(--soft);
+  font: 400 0.86em/1.6 var(--font-code);
+}
+.rich pre code {
+  font-family: var(--font-code);
+}
+.rich hr {
+  margin: 28px 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+.table {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 20px 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+.table table {
+  width: 100%;
+  border-collapse: collapse;
+  font: 400 13px/1.8 var(--font-ui);
+}
+.table td,
+.table th {
+  min-width: 100px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+.table th {
+  background: var(--soft);
+  font-weight: 500;
+}
+.table p {
+  margin: 0 !important;
+  font: inherit !important;
+}
+.table:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 3px;
+}
+.image {
+  margin: 24px 0;
+}
+.image img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+  border-radius: 4px;
+}
+.image figcaption {
+  margin-top: 8px;
+  color: var(--muted);
+  text-align: center;
+  font: 400 12px/1.8 var(--font-ui);
+}
+@media (max-width: 700px) {
+  .rich {
+    font-size: 15px;
+  }
+  .table td,
+  .table th {
+    padding: 8px;
+  }
+}

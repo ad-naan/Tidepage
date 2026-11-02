@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { useLocale, useMessages, useTranslations } from "next-intl";
 import { z } from "zod";
 import { locales, localeRegistry, type Locale } from "@/shared/i18n/config";
-import { readLocalRecord, writeLocalRecord } from "@/shared/lib/browser-store";
+import {
+  readWorkbenchRecord,
+  updateWorkbenchRecord,
+} from "@/shared/lib/workbench-store";
 import { Field } from "@/shared/ui/field/Field";
 import { Input } from "@/shared/ui/field/Input";
 import { Textarea } from "@/shared/ui/field/Textarea";
@@ -17,10 +20,7 @@ import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 import { UnsavedChangesGuard } from "@/shared/ui/navigation/UnsavedChangesGuard";
 import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import styles from "./SiteSettingsView.module.css";
-const schema = z.object({
-  revision: z.number(),
-  translations: z.record(z.string(), z.record(z.string(), z.string())),
-});
+import { settingsDraftSchema as schema } from "@/modules/site-settings/domain/models";
 export function SiteSettingsView() {
   const t = useTranslations("admin");
   const copy = useMessages().admin.settings;
@@ -34,7 +34,7 @@ export function SiteSettingsView() {
   const [dirty, setDirty] = useState(false);
   const [assetField, setAssetField] = useState<string | null>(null);
   useEffect(() => {
-    readLocalRecord("site-settings")
+    readWorkbenchRecord("site-settings")
       .then((data) =>
         setValue(
           data === undefined
@@ -101,17 +101,18 @@ export function SiteSettingsView() {
             if (!value) return;
             setBusy(true);
             try {
-              await navigator.locks.request("tidepage:settings", async () => {
-                const current = await readLocalRecord("site-settings");
-                if (
-                  current &&
-                  schema.parse(current).revision !== value.revision
-                )
-                  throw new Error("CONFLICT");
-                const saved = { ...value, revision: value.revision + 1 };
-                await writeLocalRecord("site-settings", saved);
-                setValue(saved);
-              });
+              const saved = await updateWorkbenchRecord(
+                "site-settings",
+                (current) => {
+                  if (
+                    current &&
+                    schema.parse(current).revision !== value.revision
+                  )
+                    throw new Error("CONFLICT");
+                  return { ...value, revision: value.revision + 1 };
+                },
+              );
+              setValue(saved);
               setDirty(false);
               notify({ title: t("settings.saved"), tone: "success" });
             } catch {

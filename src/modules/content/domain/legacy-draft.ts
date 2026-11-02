@@ -75,7 +75,7 @@ export function legacyArticlesToDraft(articles: Article[]): ArticleDraft {
       title: article.title,
       slug: article.slug,
       excerpt: article.excerpt,
-      body: { type: "doc", content },
+      body: article.body ?? { type: "doc", content },
       tags: article.tags,
       seoTitle: "",
       seoDescription: "",

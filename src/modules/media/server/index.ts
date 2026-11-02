@@ -1,0 +1,69 @@
+import "server-only";
+import { and, desc, eq } from "drizzle-orm";
+import { getDb, type Database } from "@/server/db/client";
+import { notFoundError } from "@/server/http/errors";
+import { mediaAssetsTable as assets } from "@/modules/media/infrastructure/schema";
+import {
+  saveImage,
+  readImage,
+} from "@/modules/media/infrastructure/local-storage";
+import { assetSchema } from "@/modules/media/domain/assets";
+
+export async function uploadImage(
+  ownerId: string,
+  bytes: Buffer,
+  name: string,
+  db: Database = getDb(),
+) {
+  const value = await saveImage(bytes, name);
+  const [saved] = await db
+    .insert(assets)
+    .values({ ...value, ownerId, createdAt: new Date(value.createdAt) })
+    .onConflictDoUpdate({
+      target: [assets.ownerId, assets.id],
+      set: { archived: false },
+    })
+    .returning();
+  return assetSchema.parse({
+    ...saved,
+    createdAt: saved.createdAt.toISOString(),
+  });
+}
+export async function listAssets(ownerId: string, includeArchived = false) {
+  const rows = await getDb()
+    .select()
+    .from(assets)
+    .where(
+      and(
+        eq(assets.ownerId, ownerId),
+        includeArchived ? undefined : eq(assets.archived, false),
+      ),
+    )
+    .orderBy(desc(assets.createdAt));
+  return rows.map((row) =>
+    assetSchema.parse({ ...row, createdAt: row.createdAt.toISOString() }),
+  );
+}
+export async function archiveAsset(
+  ownerId: string,
+  id: string,
+  archived: boolean,
+) {
+  const rows = await getDb()
+    .update(assets)
+    .set({ archived })
+    .where(and(eq(assets.ownerId, ownerId), eq(assets.id, id)))
+    .returning({ id: assets.id });
+  if (!rows.length) throw notFoundError();
+}
+export async function uploadedImageResponse(filename: string) {
+  const { bytes, mime } = await readImage(filename);
+  return new Response(new Uint8Array(bytes), {
+    headers: {
+      "Content-Type": mime,
+      "Content-Length": String(bytes.length),
+      "Cache-Control": "public, max-age=31536000, immutable",
+      "X-Content-Type-Options": "nosniff",
+    },
+  });
+}

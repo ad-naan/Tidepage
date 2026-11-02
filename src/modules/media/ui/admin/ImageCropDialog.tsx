@@ -6,7 +6,7 @@ import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { Button } from "@/shared/ui/button/Button";
 import { RangeSlider } from "@/shared/ui/field/Input";
 import { Select } from "@/shared/ui/select/Select";
-import { localImageUploader, resolveLocalAsset } from "./local-assets";
+import { imageUploader, resolveAsset } from "./media-client";
 import type { ImageAsset } from "@/modules/media/domain/assets";
 import styles from "./ImageCropDialog.module.css";
 export function ImageCropDialog({
@@ -33,7 +33,7 @@ export function ImageCropDialog({
     controller.current = new AbortController();
     let live = true;
     let url = "";
-    resolveLocalAsset(assetId)
+    resolveAsset(assetId)
       .then(async (blob) => {
         const bitmap = await createImageBitmap(blob);
         if (live) {
@@ -56,7 +56,7 @@ export function ImageCropDialog({
     if (!pixels || !source) return;
     setBusy(true);
     try {
-      const blob = await resolveLocalAsset(assetId);
+      const blob = await resolveAsset(assetId);
       const bitmap = await createImageBitmap(blob);
       let output: Blob;
       try {
@@ -88,7 +88,7 @@ export function ImageCropDialog({
         bitmap.close();
       }
       controller.current.signal.throwIfAborted();
-      const asset = await localImageUploader.upload(
+      const asset = await imageUploader.upload(
         new File([output], `crop-${Date.now()}.png`, { type: "image/png" }),
         { signal: controller.current.signal, onProgress: () => {} },
       );

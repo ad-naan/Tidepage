@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { resolveLocalAsset } from "./local-assets";
+import { resolveAsset } from "./media-client";
 export function AssetImage({
   id,
   alt,
@@ -19,7 +19,7 @@ export function AssetImage({
     let objectUrl = "";
     setUrl("");
     setFailed(false);
-    resolveLocalAsset(id)
+    resolveAsset(id)
       .then((blob) => {
         if (live) {
           objectUrl = URL.createObjectURL(blob);

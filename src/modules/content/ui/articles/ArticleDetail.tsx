@@ -11,6 +11,8 @@ import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
 import { ArticleContents } from "./ArticleContents";
 import { ArticleActions } from "./ArticleActions";
 import { ArticleBlocks } from "./ArticleBlocks";
+import { RichText } from "@/modules/content/ui/rich-text/RichText";
+import { documentChapters } from "@/modules/content/domain/document-presentation";
 import {
   Discussion,
   ReadingAnnotations,
@@ -54,18 +56,22 @@ export async function ArticleDetail({
       </header>
       <div className="reading-layout">
         <div className="prose">
-          {article.sections.map((s, i) => (
-            <section key={s.title} id={`section-${i}`}>
-              <h2>
-                {s.title}
-                <HanddrawnMark className="chapter-mark" />
-              </h2>
-              {s.paragraphs.map((p) => (
-                <p key={p}>{p}</p>
-              ))}
-              {s.blocks && <ArticleBlocks blocks={s.blocks} />}
-            </section>
-          ))}
+          {article.body ? (
+            <RichText document={article.body} chapters />
+          ) : (
+            article.sections.map((s, i) => (
+              <section key={s.title} id={`section-${i}`}>
+                <h2>
+                  {s.title}
+                  <HanddrawnMark className="chapter-mark" />
+                </h2>
+                {s.paragraphs.map((p) => (
+                  <p key={p}>{p}</p>
+                ))}
+                {s.blocks && <ArticleBlocks blocks={s.blocks} />}
+              </section>
+            ))
+          )}
           <div className="article-end">
             <CoastGlyph kind="shell" />
           </div>
@@ -82,7 +88,13 @@ export async function ArticleDetail({
           <ArticleActions slug={article.slug} title={article.title} />
         </div>
         <ArticleContents
-          titles={article.sections.map((section) => section.title)}
+          titles={
+            article.body
+              ? documentChapters(article.body).flatMap((chapter) =>
+                  chapter.title ? [chapter.title] : [],
+                )
+              : article.sections.map((section) => section.title)
+          }
           label={t("toc")}
         />
       </div>

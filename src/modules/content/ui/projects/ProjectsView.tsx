@@ -17,6 +17,7 @@ import { ArrowUpRight } from "lucide-react";
 import type { Project } from "@/modules/content/domain/models";
 import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
+import { RichText } from "@/modules/content/ui/rich-text/RichText";
 
 export function ProjectsView({ projects }: { projects: Project[] }) {
   const t = useTranslations("projects");
@@ -108,6 +109,7 @@ export function ProjectsView({ projects }: { projects: Project[] }) {
             <span className="eyebrow">{selected.status}</span>
             <h2>{selected.subtitle}</h2>
             <p>{selected.description}</p>
+            {selected.body && <RichText document={selected.body} />}
             <div className="tags">
               {selected.stack.map((s) => (
                 <span key={s}>{s}</span>

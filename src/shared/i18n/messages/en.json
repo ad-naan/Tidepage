@@ -331,9 +331,12 @@
     "FORBIDDEN": "You don't have permission to perform this action",
     "INVALID_ORIGIN": "Invalid request origin",
     "CONFLICT": "Conflicting state, please refresh and retry",
-    "RATE_LIMITED": "Too many requests, please try again later"
+    "RATE_LIMITED": "Too many requests, please try again later",
+    "BODY_TOO_LARGE": "The request is too large",
+    "AUTHOR_NOT_CONFIGURED": "Author access is not configured"
   },
   "notes": {
+    "readMore": "Read the full note",
     "title": "Copies of ordinary days",
     "description": "Small thoughts, unfinished ideas, and moments I don't want to forget.",
     "year": "Slices of everyday life",
@@ -630,6 +633,7 @@
     }
   },
   "articleBlocks": {
+    "table": "Article table, scroll horizontally",
     "preview": "Preview this reference",
     "visit": "Visit website",
     "film": "A film to watch",
@@ -691,12 +695,12 @@
   },
   "admin": {
     "name": "Tidepage studio",
-    "localMode": "Local workspace",
-    "localDetail": "Frontend workspace: drafts and images stay in this browser. Identity and publishing services are not connected.",
+    "localMode": "Site workspace",
+    "localDetail": "Drafts are saved in the site database and images in the server media directory. Saved working copies remain available for editing and preview.",
     "visit": "View site",
     "navigation": "Studio navigation",
     "loading": "Loading this page…",
-    "storageError": "Local storage is unavailable. Check browser storage permissions; clearing it may delete drafts.",
+    "storageError": "Could not load or save drafts. Check your session or try again.",
     "retry": "Retry",
     "edit": "Edit",
     "nav": {
@@ -723,11 +727,11 @@
       "new": "New article",
       "search": "Search titles in any language",
       "untitled": "Untitled page",
-      "localDraft": "Local draft",
+      "localDraft": "Working draft",
       "empty": "No drafts yet. Give a new idea a page.",
-      "notFound": "This draft is not in this browser. Return to the article list.",
+      "notFound": "This draft was not found. Return to the article list.",
       "publishedSource": "Current public content",
-      "importHelp": "Create a separate local working copy. Changes here do not overwrite the public article.",
+      "importHelp": "Create a separate working copy. Changes do not overwrite the public article.",
       "import": "Open working copy"
     },
     "categories": {
@@ -750,15 +754,15 @@
       "title": "A page for a new idea",
       "previewTitle": "Preview this page",
       "unsaved": "Unsaved",
-      "localState": "Saved locally",
+      "localState": "Draft saved",
       "revision": "Revision {revision}",
       "contentLocale": "Content language",
       "localeHelp": "Content language is independent of the interface. Each translation has its own body and SEO.",
       "preview": "Preview",
       "back": "Back to editing",
-      "save": "Save local draft",
+      "save": "Save draft",
       "checkPublish": "Check publication",
-      "savedLocal": "Draft saved in this browser",
+      "savedLocal": "Draft saved to the site",
       "conflict": "Another tab changed this record. Preserve your current work and reopen it to avoid overwriting a newer revision.",
       "invalidFields": "Check the slug, reading time and content blocks before saving.",
       "metadata": "Properties",
@@ -883,18 +887,18 @@
     },
     "media": {
       "upload": "Add images",
-      "help": "JPEG, PNG, WebP or GIF; up to 12 MB each. Images are decoded before being stored in this browser.",
+      "help": "JPEG, PNG, WebP or GIF, up to 12 MB. Uploaded images remain available in the media library.",
       "alt": "Alternative text in the content language",
       "altHelp": "Describe what the image shows before inserting it.",
       "progress": "Image processing progress",
       "cancel": "Cancel",
       "loadError": "Could not load media library",
-      "uploadError": "Could not save image. Check format, size and browser storage.",
+      "uploadError": "Upload failed. Check the image format, size and your session.",
       "insert": "Select and insert",
       "empty": "No images yet. Body images, covers and gallery photos reuse this library.",
       "missing": "Image unavailable",
       "loading": "Loading image…",
-      "local": "Images stored in this browser. A future upload adapter can connect object storage."
+      "local": "Your site media library. Reuse uploaded images in articles, projects and site settings."
     },
     "ai": {
       "title": "Writing assistant",
@@ -916,9 +920,9 @@
       }
     },
     "collection": {
-      "description": "Edit each translation separately and keep shared properties together. Changes stay in the local workspace.",
+      "description": "Edit translations separately and keep shared properties together. Saved as a site working copy.",
       "new": "New",
-      "empty": "No local content yet.",
+      "empty": "No working copies yet.",
       "saveFirst": "Save first, or choose Discard to close.",
       "discard": "Discard",
       "fields": {
@@ -943,7 +947,7 @@
     },
     "settings": {
       "description": "Organize public details in each language. Saving keeps a working copy without changing the site.",
-      "saved": "Settings working copy saved in this browser",
+      "saved": "Settings working copy saved to the site",
       "tabsLabel": "Settings groups",
       "tabs": {
         "profile": "Profile",
@@ -1026,6 +1030,14 @@
       "summary": "Introduction",
       "url": "Site URL",
       "invalid": "Check the site URL or reload if another tab changed this record."
+    },
+    "access": {
+      "title": "Open your workspace",
+      "help": "Sign in with your author access key to manage drafts and media.",
+      "key": "Author access key",
+      "signIn": "Sign in",
+      "signOut": "Sign out",
+      "error": "Sign-in failed. Check your key or try again later."
     }
   }
 }

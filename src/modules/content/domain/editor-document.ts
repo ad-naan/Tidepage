@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { locales, type Locale } from "@/shared/i18n/config";
-import { categorySchema, sketchSchema } from "./models";
+import { categorySchema, sketchSchema } from "./taxonomy";
 
 export const safeWebUrl = z.url({ protocol: /^https?$/ }).refine((value) => {
   try {

@@ -27,6 +27,8 @@ import { ThemeToggle } from "@/shared/ui/preferences/ThemeToggle";
 import { LanguageSwitcher } from "@/shared/ui/preferences/LanguageSwitcher";
 import { HanddrawnMark } from "@/shared/ui/drawing/HanddrawnMark";
 import styles from "./AdminShell.module.css";
+import { Button } from "@/shared/ui/button/Button";
+import { apiSend } from "@/shared/http/client";
 const entries = [
   ["overview", "/admin", Compass],
   ["articles", "/admin/articles", FileText],
@@ -64,6 +66,15 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <span>{t("name")}</span>
           <small>{t("localMode")}</small>
           <NoticeDock />
+          <Button
+            size="sm"
+            onClick={async () => {
+              await apiSend("/api/v1/author/session", "DELETE");
+              window.location.reload();
+            }}
+          >
+            {t("access.signOut")}
+          </Button>
           <Link href="/" className={styles.visit}>
             {t("visit")}
             <ArrowUpRight size={13} />

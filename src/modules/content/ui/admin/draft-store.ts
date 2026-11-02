@@ -1,4 +1,7 @@
-import { readLocalRecord, writeLocalRecord } from "@/shared/lib/browser-store";
+import {
+  readWorkbenchRecord,
+  updateWorkbenchRecord,
+} from "@/shared/lib/workbench-store";
 import {
   articleDraftSchema,
   type ArticleDraft,
@@ -6,7 +9,7 @@ import {
 export async function loadArticleDrafts(
   includeDeleted = false,
 ): Promise<ArticleDraft[]> {
-  const value = await readLocalRecord("articles");
+  const value = await readWorkbenchRecord("articles");
   if (value === undefined) return [];
   return articleDraftSchema
     .array()
@@ -17,8 +20,9 @@ export async function loadArticleDrafts(
 export async function saveArticleDraft(
   draft: ArticleDraft,
 ): Promise<ArticleDraft> {
-  return navigator.locks.request("tidepage:articles", async () => {
-    const items = await loadArticleDrafts(true);
+  const items = await updateWorkbenchRecord("articles", (raw) => {
+    const items =
+      raw === undefined ? [] : articleDraftSchema.array().parse(raw);
     const previous = items.find((item) => item.id === draft.id);
     if (previous && previous.revision !== draft.revision)
       throw new Error("DRAFT_CONFLICT");
@@ -27,10 +31,7 @@ export async function saveArticleDraft(
       revision: draft.revision + 1,
       updatedAt: new Date().toISOString(),
     });
-    await writeLocalRecord("articles", [
-      saved,
-      ...items.filter((item) => item.id !== draft.id),
-    ]);
-    return saved;
+    return [saved, ...items.filter((item) => item.id !== draft.id)];
   });
+  return items.find((item) => item.id === draft.id)!;
 }

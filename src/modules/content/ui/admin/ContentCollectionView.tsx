@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { useLocale, useMessages, useTranslations } from "next-intl";
 import { z } from "zod";
 import { locales, localeRegistry, type Locale } from "@/shared/i18n/config";
-import { readLocalRecord, writeLocalRecord } from "@/shared/lib/browser-store";
+import {
+  readWorkbenchRecord,
+  updateWorkbenchRecord,
+} from "@/shared/lib/workbench-store";
 import { Field } from "@/shared/ui/field/Field";
 import { Input } from "@/shared/ui/field/Input";
 import { DatePicker } from "@/shared/ui/date-picker/DatePicker";
@@ -19,25 +22,13 @@ import { MediaPicker } from "@/modules/media/ui/admin/MediaPicker";
 import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import styles from "./admin.module.css";
 import type { Collection } from "@/modules/content/domain/managed-collections";
+import { managedItemSchema as itemSchema } from "@/modules/content/domain/managed-collections";
 const fields = {
   notes: ["text", "mood", "tag"],
   projects: ["name", "subtitle", "description", "status", "stack"],
   quotes: ["text", "author"],
   gallery: ["title", "description", "alt", "location"],
 } as const;
-const itemSchema = z.object({
-  deletedAt: z.iso.datetime().optional(),
-  id: z.string(),
-  revision: z.number().int(),
-  updatedAt: z.iso.datetime(),
-  sortOrder: z.number(),
-  publishedOn: z.string(),
-  category: z.string(),
-  sketch: z.string(),
-  color: z.string(),
-  assetId: z.string(),
-  translations: z.record(z.string(), z.record(z.string(), z.string())),
-});
 type Item = z.infer<typeof itemSchema>;
 export function ContentCollectionView({ kind }: { kind: Collection }) {
   const t = useTranslations("admin");
@@ -57,8 +48,7 @@ export function ContentCollectionView({ kind }: { kind: Collection }) {
   async function changeStatus(item: Item, remove: boolean) {
     setBusy(true);
     try {
-      await navigator.locks.request(`tidepage:${kind}`, async () => {
-        const raw = await readLocalRecord(`collection:${kind}`);
+      const next = await updateWorkbenchRecord(`collection:${kind}`, (raw) => {
         const current = raw === undefined ? [] : itemSchema.array().parse(raw);
         const existing = current.find((value) => value.id === item.id);
         if (!existing || existing.revision !== item.revision)
@@ -69,12 +59,9 @@ export function ContentCollectionView({ kind }: { kind: Collection }) {
           revision: item.revision + 1,
           updatedAt: new Date().toISOString(),
         };
-        const next = current.map((value) =>
-          value.id === item.id ? saved : value,
-        );
-        await writeLocalRecord(`collection:${kind}`, next);
-        setItems(next);
+        return current.map((value) => (value.id === item.id ? saved : value));
       });
+      setItems(next);
       setDeleting(null);
       notify({
         title: t(remove ? "crud.moved" : "crud.restored"),
@@ -87,7 +74,7 @@ export function ContentCollectionView({ kind }: { kind: Collection }) {
     }
   }
   useEffect(() => {
-    readLocalRecord(`collection:${kind}`)
+    readWorkbenchRecord(`collection:${kind}`)
       .then((data) => {
         setItems(data === undefined ? [] : itemSchema.array().parse(data));
         setReady(true);
@@ -108,8 +95,7 @@ export function ContentCollectionView({ kind }: { kind: Collection }) {
     if (!value) return;
     setBusy(true);
     try {
-      await navigator.locks.request(`tidepage:${kind}`, async () => {
-        const raw = await readLocalRecord(`collection:${kind}`);
+      const next = await updateWorkbenchRecord(`collection:${kind}`, (raw) => {
         const current = raw === undefined ? [] : itemSchema.array().parse(raw);
         const previous = current.find((item) => item.id === value.id);
         if (previous && previous.revision !== value.revision)
@@ -119,11 +105,10 @@ export function ContentCollectionView({ kind }: { kind: Collection }) {
           revision: value.revision + 1,
           updatedAt: new Date().toISOString(),
         });
-        const next = [saved, ...current.filter((item) => item.id !== saved.id)];
-        await writeLocalRecord(`collection:${kind}`, next);
-        setItems(next);
-        setValue(saved);
+        return [saved, ...current.filter((item) => item.id !== saved.id)];
       });
+      setItems(next);
+      setValue(next[0]);
       setDirty(false);
       notify({ title: t("editor.savedLocal"), tone: "success" });
       setError("");

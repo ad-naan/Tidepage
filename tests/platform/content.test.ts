@@ -18,6 +18,15 @@ test("PostgreSQL content honors publication and summary boundaries", async () =>
       minutes: source.minutes,
       sketch: source.sketch,
       sections: source.sections,
+      body: {
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+            content: [{ type: "text", text: "Structured body" }],
+          },
+        ],
+      },
       visibility: "published" as const,
       publishedAt: new Date("2020-01-01"),
       updatedAt: new Date("2020-01-02"),
@@ -44,6 +53,12 @@ test("PostgreSQL content honors publication and summary boundaries", async () =>
       "zh-CN",
     ]);
     assert.equal("sections" in all[0], false);
+    assert.equal("body" in all[0], false);
+    assert.equal(
+      (await service.articleBySlug(source.slug))?.body?.content?.[0]
+        .content?.[0].text,
+      "Structured body",
+    );
     assert.equal(await service.articleBySlug("draft-only"), null);
     assert.equal(await service.articleBySlug("scheduled-only"), null);
     assert.ok((await service.articleBySlug(source.slug))?.sections.length);

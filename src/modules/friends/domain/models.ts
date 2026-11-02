@@ -20,6 +20,18 @@ export const friendLinkSchema = z.object({
   category: friendCategorySchema,
 });
 export type FriendLink = z.infer<typeof friendLinkSchema>;
+export const friendDraftSchema = z.object({
+  id: z.string(),
+  revision: z.number().int().min(0),
+  url: friendLinkSchema.shape.url,
+  category: friendLinkSchema.shape.category,
+  sortOrder: z.number(),
+  deletedAt: z.string().optional(),
+  translations: z.record(
+    z.string(),
+    z.object({ name: z.string().max(60), description: z.string().max(160) }),
+  ),
+});
 export type FriendDirectory = { items: FriendLink[] };
 export type SiteLinkInfo = {
   name: string;

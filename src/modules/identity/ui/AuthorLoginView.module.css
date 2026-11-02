@@ -1,0 +1,21 @@
+.page {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: var(--space-6);
+}
+.form {
+  width: min(100%, 380px);
+  display: grid;
+  gap: var(--space-4);
+}
+.form h1 {
+  font: 500 var(--text-title)/var(--leading-heading) var(--font-editorial);
+}
+.form p {
+  color: var(--muted);
+  font: 400 var(--text-body)/var(--leading-body) var(--font-ui);
+}
+.form [role="alert"] {
+  color: var(--accent);
+}

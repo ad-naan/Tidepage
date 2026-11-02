@@ -2,6 +2,7 @@ import "server-only";
 import { and, asc, count, desc, eq, ilike, lte, or, sql } from "drizzle-orm";
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import { getDb, type Database } from "@/server/db/client";
+import { site } from "@/shared/config/site";
 import {
   articleSchema,
   type ArticleSummary,
@@ -25,7 +26,7 @@ const summaryColumns = {
   publishedAt: a.publishedAt,
   updatedAt: a.updatedAt,
 };
-const summarySchema = articleSchema.omit({ sections: true });
+const summarySchema = articleSchema.omit({ sections: true, body: true });
 function summary(
   row:
     | typeof a.$inferSelect
@@ -33,7 +34,9 @@ function summary(
 ): ArticleSummary {
   return summarySchema.parse({
     ...row,
-    date: row.publishedAt!.toISOString().slice(0, 10),
+    date: new Intl.DateTimeFormat("en-CA", { timeZone: site.timeZone }).format(
+      row.publishedAt!,
+    ),
     updatedAt: row.updatedAt.toISOString(),
   });
 }
@@ -61,7 +64,11 @@ export function postgresContentRepository(
         .where(and(published(a), eq(a.slug, slug), eq(a.locale, locale)))
         .limit(1);
       return row
-        ? articleSchema.parse({ ...summary(row), sections: row.sections })
+        ? articleSchema.parse({
+            ...summary(row),
+            sections: row.sections,
+            body: row.body ?? undefined,
+          })
         : null;
     },
     articleLocales: async (slug) =>
@@ -127,6 +134,7 @@ export function postgresContentRepository(
         publishedOn: row.publishedOn,
         mood: row.mood,
         text: row.text,
+        body: row.body ?? undefined,
         tag: row.tag,
         sketch: row.sketch,
       })),
@@ -146,6 +154,7 @@ export function postgresContentRepository(
           category,
           status,
           description,
+          body,
           stack,
           sketch,
           color,
@@ -157,6 +166,7 @@ export function postgresContentRepository(
           category,
           status,
           description,
+          body: body ?? undefined,
           stack,
           sketch,
           color,

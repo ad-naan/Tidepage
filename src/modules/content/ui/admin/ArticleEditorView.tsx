@@ -49,7 +49,7 @@ import { AssetImage } from "@/modules/media/ui/admin/AssetImage";
 import { MediaPicker } from "@/modules/media/ui/admin/MediaPicker";
 import { RichTextEditor } from "./editor/RichTextEditor";
 import { loadArticleDrafts, saveArticleDraft } from "./draft-store";
-import { localImageUploader } from "@/modules/media/ui/admin/local-assets";
+import { imageUploader } from "@/modules/media/ui/admin/media-client";
 import styles from "./ArticleEditorView.module.css";
 export function ArticleEditorView({
   id,
@@ -432,7 +432,7 @@ export function ArticleEditorView({
                 onDirty={markDirty}
                 onUploading={setUploading}
                 active={code === locale && !preview}
-                uploader={localImageUploader}
+                uploader={imageUploader}
               />
             </div>
           ))}

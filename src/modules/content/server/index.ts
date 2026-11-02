@@ -19,7 +19,7 @@ export const getArticles = cache(async (locale: Locale = defaultLocale) =>
   memo()(
     key(locale, "articles"),
     getEnv().CACHE_TTL_SECONDS,
-    z.array(articleSchema.omit({ sections: true })),
+    z.array(articleSchema.omit({ sections: true, body: true })),
     async () => (await service()).allArticles(locale),
   ),
 );

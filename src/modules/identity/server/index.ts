@@ -10,6 +10,7 @@ import {
   usersTable,
 } from "@/modules/identity/infrastructure/schema";
 import type { Principal, Role } from "@/modules/identity/domain/principal";
+export { createAuthorSession, deleteAuthorSession } from "./author-session";
 
 export async function getCurrentPrincipal(): Promise<Principal | null> {
   const token = (await cookies()).get("adnaan_session")?.value;

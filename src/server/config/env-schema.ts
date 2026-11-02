@@ -12,6 +12,9 @@ export const envSchema = z
     SITE_URL: z.url().default("http://localhost:3000"),
     DATABASE_URL: z.url(),
     DATABASE_POOL_MAX: z.coerce.number().int().min(1).max(50).default(10),
+    UPLOAD_DIR: z.string().min(1).default("./storage/uploads"),
+    ADMIN_USER_ID: z.uuid().optional(),
+    ADMIN_ACCESS_KEY: z.string().min(32).max(256).optional(),
     REDIS_URL: optionalUrl,
     CACHE_NAMESPACE: z
       .string()

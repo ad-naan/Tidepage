@@ -67,6 +67,8 @@ pnpm run build     # 确认可构建生产版本
 
 文章、手记、项目、一言已有 demo 与 PostgreSQL 两种来源；数据库接入按上手指南操作。HTTP 接口在 `/api/v1`，存活检查为 `/api/v1/health/live`。
 
-标明“演示”的登录、评论、点赞和人数仍是界面预览。真实 OAuth、内容管理后台、对象存储、Agent 服务尚未实现。照片和音乐导入使用浏览器临时地址，海岸进度保存在当前浏览器。
+站主后台使用访问密钥登录，工作副本保存到 PostgreSQL，上传图片保存到 `UPLOAD_DIR`（默认 `storage/uploads`），访问地址为 `/uploads/...`。首次执行 `pnpm run admin:setup`，再从 `.env.local` 读取站主密钥登录。配置与边界见 [工作台说明](docs/workbench-development.md)，旧博客导入见 [MySQL 迁移说明](docs/legacy-mysql-migration.md)。
+
+标明“演示”的读者登录、评论、点赞和人数仍是界面预览。真实 OAuth、正式内容发布、对象存储、Agent 服务尚未实现。前台照片和音乐临时导入、海岸进度仍是浏览器体验。
 
 开发默认关闭索引；正式发布前配置真实 `SITE_URL`、数据库内容和 `INDEXING_ENABLED`。素材来源见 [ASSETS.md](ASSETS.md)。

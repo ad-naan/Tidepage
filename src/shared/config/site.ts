@@ -2,6 +2,7 @@ export const site = {
   name: "Tidepage",
   author: "adnaan",
   language: "zh-CN",
+  timeZone: "Asia/Shanghai",
   description:
     "adnaan 的光阴副本。记录技术、产品与生活，把这一页留好，下一页继续。",
 } as const;

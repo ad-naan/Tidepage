@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import {
   motion,
@@ -11,6 +11,7 @@ import {
 import { ArrowLeft } from "lucide-react";
 import { Link } from "@/shared/i18n/navigation";
 import styles from "./ReadingProgress.module.css";
+import { useArticleReading } from "@/modules/content/ui/articles/useArticleReading";
 
 /** Measures the article itself; comments and the footer don't dilute reading progress. */
 export function ReadingProgress({ title }: { title: string }) {
@@ -20,40 +21,10 @@ export function ReadingProgress({ title }: { title: string }) {
   const value = useMotionValue(0);
   const smooth = useSpring(value, { stiffness: 110, damping: 28 });
   const offset = useTransform(reduced ? value : smooth, (v) => 100 - v * 100);
-  const [percent, setPercent] = useState(0);
+  const { percent } = useArticleReading();
   useEffect(() => {
-    const article = document.querySelector(".prose");
-    if (!article) return;
-    let frame = 0;
-    function measure() {
-      frame = 0;
-      const rect = article!.getBoundingClientRect();
-      const progress = Math.max(
-        0,
-        Math.min(
-          1,
-          (innerHeight * 0.2 - rect.top) /
-            Math.max(1, rect.height - innerHeight * 0.55),
-        ),
-      );
-      value.set(progress);
-      setPercent(Math.round(progress * 100));
-    }
-    function schedule() {
-      if (!frame) frame = requestAnimationFrame(measure);
-    }
-    const observer = new ResizeObserver(schedule);
-    observer.observe(article);
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-    measure();
-    return () => {
-      cancelAnimationFrame(frame);
-      observer.disconnect();
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
-    };
-  }, [value]);
+    value.set(percent / 100);
+  }, [value, percent]);
   return (
     <>
       <Link

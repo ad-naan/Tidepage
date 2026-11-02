@@ -19,6 +19,8 @@ import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
 import { NoteReplies } from "@/modules/engagement/ui/NoteReplies";
 import { Button } from "@/shared/ui/button/Button";
 import { softSpring } from "@/shared/lib/motion";
+import { RichText } from "@/modules/content/ui/rich-text/RichText";
+import { Disclosure } from "@/shared/ui/disclosure/Disclosure";
 
 export function NotesView({ notes }: { notes: Note[] }) {
   const t = useTranslations("notes");
@@ -63,7 +65,19 @@ export function NotesView({ notes }: { notes: Note[] }) {
                 <time>{note.date}</time>
                 <span>{note.mood}</span>
               </div>
-              <p>{note.text}</p>
+              {note.body ? (
+                <>
+                  <p>
+                    {note.text.slice(0, 140)}
+                    {note.text.length > 140 ? "…" : ""}
+                  </p>
+                  <Disclosure summary={t("readMore")}>
+                    <RichText document={note.body} />
+                  </Disclosure>
+                </>
+              ) : (
+                <p>{note.text}</p>
+              )}
               <CoastalVignette kind={note.sketch} />
               <div className="note-bottom">
                 <PencilLine kind="fold" className="note-fold" />

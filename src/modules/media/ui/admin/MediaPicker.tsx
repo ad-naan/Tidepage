@@ -9,11 +9,7 @@ import { UploadField } from "@/shared/ui/field/UploadField";
 import { Field } from "@/shared/ui/field/Field";
 import { PencilFrame } from "@/shared/ui/drawing/CoastalMarks";
 import type { ImageAsset } from "@/modules/media/domain/assets";
-import {
-  localImageUploader,
-  listLocalAssets,
-  archiveLocalAsset,
-} from "./local-assets";
+import { imageUploader, listAssets, archiveAsset } from "./media-client";
 import { ImageCropDialog } from "./ImageCropDialog";
 import { AssetImage } from "./AssetImage";
 import styles from "./MediaPicker.module.css";
@@ -35,7 +31,7 @@ export function MediaPicker({
   const [cropping, setCropping] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<ImageAsset | null>(null);
   const refresh = () =>
-    listLocalAssets(management)
+    listAssets(management)
       .then(setAssets)
       .catch(() => setError(t("loadError")));
   useEffect(() => {
@@ -58,7 +54,7 @@ export function MediaPicker({
               setProgress(0);
               setError("");
               try {
-                await localImageUploader.upload(file, {
+                await imageUploader.upload(file, {
                   signal: task.signal,
                   onProgress: setProgress,
                 });
@@ -136,7 +132,7 @@ export function MediaPicker({
                     <Button
                       size="sm"
                       onClick={async () => {
-                        await archiveLocalAsset(asset.id, false);
+                        await archiveAsset(asset.id, false);
                         await refresh();
                       }}
                     >
@@ -178,7 +174,7 @@ export function MediaPicker({
             variant="primary"
             onClick={async () => {
               try {
-                await archiveLocalAsset(deleting.id, true);
+                await archiveAsset(deleting.id, true);
                 setDeleting(null);
                 await refresh();
               } catch {
