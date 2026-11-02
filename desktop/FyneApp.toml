@@ -1,0 +1,6 @@
+[Details]
+  Name = "Tidepage Companion"
+  ID = "blog.tidepage.companion"
+  Version = "0.1.0"
+  Build = 1
+  Icon = "internal/tray/assets/tide.png"

@@ -9,3 +9,5 @@ next-env.d.ts
 .adnify
 
 .cache/
+aqtinstall.log
+desktop/dist/

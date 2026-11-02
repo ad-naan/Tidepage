@@ -33,6 +33,7 @@ import { spring } from "@/shared/lib/motion";
 import { useDisclosure } from "@/shared/hooks/useDisclosure";
 import { LoginTrigger } from "@/modules/identity/ui/IdentityProvider";
 import { ActivityDetails } from "./ActivityDetails";
+import { AuthorStatus } from "@/modules/presence/ui/AuthorStatus";
 import { MusicPlayer } from "@/modules/media/ui/player/MusicPlayer";
 import { SiteNavigation } from "@/widgets/site-shell/navigation/SiteNavigation";
 import { HeaderBrand } from "./HeaderBrand";
@@ -157,12 +158,7 @@ export function SiteHeader({
                   aria-controls="header-panel"
                   whileTap={{ scale: 0.97 }}
                 >
-                  <span className="living-state-mark" aria-hidden="true">
-                    <i />
-                  </span>
-                  <span className="living-status">
-                    <strong>{t("statusLine")}</strong>
-                  </span>
+                  <AuthorStatus />
                   <ChevronDown size={11} />
                 </Button>
               </div>

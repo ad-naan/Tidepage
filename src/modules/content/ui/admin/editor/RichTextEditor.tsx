@@ -61,8 +61,8 @@ export function RichTextEditor({
   const slashList = useRef<HTMLDivElement>(null);
   const slashRange = useRef<{ from: number; to: number } | null>(null);
   const dismissed = useRef<number | null>(null);
-  const syncSlash = useRef<(e: Editor) => void>(() => { });
-  const linkAction = useRef<() => void>(() => { });
+  const syncSlash = useRef<(e: Editor) => void>(() => {});
+  const linkAction = useRef<() => void>(() => {});
   const [slashIndex, setSlashIndex] = useState(0);
   const root = useRef<HTMLDivElement>(null);
   const [slashPosition, setSlashPosition] = useState({ left: 0, top: 0 });
@@ -74,7 +74,7 @@ export function RichTextEditor({
   uploadCallback.current = onUploading;
   const slashRef = useRef<string | null>(null);
   slashRef.current = slash;
-  const actionRef = useRef<(key: BlockCommand) => void>(() => { });
+  const actionRef = useRef<(key: BlockCommand) => void>(() => {});
   const filtered = blockCommands.filter((item) =>
     `${t(`blocks.${item.key}`)} ${item.keywords}`
       .toLocaleLowerCase()
@@ -112,7 +112,7 @@ export function RichTextEditor({
       try {
         const asset = await uploader.upload(file, {
           signal: task.signal,
-          onProgress: () => { },
+          onProgress: () => {},
         });
         if (e.isDestroyed || task.signal.aborted) continue;
         let pos: number | undefined;

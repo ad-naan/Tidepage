@@ -50,6 +50,8 @@ pnpm run build     # 确认可构建生产版本
 
 基础控件用现成的 `Button`、`Input`、`FilterTabs`、`Dialog` 等；文案使用语言包。可复制的例子见 [开发上手](docs/onboarding.md)。
 
+作者实时状态配套 [Go 原生桌面助手](desktop/README.md)，网关启动、多实例部署与扩展边界见 [实时连接说明](docs/realtime.md)。
+
 ## 文档怎么读
 
 1. [开发上手](docs/onboarding.md)：启动、改文字、改样式、新增页面、接数据库。

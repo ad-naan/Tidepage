@@ -30,6 +30,19 @@ test("local pubsub delivers messages per channel and supports unsubscribe", asyn
   await closePubSub();
 });
 
+test("concurrent pubsub initialization shares one bus and rejects use after close", async () => {
+  await closePubSub();
+  const buses = await Promise.all(
+    Array.from({ length: 20 }, () => getPubSub()),
+  );
+  for (const bus of buses) assert.equal(bus, buses[0]);
+  await closePubSub();
+  await assert.rejects(buses[0].publish("author:changed", "stale"));
+  const replacement = await getPubSub();
+  assert.notEqual(replacement, buses[0]);
+  await closePubSub();
+});
+
 test("fixed-window rate limiter blocks over-limit calls and resets", async () => {
   const key = `test:${Date.now()}`;
   const first = checkRateLimit(key, 2, 60);

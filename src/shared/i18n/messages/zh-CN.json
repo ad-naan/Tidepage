@@ -266,7 +266,16 @@
     "unavailable": "访问统计尚未接入，暂无可展示的数据。"
   },
   "activity": {
-    "unavailable": "活动信息尚未接入。"
+    "unavailable": "活动信息尚未接入。",
+    "unavailableShort": "活动暂未接入",
+    "connecting": "正在连接…",
+    "online": "此刻在线",
+    "offline": "此刻离线",
+    "paused": "暂不分享活动",
+    "applications": "正在使用的软件",
+    "noApplications": "当前没有公开的软件活动。",
+    "listening": "正在听",
+    "sharedOnly": "仅展示作者主动分享的内容。"
   },
   "letter": {
     "open": "水獭身边有一封信，打开自述扉页",

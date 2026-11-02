@@ -266,7 +266,16 @@
     "unavailable": "Visitor statistics are not connected yet."
   },
   "activity": {
-    "unavailable": "Activity information is not connected yet."
+    "unavailable": "Activity information is not connected yet.",
+    "unavailableShort": "Activity unavailable",
+    "connecting": "Connecting…",
+    "online": "Online now",
+    "offline": "Currently offline",
+    "paused": "Activity sharing paused",
+    "applications": "Applications in use",
+    "noApplications": "No application activity is being shared.",
+    "listening": "Now playing",
+    "sharedOnly": "Only content the author chooses to share is shown."
   },
   "letter": {
     "open": "There's a letter by the otter. Open the foreword",

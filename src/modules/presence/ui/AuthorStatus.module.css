@@ -1,0 +1,4 @@
+.mark[data-state]:not([data-state="online"]) > i {
+  background: var(--muted);
+  box-shadow: none;
+}

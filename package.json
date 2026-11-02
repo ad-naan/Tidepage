@@ -6,6 +6,8 @@
   "packageManager": "pnpm@12.16.1",
   "scripts": {
     "dev": "next dev --hostname 0.0.0.0",
+    "realtime": "node --import tsx services/realtime/main.ts",
+    "test:realtime": "node --conditions=react-server --import tsx --test tests/platform/realtime*.test.ts",
     "build": "next build",
     "start": "next start --hostname 0.0.0.0",
     "typecheck": "next typegen && tsc --noEmit",
@@ -26,6 +28,7 @@
     "@fontsource-variable/noto-sans-sc": "^5.3.1",
     "@fontsource-variable/noto-serif-sc": "^5.3.1",
     "@radix-ui/react-select": "^2.4.1",
+    "@socket.io/redis-streams-adapter": "^0.3.1",
     "@tiptap/core": "3.32.2",
     "@tiptap/extension-placeholder": "3.32.2",
     "@tiptap/extension-table": "3.32.2",
@@ -46,7 +49,10 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-easy-crop": "6.2.4",
+    "redis": "^6.3.1",
     "server-only": "^0.0.1",
+    "socket.io": "^4.8.4",
+    "socket.io-client": "^4.8.4",
     "three": "^0.186.1",
     "zod": "^4.6.7"
   },

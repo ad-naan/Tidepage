@@ -1,0 +1,72 @@
+.activity {
+  display: grid;
+  gap: var(--space-4);
+  padding-block: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--ink);
+}
+.status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+}
+.status > span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #67936a;
+}
+.apps {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.apps li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+.apps img {
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.apps li > span {
+  overflow-wrap: anywhere;
+}
+.track {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: var(--stroke-ui) solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--soft);
+}
+.track > svg {
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.track > div {
+  display: grid;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.track strong {
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+}
+.track span {
+  color: var(--muted);
+}
+.label,
+.note {
+  font-size: var(--text-xs);
+}
+.note,
+.empty {
+  margin: 0;
+  color: var(--muted);
+}

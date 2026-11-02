@@ -1,0 +1,83 @@
+name: desktop-native
+on:
+  push:
+    paths:
+      [
+        "desktop/**",
+        "services/realtime/**",
+        "src/shared/realtime/**",
+        "src/server/realtime/**",
+        "tests/platform/realtime*.ts",
+        ".github/workflows/desktop.yml",
+      ]
+  pull_request:
+    paths:
+      [
+        "desktop/**",
+        "services/realtime/**",
+        "src/shared/realtime/**",
+        "src/server/realtime/**",
+        "tests/platform/realtime*.ts",
+        ".github/workflows/desktop.yml",
+      ]
+  workflow_dispatch:
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: desktop/go.mod
+          cache-dependency-path: desktop/go.sum
+      - name: Linux native graphics and tray dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y gcc libgl1-mesa-dev xorg-dev libayatana-appindicator3-dev
+      - name: Windows native compiler
+        if: runner.os == 'Windows'
+        run: choco install mingw --no-progress -y
+      - run: go test -tags ci ./...
+      - name: Race checks for shared state
+        if: runner.os == 'Linux'
+        run: go test -race ./internal/config ./internal/collector ./internal/localipc ./internal/protocol
+      - name: Windows executable
+        if: runner.os == 'Windows'
+        run: go build -trimpath -ldflags "-s -w -H=windowsgui" -o dist/TidepageCompanion.exe ./cmd/companion
+      - name: Unix executable
+        if: runner.os != 'Windows'
+        run: go build -trimpath -ldflags "-s -w" -o dist/tidepage-companion ./cmd/companion
+      - uses: actions/upload-artifact@v4
+        with:
+          name: companion-${{ runner.os }}-${{ runner.arch }}
+          path: desktop/dist/*
+  realtime-integration:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: desktop/go.mod
+          cache-dependency-path: desktop/go.sum
+      - run: pnpm install --frozen-lockfile
+      - run: mkdir -p .cache && cd desktop && go build -o ../.cache/go-probe ./internal/realtime/testdata/probe.go
+      - run: pnpm test:realtime
+        env:
+          REALTIME_TEST_REDIS_URL: redis://localhost:6379
+          REALTIME_TEST_REDIS_STREAMS_URL: redis://localhost:6379
+          REALTIME_GO_PROBE: ${{ github.workspace }}/.cache/go-probe
