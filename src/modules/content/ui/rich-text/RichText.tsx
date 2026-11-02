@@ -1,14 +1,13 @@
 import { createElement, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { ExternalLink } from "@/shared/ui/link/Anchor";
-import { HanddrawnMark } from "@/shared/ui/drawing/HanddrawnMark";
 import {
   documentText,
   safeWebUrl,
   type EditorNode,
 } from "@/modules/content/domain/editor-document";
 import { documentChapters } from "@/modules/content/domain/document-presentation";
-import { ArticleBlocks } from "@/modules/content/ui/articles/ArticleBlocks";
+import { CodeBlock } from "@/shared/ui/code/CodeBlock";
 import { isUploadedAssetId } from "@/modules/media/domain/asset-path";
 import styles from "./RichText.module.css";
 
@@ -56,9 +55,6 @@ function RenderNode({ node }: { node: EditorNode }) {
         `h${Math.min(6, Math.max(2, Number(node.attrs?.level) || 2))}`,
         null,
         children,
-        Number(node.attrs?.level) === 2 && (
-          <HanddrawnMark className="chapter-mark" />
-        ),
       );
     case "hardBreak":
       return <br />;
@@ -92,15 +88,10 @@ function RenderNode({ node }: { node: EditorNode }) {
       );
     case "codeBlock":
       return (
-        <ArticleBlocks
-          blocks={[
-            {
-              type: "code",
-              language: String(node.attrs?.language || "text"),
-              code: documentText(node),
-              caption: String(node.attrs?.caption || ""),
-            },
-          ]}
+        <CodeBlock
+          code={documentText(node)}
+          language={String(node.attrs?.language || "text")}
+          caption={String(node.attrs?.caption || "")}
         />
       );
     case "table":

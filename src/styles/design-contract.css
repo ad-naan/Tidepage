@@ -100,14 +100,15 @@ select {
   font: 400 17px/1.8 var(--font-editorial);
 }
 .site-shell .prose {
-  font-family: var(--font-editorial);
+  font: 400 var(--text-reading)/var(--leading-reading) var(--font-reading);
 }
-.site-shell .reading-page .prose p {
-  font: 400 var(--text-reading)/var(--leading-reading) var(--font-editorial);
-  letter-spacing: 0.005em;
+:where(.site-shell .reading-page .prose) p {
+  font: inherit;
+  margin: 0 0 20px;
+  letter-spacing: normal;
 }
-.site-shell .reading-page .prose h2 {
-  font: 500 20px/var(--leading-heading) var(--font-editorial);
+:where(.site-shell .reading-page .prose) h2 {
+  font: 600 23px/1.5 var(--font-reading);
 }
 .site-shell .reading-page .reading-header h1 {
   font-family: var(--font-editorial);
@@ -192,8 +193,8 @@ select {
     grid-template-columns: 1fr;
     gap: var(--space-6);
   }
-  .site-shell .reading-page .prose p {
-    font-size: 15px;
+  :where(.site-shell .reading-page) .prose {
+    font-size: 15.5px;
   }
   .sky-header .living-actions {
     padding-left: 13px;

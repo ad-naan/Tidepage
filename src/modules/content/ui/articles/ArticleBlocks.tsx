@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { ArticleBlock } from "@/modules/content/domain/blocks";
-import { CodeCopy } from "./CodeCopy";
+import { CodeBlock } from "@/shared/ui/code/CodeBlock";
 import styles from "./ArticleBlocks.module.css";
 
 function Block({ block }: { block: ArticleBlock }) {
@@ -114,15 +114,11 @@ function Block({ block }: { block: ArticleBlock }) {
       );
     case "code":
       return (
-        <figure className={styles.code}>
-          <figcaption>
-            <span>{block.caption || block.language}</span>
-            <CodeCopy code={block.code} />
-          </figcaption>
-          <pre tabIndex={0} aria-label={block.caption || block.language}>
-            <code>{block.code}</code>
-          </pre>
-        </figure>
+        <CodeBlock
+          code={block.code}
+          language={block.language}
+          caption={block.caption}
+        />
       );
   }
 }

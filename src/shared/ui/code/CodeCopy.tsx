@@ -5,13 +5,15 @@ import { Check, Copy } from "lucide-react";
 import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import { useTranslations } from "next-intl";
 export function CodeCopy({ code }: { code: string }) {
-  const t = useTranslations("articleBlocks");
+  const t = useTranslations("code");
   const { notify } = useNotice();
   const [state, setState] = useState<"copy" | "copied" | "failed">("copy");
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useEffect(() => () => clearTimeout(timer.current), []);
   return (
     <Button
+      variant="bare"
+      size="sm"
       type="button"
       aria-label={t(state)}
       onClick={async () => {

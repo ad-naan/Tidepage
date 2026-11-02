@@ -2,6 +2,7 @@
 :root {
   --font-ui: "Inter Variable", "Noto Sans SC Variable", system-ui, sans-serif;
   --font-editorial: "Noto Serif SC Variable", "Songti SC", Georgia, serif;
+  --font-reading: var(--font-ui);
   --font-code: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
   --ui-font: var(--font-ui);
   --weight-regular: 400;
@@ -17,7 +18,7 @@
   --text-display: 38px;
   --leading-ui: 1.55;
   --leading-body: 1.8;
-  --leading-reading: 1.95;
+  --leading-reading: 1.8;
   --leading-heading: 1.5;
   --space-1: 4px;
   --space-2: 8px;

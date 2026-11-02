@@ -1,14 +1,17 @@
 .rich {
   min-width: 0;
-  overflow-wrap: anywhere;
-  font: 400 var(--text-reading)/var(--leading-reading) var(--font-editorial);
+  overflow-wrap: break-word;
+  font: 400 var(--text-reading)/var(--leading-reading) var(--font-reading);
+  color: var(--ink);
 }
 .rich > div,
 .rich > section {
   min-width: 0;
 }
 .rich p {
-  margin: 12px 0;
+  font: inherit;
+  letter-spacing: normal;
+  margin: 0 0 20px;
 }
 .rich h2,
 .rich h3,
@@ -16,16 +19,17 @@
 .rich h5,
 .rich h6 {
   position: relative;
-  margin: 28px 0 12px;
-  font-family: var(--font-editorial);
-  font-weight: 500;
-  line-height: 1.7;
+  margin: 32px 0 14px;
+  font-family: var(--font-reading);
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: normal;
 }
 .rich h2 {
-  font-size: 19px;
+  font-size: 23px;
 }
 .rich h3 {
-  font-size: 17px;
+  font-size: 19px;
 }
 .rich h4,
 .rich h5,
@@ -34,8 +38,8 @@
 }
 .rich ul,
 .rich ol {
-  padding-left: 24px;
-  margin: 12px 0;
+  padding-left: 22px;
+  margin: 0 0 20px;
 }
 .rich ul {
   list-style: disc;
@@ -47,59 +51,90 @@
   margin: 6px 0;
 }
 .rich li > p {
-  margin: 4px 0;
+  margin: 0;
 }
 .rich strong {
   font-weight: 600;
 }
-.rich blockquote,
+.rich blockquote {
+  margin: 24px 0;
+  padding: 2px 0 2px 22px;
+  border-left: 2px solid color-mix(in srgb, var(--accent) 40%, var(--line));
+  font-family: var(--font-editorial);
+}
+.rich blockquote p:last-child {
+  margin-bottom: 0;
+}
 .callout {
-  margin: 20px 0;
-  padding: 4px 16px;
+  margin: 24px 0;
+  padding: 14px 18px;
   border-left: 2px solid var(--accent);
-  background: color-mix(in srgb, var(--wash) 24%, transparent);
+  background: color-mix(in srgb, var(--wash) 20%, transparent);
+  font: 400 15px/1.8 var(--font-ui);
+}
+.callout p {
+  margin: 8px 0 0;
+}
+.rich > :first-child > :first-child {
+  margin-top: 0;
+}
+.rich ul ul {
+  list-style: circle;
+}
+.rich li > ul,
+.rich li > ol {
+  margin: 8px 0;
+}
+.rich a {
+  overflow-wrap: anywhere;
+  text-underline-offset: 3px;
 }
 .rich :not(pre) > code {
   padding: 2px 5px;
-  border-radius: 3px;
-  background: var(--soft);
-  font: 400 0.86em/1.6 var(--font-code);
+  border: 1px solid color-mix(in srgb, var(--line) 65%, transparent);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--soft) 70%, transparent);
+  font: 400 0.85em/1.5 var(--font-code);
 }
 .rich pre code {
   font-family: var(--font-code);
 }
 .rich hr {
-  margin: 28px 0;
+  margin: 32px 0;
   border: 0;
   border-top: 1px solid var(--line);
 }
 .table {
   max-width: 100%;
   overflow-x: auto;
-  margin: 20px 0;
+  margin: 24px 0;
   border: 1px solid var(--line);
   border-radius: 4px;
 }
 .table table {
   width: 100%;
   border-collapse: collapse;
-  font: 400 13px/1.8 var(--font-ui);
+  font: 400 14px/1.75 var(--font-ui);
 }
 .table td,
 .table th {
   min-width: 100px;
-  padding: 8px 12px;
-  border: 1px solid var(--line);
+  padding: 11px 14px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
   text-align: left;
   vertical-align: top;
 }
 .table th {
   background: var(--soft);
-  font-weight: 500;
+  font-weight: 600;
 }
 .table p {
-  margin: 0 !important;
-  font: inherit !important;
+  margin: 0;
+  font: inherit;
+}
+.table tr:last-child td {
+  border-bottom: 0;
 }
 .table:focus-visible {
   outline: 1px solid var(--accent);
@@ -124,7 +159,14 @@
 }
 @media (max-width: 700px) {
   .rich {
-    font-size: 15px;
+    font-size: 15.5px;
+    line-height: 1.85;
+  }
+  .rich h2 {
+    font-size: 21px;
+  }
+  .rich h3 {
+    font-size: 18px;
   }
   .table td,
   .table th {

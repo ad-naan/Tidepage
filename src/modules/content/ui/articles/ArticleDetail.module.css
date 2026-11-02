@@ -55,28 +55,8 @@
   justify-content: space-between;
   gap: 48px;
 }
-.reading.reading :global(.prose h2) {
-  position: relative;
-  width: fit-content;
-  padding-bottom: 10px;
-  font: 500 19px/1.7 var(--font-editorial);
-  margin-bottom: 12px;
-}
-.reading.reading :global(.chapter-mark) {
-  position: absolute;
-  bottom: 0;
-  left: -2px;
-  width: 65px;
-  height: 8px;
-  color: var(--accent);
-  opacity: 0.5;
-}
-.reading.reading :global(.prose p) {
-  font: 400 16px/1.95 var(--font-editorial);
-  margin-top: 12px;
-}
 .reading.reading :global(.prose section) {
-  scroll-margin-top: var(--reading-safe-top);
+  scroll-margin-top: var(--reading-safe-gap);
   margin-bottom: 28px;
 }
 .reading.reading :global(.article-end) {
@@ -116,8 +96,5 @@
 @media (max-width: 700px) {
   .reading.reading :global(.reading-header h1) {
     font-size: 23px;
-  }
-  .reading.reading :global(.prose p) {
-    font-size: 15px;
   }
 }

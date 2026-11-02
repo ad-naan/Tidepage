@@ -11,6 +11,12 @@ import { localeSwitchHref } from "../../src/shared/i18n/location";
 import { languageAlternates } from "../../src/server/seo/metadata";
 
 function shape(value: unknown, path = ""): string[] {
+  if (typeof value === "string")
+    assert.doesNotMatch(
+      value,
+      /\uFFFD|\?{3,}/,
+      `Invalid catalog encoding: ${path}`,
+    );
   if (Array.isArray(value))
     return value.flatMap((item, index) => shape(item, `${path}.${index}`));
   if (value !== null && typeof value === "object")

@@ -775,25 +775,6 @@ body {
   line-height: 1.9;
   padding-right: 90px;
 }
-.prose h2 {
-  font-family: var(--ui-font);
-  font-size: 24px;
-  font-weight: 600;
-  letter-spacing: 0;
-}
-.prose p {
-  font-family: var(--ui-font);
-  font-size: 16px;
-  line-height: 2.1;
-  letter-spacing: 0;
-}
-.toc {
-  font-size: 12px;
-  padding-left: 17px;
-}
-.toc > span {
-  font-size: 13px;
-}
 .prose .tags {
   font-size: 13px;
 }
@@ -1877,14 +1858,6 @@ body {
   .reading-excerpt {
     padding: 0;
     font-size: 15px;
-  }
-  .prose h2 {
-    font-size: 22px;
-    font-weight: 600;
-  }
-  .prose p {
-    font-size: 16px;
-    line-height: 2;
   }
   .prose .article-callout p {
     font-size: 14px;

@@ -22,6 +22,7 @@ export function readingPosition({
   safeTop: number;
   sections: number[];
 }): ReadingPosition {
+  if (height <= 0) return initialReadingPosition;
   const started = top <= safeTop;
   const distance = Math.max(1, height - (viewportHeight - safeTop - 24));
   const percent = Math.round(

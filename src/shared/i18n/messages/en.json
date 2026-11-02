@@ -636,10 +636,7 @@
     "table": "Article table, scroll horizontally",
     "preview": "Preview this reference",
     "visit": "Visit website",
-    "film": "A film to watch",
-    "copy": "Copy code",
-    "copied": "Copied",
-    "failed": "Could not copy. Try again."
+    "film": "A film to watch"
   },
   "feedback": {
     "dismiss": "Dismiss this note",
@@ -1039,5 +1036,14 @@
       "signOut": "Sign out",
       "error": "Sign-in failed. Check your key or try again later."
     }
+  },
+  "code": {
+    "copy": "Copy code",
+    "copied": "Copied",
+    "failed": "Could not copy. Try again.",
+    "lines": "{count, plural, one {# line} other {# lines}}",
+    "expand": "Expand all",
+    "collapse": "Collapse code",
+    "region": "{language} code, scroll horizontally"
   }
 }

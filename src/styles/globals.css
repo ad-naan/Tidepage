@@ -34,7 +34,7 @@
 }
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 35px;
+  scroll-padding-top: var(--site-header-height, 80px);
 }
 body {
   margin: 0;
@@ -1297,39 +1297,6 @@ input {
   scroll-margin-top: 35px;
   margin-bottom: 38px;
 }
-.prose h2 {
-  font-family: var(--serif);
-  font-size: 23px;
-  font-weight: 400;
-  letter-spacing: 1px;
-  margin-bottom: 18px;
-}
-.prose p {
-  font-size: 14px;
-  line-height: 2.2;
-  margin-top: 18px;
-  letter-spacing: 0.3px;
-}
-.toc {
-  border-left: 1px solid var(--line);
-  padding-left: 20px;
-  align-self: start;
-  position: sticky;
-  top: 35px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  font-size: 10px;
-  color: var(--muted);
-}
-.toc > span {
-  font-size: 10px;
-  color: var(--ink);
-  margin-bottom: 3px;
-}
-.toc a:hover {
-  color: var(--accent);
-}
 .article-end {
   text-align: center;
   color: var(--accent);
@@ -2007,9 +1974,6 @@ input {
   .reading-layout {
     grid-template-columns: 1fr;
   }
-  .toc {
-    display: none;
-  }
   .reading-header h1 {
     font-size: 29px;
   }
@@ -2470,13 +2434,6 @@ input {
   .reading-header > .mini-sketch {
     width: 105px;
     bottom: 10px;
-  }
-  .prose h2 {
-    font-size: 22px;
-  }
-  .prose p {
-    font-size: 14px;
-    line-height: 2.15;
   }
   .prose section {
     margin-bottom: 32px;

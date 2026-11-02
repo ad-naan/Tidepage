@@ -5,7 +5,6 @@ import {
   CoastGlyph,
   SketchLabel,
 } from "@/shared/ui/drawing/CoastalMarks";
-import { HanddrawnMark } from "@/shared/ui/drawing/HanddrawnMark";
 import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
 import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
 import { ArticleContents } from "./ArticleContents";
@@ -61,10 +60,7 @@ export async function ArticleDetail({
           ) : (
             article.sections.map((s, i) => (
               <section key={s.title} id={`section-${i}`}>
-                <h2>
-                  {s.title}
-                  <HanddrawnMark className="chapter-mark" />
-                </h2>
+                <h2>{s.title}</h2>
                 {s.paragraphs.map((p) => (
                   <p key={p}>{p}</p>
                 ))}

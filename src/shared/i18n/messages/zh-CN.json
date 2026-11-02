@@ -332,8 +332,8 @@
     "INVALID_ORIGIN": "请求来源不合法",
     "CONFLICT": "资源状态冲突，请刷新后重试",
     "RATE_LIMITED": "请求过于频繁，请稍后再试",
-    "BODY_TOO_LARGE": "??????",
-    "AUTHOR_NOT_CONFIGURED": "????????"
+    "BODY_TOO_LARGE": "上传内容过大",
+    "AUTHOR_NOT_CONFIGURED": "站主账号尚未配置"
   },
   "notes": {
     "readMore": "展开完整手记",
@@ -636,10 +636,7 @@
     "table": "文章表格，可横向滚动",
     "preview": "展开网页摘要",
     "visit": "访问网站",
-    "film": "观影推荐",
-    "copy": "复制代码",
-    "copied": "已复制",
-    "failed": "复制失败，请重试"
+    "film": "观影推荐"
   },
   "feedback": {
     "dismiss": "收起这条提醒",
@@ -695,12 +692,12 @@
   },
   "admin": {
     "name": "潮页工作台",
-    "localMode": "?????",
-    "localDetail": "?????????????????????????????????????????",
+    "localMode": "站点工作区",
+    "localDetail": "草稿保存在站点数据库，图片保存在服务器媒体目录。保存工作副本后，可继续编辑和预览。",
     "visit": "查看网站",
     "navigation": "工作台导航",
     "loading": "正在整理这一页…",
-    "storageError": "???????????????????????",
+    "storageError": "无法读取或保存草稿，请检查登录状态或稍后再试。",
     "retry": "重试",
     "edit": "编辑",
     "nav": {
@@ -727,11 +724,11 @@
       "new": "写文章",
       "search": "按任意语言的标题查找",
       "untitled": "尚未命名的一页",
-      "localDraft": "????",
+      "localDraft": "工作草稿",
       "empty": "还没有草稿，先给新的念头留一页。",
-      "notFound": "?????????????????",
+      "notFound": "没有找到这份草稿，请回到文章列表。",
       "publishedSource": "当前公开内容",
-      "importHelp": "?????????????????????????",
+      "importHelp": "从现有内容建立独立工作副本，修改不会覆盖公开文章。",
       "import": "建立工作副本"
     },
     "categories": {
@@ -754,15 +751,15 @@
       "title": "留一页给新的念头",
       "previewTitle": "看看这一页",
       "unsaved": "未保存",
-      "localState": "?????",
+      "localState": "草稿已保存",
       "revision": "版本 {revision}",
       "contentLocale": "内容语言",
       "localeHelp": "切换内容语言不会切换工作台界面；各语言的正文与 SEO 独立保存。",
       "preview": "预览",
       "back": "返回编辑",
-      "save": "????",
+      "save": "保存草稿",
       "checkPublish": "发布前检查",
-      "savedLocal": "????????",
+      "savedLocal": "草稿已保存到站点",
       "conflict": "另一页面已修改这份数据。请先保留当前内容，再重新打开，避免覆盖新版本。",
       "invalidFields": "部分字段格式不正确，请检查访问标识、阅读时间和内容块。",
       "metadata": "文章属性",
@@ -887,18 +884,18 @@
     },
     "media": {
       "upload": "添加图片",
-      "help": "?? JPEG?PNG?WebP?GIF?????? 12 MB??????????????????",
+      "help": "支持 JPEG、PNG、WebP、GIF，单张不超过 12 MB。上传后可在媒体库中管理和重复使用。",
       "alt": "当前内容语言的替代文字",
       "altHelp": "描述图片实际内容后再插入，不使用文件名代替说明。",
       "progress": "图片处理进度",
       "cancel": "取消",
       "loadError": "无法读取媒体库",
-      "uploadError": "?????????????????????",
+      "uploadError": "图片上传失败，请检查格式、大小和登录状态。",
       "insert": "选择并插入",
       "empty": "媒体库还是空的。正文、封面和照片廊会复用这里的图片。",
       "missing": "图片资源不可用",
       "loading": "图片加载中…",
-      "local": "?????????????????????????????"
+      "local": "站点媒体库。图片上传后可在文章、项目和站点资料中重复使用。"
     },
     "ai": {
       "title": "写作助手",
@@ -920,9 +917,9 @@
       }
     },
     "collection": {
-      "description": "????????????????????????????????",
+      "description": "按内容语言分别整理字段；公共属性只维护一份。保存为站点工作副本。",
       "new": "新建",
-      "empty": "????????",
+      "empty": "还没有工作副本。",
       "saveFirst": "请先保存，或使用“放弃修改”关闭。",
       "discard": "放弃修改",
       "fields": {
@@ -947,7 +944,7 @@
     },
     "settings": {
       "description": "先整理各语言的公开资料。保存只保留工作副本，不改变前台。",
-      "saved": "????????????",
+      "saved": "设置工作副本已保存到站点",
       "tabsLabel": "设置分组",
       "tabs": {
         "profile": "个人资料",
@@ -1032,12 +1029,21 @@
       "invalid": "请检查站点地址；若另一页面已修改此记录，请重新加载。"
     },
     "access": {
-      "title": "?????",
-      "help": "?????????????????????",
-      "key": "??????",
-      "signIn": "??",
-      "signOut": "????",
-      "error": "????????????????"
+      "title": "进入工作台",
+      "help": "使用站主访问密钥登录，管理草稿与媒体资源。",
+      "key": "站主访问密钥",
+      "signIn": "登录",
+      "signOut": "退出登录",
+      "error": "登录失败，请检查密钥或稍后再试。"
     }
+  },
+  "code": {
+    "copy": "复制代码",
+    "copied": "已复制",
+    "failed": "复制失败，请重试",
+    "lines": "{count} 行",
+    "expand": "展开全部",
+    "collapse": "收起代码",
+    "region": "{language} 代码，可横向滚动"
   }
 }

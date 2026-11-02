@@ -9,6 +9,11 @@ test("reading position respects the header boundary and keeps progress within th
     safeTop: 112,
     sections: [300, 600, 900],
   };
+  assert.deepEqual(readingPosition({ ...geometry, top: 0, height: 0 }), {
+    active: 0,
+    percent: 0,
+    started: false,
+  });
   assert.deepEqual(readingPosition({ ...geometry, top: 300 }), {
     active: 0,
     percent: 0,
