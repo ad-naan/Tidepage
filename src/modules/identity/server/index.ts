@@ -11,6 +11,21 @@ import {
 } from "@/modules/identity/infrastructure/schema";
 import type { Principal, Role } from "@/modules/identity/domain/principal";
 export { createAuthorSession, deleteAuthorSession } from "./author-session";
+export { loginWithOAuth } from "./reader-session";
+export { revokeCurrentSession } from "./session";
+export {
+  buildAuthorizeUrl,
+  fetchOAuthProfile,
+  listConfiguredOAuthProviders,
+  requireOAuthClient,
+} from "./oauth";
+export {
+  clearOAuthState,
+  newOAuthState,
+  readOAuthState,
+  sameOAuthState,
+  writeOAuthState,
+} from "./oauth-state";
 
 export async function getCurrentPrincipal(): Promise<Principal | null> {
   const token = (await cookies()).get("adnaan_session")?.value;

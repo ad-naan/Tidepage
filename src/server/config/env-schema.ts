@@ -15,6 +15,10 @@ export const envSchema = z
     UPLOAD_DIR: z.string().min(1).default("./storage/uploads"),
     ADMIN_USER_ID: z.uuid().optional(),
     ADMIN_ACCESS_KEY: z.string().min(32).max(256).optional(),
+    OAUTH_GITHUB_CLIENT_ID: z.string().min(1).max(128).optional(),
+    OAUTH_GITHUB_CLIENT_SECRET: z.string().min(8).max(256).optional(),
+    OAUTH_GITEE_CLIENT_ID: z.string().min(1).max(128).optional(),
+    OAUTH_GITEE_CLIENT_SECRET: z.string().min(8).max(256).optional(),
     REDIS_URL: optionalUrl,
     CACHE_NAMESPACE: z
       .string()
@@ -65,6 +69,16 @@ export const envSchema = z
         path: ["INDEXING_ENABLED"],
         message: "Indexing requires an https site origin",
       });
+    for (const provider of ["GITHUB", "GITEE"] as const) {
+      const id = env[`OAUTH_${provider}_CLIENT_ID`];
+      const secret = env[`OAUTH_${provider}_CLIENT_SECRET`];
+      if (!!id !== !!secret)
+        context.addIssue({
+          code: "custom",
+          path: [`OAUTH_${provider}_CLIENT_SECRET`],
+          message: `OAUTH_${provider}_CLIENT_ID and OAUTH_${provider}_CLIENT_SECRET must be configured together`,
+        });
+    }
   });
 
 export type ServerEnv = z.infer<typeof envSchema>;

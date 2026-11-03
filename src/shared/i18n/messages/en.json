@@ -415,7 +415,14 @@
   "identity": {
     "login": "Sign in",
     "title": "Reader account",
-    "unavailable": "Sign-in is not connected yet."
+    "unavailable": "Sign-in is not connected yet.",
+    "choose": "Continue with:",
+    "githubLogin": "Continue with GitHub",
+    "giteeLogin": "Continue with Gitee",
+    "signedInAs": "Signed in as",
+    "logout": "Sign out",
+    "signingOut": "Signing out…",
+    "loginFailed": "Sign-in did not complete. Please try again."
   },
   "discussion": {
     "reactionsTitle": "What did this piece bring to mind?",

@@ -27,6 +27,36 @@ export const usersTable = pgTable(
     check("users_role_valid", sql`${t.role} in ('reader','author','admin')`),
   ],
 );
+export const identitiesTable = pgTable(
+  "identities",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => usersTable.id, { onDelete: "cascade" }),
+    provider: text("provider").notNull(),
+    providerAccountId: text("provider_account_id").notNull(),
+    profileName: text("profile_name"),
+    profileAvatarUrl: text("profile_avatar_url"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("identities_provider_account_idx").on(
+      t.provider,
+      t.providerAccountId,
+    ),
+    index("identities_user_idx").on(t.userId),
+    check(
+      "identities_provider_valid",
+      sql`${t.provider} in ('github','gitee')`,
+    ),
+  ],
+);
 export const sessionsTable = pgTable(
   "sessions",
   {

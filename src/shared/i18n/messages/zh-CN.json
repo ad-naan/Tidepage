@@ -415,7 +415,14 @@
   "identity": {
     "login": "登录",
     "title": "阅读账号",
-    "unavailable": "登录服务尚未接入，暂时无法登录。"
+    "unavailable": "登录服务尚未接入，暂时无法登录。",
+    "choose": "选择一种方式继续：",
+    "githubLogin": "通过 GitHub 登录",
+    "giteeLogin": "通过 Gitee 登录",
+    "signedInAs": "当前身份",
+    "logout": "退出登录",
+    "signingOut": "正在退出…",
+    "loginFailed": "登录没有完成，请再试一次。"
   },
   "discussion": {
     "reactionsTitle": "这篇文章，让你想到了什么？",
