@@ -17,12 +17,19 @@ import (
 )
 
 func TestPreviewLayoutAndArtifacts(t *testing.T) {
+	for _, locale := range []string{"zh-CN", "en"} {
+		t.Run(locale, func(t *testing.T) { checkPreviewLayout(t, locale) })
+	}
+}
+
+func checkPreviewLayout(t *testing.T, locale string) {
 	app := test.NewApp()
 	defer app.Quit()
 	app.Settings().SetTheme(tideTheme{})
 	cfg := config.Default()
+	cfg.Locale = locale
 	cfg.Rules = []config.Rule{{ID: "editor", Name: "Visual Studio Code", Process: "Code.exe", Enabled: true}, {ID: "design", Name: "Figma", Process: "Figma.exe", Enabled: true}}
-	a := &application{app: app, cfg: cfg, preview: true, t: i18n.Load("zh-CN"), iconCache: map[string]string{"editor": "", "design": ""}}
+	a := &application{app: app, cfg: cfg, preview: true, t: i18n.Load(locale), iconCache: map[string]string{"editor": "", "design": ""}}
 	a.win = app.NewWindow("Preview")
 	defer a.win.Close()
 	a.win.SetPadded(false)
@@ -68,6 +75,9 @@ func TestPreviewLayoutAndArtifacts(t *testing.T) {
 func capture(t *testing.T, a *application, name string) {
 	t.Helper()
 	if dir := os.Getenv("TIDEPAGE_RENDER_DIR"); dir != "" {
+		if a.cfg.Locale != "zh-CN" {
+			dir = filepath.Join(dir, a.cfg.Locale)
+		}
 		if e := os.MkdirAll(dir, 0755); e != nil {
 			t.Fatal(e)
 		}

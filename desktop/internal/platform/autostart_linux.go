@@ -1,6 +1,7 @@
 package platform
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -24,7 +25,12 @@ func Autostart(enabled bool) error {
 	if e != nil {
 		return e
 	}
+	if strings.Contains(exe, "=") {
+		return errors.New("desktop entry executable paths cannot contain '='")
+	}
+	// The desktop file reader unescapes the value before parsing Exec quotes.
 	exe = strings.NewReplacer(`\`, `\\`, `"`, `\"`, "`", "\\`", "$", `\$`, "%", "%%").Replace(exe)
+	exe = strings.NewReplacer(`\`, `\\`, "\n", `\n`, "\r", `\r`, "\t", `\t`).Replace(exe)
 	if e = os.MkdirAll(dir, 0700); e != nil {
 		return e
 	}

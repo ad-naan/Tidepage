@@ -68,6 +68,7 @@
   "tokenHint": "保存在系统凭据库，不写入配置文件。",
   "music": "分享正在听的歌",
   "musicHint": "仅展示正在播放的歌曲，关闭后立即清除。",
+  "musicAutomation": "开启歌曲分享后，潮汐会从音乐或 Spotify 读取当前歌曲，显示在你的站点上。",
   "autostart": "登录系统后启动",
   "autostartHint": "启动后安静驻留托盘。",
   "locale": "界面语言",

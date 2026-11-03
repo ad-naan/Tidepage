@@ -11,7 +11,7 @@ Go + Fyne 原生桌面助手，支持 Windows、macOS、Linux。没有 Electron�
 3. 在“软件监听”添加进程名或完整可执行文件路径，填写你希望公开的名称，保存。
 4. 按列表顺序展示正在运行的软件；软件图标和歌曲信息可以分别关闭。暂停分享会清空公开软件与歌曲。
 
-Windows 主窗默认 640 × 460（逻辑像素）。拖动顶栏左侧的品牌区可以移动窗口，拖动右下角可以调整大小。顶栏右侧可最小化、最大化或关闭窗口；关闭后可从托盘重新打开。
+三个平台的主窗默认都是 640 × 460（逻辑像素）。Windows 使用无边框窗口，可拖动左上角品牌区移动窗口，或拖动右下角调整大小。macOS 使用同色标题栏和系统红黄绿按钮；Linux 的标题栏、拖动和缩放由当前桌面环境管理。关闭窗口后，可从托盘重新打开。
 
 令牌使用 Windows Credential Manager、macOS Keychain 或 Linux Secret Service 保存，并与服务地址绑定。配置文件不含令牌。Linux 需要可用且已解锁的密钥环；失败时不降级为明文文件。
 
@@ -33,7 +33,7 @@ Go **1.26+**。Fyne 构建需要 C 编译器和系统图形开发库；应用业
 
 - Windows：安装 Go、MinGW-w64，确保 `gcc` 在 PATH。
 - macOS：安装 Go 与 Xcode Command Line Tools。
-- Debian / Ubuntu：`sudo apt install gcc libgl1-mesa-dev xorg-dev libayatana-appindicator3-dev`。中文字体已随应用打包。
+- Debian / Ubuntu：`sudo apt install gcc pkg-config libgl1-mesa-dev xorg-dev libwayland-dev libxkbcommon-dev libayatana-appindicator3-dev`。中文字体已随应用打包。
 
 在 `desktop` 目录运行：
 
@@ -58,13 +58,22 @@ Windows 日常使用请在 PowerShell 构建一次，再双击生成的 `dist/Ti
 .\build-windows.ps1
 ```
 
-构建 macOS / Linux：
+在 macOS 或 Linux 本机打包：
 
 ```sh
-go build -trimpath -ldflags "-s -w" -o dist/tidepage-companion ./cmd/companion
+sh build-unix.sh
 ```
 
-可用 Fyne 官方打包工具生成 `.app` / Windows 应用元数据。仓库提供三平台 CI 构建，不等于已经在所有真实系统上完成验收；签名与公证需要发布者自己的证书。
+macOS 生成 `dist/TidepageCompanion-macOS.zip`，内含 Apple Silicon 和 Intel 两种架构。解压后将 `Tidepage Companion.app` 放入“应用程序”，用 Finder 打开。包使用本地 ad-hoc 签名，面向公众分发仍需要 Developer ID 签名和公证。
+
+Linux 生成与构建机 CPU 架构对应的 `dist/TidepageCompanion-Linux.tar.gz`。运行需要图形桌面和可用的 OpenGL 驱动。安装到当前用户目录后从桌面应用菜单启动，桌面会话的 `PATH` 须包含 `~/.local/bin`：
+
+```sh
+mkdir -p "$HOME/.local"
+tar -xzf dist/TidepageCompanion-Linux.tar.gz -C "$HOME/.local"
+```
+
+三平台 CI 会测试并构建应用；macOS 检查解压后的预览窗口，Linux 分别用 X11 虚拟显示和 Wayland 合成器检查预览窗口。系统凭据库、真实播放器权限和登录自启动仍需要对应桌面会话验收。
 
 ## 从哪里改
 

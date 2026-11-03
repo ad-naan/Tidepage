@@ -142,7 +142,7 @@ func (a *application) show() {
 		a.state = a.controller.Snapshot()
 	}
 	a.refresh()
-	a.win.Show()
+	showCompanionWindow(a.win)
 	a.win.RequestFocus()
 }
 func (a *application) shell() fyne.CanvasObject {

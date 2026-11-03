@@ -68,6 +68,7 @@
   "tokenHint": "Stored in the system credential vault, outside the settings file.",
   "music": "Share the current song",
   "musicHint": "Only playing tracks are shared. Turning this off clears the song.",
+  "musicAutomation": "When music sharing is on, Tidepage reads the current song from Music or Spotify to display it on your site.",
   "autostart": "Start when I sign in",
   "autostartHint": "Start quietly in the system tray.",
   "locale": "Interface language",

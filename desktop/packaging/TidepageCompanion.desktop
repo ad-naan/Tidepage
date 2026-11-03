@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Tidepage Companion
+Name[zh_CN]=潮汐 Companion
+Exec=tidepage-companion
+TryExec=tidepage-companion
+Icon=blog.tidepage.companion
+Terminal=false
+Categories=Utility;

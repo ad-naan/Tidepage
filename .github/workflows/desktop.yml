@@ -39,7 +39,7 @@ jobs:
           cache-dependency-path: desktop/go.sum
       - name: Linux native graphics and tray dependencies
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y gcc libgl1-mesa-dev xorg-dev libayatana-appindicator3-dev
+        run: sudo apt-get update && sudo apt-get install -y gcc libgl1-mesa-dev xorg-dev libwayland-dev libxkbcommon-dev libayatana-appindicator3-dev xvfb xauth xdotool openbox wmctrl weston desktop-file-utils
       - name: Windows native compiler
         if: runner.os == 'Windows'
         run: choco install mingw --no-progress -y
@@ -50,9 +50,28 @@ jobs:
       - name: Windows executable
         if: runner.os == 'Windows'
         run: ./build-windows.ps1
-      - name: Unix executable
+      - name: Build Unix application package
         if: runner.os != 'Windows'
-        run: go build -trimpath -ldflags "-s -w" -o dist/tidepage-companion ./cmd/companion
+        run: sh build-unix.sh
+      - name: Launch packaged macOS preview
+        if: runner.os == 'macOS'
+        run: |
+          ditto -x -k dist/TidepageCompanion-macOS.zip "$RUNNER_TEMP/companion"
+          app="$RUNNER_TEMP/companion/Tidepage Companion.app"
+          codesign --verify --strict "$app"
+          "$app/Contents/MacOS/tidepage-companion" --preview &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          swift packaging/check-macos-preview.swift "$pid"
+      - name: Launch packaged Linux preview on X11 and Wayland
+        if: runner.os == 'Linux'
+        run: |
+          mkdir "$RUNNER_TEMP/companion"
+          tar -xzf dist/TidepageCompanion-Linux.tar.gz -C "$RUNNER_TEMP/companion"
+          desktop-file-validate "$RUNNER_TEMP/companion/share/applications/blog.tidepage.companion.desktop"
+          exe="$RUNNER_TEMP/companion/bin/tidepage-companion"
+          xvfb-run -a sh packaging/check-linux-preview.sh "$exe" x11
+          xvfb-run -a sh packaging/check-linux-preview.sh "$exe" wayland
       - uses: actions/upload-artifact@v4
         with:
           name: companion-${{ runner.os }}-${{ runner.arch }}
