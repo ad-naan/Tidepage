@@ -1,0 +1,217 @@
+.page {
+  width: min(1120px, calc(100% - 80px));
+  min-height: 100svh;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  padding-block: var(--space-8) var(--space-6);
+}
+.header,
+.headerTools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font: 300 36px/1.2 var(--font-hand);
+  color: var(--ink);
+}
+.brand > span {
+  font: 400 22px/1 var(--font-ui);
+  color: var(--accent);
+  transform: rotate(12deg);
+}
+.edition {
+  letter-spacing: 0.1em;
+}
+.content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  align-items: center;
+  gap: var(--space-10);
+  padding-block: 72px 96px;
+}
+.copy {
+  position: relative;
+  z-index: 1;
+}
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  letter-spacing: 0.12em;
+  margin-bottom: var(--space-6);
+}
+.eyebrow > span {
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: currentColor;
+  transform: rotate(-5deg);
+}
+.title {
+  max-width: 12em;
+  font-size: clamp(30px, 3.3vw, 42px);
+  line-height: 1.55;
+  letter-spacing: -0.035em;
+  white-space: pre-line;
+  text-wrap: balance;
+}
+.description {
+  max-width: 27em;
+  margin-top: var(--space-5);
+  line-height: 2;
+  text-wrap: pretty;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-6);
+  margin-top: var(--space-8);
+}
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 42px;
+  font: 400 var(--text-sm)/var(--leading-ui) var(--font-ui);
+  transition:
+    background var(--motion-quick),
+    color var(--motion-quick);
+}
+.primary {
+  padding: var(--space-3) var(--space-5);
+  border: var(--stroke-ui) solid var(--ink);
+  border-radius: 5px 8px 6px 7px;
+  background: var(--ink);
+  color: var(--paper);
+}
+.primary:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+}
+.secondary {
+  color: var(--ink);
+}
+.secondary:hover {
+  color: var(--accent);
+}
+.illustration {
+  position: relative;
+  min-width: 0;
+  aspect-ratio: 520 / 350;
+  color: color-mix(in srgb, var(--ink) 68%, var(--paper));
+}
+.illustration::before {
+  content: "";
+  position: absolute;
+  inset: -15% -10%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, var(--wash) 50%, transparent),
+    transparent 65%
+  );
+  pointer-events: none;
+}
+.number {
+  position: absolute;
+  inset: 0 0 auto;
+  text-align: center;
+  font: 400 clamp(130px, 15vw, 192px)/1 var(--font-editorial);
+  letter-spacing: 0.025em;
+  color: color-mix(in srgb, var(--muted) 20%, var(--paper));
+  user-select: none;
+}
+.illustration[data-kind="error"] .number {
+  letter-spacing: 0.16em;
+  color: color-mix(in srgb, var(--accent) 15%, var(--paper));
+}
+.illustration > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+:global([data-theme="dark"]) .illustration {
+  color: color-mix(in srgb, var(--ink) 92%, var(--paper));
+}
+:global([data-theme="dark"]) .number {
+  color: color-mix(in srgb, var(--muted) 30%, var(--paper));
+}
+.annotation {
+  position: absolute;
+  right: 12%;
+  bottom: 0;
+  font: 400 16px/1.5 var(--font-editorial);
+  color: var(--muted);
+  transform: rotate(-5deg);
+}
+.footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--muted);
+}
+.footerLine {
+  width: var(--space-8);
+  height: 1px;
+  background: var(--line);
+  transform: rotate(-6deg);
+}
+.pageMark {
+  margin-left: auto;
+  font: 400 var(--text-xs)/1.5 var(--font-code);
+  letter-spacing: 0.1em;
+}
+@media (max-width: 760px) {
+  .page {
+    width: calc(100% - 40px);
+    padding-block: var(--space-6);
+  }
+  .content {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    padding-block: var(--space-12);
+  }
+  .copy {
+    max-width: 470px;
+    margin-inline: auto;
+    width: 100%;
+  }
+  .illustration {
+    grid-row: 1;
+    width: min(400px, 100%);
+    margin-inline: auto;
+  }
+  .number {
+    font-size: clamp(120px, 34vw, 160px);
+  }
+  .title {
+    font-size: clamp(28px, 6vw, 34px);
+  }
+  .edition {
+    display: none;
+  }
+  .footerLine {
+    width: var(--space-4);
+  }
+  .footer {
+    gap: var(--space-2);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .primary,
+  .secondary {
+    transition: none;
+  }
+}

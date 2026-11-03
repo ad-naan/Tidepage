@@ -9,14 +9,24 @@
     "close": "Close"
   },
   "error": {
-    "title": "This page didn't open",
-    "description": "You can try again, or head back home first.",
+    "title": "A little rough weather.\nLet's turn this page again.",
+    "description": "This page couldn't open just now. Give the breeze a moment and try again, or find your way back to familiar shores.",
+    "edition": "Tidepage · Coastal navigation",
+    "eyebrow": "A MOMENT ASHORE / TRY AGAIN",
+    "annotation": "A little pause between stories.",
+    "note": "The coast is here. The story continues.",
     "retry": "Try again",
     "home": "Back to home"
   },
   "notFound": {
-    "title": "Looks like you drifted into unknown waters.",
-    "description": "That's alright. Follow the way you came, back to a familiar page.",
+    "title": "This page has\ndrifted out to sea.",
+    "description": "The page may have moved, or its story hasn't been written yet. Follow the coast back to somewhere familiar.",
+    "edition": "Tidepage · Coastal navigation",
+    "eyebrow": "404 / A LITTLE DETOUR",
+    "annotation": "Even a detour can lead to the sea.",
+    "note": "A wrong turn might lead to the next story.",
+    "home": "Back to home",
+    "browse": "Browse articles",
     "back": "Back to home →"
   },
   "sky": {

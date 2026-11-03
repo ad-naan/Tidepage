@@ -76,7 +76,14 @@ export default async function RootLayout({
         </Anchor>
         <NextIntlClientProvider
           locale={locale}
-          messages={{ error: messages.error, notFound: messages.notFound }}
+          messages={{
+            error: messages.error,
+            notFound: messages.notFound,
+            header: {
+              light: messages.header.light,
+              dark: messages.header.dark,
+            },
+          }}
         >
           <NavigationFeedback copy={loadingCopy}>{children}</NavigationFeedback>
         </NextIntlClientProvider>
