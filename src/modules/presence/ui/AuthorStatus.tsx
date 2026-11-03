@@ -1,5 +1,6 @@
 "use client";
 import { useTranslations } from "next-intl";
+import { Monitor } from "lucide-react";
 import { useAuthorPresence } from "./useAuthorPresence";
 import styles from "./AuthorStatus.module.css";
 
@@ -12,6 +13,31 @@ export function AuthorStatus() {
       : connection === "connecting"
         ? "connecting"
         : snapshot.status;
+  const app =
+    connection === "connected" && snapshot.status === "online"
+      ? snapshot.apps[0]
+      : undefined;
+  if (app)
+    return (
+      <span className={styles.application}>
+        {app.icon ? (
+          <img
+            src={app.icon}
+            alt={t("usingApplication", { name: app.name })}
+            width={24}
+            height={24}
+            draggable={false}
+          />
+        ) : (
+          <Monitor
+            size={24}
+            role="img"
+            aria-label={t("usingApplication", { name: app.name })}
+          />
+        )}
+        <i aria-hidden="true" />
+      </span>
+    );
   return (
     <>
       <span

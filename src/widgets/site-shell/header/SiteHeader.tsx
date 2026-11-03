@@ -16,14 +16,7 @@ import {
   useReducedMotion,
   useScroll,
 } from "motion/react";
-import {
-  ArrowRight,
-  ChevronDown,
-  Command,
-  Focus,
-  Search,
-  X,
-} from "lucide-react";
+import { ArrowRight, Command, Focus, Search, X } from "lucide-react";
 import type {
   ArticleSummary,
   NavigationOverview,
@@ -32,8 +25,7 @@ import { useArticleSearch } from "@/modules/content/ui/articles/useArticleSearch
 import { spring } from "@/shared/lib/motion";
 import { useDisclosure } from "@/shared/hooks/useDisclosure";
 import { LoginTrigger } from "@/modules/identity/ui/IdentityProvider";
-import { ActivityDetails } from "./ActivityDetails";
-import { AuthorStatus } from "@/modules/presence/ui/AuthorStatus";
+import { AuthorPresence } from "@/modules/presence/ui/AuthorPresence";
 import { MusicPlayer } from "@/modules/media/ui/player/MusicPlayer";
 import { SiteNavigation } from "@/widgets/site-shell/navigation/SiteNavigation";
 import { HeaderBrand } from "./HeaderBrand";
@@ -41,11 +33,6 @@ import { HeaderSky } from "./HeaderSky";
 import { ReadingProgress } from "@/widgets/site-shell/reading/ReadingProgress";
 
 const surfaces = {
-  activity: {
-    selector: ".living-activity-trigger",
-    width: 390,
-    align: "start",
-  },
   search: { selector: ".living-search-trigger", width: 480, align: "end" },
   music: { selector: ".music-open", width: 620, align: "end" },
 } as const;
@@ -69,7 +56,7 @@ export function SiteHeader({
     categories = useTranslations("categories");
   const pathname = usePathname();
   const { open, setOpen, ref } = useDisclosure("header");
-  const [panel, setPanel] = useState<HeaderPanel>("activity");
+  const [panel, setPanel] = useState<HeaderPanel>("search");
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const [compact, setCompact] = useState(false);
   const [query, setQuery] = useState("");
@@ -150,17 +137,7 @@ export function SiteHeader({
             <div className="header-identity-group">
               <HeaderBrand compact={condensed} />
               <div className="living-context">
-                <Button
-                  className={`living-activity-trigger ${open && panel === "activity" ? "selected" : ""}`}
-                  onClick={() => show("activity")}
-                  aria-label={t("activityLabel")}
-                  aria-expanded={open && panel === "activity"}
-                  aria-controls="header-panel"
-                  whileTap={{ scale: 0.97 }}
-                >
-                  <AuthorStatus />
-                  <ChevronDown size={11} />
-                </Button>
+                <AuthorPresence boundary={header} />
               </div>
             </div>
             <NoticeDock
@@ -266,8 +243,6 @@ export function SiteHeader({
             </div>
             {panel === "music" ? (
               <div className="header-music-slot" ref={setMusicContainer} />
-            ) : panel === "activity" ? (
-              <ActivityDetails />
             ) : (
               <>
                 <div className="living-search-field">

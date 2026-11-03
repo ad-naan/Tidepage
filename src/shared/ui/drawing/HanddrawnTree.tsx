@@ -31,6 +31,7 @@ export function HanddrawnTree({
       style={{ height, filter: "url(#tidepage-pencil)" }}
     >
       <motion.path
+        initial={false}
         d={d}
         animate={{ d }}
         transition={reduced ? { duration: 0 } : softSpring}
@@ -39,6 +40,7 @@ export function HanddrawnTree({
         strokeLinecap="round"
       />
       <motion.path
+        initial={false}
         d={d}
         animate={{ d, pathLength: percent / 100 }}
         transition={reduced ? { duration: 0 } : softSpring}
@@ -58,6 +60,7 @@ export function HanddrawnTree({
             strokeLinejoin="round"
           >
             <motion.path
+              initial={false}
               animate={{
                 d: `M16 ${y} Q${open ? 24 : 18} ${y - 1} ${end} ${y - (open ? 6 : 2)}`,
                 opacity: index === active ? 0.95 : 0.4,
@@ -66,6 +69,7 @@ export function HanddrawnTree({
               strokeWidth="1.2"
             />
             <motion.path
+              initial={false}
               d={`M22 ${y - 1}q-2-8 5-8q1 5-5 8`}
               animate={{ opacity: index === active ? 0.65 : 0 }}
               transition={{ duration: reduced ? 0 : 0.25 }}

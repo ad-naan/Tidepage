@@ -273,6 +273,7 @@
     "offline": "Currently offline",
     "paused": "Activity sharing paused",
     "applications": "Applications in use",
+    "usingApplication": "Using {name}",
     "noApplications": "No application activity is being shared.",
     "listening": "Now playing",
     "sharedOnly": "Only content the author chooses to share is shown."

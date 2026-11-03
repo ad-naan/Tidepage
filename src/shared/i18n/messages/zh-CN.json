@@ -273,6 +273,7 @@
     "offline": "此刻离线",
     "paused": "暂不分享活动",
     "applications": "正在使用的软件",
+    "usingApplication": "正在使用 {name}",
     "noApplications": "当前没有公开的软件活动。",
     "listening": "正在听",
     "sharedOnly": "仅展示作者主动分享的内容。"

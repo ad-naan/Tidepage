@@ -37,14 +37,24 @@ func processIcon(_ context.Context, p Process) (image.Image, error) {
 	if e != nil || p.Path == "" {
 		return nil, errors.New("no executable")
 	}
-	var info shellFileInfo
-	result, _, _ := shell.NewProc("SHGetFileInfoW").Call(uintptr(unsafe.Pointer(path)), 0, uintptr(unsafe.Pointer(&info)), unsafe.Sizeof(info), 0x101)
-	if result == 0 || info.Icon == 0 {
-		return nil, errors.New("no icon")
+	// Request the actual transport resolution instead of enlarging SHGFI_SMALLICON
+	// (normally 16px). This also keeps the 24px website icon sharp on 2x displays.
+	var handle uintptr
+	hr, _, _ := shell.NewProc("SHDefExtractIconW").Call(uintptr(unsafe.Pointer(path)), 0, 0, uintptr(unsafe.Pointer(&handle)), 0, 48)
+	if hr != 0 || handle == 0 {
+		if handle != 0 {
+			user.NewProc("DestroyIcon").Call(handle)
+		}
+		var info shellFileInfo
+		result, _, _ := shell.NewProc("SHGetFileInfoW").Call(uintptr(unsafe.Pointer(path)), 0, uintptr(unsafe.Pointer(&info)), unsafe.Sizeof(info), 0x100)
+		if result == 0 || info.Icon == 0 {
+			return nil, errors.New("no icon")
+		}
+		handle = info.Icon
 	}
-	defer user.NewProc("DestroyIcon").Call(info.Icon)
+	defer user.NewProc("DestroyIcon").Call(handle)
 	var icon iconInfo
-	result, _, _ = user.NewProc("GetIconInfo").Call(info.Icon, uintptr(unsafe.Pointer(&icon)))
+	result, _, _ := user.NewProc("GetIconInfo").Call(handle, uintptr(unsafe.Pointer(&icon)))
 	if result == 0 {
 		return nil, errors.New("icon unavailable")
 	}

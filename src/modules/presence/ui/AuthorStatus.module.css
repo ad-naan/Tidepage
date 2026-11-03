@@ -2,3 +2,26 @@
   background: var(--muted);
   box-shadow: none;
 }
+.application {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  color: var(--muted);
+}
+.application img {
+  display: block;
+  object-fit: contain;
+}
+.application > i {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 7px;
+  height: 7px;
+  border: 2px solid var(--paper);
+  border-radius: 50%;
+  background: #67936a;
+}

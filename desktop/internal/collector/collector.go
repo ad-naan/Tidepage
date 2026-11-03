@@ -25,7 +25,10 @@ type Result struct {
 	Presence protocol.Presence
 	Warning  string
 }
-type Collector struct{ icons map[string]string }
+type Collector struct {
+	icons       map[string]string
+	activeAppID string
+}
 
 func stringLimit(s string, n int) string {
 	r := []rune(s)
@@ -77,6 +80,7 @@ func Running(ctx context.Context) ([]Process, error) {
 func (c *Collector) Sample(ctx context.Context, cfg config.Config, paused bool) Result {
 	result := Result{Presence: protocol.Empty(paused)}
 	if paused {
+		c.activeAppID = ""
 		return result
 	}
 	enabled := false
@@ -84,6 +88,8 @@ func (c *Collector) Sample(ctx context.Context, cfg config.Config, paused bool) 
 		enabled = enabled || r.Enabled
 	}
 	if enabled {
+		focusedPID := foregroundProcessID(ctx)
+		focusedAppID := ""
 		ps, e := process.ProcessesWithContext(ctx)
 		if e != nil {
 			result.Warning = "processError"
@@ -110,6 +116,9 @@ func (c *Collector) Sample(ctx context.Context, cfg config.Config, paused bool) 
 				}
 				for _, r := range cfg.Rules {
 					if r.Enabled && Matches(r.Process, name, path) {
+						if p.Pid == focusedPID {
+							focusedAppID = r.ID
+						}
 						if _, exists := matched[r.ID]; !exists {
 							matched[r.ID] = Process{name, path}
 						}
@@ -126,6 +135,7 @@ func (c *Collector) Sample(ctx context.Context, cfg config.Config, paused bool) 
 				}
 			}
 		}
+		c.prioritizeApp(result.Presence.Apps, focusedAppID)
 	}
 	if cfg.Music {
 		track, e := nowPlaying(ctx)
@@ -136,6 +146,32 @@ func (c *Collector) Sample(ctx context.Context, cfg config.Config, paused bool) 
 		}
 	}
 	return result
+}
+
+// The first public app drives the website icon. Keep the rest in rule order.
+// A non-shared foreground process never replaces a shared app or leaves the device.
+func (c *Collector) prioritizeApp(apps []protocol.App, focusedID string) {
+	selected := -1
+	for i, app := range apps {
+		if app.ID == focusedID {
+			selected = i
+			break
+		}
+		if app.ID == c.activeAppID {
+			selected = i
+		}
+	}
+	if len(apps) == 0 {
+		c.activeAppID = ""
+		return
+	}
+	if selected < 0 {
+		selected = 0
+	}
+	active := apps[selected]
+	copy(apps[1:selected+1], apps[:selected])
+	apps[0] = active
+	c.activeAppID = active.ID
 }
 func (c *Collector) icon(ctx context.Context, custom string, p Process) string {
 	key := custom

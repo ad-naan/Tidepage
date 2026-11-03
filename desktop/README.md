@@ -9,7 +9,7 @@ Go + Fyne 原生桌面助手，支持 Windows、macOS、Linux。没有 Electron�
 1. 按 [实时服务说明](../docs/realtime.md) 启动网关。
 2. 启动应用，打开“偏好设置”，填写服务地址和设备令牌。公网地址必须使用 HTTPS，本机允许 `http://localhost:3101`。
 3. 在“软件监听”添加进程名或完整可执行文件路径，填写你希望公开的名称，保存。
-4. 按列表顺序展示正在运行的软件；软件图标和歌曲信息可以分别关闭。暂停分享会清空公开软件与歌曲。
+4. 网站页头展示正在使用的软件图标，悬停查看详情。前台应用在监听列表中时优先展示它；切到未监听的软件时保留最近使用且仍在运行的监听软件，否则按列表顺序回退。只有一个监听软件在运行时始终展示它。软件图标和歌曲信息可以分别关闭。暂停分享会清空公开软件与歌曲。
 
 三个平台的主窗默认都是 640 × 460（逻辑像素）。Windows 使用无边框窗口，可拖动左上角品牌区移动窗口，或拖动右下角调整大小。macOS 使用同色标题栏和系统红黄绿按钮；Linux 的标题栏、拖动和缩放由当前桌面环境管理。关闭窗口后，可从托盘重新打开。
 
@@ -26,6 +26,8 @@ Go + Fyne 原生桌面助手，支持 Windows、macOS、Linux。没有 Electron�
 | Linux                 | 提供 MPRIS 的播放器，桌面会话 D-Bus                           | desktop 文件和常见主题的 PNG 图标；SVG-only 主题可手动选 PNG | XDG autostart                      |
 
 Linux 托盘依赖桌面环境支持状态指示器，GNOME 通常需要 AppIndicator 支持。Wayland 下采用进程白名单，不读取其他应用窗口内容。应用不使用 macOS 私有 MediaRemote API。
+
+前台软件识别随配置的采样间隔更新（默认 5 秒）：Windows 使用前台窗口所属进程，macOS 使用公共 AppKit 的前台应用信息；Linux X11 需要 `xprop`，Wayland 或无法识别前台时按监听列表回退。公开数据只包含已监听软件；前台 PID 和窗口标识只在本机用于匹配，不上传窗口标题、进程路径或未监听应用。
 
 ## 开发
 
@@ -47,7 +49,7 @@ go test -tags ci ./...
 
 Fyne 的原生 OpenGL 驱动依赖 CGO。`go mod download` 只下载 Go 工具链和模块，不会安装 C 编译器。若出现 `github.com/go-gl/gl/v2.1/gl: build constraints exclude all Go files`，先检查 `go env CGO_ENABLED` 和 `gcc --version`；CGO 被关闭或缺少编译器时无法构建原生窗口。
 
-1. 安装 [MSYS2](https://www.msys2.org/)（以下以默认目录 `C:\msys64`、Windows amd64 为例）。
+1. 安装 [MSYS2](https://www.msys2.org/)（以下以默认目录 `C:\msys64`、Windows amd64 为例）。安装包保存在下载目录等独立位置，不要放进安装目标目录；尤其不要在目标目录中运行名为 `msys2.exe` 的安装包，否则会与安装后的同名启动器冲突，导致解压失败、缺少 `bash.exe`。
 2. 安装完成后，在 **PowerShell** 调用 MSYS2 的 Bash 安装 MinGW-w64 GCC；如果 MSYS2 安装在其他目录，请调整路径：
 
    ```powershell
@@ -70,7 +72,9 @@ Fyne 的原生 OpenGL 驱动依赖 CGO。`go mod download` 只下载 Go 工具�
 
 这些环境变量只影响当前 PowerShell 会话。每次打开新终端需重新设置，也可以将上述编译器目录加入用户 PATH。若通过 `CC` 指定其他编译器，也需确保它支持目标 Windows 架构。
 
-`build-windows.ps1` 会为本次构建启用 CGO，结束后恢复原值；找不到默认 `gcc` 时会直接提示安装步骤。直接使用 `go run` 时仍需自行设置 `$env:CGO_ENABLED = '1'`。`go test -tags ci ./...` 使用无图形测试驱动，不能替代原生 GUI 构建验证。构建依赖说明见 [Fyne 官方文档](https://docs.fyne.io/started/quick/)。
+`build-windows.ps1` 会为本次构建启用 CGO；在 amd64 目标下，如果 PATH 中找不到默认 `gcc`，会自动查找 `D:\msys2`、`C:\msys64`、`D:\msys64`、`C:\msys2` 的 UCRT64 / MinGW64 编译器，无需手动设置 PATH。也可以用 `.\build-windows.ps1 -MsysRoot '其他安装目录'` 优先查找指定位置。结束后恢复原有环境变量。只有 `msys2.exe` 安装包的目录不算已安装；缺少 MSYS2 或 GCC 时会提示对应步骤。
+
+直接使用 `go run` 时仍需自行设置编译器 PATH 和 `$env:CGO_ENABLED = '1'`。`go test -tags ci ./...` 使用无图形测试驱动，不能替代原生 GUI 构建验证。构建依赖说明见 [Fyne 官方文档](https://docs.fyne.io/started/quick/)。
 
 ### 界面预览与打包
 

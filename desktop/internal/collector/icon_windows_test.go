@@ -16,8 +16,8 @@ func TestWindowsExecutableIcon(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	if img.Bounds().Dx() < 1 {
-		t.Fatal("empty icon")
+	if img.Bounds().Dx() < 48 || img.Bounds().Dy() < 48 {
+		t.Fatal("executable icon must be extracted at transport resolution, not enlarged from the small shell icon")
 	}
 	var encoded bytes.Buffer
 	if e = png.Encode(&encoded, img); e != nil {
