@@ -31,7 +31,7 @@ Linux 托盘依赖桌面环境支持状态指示器，GNOME 通常需要 AppIndi
 
 Go **1.26+**。Fyne 构建需要 C 编译器和系统图形开发库；应用业务和平台适配代码均为 Go，不需要维护 C++。
 
-- Windows：安装 Go、MinGW-w64，确保 `gcc` 在 PATH。
+- Windows：安装 Go、MinGW-w64，确保 `gcc` 在 PATH 并启用 CGO，具体步骤见下方。
 - macOS：安装 Go 与 Xcode Command Line Tools。
 - Debian / Ubuntu：`sudo apt install gcc pkg-config libgl1-mesa-dev xorg-dev libwayland-dev libxkbcommon-dev libayatana-appindicator3-dev`。中文字体已随应用打包。
 
@@ -42,6 +42,37 @@ go mod download
 go run ./cmd/companion
 go test -tags ci ./...
 ```
+
+### Windows 编译环境
+
+Fyne 的原生 OpenGL 驱动依赖 CGO。`go mod download` 只下载 Go 工具链和模块，不会安装 C 编译器。若出现 `github.com/go-gl/gl/v2.1/gl: build constraints exclude all Go files`，先检查 `go env CGO_ENABLED` 和 `gcc --version`；CGO 被关闭或缺少编译器时无法构建原生窗口。
+
+1. 安装 [MSYS2](https://www.msys2.org/)（以下以默认目录 `C:\msys64`、Windows amd64 为例）。
+2. 安装完成后，在 **PowerShell** 调用 MSYS2 的 Bash 安装 MinGW-w64 GCC；如果 MSYS2 安装在其他目录，请调整路径：
+
+   ```powershell
+   & 'C:\msys64\usr\bin\bash.exe' -lc 'pacman -S --needed mingw-w64-ucrt-x86_64-gcc'
+   ```
+
+   `pacman` 是 MSYS2 自带的包管理器，不能在尚未配置它的 PowerShell 中直接执行。也可以从开始菜单打开 **MSYS2 UCRT64**，在该终端运行 `pacman -S --needed mingw-w64-ucrt-x86_64-gcc`。
+
+3. 继续在 PowerShell 的 `desktop` 目录执行；如果 MSYS2 安装在其他目录，请调整路径：
+
+   ```powershell
+   $env:PATH = "C:\msys64\ucrt64\bin;$env:PATH"
+   $env:CGO_ENABLED = '1'
+   gcc --version
+   go env CGO_ENABLED
+   go run ./cmd/companion
+   # 或仅预览界面：
+   # go run ./cmd/companion --preview
+   ```
+
+这些环境变量只影响当前 PowerShell 会话。每次打开新终端需重新设置，也可以将上述编译器目录加入用户 PATH。若通过 `CC` 指定其他编译器，也需确保它支持目标 Windows 架构。
+
+`build-windows.ps1` 会为本次构建启用 CGO，结束后恢复原值；找不到默认 `gcc` 时会直接提示安装步骤。直接使用 `go run` 时仍需自行设置 `$env:CGO_ENABLED = '1'`。`go test -tags ci ./...` 使用无图形测试驱动，不能替代原生 GUI 构建验证。构建依赖说明见 [Fyne 官方文档](https://docs.fyne.io/started/quick/)。
+
+### 界面预览与打包
 
 仅查看界面，避免自动采集、联网或保存应用配置：
 
