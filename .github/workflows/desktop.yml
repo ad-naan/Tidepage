@@ -49,7 +49,7 @@ jobs:
         run: go test -race ./internal/config ./internal/collector ./internal/localipc ./internal/protocol
       - name: Windows executable
         if: runner.os == 'Windows'
-        run: go build -trimpath -ldflags "-s -w -H=windowsgui" -o dist/TidepageCompanion.exe ./cmd/companion
+        run: ./build-windows.ps1
       - name: Unix executable
         if: runner.os != 'Windows'
         run: go build -trimpath -ldflags "-s -w" -o dist/tidepage-companion ./cmd/companion

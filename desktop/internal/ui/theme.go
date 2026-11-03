@@ -14,10 +14,10 @@ var fontOnce sync.Once
 var regularFont, semiboldFont fyne.Resource
 
 var ink = color.NRGBA{37, 62, 56, 255}
-var muted = color.NRGBA{114, 132, 121, 255}
+var muted = color.NRGBA{85, 109, 101, 255}
 var green = color.NRGBA{57, 117, 95, 255}
 var paper = color.NRGBA{253, 253, 249, 255}
-var surface = color.NRGBA{241, 245, 236, 255}
+var surface = color.NRGBA{234, 242, 235, 255}
 var border = color.NRGBA{224, 231, 221, 255}
 
 type tideTheme struct{}
@@ -30,8 +30,10 @@ func (t tideTheme) Color(name fyne.ThemeColorName, variant fyne.ThemeVariant) co
 		return ink
 	case theme.ColorNamePrimary, theme.ColorNameHyperlink, theme.ColorNameFocus:
 		return green
-	case theme.ColorNameButton, theme.ColorNameInputBackground:
-		return color.NRGBA{246, 248, 240, 255}
+	case theme.ColorNameButton:
+		return color.NRGBA{231, 239, 231, 255}
+	case theme.ColorNameInputBackground:
+		return paper
 	case theme.ColorNameDisabled, theme.ColorNamePlaceHolder:
 		return muted
 	case theme.ColorNameSeparator, theme.ColorNameInputBorder:
@@ -61,12 +63,16 @@ func (t tideTheme) Size(n fyne.ThemeSizeName) float32 {
 	switch n {
 	case theme.SizeNameText:
 		return 13
+	case theme.SizeNameInnerPadding:
+		return 5
+	case theme.SizeNameCaptionText:
+		return 12
 	case theme.SizeNameHeadingText:
-		return 24
+		return 20
 	case theme.SizeNameSubHeadingText:
 		return 18
 	case theme.SizeNamePadding:
-		return 8
+		return 5
 	case theme.SizeNameInputRadius, theme.SizeNameSelectionRadius:
 		return 7
 	}
@@ -74,3 +80,11 @@ func (t tideTheme) Size(n fyne.ThemeSizeName) float32 {
 }
 
 var appIcon = fyne.NewStaticResource("tidepage.svg", []byte(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#e1eadd"/><path d="M12 34c8 0 9 8 18 4s12-12 22-9M12 41c8 0 10 7 19 4s11-10 21-8" fill="none" stroke="#39755f" stroke-width="3" stroke-linecap="round"/></svg>`))
+
+// Static tide lines for the public-presence panel.
+var tideLines = fyne.NewStaticResource("tide-lines.svg", []byte(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 156 58" fill="none">
+<g stroke="#93b7a3" stroke-width="1.6" stroke-linecap="round">
+<path d="M2 34C31 35 37 9 65 12S102 47 152 20"/>
+<path d="M3 41C35 42 40 17 67 20S105 52 153 27"/>
+<path d="M4 48C37 49 43 25 69 28S108 57 154 34"/>
+</g></svg>`))

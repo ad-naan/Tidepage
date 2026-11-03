@@ -54,9 +54,7 @@ func Run(dir string, cfg config.Config, background bool) error {
 		if e != nil {
 			return
 		}
-		child = exec.Command(exe, "--ui")
-		child.Stdout = os.Stdout
-		child.Stderr = os.Stderr
+		child = windowCommand(exe)
 		if child.Start() != nil {
 			child = nil
 			return

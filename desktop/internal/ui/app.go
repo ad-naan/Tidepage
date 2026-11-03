@@ -40,6 +40,10 @@ type Options struct {
 	Config              config.Config
 	LoadError           bool
 }
+
+var windowSize = fyne.NewSize(640, 460)
+var minimumWindowSize = fyne.NewSize(560, 400)
+
 type application struct {
 	app                     fyne.App
 	win                     fyne.Window
@@ -56,6 +60,7 @@ type application struct {
 	content                 *fyne.Container
 	connection              *widget.Label
 	previewBox              *fyne.Container
+	publicStatus            *canvas.Text
 	musicBox                *fyne.Container
 	syncLabel, warning      *widget.Label
 	pause                   *widget.Button
@@ -79,9 +84,9 @@ func Run(options Options) {
 	_ = lang.AddTranslationsForLocale(translations, fyne.Locale("zh-CN"))
 	a.app.Settings().SetTheme(tideTheme{})
 	a.app.SetIcon(appIcon)
-	a.win = a.app.NewWindow(a.t.Text("app"))
+	a.win = companionWindow(a.app, a.t.Text("app"))
 	a.win.SetIcon(appIcon)
-	a.win.Resize(fyne.NewSize(920, 650))
+	a.win.Resize(windowSize)
 	a.win.SetPadded(false)
 	a.connection = widget.NewLabel(a.t.Text("disconnected"))
 	a.connection.Wrapping = fyne.TextWrapWord
@@ -98,9 +103,7 @@ func Run(options Options) {
 		}
 	})
 	a.content = container.NewStack()
-	minimum := canvas.NewRectangle(color.Transparent)
-	minimum.SetMinSize(fyne.NewSize(860, 600))
-	a.win.SetContent(container.NewStack(minimum, container.NewBorder(nil, nil, a.sidebar(), nil, pad(24, a.content))))
+	a.win.SetContent(a.shell())
 	a.win.SetCloseIntercept(func() { a.visible.Store(false); a.app.Quit() })
 	a.page(options.Page)
 	if options.Preview {
@@ -142,14 +145,14 @@ func (a *application) show() {
 	a.win.Show()
 	a.win.RequestFocus()
 }
-func (a *application) sidebar() fyne.CanvasObject {
+func (a *application) shell() fyne.CanvasObject {
 	brand := canvas.NewText(a.t.Text("brand"), ink)
-	brand.TextSize = 23
+	brand.TextSize = 16
 	brand.TextStyle = fyne.TextStyle{Bold: true}
 	logo := canvas.NewImageFromResource(appIcon)
-	logo.SetMinSize(fyne.NewSize(30, 30))
+	logo.SetMinSize(fyne.NewSize(22, 22))
 	logo.FillMode = canvas.ImageFillContain
-	nav := container.NewVBox(pad(10, container.NewVBox(container.NewHBox(logo, brand), small(a.t.Text("tagline")))), spacer(18))
+	nav := container.NewHBox()
 	a.nav = make(map[string]*widget.Button)
 	for _, item := range []struct {
 		key  string
@@ -162,10 +165,16 @@ func (a *application) sidebar() fyne.CanvasObject {
 		a.nav[key] = b
 		nav.Add(b)
 	}
-	foot := container.NewVBox(widget.NewSeparator(), a.connection, small(a.t.Text("version")))
-	bg := canvas.NewRectangle(color.NRGBA{243, 245, 238, 255})
-	bg.SetMinSize(fyne.NewSize(180, 0))
-	return container.NewStack(bg, container.NewPadded(container.NewBorder(nav, foot, nil, nil)))
+	brandArea := container.NewBorder(nil, nil, container.NewCenter(container.NewHBox(logo, brand)), nil)
+	bar, grip := windowControls(a, brandArea, nav)
+	top := container.NewStack(canvas.NewRectangle(surface), container.New(layout.NewCustomPaddedLayout(4, 4, 10, 6), bar))
+	version := small(a.t.Text("version"))
+	version.Wrapping = fyne.TextWrapOff
+	status := container.NewBorder(nil, nil, nil, container.NewHBox(version, grip), container.NewGridWithColumns(2, a.connection, a.syncLabel))
+	foot := container.NewVBox(widget.NewSeparator(), status)
+	minimum := canvas.NewRectangle(color.Transparent)
+	minimum.SetMinSize(minimumWindowSize)
+	return container.NewStack(minimum, container.NewBorder(top, foot, nil, nil, pad(10, a.content)))
 }
 func (a *application) page(key string) {
 	if key != "watch" && key != "settings" {
@@ -175,7 +184,7 @@ func (a *application) page(key string) {
 	for name, button := range a.nav {
 		button.Importance = widget.LowImportance
 		if name == key {
-			button.Importance = widget.MediumImportance
+			button.Importance = widget.HighImportance
 		}
 		button.Refresh()
 	}
@@ -193,15 +202,20 @@ func (a *application) page(key string) {
 	a.refresh()
 }
 func title(label, hint string) fyne.CanvasObject {
-	h := canvas.NewText(label, ink)
-	h.TextSize = 22
-	h.TextStyle = fyne.TextStyle{Bold: true}
+	h := heading(label)
+	h.SizeName = theme.SizeNameHeadingText
 	sub := small(hint)
-	return container.NewVBox(h, sub, spacer(12))
+	return container.NewVBox(h, sub)
+}
+func heading(text string) *widget.Label {
+	l := widget.NewLabelWithStyle(text, fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
+	l.Wrapping = fyne.TextWrapWord
+	return l
 }
 func small(text string) *widget.Label {
 	l := widget.NewLabel(text)
 	l.Importance = widget.LowImportance
+	l.SizeName = theme.SizeNameCaptionText
 	l.Wrapping = fyne.TextWrapWord
 	return l
 }
@@ -222,12 +236,26 @@ func card(content fyne.CanvasObject, accent bool) fyne.CanvasObject {
 		bg.FillColor = surface
 		bg.StrokeWidth = 0
 	}
-	return container.NewStack(bg, container.NewPadded(container.NewPadded(content)))
+	return container.NewStack(bg, pad(8, content))
 }
 func (a *application) overview() fyne.CanvasObject {
-	footer := container.NewVBox(widget.NewSeparator(), container.NewBorder(nil, nil, nil, a.pause, container.NewVBox(small(a.t.Text("privacy")), small(a.t.Text("privacyDetail")))), a.syncLabel, a.warning)
-	body := container.NewVBox(title(a.t.Text("overview"), a.t.Text("overviewHint")), card(container.NewVBox(small(a.t.Text("preview")), a.previewBox), true), spacer(10), widget.NewLabelWithStyle(a.t.Text("listening"), fyne.TextAlignLeading, fyne.TextStyle{Bold: true}), card(a.musicBox, false))
-	return container.NewPadded(container.NewBorder(nil, footer, nil, nil, container.NewVScroll(body)))
+	a.publicStatus = canvas.NewText("", paper)
+	a.publicStatus.TextSize = 21
+	a.publicStatus.TextStyle.Bold = true
+	caption := canvas.NewText(a.t.Text("preview"), surface)
+	caption.TextSize = 13
+	waves := canvas.NewImageFromResource(tideLines)
+	waves.FillMode = canvas.ImageFillContain
+	waves.SetMinSize(fyne.NewSize(102, 38))
+	band := canvas.NewRectangle(ink)
+	band.CornerRadius = 12
+	status := container.NewStack(band, pad(10, container.NewBorder(nil, nil, nil, waves, container.NewVBox(caption, a.publicStatus))))
+	activity := container.NewGridWithColumns(2,
+		card(container.NewVBox(heading(a.t.Text("using")), a.previewBox), false),
+		card(container.NewVBox(heading(a.t.Text("listening")), a.musicBox), false))
+	body := container.NewVBox(status, activity)
+	footer := container.NewVBox(container.NewBorder(nil, nil, nil, container.NewCenter(a.pause), container.NewVBox(heading(a.t.Text("privacy")), small(a.t.Text("privacyDetail")))), a.warning)
+	return container.NewBorder(title(a.t.Text("overview"), a.t.Text("overviewHint")), footer, nil, nil, container.NewVScroll(body))
 }
 func appImage(p protocol.App) fyne.CanvasObject {
 	var img *canvas.Image
@@ -247,6 +275,14 @@ func appImage(p protocol.App) fyne.CanvasObject {
 func (a *application) refresh() {
 	s := a.state
 	a.connection.SetText(a.t.Text(s.Connection))
+	if s.SyncedAt.IsZero() {
+		a.syncLabel.SetText(a.t.Text("notSynced"))
+	} else {
+		a.syncLabel.SetText(a.t.Text("lastSync") + "  " + s.SyncedAt.Local().Format("15:04:05"))
+	}
+	if a.activePage != "overview" {
+		return
+	}
 	a.pause.SetText(a.t.Text("pause"))
 	if s.Paused {
 		a.pause.SetText(a.t.Text("resume"))
@@ -257,34 +293,38 @@ func (a *application) refresh() {
 	} else if s.Connection != "connected" {
 		status = a.t.Text("offline")
 	}
-	a.previewBox.Objects = []fyne.CanvasObject{widget.NewLabelWithStyle(a.t.Text("author"), fyne.TextAlignLeading, fyne.TextStyle{Bold: true}), widget.NewLabel(status)}
+	a.publicStatus.Text = status
+	a.publicStatus.Refresh()
+	a.previewBox.Objects = nil
 	if len(s.Presence.Apps) == 0 {
 		a.previewBox.Add(small(a.t.Text("noApps")))
 	} else {
 		for _, p := range s.Presence.Apps {
-			a.previewBox.Add(container.NewBorder(nil, nil, appImage(p), nil, widget.NewLabel(p.Name)))
+			name := widget.NewLabel(p.Name)
+			name.Wrapping = fyne.TextWrapWord
+			a.previewBox.Add(container.NewBorder(nil, nil, appImage(p), nil, name))
 		}
 	}
 	a.previewBox.Refresh()
 	a.musicBox.Objects = nil
 	if track := s.Presence.Track; track != nil {
-		a.musicBox.Add(widget.NewLabelWithStyle(track.Title, fyne.TextAlignLeading, fyne.TextStyle{Bold: true}))
-		a.musicBox.Add(small(track.Artist + " · " + track.Player))
+		a.musicBox.Add(heading(track.Title))
+		detail := track.Artist
+		if detail != "" && track.Player != "" {
+			detail += " · "
+		}
+		a.musicBox.Add(small(detail + track.Player))
 	} else {
 		a.musicBox.Add(small(a.t.Text("noTrack")))
 	}
 	a.musicBox.Refresh()
-	if s.SyncedAt.IsZero() {
-		a.syncLabel.SetText(a.t.Text("notSynced"))
-	} else {
-		a.syncLabel.SetText(a.t.Text("lastSync") + "  " + s.SyncedAt.Local().Format("15:04:05"))
-	}
 	if s.Warning != "" {
 		a.warning.SetText(a.t.Text(s.Warning))
 		a.warning.Show()
 	} else {
 		a.warning.Hide()
 	}
+	a.content.Refresh()
 }
 func (a *application) watchPage() fyne.CanvasObject {
 	a.rules = container.NewVBox()
@@ -300,10 +340,9 @@ func (a *application) watchPage() fyne.CanvasObject {
 	a.icons.SetChecked(a.cfg.Icons)
 	save := widget.NewButton(a.t.Text("save"), func() { a.persist(false) })
 	save.Importance = widget.HighImportance
-	add.Importance = widget.HighImportance
-	header := container.NewVBox(container.NewBorder(nil, nil, nil, container.NewVBox(add, layout.NewSpacer()), title(a.t.Text("watch"), a.t.Text("watchHint"))), small(a.t.Text("priority")), spacer(12))
+	header := container.NewBorder(nil, nil, nil, container.NewCenter(add), title(a.t.Text("watch"), a.t.Text("priority")))
 	footer := container.NewVBox(widget.NewSeparator(), a.icons, small(a.t.Text("shareIconsHint")), container.NewBorder(nil, nil, nil, save, small(a.t.Text("unsaved"))))
-	return container.NewPadded(container.NewBorder(header, footer, nil, nil, container.NewVScroll(a.rules)))
+	return container.NewBorder(header, footer, nil, nil, container.NewVScroll(container.NewVBox(card(a.rules, false))))
 }
 func (a *application) renderRules() {
 	a.rules.Objects = nil
@@ -311,13 +350,13 @@ func (a *application) renderRules() {
 		a.iconCache = make(map[string]string)
 	}
 	if len(a.cfg.Rules) == 0 {
-		a.rules.Add(card(small(a.t.Text("emptyRules")), false))
+		a.rules.Add(small(a.t.Text("emptyRules")))
 	}
 	for i, r := range a.cfg.Rules {
 		index, rule := i, r
 		enabled := widget.NewCheck("", func(v bool) { a.cfg.Rules[index].Enabled = v })
 		enabled.SetChecked(rule.Enabled)
-		details := container.NewVBox(widget.NewLabelWithStyle(rule.Name, fyne.TextAlignLeading, fyne.TextStyle{Bold: true}), small(rule.Process))
+		details := container.NewVBox(heading(rule.Name), small(rule.Process))
 		icon := appImage(protocol.App{ID: rule.ID, Name: rule.Name, Icon: a.iconCache[rule.ID]})
 		if _, loaded := a.iconCache[rule.ID]; !loaded {
 			a.iconCache[rule.ID] = ""
@@ -344,25 +383,11 @@ func (a *application) renderRules() {
 				})
 			}()
 		}
-		edit := widget.NewButtonWithIcon("", theme.DocumentCreateIcon(), func() { a.ruleDialog(index) })
-		edit.SetText(a.t.Text("edit"))
-		up := widget.NewButtonWithIcon("", theme.MoveUpIcon(), func() {
-			a.cfg.Rules[index-1], a.cfg.Rules[index] = a.cfg.Rules[index], a.cfg.Rules[index-1]
+		move := func(to int) {
+			a.cfg.Rules[to], a.cfg.Rules[index] = a.cfg.Rules[index], a.cfg.Rules[to]
 			a.renderRules()
-		})
-		up.SetText(a.t.Text("up"))
-		if index == 0 {
-			up.Disable()
 		}
-		down := widget.NewButtonWithIcon("", theme.MoveDownIcon(), func() {
-			a.cfg.Rules[index+1], a.cfg.Rules[index] = a.cfg.Rules[index], a.cfg.Rules[index+1]
-			a.renderRules()
-		})
-		down.SetText(a.t.Text("down"))
-		if index == len(a.cfg.Rules)-1 {
-			down.Disable()
-		}
-		remove := widget.NewButtonWithIcon("", theme.DeleteIcon(), func() {
+		remove := fyne.NewMenuItem(a.t.Text("remove"), func() {
 			dialog.ShowConfirm(a.t.Text("remove"), a.t.Text("confirmRemove"), func(ok bool) {
 				if ok {
 					a.cfg.Rules = append(a.cfg.Rules[:index], a.cfg.Rules[index+1:]...)
@@ -370,24 +395,33 @@ func (a *application) renderRules() {
 				}
 			}, a.win)
 		})
-		remove.SetText(a.t.Text("remove"))
+		edit := widget.NewButton(a.t.Text("edit"), func() { a.ruleDialog(index) })
+		edit.Importance = widget.LowImportance
 		more := widget.NewButtonWithIcon("", theme.MoreHorizontalIcon(), nil)
 		more.Importance = widget.LowImportance
 		more.OnTapped = func() {
-			menu := fyne.NewMenu("", fyne.NewMenuItem(a.t.Text("edit"), func() { a.ruleDialog(index) }))
+			menu := fyne.NewMenu("")
 			if index > 0 {
-				menu.Items = append(menu.Items, fyne.NewMenuItem(a.t.Text("up"), up.OnTapped))
+				menu.Items = append(menu.Items, fyne.NewMenuItem(a.t.Text("up"), func() { move(index - 1) }))
 			}
 			if index < len(a.cfg.Rules)-1 {
-				menu.Items = append(menu.Items, fyne.NewMenuItem(a.t.Text("down"), down.OnTapped))
+				menu.Items = append(menu.Items, fyne.NewMenuItem(a.t.Text("down"), func() { move(index + 1) }))
 			}
-			menu.Items = append(menu.Items, fyne.NewMenuItemSeparator(), fyne.NewMenuItem(a.t.Text("remove"), remove.OnTapped))
+			if len(menu.Items) > 0 {
+				menu.Items = append(menu.Items, fyne.NewMenuItemSeparator())
+			}
+			menu.Items = append(menu.Items, remove)
 			widget.ShowPopUpMenuAtPosition(menu, a.win.Canvas(), fyne.CurrentApp().Driver().AbsolutePositionForObject(more).Add(fyne.NewPos(0, more.Size().Height)))
 		}
-		a.rules.Add(pad(8, container.NewBorder(nil, nil, container.NewHBox(enabled, icon), more, details)))
-		a.rules.Add(widget.NewSeparator())
+		if index > 0 {
+			a.rules.Add(widget.NewSeparator())
+		}
+		a.rules.Add(container.NewBorder(nil, nil, container.NewHBox(enabled, icon), container.NewHBox(edit, more), details))
 	}
 	a.rules.Refresh()
+	if a.activePage == "watch" {
+		a.content.Refresh()
+	}
 }
 func (a *application) ruleDialog(index int) {
 	rule := config.Rule{Enabled: true}
@@ -536,7 +570,7 @@ func (a *application) ruleDialog(index int) {
 	if index >= 0 {
 		heading = a.t.Text("edit")
 	}
-	modal := dialog.NewCustomConfirm(heading, a.t.Text("save"), a.t.Text("cancel"), pad(8, form), func(ok bool) {
+	modal := dialog.NewCustomConfirm(heading, a.t.Text("save"), a.t.Text("cancel"), container.NewVScroll(pad(6, form)), func(ok bool) {
 		active = false
 		if currentCancel != nil {
 			currentCancel()
@@ -568,7 +602,8 @@ func (a *application) ruleDialog(index int) {
 		}
 		a.renderRules()
 	}, a.win)
-	modal.Resize(fyne.NewSize(570, 510))
+	size := a.win.Canvas().Size()
+	modal.Resize(fyne.NewSize(min(520, size.Width-24), min(490, size.Height-24)))
 	modal.Show()
 	if rule.Process != "" || rule.Icon != "" {
 		refreshIcon()
@@ -592,8 +627,17 @@ func (a *application) settingsPage() fyne.CanvasObject {
 	a.interval.SetSelected(strconv.Itoa(a.cfg.Interval))
 	a.save = widget.NewButton(a.t.Text("connect"), func() { a.persist(true) })
 	a.save.Importance = widget.HighImportance
-	body := container.NewVBox(title(a.t.Text("settings"), a.t.Text("settingsHint")), widget.NewForm(widget.NewFormItem(a.t.Text("endpoint"), a.endpoint)), small(a.t.Text("endpointHint")), widget.NewForm(widget.NewFormItem(a.t.Text("token"), a.tokenEntry)), small(a.t.Text("tokenHint")), widget.NewSeparator(), a.music, small(a.t.Text("musicHint")), a.autostart, small(a.t.Text("autostartHint")), widget.NewForm(widget.NewFormItem(a.t.Text("interval"), a.interval), widget.NewFormItem(a.t.Text("locale"), a.locale)), small(a.t.Text("intervalHint")), small(a.t.Text("languageRestart")))
-	return container.NewPadded(container.NewBorder(nil, container.NewVBox(widget.NewSeparator(), container.NewHBox(layout.NewSpacer(), a.save)), nil, nil, container.NewVScroll(body)))
+	field := func(label, hint string, control fyne.CanvasObject) *widget.FormItem {
+		return widget.NewFormItem(a.t.Text(label), container.NewVBox(control, small(a.t.Text(hint))))
+	}
+	connection := widget.NewForm(field("endpoint", "endpointHint", a.endpoint), field("token", "tokenHint", a.tokenEntry))
+	preferences := widget.NewForm(field("interval", "intervalHint", container.NewBorder(nil, nil, nil, widget.NewLabel(a.t.Text("seconds")), a.interval)),
+		field("locale", "languageRestart", a.locale))
+	body := container.NewVBox(card(container.NewVBox(heading(a.t.Text("siteConnection")), connection), false),
+		card(container.NewVBox(heading(a.t.Text("desktopPreferences")), a.music, small(a.t.Text("musicHint")),
+			a.autostart, small(a.t.Text("autostartHint")), preferences), false))
+	footer := container.NewVBox(widget.NewSeparator(), container.NewHBox(layout.NewSpacer(), a.save))
+	return container.NewBorder(title(a.t.Text("settings"), a.t.Text("settingsHint")), footer, nil, nil, container.NewVScroll(body))
 }
 func (a *application) persist(connection bool) {
 	if a.preview || a.saving {

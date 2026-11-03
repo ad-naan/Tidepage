@@ -11,6 +11,8 @@ Go + Fyne 原生桌面助手，支持 Windows、macOS、Linux。没有 Electron�
 3. 在“软件监听”添加进程名或完整可执行文件路径，填写你希望公开的名称，保存。
 4. 按列表顺序展示正在运行的软件；软件图标和歌曲信息可以分别关闭。暂停分享会清空公开软件与歌曲。
 
+Windows 主窗默认 640 × 460（逻辑像素）。拖动顶栏左侧的品牌区可以移动窗口，拖动右下角可以调整大小。顶栏右侧可最小化、最大化或关闭窗口；关闭后可从托盘重新打开。
+
 令牌使用 Windows Credential Manager、macOS Keychain 或 Linux Secret Service 保存，并与服务地址绑定。配置文件不含令牌。Linux 需要可用且已解锁的密钥环；失败时不降级为明文文件。
 
 软件图标在本机转成 48 × 48 PNG，自动图标不可用时可以选择自定义 PNG。不发送完整进程列表、窗口标题、执行路径或文件名。
@@ -50,10 +52,10 @@ go run ./cmd/companion --preview --page watch
 
 手动选择本地文件或进程时，图标预览会读取你选择的软件；预览不会向站点发送数据。
 
-构建 Windows：
+Windows 日常使用请在 PowerShell 构建一次，再双击生成的 `dist/TidepageCompanion.exe`。构建脚本与 CI 共用同一入口，会校验 exe 的 Windows GUI 子系统。替换旧版本前先从托盘退出潮汐。
 
-```sh
-go build -trimpath -ldflags "-s -w -H=windowsgui" -o dist/TidepageCompanion.exe ./cmd/companion
+```powershell
+.\build-windows.ps1
 ```
 
 构建 macOS / Linux：

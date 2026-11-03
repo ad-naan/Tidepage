@@ -2,11 +2,9 @@ package ui
 
 import (
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/test"
 	"fyne.io/fyne/v2/widget"
-	"image/color"
 	"image/png"
 	"os"
 	"path/filepath"
@@ -27,6 +25,7 @@ func TestPreviewLayoutAndArtifacts(t *testing.T) {
 	a := &application{app: app, cfg: cfg, preview: true, t: i18n.Load("zh-CN"), iconCache: map[string]string{"editor": "", "design": ""}}
 	a.win = app.NewWindow("Preview")
 	defer a.win.Close()
+	a.win.SetPadded(false)
 	a.connection = widget.NewLabel("")
 	a.previewBox = container.NewVBox()
 	a.musicBox = container.NewVBox()
@@ -35,18 +34,33 @@ func TestPreviewLayoutAndArtifacts(t *testing.T) {
 	a.pause = widget.NewButton(a.t.Text("pause"), nil)
 	a.content = container.NewStack()
 	a.state = companion.State{Connection: "connected", SyncedAt: time.Now(), Presence: protocol.Presence{Status: "online", Apps: []protocol.App{{ID: "editor", Name: "Visual Studio Code"}, {ID: "design", Name: "Figma"}}, Track: &protocol.Track{Title: "Sunset Lover", Artist: "Petit Biscuit", Player: "Spotify"}}}
-	minimum := canvas.NewRectangle(color.Transparent)
-	minimum.SetMinSize(fyne.NewSize(860, 600))
-	a.win.SetContent(container.NewStack(minimum, container.NewBorder(nil, nil, a.sidebar(), nil, pad(24, a.content))))
-	a.win.Resize(fyne.NewSize(920, 650))
+	a.win.SetContent(a.shell())
+	a.win.Resize(windowSize)
 	a.win.Show()
 	for _, page := range []string{"overview", "watch", "settings"} {
-		a.page(page)
+		test.Tap(a.nav[page])
+		if a.activePage != page {
+			t.Fatalf("navigation did not open %s", page)
+		}
 		capture(t, a, page)
-		if a.win.Content().MinSize().Width < 860 {
-			t.Fatal("window shrinks below the designed minimum")
+		if size := a.win.Content().MinSize(); size.Width > minimumWindowSize.Width || size.Height > minimumWindowSize.Height {
+			t.Fatalf("%s exceeds compact minimum: %v", page, size)
 		}
 	}
+	// Live data arrives after the overview is mounted. Both columns must
+	// contain their new rows without painting into the footer or one another.
+	a.win.Resize(minimumWindowSize)
+	state := a.state
+	a.state = companion.State{}
+	test.Tap(a.nav["overview"])
+	a.state = state
+	a.refresh()
+	for _, column := range []*fyne.Container{a.previewBox, a.musicBox} {
+		if len(column.Objects) != 2 || column.Size().Height < column.MinSize().Height {
+			t.Fatalf("live rows overflow at minimum window size: height %v, need %v", column.Size().Height, column.MinSize().Height)
+		}
+	}
+	a.win.Resize(windowSize)
 	a.page("watch")
 	a.ruleDialog(-1)
 	capture(t, a, "add-application")
