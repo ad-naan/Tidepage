@@ -1,8 +1,8 @@
 "use client";
 import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import { useTranslations } from "next-intl";
-import { Copy, Heart } from "lucide-react";
-import { useLocalState } from "@/shared/hooks/useLocalState";
+import { Copy } from "lucide-react";
+import { ContentEngagementActions } from "@/modules/engagement/ui/EngagementActions";
 import { Button } from "@/shared/ui/button/Button";
 
 export function ArticleActions({
@@ -13,7 +13,6 @@ export function ArticleActions({
   title: string;
 }) {
   const t = useTranslations("articles");
-  const [saved, setSaved] = useLocalState<string[]>("adnaan-articles", []);
   const { notify } = useNotice();
   const feedback = useTranslations("feedback");
   async function share() {
@@ -31,25 +30,7 @@ export function ArticleActions({
   }
   return (
     <div className="article-actions">
-      <Button
-        className={`button-outline ${saved.includes(slug) ? "liked" : ""}`}
-        onClick={() => {
-          const removing = saved.includes(slug);
-          setSaved((value) =>
-            removing ? value.filter((item) => item !== slug) : [...value, slug],
-          );
-          notify({
-            title: feedback(removing ? "removed" : "saved"),
-            tone: "success",
-          });
-        }}
-      >
-        <Heart
-          size={16}
-          fill={saved.includes(slug) ? "currentColor" : "none"}
-        />
-        {saved.includes(slug) ? t("saved") : t("save")}
-      </Button>
+      <ContentEngagementActions target={{ type: "article", id: slug }} />
       <Button className="button-outline" onClick={share}>
         <Copy size={15} />
         {t("share")}

@@ -1,13 +1,33 @@
 import "server-only";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { getDb, type Database } from "@/server/db/client";
-import { notFoundError } from "@/server/http/errors";
+import { notFoundError, validationError } from "@/server/http/errors";
 import { mediaAssetsTable as assets } from "@/modules/media/infrastructure/schema";
 import {
   saveImage,
   readImage,
 } from "@/modules/media/infrastructure/local-storage";
 import { assetSchema } from "@/modules/media/domain/assets";
+
+export async function requireOwnedAssets(
+  ownerId: string,
+  ids: string[],
+  db: Database = getDb(),
+) {
+  if (!ids.length) return;
+  const rows = await db
+    .select({ id: assets.id })
+    .from(assets)
+    .where(
+      and(
+        eq(assets.ownerId, ownerId),
+        eq(assets.archived, false),
+        inArray(assets.id, ids),
+      ),
+    );
+  if (new Set(rows.map((row) => row.id)).size !== new Set(ids).size)
+    throw validationError();
+}
 
 export async function uploadImage(
   ownerId: string,

@@ -10,6 +10,7 @@ import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
 import { profile } from "@/shared/config/profile";
 import { getTranslations } from "next-intl/server";
 import { Discussion } from "@/modules/engagement/ui/Discussion";
+import { ContentEngagementActions } from "@/modules/engagement/ui/EngagementActions";
 
 export async function AboutView() {
   const t = await getTranslations("about");
@@ -71,6 +72,7 @@ export async function AboutView() {
           </p>
         </aside>
       </div>
+      <ContentEngagementActions target={{ type: "page", id: "about" }} />
       <Discussion target={{ type: "page", id: "about" }} />
       <div className="memoir-next">
         <PencilLine className="memoir-shore" />

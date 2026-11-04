@@ -43,6 +43,13 @@
       "when": 1793798596705,
       "tag": "0005_misty_mandrill",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793800315943,
+      "tag": "0006_salty_lockjaw",
+      "breakpoints": true
     }
   ]
 }

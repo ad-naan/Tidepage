@@ -23,6 +23,8 @@ import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import styles from "./admin.module.css";
 import type { Collection } from "@/modules/content/domain/managed-collections";
 import { managedItemSchema as itemSchema } from "@/modules/content/domain/managed-collections";
+import { NoteImagesEditor } from "./NoteImagesEditor";
+import { apiSend } from "@/shared/http/client";
 const fields = {
   notes: ["text", "mood", "tag"],
   projects: ["name", "subtitle", "description", "status", "stack"],
@@ -43,6 +45,7 @@ export function ContentCollectionView({ kind }: { kind: Collection }) {
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const [media, setMedia] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [view, setView] = useState("active");
   const [deleting, setDeleting] = useState<Item | null>(null);
   async function changeStatus(item: Item, remove: boolean) {
@@ -118,6 +121,23 @@ export function ContentCollectionView({ kind }: { kind: Collection }) {
       setBusy(false);
     }
   }
+  async function publishNote() {
+    if (!value || dirty || uploading) return;
+    setBusy(true);
+    try {
+      await apiSend("/api/v1/notes", "POST", {
+        id: value.id,
+        locale,
+        revision: value.revision,
+      });
+      notify({ title: t("noteImages.published"), tone: "success" });
+      setError("");
+    } catch {
+      setError(t("noteImages.publishFailed"));
+    } finally {
+      setBusy(false);
+    }
+  }
   const update = (patch: Partial<Item>) => {
     if (value) {
       setValue({ ...value, ...patch });
@@ -147,6 +167,7 @@ export function ContentCollectionView({ kind }: { kind: Collection }) {
               sketch: "boat",
               color: "sand",
               assetId: "",
+              images: {},
               translations: Object.fromEntries(
                 locales.map((locale) => [locale, {}]),
               ),
@@ -231,6 +252,7 @@ export function ContentCollectionView({ kind }: { kind: Collection }) {
             <div className={styles.actions}>
               <Button
                 variant="quiet"
+                disabled={uploading || busy}
                 onClick={() => {
                   setValue(null);
                   setDirty(false);
@@ -238,7 +260,12 @@ export function ContentCollectionView({ kind }: { kind: Collection }) {
               >
                 {t("collection.discard")}
               </Button>
-              <Button variant="primary" busy={busy} onClick={save}>
+              <Button
+                variant="primary"
+                busy={busy}
+                disabled={uploading}
+                onClick={save}
+              >
                 {t("editor.save")}
               </Button>
             </div>
@@ -252,6 +279,7 @@ export function ContentCollectionView({ kind }: { kind: Collection }) {
                 label: localeRegistry[value].name,
               }))}
               onValueChange={setLocale}
+              disabled={uploading}
             />
             {fields[kind].map((key) => (
               <Field
@@ -293,6 +321,16 @@ export function ContentCollectionView({ kind }: { kind: Collection }) {
                 )}
               </Field>
             ))}
+            {kind === "notes" && (
+              <NoteImagesEditor
+                key={value.id + locale}
+                images={value.images[locale] ?? []}
+                onChange={(images) =>
+                  update({ images: { ...value.images, [locale]: images } })
+                }
+                onBusyChange={setUploading}
+              />
+            )}
             <div className={styles.row}>
               <Field id="collection-date" label={labels.publishedOn}>
                 <DatePicker
@@ -361,10 +399,16 @@ export function ContentCollectionView({ kind }: { kind: Collection }) {
               </>
             )}
             <div className={styles.actions}>
-              <Button variant="primary" busy={busy} onClick={save}>
+              <Button
+                variant="primary"
+                busy={busy}
+                disabled={uploading}
+                onClick={save}
+              >
                 {t("editor.save")}
               </Button>
               <Button
+                disabled={uploading || busy}
                 onClick={() => {
                   setValue(null);
                   setDirty(false);
@@ -373,7 +417,21 @@ export function ContentCollectionView({ kind }: { kind: Collection }) {
                 {t("collection.discard")}
               </Button>
             </div>
-            <p className={styles.muted}>{t("editor.publishUnavailable")}</p>
+            {kind === "notes" ? (
+              <>
+                <Button
+                  variant="primary"
+                  busy={busy}
+                  disabled={dirty || uploading || !value.revision}
+                  onClick={() => void publishNote()}
+                >
+                  {t("noteImages.publish")}
+                </Button>
+                <p className={styles.muted}>{t("noteImages.publishHelp")}</p>
+              </>
+            ) : (
+              <p className={styles.muted}>{t("editor.publishUnavailable")}</p>
+            )}
           </div>
         </section>
       )}

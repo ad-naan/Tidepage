@@ -4,6 +4,7 @@ import type { Locale } from "@/shared/i18n/config";
 import { articleBlockSchema } from "./blocks";
 import { editorDocumentSchema } from "./editor-document";
 import { categorySchema, sketchSchema } from "./taxonomy";
+import type { NoteImage } from "./note-images";
 
 export { categorySchema, sketchSchema } from "./taxonomy";
 export const slugSchema = z
@@ -34,6 +35,7 @@ export type Category = z.infer<typeof categorySchema>;
 export type Article = z.infer<typeof articleSchema>;
 export type ArticleSummary = Omit<Article, "sections" | "body">;
 export type Note = {
+  images: NoteImage[];
   body?: Article["body"];
   locale: Locale;
   id: string;

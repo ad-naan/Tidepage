@@ -8,6 +8,7 @@ import {
   check,
   foreignKey,
   unique,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 import { usersTable } from "@/modules/identity/server/schema";
 import type { DiscussionTarget } from "@/modules/engagement/domain/discussion";
@@ -60,6 +61,44 @@ export const commentsTable = pgTable(
     check(
       "comments_body_valid",
       sql`char_length(trim(${table.body})) between 1 and 2000`,
+    ),
+  ],
+);
+
+export const interactionsTable = pgTable(
+  "content_interactions",
+  {
+    targetType: text("target_type").$type<DiscussionTarget["type"]>().notNull(),
+    targetId: text("target_id").notNull(),
+    locale: text("locale").$type<Locale>().notNull(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => usersTable.id, { onDelete: "cascade" }),
+    kind: text("kind").$type<"like" | "save">().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    primaryKey({
+      columns: [
+        table.targetType,
+        table.targetId,
+        table.locale,
+        table.userId,
+        table.kind,
+      ],
+    }),
+    index("interactions_content_idx").on(
+      table.targetType,
+      table.locale,
+      table.targetId,
+    ),
+    index("interactions_user_idx").on(table.userId, table.kind),
+    check("interactions_kind_valid", sql`${table.kind} in ('like', 'save')`),
+    check(
+      "interactions_target_valid",
+      sql`${table.targetType} in ('article', 'note', 'project', 'page')`,
     ),
   ],
 );

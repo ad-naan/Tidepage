@@ -1,7 +1,7 @@
 "use client";
 import { useRef } from "react";
 import { useTranslations } from "next-intl";
-import { Bookmark, Heart, MessageCircle } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import type { Note } from "@/modules/content/domain/models";
 import { profile } from "@/shared/config/profile";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
@@ -9,26 +9,18 @@ import { Button } from "@/shared/ui/button/Button";
 import { Discussion } from "@/modules/engagement/ui/Discussion";
 import { RichText } from "@/modules/content/ui/rich-text/RichText";
 import { NoteGallery } from "./NoteGallery";
-import { notePresentation } from "./note-presentation";
+import { EngagementActions } from "@/modules/engagement/ui/EngagementActions";
 import styles from "./NoteReader.module.css";
 
 export function NoteReader({
   note,
-  saved,
-  liked,
-  onSave,
-  onLike,
   onClose,
 }: {
   note: Note;
-  saved: boolean;
-  liked: boolean;
-  onSave: () => void;
-  onLike: () => void;
   onClose: () => void;
 }) {
   const t = useTranslations("notes");
-  const { images, body } = notePresentation(note);
+  const { images, body } = note;
   const comments = useRef<HTMLDivElement>(null);
   return (
     <Dialog
@@ -69,22 +61,7 @@ export function NoteReader({
           </div>
           <footer className={styles.footer}>
             <div className={styles.actions}>
-              <Button
-                aria-pressed={liked}
-                onClick={onLike}
-                className={styles.action}
-              >
-                <Heart size={19} fill={liked ? "currentColor" : "none"} />
-                {t(liked ? "reader.liked" : "reader.like")}
-              </Button>
-              <Button
-                aria-pressed={saved}
-                onClick={onSave}
-                className={styles.action}
-              >
-                <Bookmark size={19} fill={saved ? "currentColor" : "none"} />
-                {t(saved ? "savedLabel" : "reader.save")}
-              </Button>
+              <EngagementActions target={{ type: "note", id: note.id }} />
               <Button
                 className={styles.action}
                 onClick={() => {
@@ -101,7 +78,6 @@ export function NoteReader({
                 {t("reader.comment")}
               </Button>
             </div>
-            <p>{t("reader.localActions")}</p>
           </footer>
         </div>
       </div>

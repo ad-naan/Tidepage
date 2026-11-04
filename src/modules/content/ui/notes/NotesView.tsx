@@ -8,36 +8,41 @@ import {
   SketchLabel,
 } from "@/shared/ui/drawing/CoastalMarks";
 import { HanddrawnMark } from "@/shared/ui/drawing/HanddrawnMark";
-import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import { ContentHeading } from "@/modules/content/ui/layout/ContentHeading";
 import type { Note } from "@/modules/content/domain/models";
-import { useLocalState } from "@/shared/hooks/useLocalState";
 import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
-import { Button, IconButton } from "@/shared/ui/button/Button";
+import { Button } from "@/shared/ui/button/Button";
 import { NoteReader } from "./NoteReader";
-import { notePresentation } from "./note-presentation";
+import {
+  EngagementProvider,
+  useEngagement,
+} from "@/modules/engagement/ui/EngagementProvider";
+import {
+  EngagementStatus,
+  InteractionButton,
+} from "@/modules/engagement/ui/EngagementActions";
+import { targetKey } from "@/modules/engagement/domain/target";
+import { useIdentity } from "@/modules/identity/ui/IdentityProvider";
 import styles from "./NotesView.module.css";
 
 export function NotesView({ notes }: { notes: Note[] }) {
+  return (
+    <EngagementProvider
+      targets={notes.map((note) => ({ type: "note", id: note.id }))}
+    >
+      <NotesContent notes={notes} />
+    </EngagementProvider>
+  );
+}
+function NotesContent({ notes }: { notes: Note[] }) {
   const t = useTranslations("notes");
-  const feedback = useTranslations("feedback");
-  const { notify } = useNotice();
-  const [saved, setSaved] = useLocalState<string[]>("adnaan-notes", []);
-  const [liked, setLiked] = useLocalState<string[]>("adnaan-note-likes", []);
+  const { states, loading, error } = useEngagement();
+  const { principal, openLogin } = useIdentity();
   const [onlySaved, setOnlySaved] = useState(false);
   const [selected, setSelected] = useState<Note | null>(null);
-  const visible = notes.filter((note) => !onlySaved || saved.includes(note.id));
-  function toggleSave(id: string) {
-    notify({
-      title: saved.includes(id) ? feedback("removed") : t("savedLabel"),
-      tone: "success",
-    });
-    setSaved((previous) =>
-      previous.includes(id)
-        ? previous.filter((value) => value !== id)
-        : [...previous, id],
-    );
-  }
+  const isSaved = (id: string) =>
+    states[targetKey({ type: "note", id })]?.saved;
+  const visible = notes.filter((note) => !onlySaved || isSaved(note.id));
   return (
     <div className={`inner-page ${styles.notes}`}>
       <ContentHeading
@@ -49,22 +54,32 @@ export function NotesView({ notes }: { notes: Note[] }) {
         <SketchLabel kind="leaf">{t("year")}</SketchLabel>
         <Button
           className={styles.filter}
-          onClick={() => setOnlySaved((value) => !value)}
+          disabled={loading || error}
+          onClick={() => {
+            if (!principal) {
+              openLogin();
+              return;
+            }
+            setOnlySaved((value) => !value);
+          }}
           aria-pressed={onlySaved}
         >
           <Bookmark size={15} />
           {onlySaved
             ? t("all")
-            : t("saved", {
-                count: notes.filter((note) => saved.includes(note.id)).length,
-              })}
+            : loading || error
+              ? t("savedFilter")
+              : t("saved", {
+                  count: notes.filter((note) => isSaved(note.id)).length,
+                })}
           {onlySaved && <HanddrawnMark className={styles.filterMark} />}
         </Button>
         <PencilLine className={styles.shore} />
       </div>
+      <EngagementStatus />
       <div className={styles.grid}>
         {visible.map((note) => {
-          const { images } = notePresentation(note);
+          const images = note.images;
           return (
             <article className={styles.card} key={note.id}>
               <PencilFrame kind="note" />
@@ -83,7 +98,7 @@ export function NotesView({ notes }: { notes: Note[] }) {
                 >
                   {images[0] ? (
                     <img
-                      src={images[0].src}
+                      src={images[0].assetId}
                       alt={images[0].alt}
                       loading="lazy"
                     />
@@ -120,23 +135,17 @@ export function NotesView({ notes }: { notes: Note[] }) {
               </Button>
               <div className={styles.cardFooter}>
                 <span>{note.tag ? `#${note.tag}` : t("reader.aMoment")}</span>
-                <IconButton
-                  aria-label={saved.includes(note.id) ? t("unsave") : t("save")}
-                  aria-pressed={saved.includes(note.id)}
-                  onClick={() => toggleSave(note.id)}
-                  className={styles.save}
-                >
-                  <Bookmark
-                    size={17}
-                    fill={saved.includes(note.id) ? "currentColor" : "none"}
-                  />
-                </IconButton>
+                <InteractionButton
+                  target={{ type: "note", id: note.id }}
+                  kind="save"
+                  iconOnly
+                />
               </div>
             </article>
           );
         })}
       </div>
-      {!visible.length && (
+      {!visible.length && (!onlySaved || (!loading && !error)) && (
         <div className={styles.empty}>
           <Bookmark size={28} />
           <p>{t(onlySaved ? "empty" : "noNotes")}</p>
@@ -154,16 +163,6 @@ export function NotesView({ notes }: { notes: Note[] }) {
         <NoteReader
           key={selected.id}
           note={selected}
-          saved={saved.includes(selected.id)}
-          liked={liked.includes(selected.id)}
-          onSave={() => toggleSave(selected.id)}
-          onLike={() =>
-            setLiked((previous) =>
-              previous.includes(selected.id)
-                ? previous.filter((id) => id !== selected.id)
-                : [...previous, selected.id],
-            )
-          }
           onClose={() => setSelected(null)}
         />
       )}

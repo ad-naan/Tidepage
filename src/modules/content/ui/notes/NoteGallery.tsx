@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
 import type { Note } from "@/modules/content/domain/models";
-import type { NoteImage } from "./note-presentation";
+import type { NoteImage } from "@/modules/content/domain/note-images";
 import { Button, IconButton } from "@/shared/ui/button/Button";
 import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
 import styles from "./NoteGallery.module.css";
@@ -69,14 +69,17 @@ export function NoteGallery({
         }}
       >
         {image ? (
-          failed[image.src] ? (
+          failed[image.assetId] ? (
             <div className={styles.fallback} role="status">
               <ImageOff size={28} aria-hidden />
               <p>{t("imageUnavailable")}</p>
               <Button
                 variant="quiet"
                 onClick={() =>
-                  setFailed((previous) => ({ ...previous, [image.src]: false }))
+                  setFailed((previous) => ({
+                    ...previous,
+                    [image.assetId]: false,
+                  }))
                 }
               >
                 {t("retry")}
@@ -85,13 +88,16 @@ export function NoteGallery({
           ) : (
             <img
               className={styles.photo}
-              src={image.src}
+              src={image.assetId}
               alt={
                 image.alt ||
                 t("photoPosition", { index: index + 1, total: images.length })
               }
               onError={() =>
-                setFailed((previous) => ({ ...previous, [image.src]: true }))
+                setFailed((previous) => ({
+                  ...previous,
+                  [image.assetId]: true,
+                }))
               }
             />
           )
@@ -134,7 +140,7 @@ export function NoteGallery({
         <div className={styles.thumbnails} aria-label={t("choosePhoto")}>
           {images.map((photo, i) => (
             <Button
-              key={`${photo.src}-${i}`}
+              key={`${photo.assetId}-${i}`}
               className={styles.thumbnail}
               aria-label={t("photoPosition", {
                 index: i + 1,
@@ -144,7 +150,7 @@ export function NoteGallery({
               onClick={() => setIndex(i)}
               pressEffect={false}
             >
-              <img src={photo.src} alt="" loading="lazy" />
+              <img src={photo.assetId} alt="" loading="lazy" />
             </Button>
           ))}
         </div>

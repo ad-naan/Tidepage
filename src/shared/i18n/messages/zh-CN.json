@@ -353,6 +353,7 @@
     "year": "生活切片",
     "all": "查看所有手记",
     "saved": "收藏的片段 ({count})",
+    "savedFilter": "收藏的片段",
     "save": "收藏手记",
     "unsave": "取消收藏手记",
     "savedLabel": "已收藏",
@@ -375,8 +376,7 @@
       "like": "喜欢",
       "liked": "已喜欢",
       "save": "收藏",
-      "comment": "评论",
-      "localActions": "喜欢与收藏会保存在当前浏览器。"
+      "comment": "评论"
     },
     "end": "— 记住这一刻，然后继续生活。—",
     "replies": {
@@ -388,6 +388,18 @@
       "submit": "发表手记回复",
       "unavailable": "回应服务尚未接入。"
     }
+  },
+  "engagement": {
+    "like": "喜欢",
+    "liked": "已喜欢",
+    "unliked": "已取消喜欢",
+    "save": "收藏",
+    "saved": "已收藏",
+    "unsaved": "已取消收藏",
+    "loadFailed": "互动状态暂时无法读取。",
+    "retry": "重试",
+    "sessionExpired": "登录已过期，请重新登录。",
+    "changeFailed": "操作未成功，请稍后重试。"
   },
   "comments": {
     "title": "评论",
@@ -976,6 +988,29 @@
         "stopped": "已停止，可审阅已生成的片段",
         "error": "生成中断"
       }
+    },
+    "noteImages": {
+      "title": "手记图片",
+      "help": "独立上传图片，与正文分别保存。第一张作为封面，按排列顺序切换，最多 20 张。",
+      "upload": "上传手记图片",
+      "library": "从媒体库选择",
+      "progress": "图片上传进度",
+      "cancel": "取消上传",
+      "limit": "每篇手记最多添加 20 张图片。",
+      "failed": "部分图片上传失败，已上传的图片已保留，请重试其余图片。",
+      "empty": "添加想留下的画面，也可以只写文字。",
+      "cover": "第 {index} 张 · 封面",
+      "position": "第 {index} 张",
+      "alt": "图片描述",
+      "altHelp": "发布前请描述画面，方便使用读屏的访客理解。",
+      "caption": "图片说明（选填）",
+      "moveUp": "将第 {index} 张图片前移",
+      "moveDown": "将第 {index} 张图片后移",
+      "remove": "从手记移除第 {index} 张图片",
+      "publish": "发布当前语言手记",
+      "publishHelp": "先保存草稿，补全正文、内容日期及图片描述，再发布到网站。",
+      "published": "手记已发布",
+      "publishFailed": "发布未成功，请检查内容、日期及图片描述，并确认草稿已保存。"
     },
     "collection": {
       "description": "按内容语言分别整理字段；公共属性只维护一份。保存为站点工作副本。",

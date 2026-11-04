@@ -353,6 +353,7 @@
     "year": "Slices of everyday life",
     "all": "View all notes",
     "saved": "Saved moments ({count})",
+    "savedFilter": "Saved moments",
     "save": "Save note",
     "unsave": "Unsave note",
     "savedLabel": "Saved",
@@ -375,8 +376,7 @@
       "like": "Like",
       "liked": "Liked",
       "save": "Save",
-      "comment": "Comment",
-      "localActions": "Likes and saves stay in this browser."
+      "comment": "Comment"
     },
     "end": "— Remember this moment, then keep living. —",
     "replies": {
@@ -388,6 +388,18 @@
       "submit": "Post this reply",
       "unavailable": "Replies are not connected yet."
     }
+  },
+  "engagement": {
+    "like": "Like",
+    "liked": "Liked",
+    "unliked": "Like removed",
+    "save": "Save",
+    "saved": "Saved",
+    "unsaved": "Save removed",
+    "loadFailed": "Interaction status could not be loaded.",
+    "retry": "Retry",
+    "sessionExpired": "Your session expired. Please sign in again.",
+    "changeFailed": "The change was not saved. Please try again."
   },
   "comments": {
     "title": "Comments",
@@ -976,6 +988,29 @@
         "stopped": "Stopped. Review the partial suggestion.",
         "error": "Generation interrupted"
       }
+    },
+    "noteImages": {
+      "title": "Note photos",
+      "help": "Upload photos separately from the text. The first photo is the cover; their order becomes the slideshow order. Up to 20 photos.",
+      "upload": "Upload note photos",
+      "library": "Choose from media library",
+      "progress": "Photo upload progress",
+      "cancel": "Cancel upload",
+      "limit": "A note can have up to 20 photos.",
+      "failed": "Some uploads failed. Uploaded photos are kept; please retry the remaining photos.",
+      "empty": "Add a scene to remember, or keep this note in words.",
+      "cover": "Photo {index} · Cover",
+      "position": "Photo {index}",
+      "alt": "Photo description",
+      "altHelp": "Describe the scene before publishing so visitors using a screen reader can understand it.",
+      "caption": "Caption (optional)",
+      "moveUp": "Move photo {index} earlier",
+      "moveDown": "Move photo {index} later",
+      "remove": "Remove photo {index} from the note",
+      "publish": "Publish this translation",
+      "publishHelp": "Save the draft and complete the text, date and photo descriptions before publishing.",
+      "published": "Note published",
+      "publishFailed": "Could not publish. Check the text, date and photo descriptions, and save the draft first."
     },
     "collection": {
       "description": "Edit translations separately and keep shared properties together. Saved as a site working copy.",

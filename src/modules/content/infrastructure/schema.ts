@@ -12,6 +12,7 @@ import {
 } from "drizzle-orm/pg-core";
 import type { Locale } from "@/shared/i18n/config";
 import type { Article, Category } from "@/modules/content/domain/models";
+import type { NoteImage } from "@/modules/content/domain/note-images";
 const publication = () => ({
   locale: text("locale").$type<Locale>().notNull().default("zh-CN"),
   visibility: text("visibility")
@@ -74,6 +75,7 @@ export const notesTable = pgTable(
     mood: text("mood").notNull(),
     text: text("text").notNull(),
     body: jsonb("body").$type<Article["body"]>(),
+    images: jsonb("images").$type<NoteImage[]>().notNull().default([]),
     tag: text("tag").notNull(),
     sketch: text("sketch").$type<Article["sketch"]>().notNull(),
     ...publication(),

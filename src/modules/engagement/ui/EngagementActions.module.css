@@ -1,0 +1,39 @@
+.root {
+  min-width: 0;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.action.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  font: 400 var(--text-sm)/1.6 var(--font-ui);
+  color: var(--ink);
+}
+.action[aria-pressed="true"] {
+  color: var(--accent);
+}
+.action.iconOnly {
+  width: 36px;
+  min-height: 36px;
+  padding: 4px;
+}
+.count {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.error {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  font: 400 var(--text-xs)/1.6 var(--font-ui);
+  color: var(--muted);
+}

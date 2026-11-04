@@ -3,6 +3,7 @@ import { and, asc, count, desc, eq, ilike, lte, or, sql } from "drizzle-orm";
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import { getDb, type Database } from "@/server/db/client";
 import { site } from "@/shared/config/site";
+import { noteImagesSchema } from "@/modules/content/domain/note-images";
 import {
   articleSchema,
   type ArticleSummary,
@@ -133,6 +134,7 @@ export function postgresContentRepository(
         }).format(new Date(row.publishedOn)),
         publishedOn: row.publishedOn,
         mood: row.mood,
+        images: noteImagesSchema.parse(row.images),
         text: row.text,
         body: row.body ?? undefined,
         tag: row.tag,

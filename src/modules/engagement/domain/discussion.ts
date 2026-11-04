@@ -1,16 +1,8 @@
 import { z } from "zod";
 import { localeSchema } from "@/shared/i18n/schema";
+import { engagementTargetSchema } from "./target";
 
-export const discussionTargetSchema = z
-  .object({
-    type: z.enum(["article", "note", "project", "page"]),
-    id: z
-      .string()
-      .min(1)
-      .max(120)
-      .regex(/^[a-zA-Z0-9_-]+$/),
-  })
-  .strict();
+export const discussionTargetSchema = engagementTargetSchema;
 export type DiscussionTarget = z.infer<typeof discussionTargetSchema>;
 export const discussionQuerySchema = z
   .object({

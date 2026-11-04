@@ -3,7 +3,6 @@ import { and, asc, eq, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { getDb, type Database } from "@/server/db/client";
 import { notFoundError } from "@/server/http/errors";
-import { getArticle, getNotes, getProjects } from "@/modules/content/server";
 import { usersTable } from "@/modules/identity/server/schema";
 import { commentsTable as comments } from "@/modules/engagement/infrastructure/schema";
 import {
@@ -15,23 +14,7 @@ import {
 } from "@/modules/engagement/domain/discussion";
 import type { Locale } from "@/shared/i18n/config";
 
-export async function requireDiscussionTarget(
-  target: DiscussionTarget,
-  locale: Locale,
-  reads = { getArticle, getNotes, getProjects },
-) {
-  const exists =
-    target.type === "article"
-      ? await reads.getArticle(target.id, locale)
-      : target.type === "note"
-        ? (await reads.getNotes(locale)).some((item) => item.id === target.id)
-        : target.type === "project"
-          ? (await reads.getProjects(locale)).some(
-              (item) => item.id === target.id,
-            )
-          : target.id === "about";
-  if (!exists) throw notFoundError();
-}
+export { requireEngagementTarget as requireDiscussionTarget } from "./targets";
 
 /** The same store serves every content type; reply foreign keys include the thread. */
 export function discussionStore(db: Database = getDb()) {
