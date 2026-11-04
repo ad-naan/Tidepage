@@ -347,7 +347,7 @@
     "AUTHOR_NOT_CONFIGURED": "Author access is not configured"
   },
   "notes": {
-    "readMore": "Read the full note",
+    "readMore": "Read this moment",
     "title": "Copies of ordinary days",
     "description": "Small thoughts, unfinished ideas, and moments I don't want to forget.",
     "year": "Slices of everyday life",
@@ -357,7 +357,27 @@
     "unsave": "Unsave note",
     "savedLabel": "Saved",
     "remember": "Keep this moment",
-    "empty": "Tap a heart to keep a note here.",
+    "empty": "Tap a bookmark to keep a moment you want to revisit.",
+    "noNotes": "The next note is on its way.",
+    "reader": {
+      "title": "Note · {date}",
+      "open": "Read the note from {date}: {text}",
+      "photos": "Note photos",
+      "photoPosition": "{index} / {total}",
+      "choosePhoto": "Choose a photo",
+      "previousPhoto": "Previous photo",
+      "nextPhoto": "Next photo",
+      "imageUnavailable": "This photo could not be loaded.",
+      "retry": "Try again",
+      "aMoment": "A page of everyday life",
+      "wordsOnly": "Some moments are best kept in words.",
+      "readingRegion": "Note and comments",
+      "like": "Like",
+      "liked": "Liked",
+      "save": "Save",
+      "comment": "Comment",
+      "localActions": "Likes and saves stay in this browser."
+    },
     "end": "— Remember this moment, then keep living. —",
     "replies": {
       "open": "Talk about this moment",
@@ -368,6 +388,29 @@
       "submit": "Post this reply",
       "unavailable": "Replies are not connected yet."
     }
+  },
+  "comments": {
+    "title": "Comments",
+    "intro": "Leave a thought and keep the conversation going.",
+    "empty": "No comments yet. Leave the first thought.",
+    "loading": "Loading comments…",
+    "loadFailed": "Comments could not be loaded. Please try again.",
+    "retry": "Retry",
+    "more": "Read more comments",
+    "reply": "Reply",
+    "replyingTo": "Replying to {name}",
+    "cancelReply": "Cancel reply",
+    "writingAs": "Commenting as {name}",
+    "write": "Leave a thought",
+    "placeholder": "What's on your mind?",
+    "limit": "{count} / 2000",
+    "loginHint": "Sign in to post a comment.",
+    "login": "Sign in to comment",
+    "submit": "Post comment",
+    "sent": "Comment posted.",
+    "sendFailed": "Your comment was not posted. Your text is kept; please retry.",
+    "sessionExpired": "Your session expired. Please sign in again to post.",
+    "rateLimited": "You're posting quickly. Please wait a moment and try again."
   },
   "quotes": {
     "title": "For the next page",
@@ -426,7 +469,7 @@
   "identity": {
     "login": "Sign in",
     "title": "Reader account",
-    "unavailable": "Sign-in is not connected yet.",
+    "unavailable": "Reader sign-in is not available yet.",
     "choose": "Continue with:",
     "githubLogin": "Continue with GitHub",
     "giteeLogin": "Continue with Gitee",

@@ -4,19 +4,16 @@ import { AnimatePresence, motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Highlighter, Quote, X } from "lucide-react";
 import { Button } from "@/shared/ui/button/Button";
-export function Discussion({ compact = false }: { compact?: boolean }) {
-  const t = useTranslations("discussion");
-  return (
-    <section
-      id="discussion"
-      className={`discussion ${compact ? "compact" : ""}`}
-    >
-      <div className="discussion-heading">
-        <h2>{t("echo")}</h2>
-      </div>
-      <p className="discussion-demo">{t("unavailable")}</p>
-    </section>
-  );
+import type { DiscussionTarget } from "@/modules/engagement/domain/discussion";
+import { CommentThread } from "./CommentThread";
+export function Discussion({
+  target,
+  compact = false,
+}: {
+  target: DiscussionTarget;
+  compact?: boolean;
+}) {
+  return <CommentThread target={target} compact={compact} />;
 }
 export function ReadingAnnotations() {
   const t = useTranslations("discussion");

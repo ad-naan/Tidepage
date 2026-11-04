@@ -347,7 +347,7 @@
     "AUTHOR_NOT_CONFIGURED": "站主账号尚未配置"
   },
   "notes": {
-    "readMore": "展开完整手记",
+    "readMore": "读这个瞬间",
     "title": "日子的副本",
     "description": "把还没写成文章的念头，和不想忘记的瞬间，留在这一页。",
     "year": "生活切片",
@@ -357,7 +357,27 @@
     "unsave": "取消收藏手记",
     "savedLabel": "已收藏",
     "remember": "记在心里",
-    "empty": "点击手记里的爱心，收藏打动你的片段。",
+    "empty": "点击书签，收藏想再读一遍的片段。",
+    "noNotes": "新的手记还在路上。",
+    "reader": {
+      "title": "手记 · {date}",
+      "open": "阅读 {date} 的手记：{text}",
+      "photos": "手记相册",
+      "photoPosition": "{index} / {total}",
+      "choosePhoto": "选择图片",
+      "previousPhoto": "上一张图片",
+      "nextPhoto": "下一张图片",
+      "imageUnavailable": "这张图片暂时无法显示。",
+      "retry": "重新加载",
+      "aMoment": "日常的一页",
+      "wordsOnly": "有些瞬间，用文字留下就很好。",
+      "readingRegion": "手记正文与评论",
+      "like": "喜欢",
+      "liked": "已喜欢",
+      "save": "收藏",
+      "comment": "评论",
+      "localActions": "喜欢与收藏会保存在当前浏览器。"
+    },
     "end": "— 记住这一刻，然后继续生活。—",
     "replies": {
       "open": "聊聊这个瞬间",
@@ -368,6 +388,29 @@
       "submit": "发表手记回复",
       "unavailable": "回应服务尚未接入。"
     }
+  },
+  "comments": {
+    "title": "评论",
+    "intro": "留下一点想法，让对话继续。",
+    "empty": "还没有评论，来写下第一句吧。",
+    "loading": "正在读取评论…",
+    "loadFailed": "评论暂时没能加载，请稍后重试。",
+    "retry": "重试",
+    "more": "继续阅读评论",
+    "reply": "回复",
+    "replyingTo": "回复 {name}",
+    "cancelReply": "取消回复",
+    "writingAs": "以 {name} 的身份留言",
+    "write": "写下你的想法",
+    "placeholder": "有什么想说的？",
+    "limit": "{count} / 2000",
+    "loginHint": "登录后即可发表评论。",
+    "login": "登录并留言",
+    "submit": "发表评论",
+    "sent": "评论已发表。",
+    "sendFailed": "评论未能发表，内容已保留，请重试。",
+    "sessionExpired": "登录已过期，请重新登录后发送。",
+    "rateLimited": "留言太快了，稍等一会儿再试。"
   },
   "quotes": {
     "title": "留给下一页的话",
@@ -426,7 +469,7 @@
   "identity": {
     "login": "登录",
     "title": "阅读账号",
-    "unavailable": "登录服务尚未接入，暂时无法登录。",
+    "unavailable": "访客登录暂未开放。",
     "choose": "选择一种方式继续：",
     "githubLogin": "通过 GitHub 登录",
     "giteeLogin": "通过 Gitee 登录",

@@ -1,115 +1,31 @@
-/* Scoped to this view; decorative surfaces come from shared/ui. */
-.notes.notes {
+﻿.notes.notes {
   max-width: none;
   margin: 10px auto 40px;
   min-height: 0;
 }
-.notes.notes :global(.notes-toolbar) {
+.toolbar {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin: 0 0 16px;
-  padding: 2px 0 14px;
-  border: 0;
+  margin-bottom: 24px;
+  padding: 2px 0 16px;
 }
-.notes.notes :global(.toolbar-shore) {
+.shore {
   position: absolute;
   bottom: 0;
   left: 0;
 }
-.notes.notes :global(.notes-grid) {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: start;
-  gap: 18px;
-  padding: 4px 0 12px;
-}
-.notes.notes :global(.notes-grid)::before {
-  content: none;
-}
-.notes.notes :global(.note-card) {
-  position: relative;
-  isolation: isolate;
-  padding: 18px;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  box-shadow: none;
-}
-.notes.notes :global(.note-card:nth-child(even)) {
-  margin-top: 10px;
-  background: none;
-}
-.notes.notes :global(.note-card)::before {
-  left: calc(50% - 18px);
-  top: -2px;
-  width: 36px;
-  height: 10px;
-  opacity: 0.6;
-  transform: rotate(-4deg);
-  clip-path: polygon(
-    3% 10%,
-    28% 4%,
-    55% 14%,
-    96% 0,
-    100% 80%,
-    70% 100%,
-    42% 86%,
-    0 100%
-  );
-}
-.notes.notes :global(.note-card > p) {
-  font: 400 14px/1.85 var(--font-editorial);
-  margin: 12px 0 0;
-}
-.notes.notes :global(.note-top) {
-  font: 400 10px/1.6 var(--font-ui);
-}
-.notes.notes :global(.note-top > span) {
-  font-size: 10px;
-}
-.notes.notes :global(.note-card > .mini-sketch) {
-  width: 68px;
-  height: 34px;
-  margin: 10px 0 7px auto;
-  opacity: 0.8;
-}
-.notes.notes :global(.note-bottom) {
-  position: relative;
-  padding-top: 10px;
-  margin-top: 5px;
-  border: 0;
-}
-.notes.notes :global(.note-fold) {
-  position: absolute;
-  top: -4px;
-  left: 0;
-}
-.notes.notes :global(.note-bottom),
-.notes.notes :global(.like-button),
-.notes.notes :global(.note-discuss) {
-  font-size: 10px;
-}
-.notes.notes :global(.note-replies) {
-  position: relative;
-  border: 0;
-  margin-top: 10px;
-  padding-top: 4px;
-}
-.notes.notes :global(.note-reply-toggle) {
-  font: 400 11px/1.6 var(--font-ui);
-}
-.notes.notes :global(.save-filter) {
+.filter.filter {
   position: relative;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 8px 3px;
-  font: 400 11px/1.6 var(--font-ui);
+  font: 400 var(--text-xs)/1.6 var(--font-ui);
 }
-.notes.notes :global(.saved-filter-mark) {
+.filterMark {
   position: absolute;
   bottom: 0;
   left: 24px;
@@ -117,29 +33,186 @@
   height: 7px;
   color: var(--accent);
 }
-.notes.notes :global(.end-note) {
-  margin-top: 28px;
-  border: 0;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 24px;
+}
+.card {
+  position: relative;
+  isolation: isolate;
+  padding: 14px;
+  min-width: 0;
+}
+.card:nth-child(even) {
+  margin-top: 16px;
+}
+.open.open {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0;
+  text-align: left;
+  border-radius: 2px;
+}
+.cover {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--soft);
+  border-radius: 2px;
+}
+.cover > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--motion-soft);
+}
+.open:hover .cover > img {
+  transform: scale(1.025);
+}
+.illustrated {
+  background: color-mix(in srgb, var(--sage) 55%, var(--paper));
+}
+.card:nth-child(3n + 2) .illustrated {
+  background: color-mix(in srgb, var(--sand) 65%, var(--paper));
+}
+.card:nth-child(3n) .illustrated {
+  background: color-mix(in srgb, var(--peach) 65%, var(--paper));
+}
+.cover .coverSketch {
+  width: 60%;
+  height: auto;
+  margin: 0;
+  opacity: 0.85;
+}
+.imageCount {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 7px;
+  border-radius: 3px;
+  background: var(--card);
+  color: var(--ink);
+  font: 400 var(--text-xs)/1.5 var(--font-ui);
+}
+.openHint {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--ink);
+}
+.meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  width: 100%;
+  gap: 12px;
+  margin-top: 16px;
+  color: var(--muted);
+  font: 400 var(--text-xs)/1.6 var(--font-ui);
+}
+.preview {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  margin-top: 8px;
+  font: 400 var(--text-body)/1.85 var(--font-reading);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.readMore {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 16px;
+  color: var(--muted);
+  font: 400 var(--text-xs)/1.6 var(--font-ui);
+  transition: color var(--motion-quick);
+}
+.open:hover .readMore,
+.open:focus-visible .readMore {
+  color: var(--accent);
+}
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  margin-top: 12px;
+  padding-top: 8px;
+  font: 400 var(--text-xs)/1.6 var(--font-ui);
+  color: var(--muted);
+}
+.save.save {
+  width: 36px;
+  height: 36px;
+}
+.save[aria-pressed="true"] {
+  color: var(--accent);
+}
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 64px 16px;
+  color: var(--muted);
+  text-align: center;
+}
+.end {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  color: var(--muted);
 }
 @media (min-width: 1250px) {
-  .notes.notes :global(.notes-grid) {
+  .grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
   }
 }
-@media (max-width: 1050px) {
-  .notes.notes :global(.notes-grid) {
+@media (max-width: 1000px) {
+  .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-@media (max-width: 700px) {
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .card:nth-child(even) {
+    margin-top: 0;
+  }
+  .cover {
+    aspect-ratio: 3 / 2;
+  }
   .notes.notes {
     margin: 8px auto 30px;
   }
-  .notes.notes :global(.notes-grid) {
-    grid-template-columns: 1fr;
-    gap: 18px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cover > img {
+    transition: none;
   }
-  .notes.notes :global(.note-card:nth-child(even)) {
-    margin-top: 0;
+  .open:hover .cover > img {
+    transform: none;
   }
 }

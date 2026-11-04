@@ -18,6 +18,7 @@ import type { Project } from "@/modules/content/domain/models";
 import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { RichText } from "@/modules/content/ui/rich-text/RichText";
+import { Discussion } from "@/modules/engagement/ui/Discussion";
 
 export function ProjectsView({ projects }: { projects: Project[] }) {
   const t = useTranslations("projects");
@@ -116,6 +117,7 @@ export function ProjectsView({ projects }: { projects: Project[] }) {
               ))}
             </div>
           </div>
+          <Discussion target={{ type: "project", id: selected.id }} />
         </Dialog>
       )}
     </div>

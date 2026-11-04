@@ -87,6 +87,16 @@ import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 
 既有插画热区、播放器与高度定制布局使用 `Button` 的 `bare` 外观或 `Input` 的 `appearance="bare"`：控件行为统一，业务视觉不被统一的大按钮覆盖。表单中的提交按钮必须显式 `type="submit"`。文件与滑块分别使用 `FileInput`、`RangeSlider`，不混用文本输入外观。
 
+## 跨内容评论与手记阅读
+
+评论属于 `modules/engagement`，由 `ui/Discussion` 提供公共入口。文章、手记、项目和自述分别传入 `{ type: "article" | "note" | "project" | "page", id }`；组件从当前语言环境读取 locale。更换评论对象会重置列表、回复对象和草稿，取消旧的读取请求。
+
+`server` 提供评论存储与对象可见性校验，`/api/v1/comments` 统一提供读取、游标分页和登录后发表。讨论串由内容类型、ID、locale 共同确定；回复外键也包含这三个字段。公开响应只返回显示名称，不暴露账号 ID。新增可评论页面时，同时在服务端对象校验中登记页面 ID。
+
+手记图片沿用富文本中的 `assetImage`，按文档顺序形成相册，不维护第二份图片数据。`notes/note-presentation` 从正文中提取相册并保留其余富文本；卡片显示第一张图片，`NoteReader` 组合相册、正文、公共评论和浏览器内保存的喜欢/收藏。`Dialog` 的 `split` 布局负责宽幅容器；桌面正文独立滚动，窄屏在同一滚动区域上图下文。
+
+交互文案分别位于语言目录的 `comments` 与 `notes.reader`。评论复用 IdentityProvider；访客发言需要配置现有 GitHub/Gitee OAuth 登录。
+
 ## 自动执行
 
 `pnpm run check:architecture` 会检查分层、客户端/服务端依赖、旧目录，以及原生控件的归属。业务和组合层不能直接写 `button`、`motion.button`、`input`、`textarea`、`select`、`a`、`dialog`、`details/summary`，必须使用统一出口。原生标签只允许出现在它自己的基础实现中；不能另建一个“临时基础组件”绕过检查。

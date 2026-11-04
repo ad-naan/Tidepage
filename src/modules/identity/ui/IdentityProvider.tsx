@@ -120,3 +120,7 @@ export function LoginTrigger() {
     </Button>
   );
 }
+
+export function useIdentity() {
+  return useContext(IdentityContext);
+}

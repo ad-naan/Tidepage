@@ -94,7 +94,7 @@ export async function ArticleDetail({
           label={t("toc")}
         />
       </div>
-      <Discussion />
+      <Discussion target={{ type: "article", id: article.slug }} />
       {next && (
         <Link href={`/articles/${next.slug}`} className="next-article">
           <PencilLine className="next-shore" />

@@ -1,0 +1,147 @@
+.thread {
+  margin: 40px 0;
+  padding: 28px 0;
+  border-top: 1px solid var(--line);
+  font: 400 var(--text-body)/1.8 var(--font-ui);
+  color: var(--ink);
+}
+.compact {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.heading h2 {
+  font: 500 var(--text-subtitle)/1.6 var(--font-editorial);
+  margin: 0;
+}
+.intro {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: 6px 0 20px;
+}
+.list {
+  margin-bottom: 24px;
+}
+.comment {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--sage);
+  font-size: var(--text-sm);
+}
+.commentContent {
+  flex: 1;
+  min-width: 0;
+}
+.meta {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-size: var(--text-sm);
+}
+.meta strong {
+  font-weight: 500;
+}
+.meta time,
+.replyTo {
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+.commentContent > p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 6px 0;
+  font: inherit;
+}
+.replyButton.replyButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+.empty {
+  padding: 16px 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+.status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+.status p {
+  margin: 0;
+}
+.more {
+  margin-top: 16px;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.form > label {
+  font-size: var(--text-sm);
+}
+.form textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 88px;
+  max-height: 260px;
+}
+.formFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.hint {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+.replyContext {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px 4px 12px;
+  border-left: 2px solid var(--accent);
+  background: var(--soft);
+  font-size: var(--text-sm);
+}
+.error {
+  font-size: var(--text-sm);
+  color: var(--accent);
+}
+@media (max-width: 700px) {
+  .thread {
+    margin: 24px 0;
+    padding: 24px 0;
+  }
+  .compact {
+    margin: 0;
+    padding: 0;
+  }
+  .formFooter {
+    align-items: flex-start;
+  }
+}

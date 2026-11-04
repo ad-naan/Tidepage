@@ -42,6 +42,24 @@
   font: 400 var(--text-sm)/1.7 var(--font-ui);
   color: var(--muted);
 }
+.split {
+  width: min(1180px, calc(100vw - 48px));
+  max-height: 92dvh;
+}
+.split .inner {
+  height: min(800px, calc(92dvh - 16px));
+  max-height: none;
+  padding: 20px;
+}
+.split .heading {
+  margin-bottom: 16px;
+}
+.split .content {
+  display: flex;
+  flex: 1;
+  padding: 0;
+  overflow: hidden;
+}
 @media (max-width: 700px) {
   .inner {
     padding: 18px;
@@ -50,5 +68,18 @@
   .dialog {
     width: calc(100vw - 24px);
     max-height: 90dvh;
+  }
+  .split .inner {
+    height: calc(94dvh - 16px);
+    max-height: none;
+    padding: 16px;
+  }
+  .split {
+    width: calc(100vw - 16px);
+    max-height: 94dvh;
+  }
+  .split .content {
+    display: block;
+    overflow: auto;
   }
 }

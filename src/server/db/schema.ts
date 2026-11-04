@@ -3,3 +3,4 @@ export * from "@/modules/content/infrastructure/schema";
 export * from "@/modules/identity/infrastructure/schema";
 export * from "@/modules/media/infrastructure/schema";
 export * from "@/server/workbench/schema";
+export * from "@/modules/engagement/infrastructure/schema";
