@@ -1,0 +1,70 @@
+# nginx 官方镜像模板：入口点会对 ${TIDEPAGE_DOMAIN} 做变量替换。
+# 证书挂载在 /etc/nginx/certs/（fullchain.pem / privkey.pem）。
+
+# 入口层按真实 IP 限流握手（网关在反代后只能看到 nginx 的 TCP 地址）。
+limit_req_zone $binary_remote_addr zone=ws_handshake:10m rate=10r/s;
+
+upstream tidepage_web {
+    server web:3000;
+    keepalive 16;
+}
+
+upstream tidepage_realtime {
+    server realtime:3101;
+}
+
+server {
+    listen 80;
+    server_name ${TIDEPAGE_DOMAIN};
+
+    # ACME HTTP-01 校验（如使用 certbot webroot 签发证书）。
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name ${TIDEPAGE_DOMAIN};
+
+    ssl_certificate /etc/nginx/certs/fullchain.pem;
+    ssl_certificate_key /etc/nginx/certs/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    # 站内上传/管理的请求体上限，按需调整。
+    client_max_body_size 20m;
+
+    # Socket.IO 网关：仅 WebSocket，无 polling 回退。
+    location /socket.io/ {
+        limit_req zone=ws_handshake burst=20 nodelay;
+
+        proxy_pass http://tidepage_realtime;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # 必须大于 75 秒的 presence TTL，留出余量。
+        proxy_read_timeout 120s;
+        proxy_send_timeout 120s;
+        proxy_buffering off;
+    }
+
+    # Next.js 应用
+    location / {
+        proxy_pass http://tidepage_web;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host;
+    }
+}

@@ -1,0 +1,26 @@
+# 版本库与本地状态
+.git
+.gitignore
+.adnify
+.vscode
+.cache
+.next
+node_modules
+tsconfig.tsbuildinfo
+
+# 本地数据与生成物，不进镜像
+storage
+backups
+artifacts
+.env
+.env.*
+
+# 桌面助手（Go）与文档、测试不参与服务镜像构建
+desktop
+docs
+tests
+nginx/certs
+
+# 杂项
+home-coast-preview.jpg
+*.log

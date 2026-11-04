@@ -1,41 +1,64 @@
-name: adnaan-local
+# 只编排本项目自身的服务：web（Next.js）、realtime（Socket.IO 网关）、nginx（入口）。
+# PostgreSQL 与 Redis 使用外部已有实例，地址通过 .env 提供。
+name: tidepage
 services:
-  postgres:
-    image: postgres:17-alpine
+  web:
+    build:
+      context: .
+      target: web
+      args:
+        # NEXT_PUBLIC_* 在构建期内联，需与 REALTIME_ORIGINS 的对外地址一致。
+        NEXT_PUBLIC_REALTIME_URL: ${NEXT_PUBLIC_REALTIME_URL:-}
     environment:
-      POSTGRES_DB: adnaan
-      POSTGRES_USER: adnaan
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
-    ports:
-      - "127.0.0.1:5432:5432"
+      NODE_ENV: production
+      SITE_URL: ${SITE_URL:?Set SITE_URL in .env}
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL in .env}
+      DATABASE_POOL_MAX: ${DATABASE_POOL_MAX:-10}
+      # Web 侧缓存可选；网关 Redis 用独立的 REALTIME_REDIS_URL。
+      REDIS_URL: ${REDIS_URL:-}
+      CACHE_NAMESPACE: ${CACHE_NAMESPACE:-tidepage:prod:v1}
+      CACHE_TTL_SECONDS: ${CACHE_TTL_SECONDS:-60}
+      INDEXING_ENABLED: ${INDEXING_ENABLED:-false}
+      UPLOAD_DIR: /app/storage/uploads
+      ADMIN_USER_ID: ${ADMIN_USER_ID:-}
+      ADMIN_ACCESS_KEY: ${ADMIN_ACCESS_KEY:-}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U adnaan -d adnaan"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-  redis:
-    image: redis:7-alpine
-    command:
-      [
-        "redis-server",
-        "--appendonly",
-        "yes",
-        "--maxmemory",
-        "128mb",
-        "--maxmemory-policy",
-        "allkeys-lru",
-      ]
+      - ./storage:/app/storage
+    expose:
+      - "3000"
+    restart: unless-stopped
+
+  realtime:
+    build:
+      context: .
+      target: realtime
+    environment:
+      NODE_ENV: production
+      # 容器内必须监听 0.0.0.0，对外只经 nginx 反代。
+      REALTIME_HOST: 0.0.0.0
+      REALTIME_PORT: "3101"
+      REALTIME_ORIGINS: ${REALTIME_ORIGINS:?Set REALTIME_ORIGINS in .env}
+      REALTIME_AUTHOR_TOKEN: ${REALTIME_AUTHOR_TOKEN:?Set REALTIME_AUTHOR_TOKEN in .env}
+      # 网关读取容器内的 REDIS_URL；生产要求 noeviction 的实例，见 docs/deployment.md。
+      REDIS_URL: ${REALTIME_REDIS_URL:?Set REALTIME_REDIS_URL in .env}
+      CACHE_NAMESPACE: ${CACHE_NAMESPACE:-tidepage:prod:v1}
+    expose:
+      - "3101"
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    environment:
+      TIDEPAGE_DOMAIN: ${TIDEPAGE_DOMAIN:?Set TIDEPAGE_DOMAIN in .env}
     ports:
-      - "127.0.0.1:6379:6379"
+      - "80:80"
+      - "443:443"
     volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-volumes:
-  postgres_data:
-  redis_data:
+      - ./nginx/tidepage.conf.template:/etc/nginx/templates/tidepage.conf.template:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      web:
+        condition: service_started
+      realtime:
+        condition: service_healthy
+    restart: unless-stopped
