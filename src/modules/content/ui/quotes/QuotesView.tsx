@@ -12,12 +12,18 @@ import styles from "./QuotesView.module.css";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowUpRight, Check, Copy, Heart, RotateCw } from "lucide-react";
+import {
+  ArrowUpRight,
+  Check,
+  ChevronLeft,
+  Copy,
+  Heart,
+  RotateCw,
+} from "lucide-react";
 import type { Quote } from "@/modules/content/domain/models";
 import { useLocalState } from "@/shared/hooks/useLocalState";
 import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
-import { Button } from "@/shared/ui/button/Button";
-import { softSpring } from "@/shared/lib/motion";
+import { Button, IconButton } from "@/shared/ui/button/Button";
 
 export function QuotesView({ quotes }: { quotes: Quote[] }) {
   const t = useTranslations("quotes");
@@ -27,6 +33,14 @@ export function QuotesView({ quotes }: { quotes: Quote[] }) {
   const [saved, setSaved] = useLocalState<number[]>("adnaan-quotes", []);
   const [copied, setCopied] = useState(false);
   const quote = quotes[index % Math.max(quotes.length, 1)];
+  const savedIndices = [...new Set(saved)].filter(
+    (value) => Number.isInteger(value) && value >= 0 && !!quotes[value],
+  );
+  const isSaved = savedIndices.includes(index);
+  function turn(step: number) {
+    setIndex((value) => (value + step + quotes.length) % quotes.length);
+    setCopied(false);
+  }
   async function copy() {
     try {
       await navigator.clipboard.writeText(`${quote.text}\n—— ${quote.author}`);
@@ -48,91 +62,158 @@ export function QuotesView({ quotes }: { quotes: Quote[] }) {
       </div>
     );
   return (
-    <div className={`inner-page quotes-page ${styles.quotes}`}>
+    <div className={`inner-page ${styles.quotes}`}>
       <ContentHeading
         room="quotes"
         title={t("title")}
         description={t("description")}
       />
-      <div className="quote-stage">
-        <div className="quote-letter">
-          <PencilFrame kind="note" />
-          <span className="quote-index">
-            <CoastGlyph kind="wind" />
-            {t("page", { index: index + 1, total: quotes.length })}
-          </span>
-          <span className="big-quote">“</span>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 8, rotate: -0.4 }}
-              animate={{ opacity: 1, y: 0, rotate: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={softSpring}
-            >
-              <blockquote>{quote.text}</blockquote>
-              <cite>— {quote.author}</cite>
-            </motion.div>
-          </AnimatePresence>
-          <CoastalVignette
-            kind={["sun", "tree", "boat", "mountain"][index % 4] as "sun"}
-          />
-        </div>
-        <div className="quote-actions">
-          <Button
-            className="button-solid"
-            onClick={() => {
-              setIndex((v) => (v + 1) % quotes.length);
-              setCopied(false);
-            }}
-          >
-            <RotateCw size={16} />
-            {t("next")}
-            <HanddrawnMark className="quote-turn-mark" />
-          </Button>
-          <Button
-            className={`icon-button ${saved.includes(index) ? "liked" : ""}`}
-            aria-label={saved.includes(index) ? t("unsave") : t("save")}
-            onClick={() => {
-              notify({
-                title: saved.includes(index) ? feedback("removed") : t("saved"),
-                tone: "success",
-              });
-              setSaved((v) =>
-                v.includes(index)
-                  ? v.filter((n) => n !== index)
-                  : [...v, index],
-              );
-            }}
-          >
-            <Heart
-              size={19}
-              fill={saved.includes(index) ? "currentColor" : "none"}
+      <div className={styles.layout}>
+        <section className={styles.reader} aria-label={t("readingLabel")}>
+          <div className={styles.letter}>
+            <PencilFrame kind="note" className={styles.paper} />
+            <div className={styles.letterTop}>
+              <span className={styles.eyebrow}>
+                <CoastGlyph kind="wind" />
+                {t("current")}
+              </span>
+              <span className={styles.page} role="status">
+                {t("page", { index: index + 1, total: quotes.length })}
+              </span>
+            </div>
+            <span className={styles.quoteMark} aria-hidden>
+              “
+            </span>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.figure
+                key={quote.id}
+                className={styles.words}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18 }}
+              >
+                <blockquote>{quote.text}</blockquote>
+                <figcaption>
+                  <span aria-hidden>—</span>
+                  <cite>{quote.author}</cite>
+                </figcaption>
+              </motion.figure>
+            </AnimatePresence>
+            <CoastalVignette
+              kind={["sun", "tree", "boat", "mountain"][index % 4] as "sun"}
+              className={styles.sketch}
             />
-          </Button>
-          <Button className="icon-button" aria-label={t("copy")} onClick={copy}>
-            {copied ? <Check size={19} /> : <Copy size={18} />}
-          </Button>
-        </div>
-        <p className="quote-feedback">{t("hint")}</p>
-      </div>
-      {saved.length > 0 && (
-        <div className="saved-quotes">
-          <PencilLine kind="trail" />
-          <h2>
-            {t("collection")} <span>{saved.length}</span>
-          </h2>
-          {saved
-            .filter((n) => !!quotes[n])
-            .map((n) => (
-              <Button key={n} onClick={() => setIndex(n)}>
-                <span>{quotes[n].text.replace("\n", "")}</span>
-                <ArrowUpRight size={16} />
-                <PencilLine kind="fold" className="saved-quote-fold" />
+          </div>
+          <div className={styles.toolbar}>
+            <div className={styles.turnControls}>
+              <IconButton
+                aria-label={t("previous")}
+                disabled={quotes.length < 2}
+                onClick={() => turn(-1)}
+                className={styles.previous}
+              >
+                <ChevronLeft size={17} />
+              </IconButton>
+              <Button
+                className={styles.next}
+                disabled={quotes.length < 2}
+                onClick={() => turn(1)}
+              >
+                <RotateCw size={15} />
+                {t("next")}
+                <HanddrawnMark className={styles.turnMark} />
               </Button>
-            ))}
-        </div>
-      )}
+            </div>
+            <div className={styles.keepControls}>
+              <Button
+                className={styles.keep}
+                aria-label={isSaved ? t("unsave") : t("save")}
+                aria-pressed={isSaved}
+                onClick={() => {
+                  notify({
+                    title: isSaved ? feedback("removed") : t("saved"),
+                    tone: "success",
+                  });
+                  setSaved((values) =>
+                    isSaved
+                      ? values.filter((value) => value !== index)
+                      : [...values, index],
+                  );
+                }}
+              >
+                <Heart size={17} fill={isSaved ? "currentColor" : "none"} />
+                <span>{t(isSaved ? "kept" : "keep")}</span>
+              </Button>
+              <IconButton
+                aria-label={t("copy")}
+                onClick={copy}
+                className={styles.copy}
+              >
+                {copied ? <Check size={17} /> : <Copy size={17} />}
+              </IconButton>
+            </div>
+          </div>
+          <p className={styles.hint}>
+            {t(quotes.length < 2 ? "singleHint" : "hint")}
+          </p>
+        </section>
+        <aside
+          className={styles.collection}
+          aria-labelledby="saved-quotes-heading"
+        >
+          <div className={styles.collectionTop}>
+            <div>
+              <span className={styles.collectionEyebrow}>
+                {t("collectionEyebrow")}
+              </span>
+              <h2 id="saved-quotes-heading">
+                {t("collection")}
+                <span className={styles.count}>{savedIndices.length}</span>
+              </h2>
+            </div>
+            <Heart size={18} aria-hidden />
+          </div>
+          <PencilLine className={styles.collectionLine} kind="trail" />
+          {savedIndices.length ? (
+            <div className={styles.savedList}>
+              {savedIndices
+                .slice()
+                .reverse()
+                .map((value, i) => (
+                  <Button
+                    key={quotes[value].id}
+                    className={styles.savedQuote}
+                    aria-pressed={index === value}
+                    onClick={() => {
+                      setIndex(value);
+                      setCopied(false);
+                    }}
+                  >
+                    <span className={styles.savedNumber}>
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className={styles.savedWords}>
+                      <span>{quotes[value].text}</span>
+                      <small>{quotes[value].author}</small>
+                    </span>
+                    <ArrowUpRight size={16} className={styles.savedArrow} />
+                    {index === value && (
+                      <HanddrawnMark className={styles.selectedMark} />
+                    )}
+                  </Button>
+                ))}
+            </div>
+          ) : (
+            <div className={styles.emptyCollection}>
+              <CoastGlyph kind="leaf" />
+              <p>{t("collectionEmpty")}</p>
+              <span>{t("collectionHelp")}</span>
+            </div>
+          )}
+          <p className={styles.collectionNote}>{t("collectionHint")}</p>
+        </aside>
+      </div>
     </div>
   );
 }

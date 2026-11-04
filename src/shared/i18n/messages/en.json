@@ -437,7 +437,17 @@
     "failed": "Copy is unavailable. You can select the text instead.",
     "saved": "Saved in this browser.",
     "hint": "Tap the heart to keep words you like.",
-    "collection": "Words kept close"
+    "collection": "Words kept close",
+    "readingLabel": "Quote reader",
+    "current": "A thought for now",
+    "previous": "Previous thought",
+    "keep": "Keep this thought",
+    "kept": "Kept close",
+    "singleHint": "Take your time with this one. More words are on their way.",
+    "collectionEyebrow": "Your little anthology",
+    "collectionEmpty": "A place for words you want to keep.",
+    "collectionHelp": "Tap the heart beside the quote to keep it here.",
+    "collectionHint": "Choose a saved thought to read it again."
   },
   "projects": {
     "title": "From an idea to something real",

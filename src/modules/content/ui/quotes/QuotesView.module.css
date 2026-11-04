@@ -1,140 +1,358 @@
-/* Scoped to this view; decorative surfaces come from shared/ui. */
-.quotes.quotes {
+﻿.quotes.quotes {
   max-width: none;
   margin: 10px auto 40px;
   min-height: 0;
 }
-.quotes.quotes :global(.quote-stage) {
-  position: relative;
-  max-width: 620px;
-  padding: 0;
-  margin: 20px auto 0;
-  background: none;
-  text-align: start;
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.85fr) minmax(280px, 0.95fr);
+  align-items: start;
+  gap: 40px;
+  margin-top: 24px;
 }
-.quotes.quotes :global(.quote-stage)::before {
-  content: none;
+.reader {
+  min-width: 0;
 }
-.quotes.quotes :global(.quote-letter) {
+.letter {
   position: relative;
   isolation: isolate;
-  padding: 24px 38px 28px;
-  min-height: 230px;
+  min-height: 280px;
+  padding: 32px 40px 48px;
 }
-.quotes.quotes :global(.quote-index) {
+.letter::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  z-index: -2;
+  background: linear-gradient(
+    120deg,
+    var(--card),
+    color-mix(in srgb, var(--sage) 24%, var(--card))
+  );
+  clip-path: polygon(0.8% 0.6%, 99.6% 0, 99% 99.2%, 0 100%);
+}
+.paper {
+  --paper-opacity: 0.2;
+}
+.letterTop {
   display: flex;
   align-items: center;
-  gap: 7px;
-  font: 400 10px/1.6 var(--font-ui);
-  letter-spacing: 0.06em;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  color: var(--muted);
+  font: 400 var(--text-xs)/1.6 var(--font-ui);
 }
-.quotes.quotes :global(.quote-index svg) {
-  width: 14px;
-  height: 14px;
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent);
 }
-.quotes.quotes :global(.big-quote) {
+.eyebrow svg {
+  width: 15px;
+  height: 15px;
+}
+.page {
+  font-variant-numeric: tabular-nums;
+}
+.quoteMark {
   position: absolute;
-  top: 63px;
-  left: 18px;
-  height: auto;
-  margin: 0;
-  font: 400 33px/1 var(--font-editorial);
+  top: 88px;
+  left: 14px;
+  color: var(--accent);
   opacity: 0.45;
+  font: 400 44px/1 var(--font-editorial);
+  pointer-events: none;
 }
-.quotes.quotes :global(.quote-stage blockquote) {
-  max-width: 29ch;
-  min-height: 76px;
-  margin: 20px 0 0;
-  font: 400 22px/1.85 var(--font-editorial);
-  text-align: start;
-  text-wrap: balance;
+.words {
+  position: relative;
+  z-index: 1;
+  margin: 36px 0 0;
+  min-width: 0;
 }
-.quotes.quotes :global(.quote-stage cite) {
-  display: block;
-  margin-top: 14px;
-  font: 400 11px/1.7 var(--font-ui);
-  text-align: start;
-}
-.quotes.quotes :global(.quote-letter > .mini-sketch) {
-  width: 70px;
-  height: 35px;
+.words blockquote {
   margin: 0;
-  position: absolute;
-  right: 27px;
-  bottom: 23px;
-  opacity: 0.6;
+  max-width: 32ch;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  font: 400 clamp(24px, 1.8vw, 28px)/1.85 var(--font-editorial);
+  letter-spacing: 0.015em;
+  text-wrap: pretty;
 }
-.quotes.quotes :global(.quote-actions) {
+.words figcaption {
   display: flex;
-  justify-content: flex-start;
-  gap: 16px;
-  margin: 12px 0 0 26px;
+  gap: 10px;
+  margin-top: 24px;
+  padding-right: 100px;
+  color: var(--muted);
+  font: 400 var(--text-sm)/1.8 var(--font-ui);
 }
-.quotes.quotes :global(.quote-actions .button-solid) {
+.words cite {
+  font: inherit;
+  overflow-wrap: anywhere;
+}
+.letter .sketch {
+  position: absolute;
+  right: 28px;
+  bottom: 24px;
+  width: 96px;
+  height: 48px;
+  margin: 0;
+  opacity: 0.65;
+}
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 12px 0;
+}
+.turnControls,
+.keepControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.previous.previous,
+.copy.copy {
+  width: 36px;
+  height: 40px;
+  color: var(--muted);
+}
+.next.next,
+.keep.keep {
   position: relative;
   display: inline-flex;
-  padding: 9px 8px 12px;
-  background: none;
-  color: var(--ink);
-  border: 0;
-  border-radius: 0;
-  font: 400 12px/1.6 var(--font-ui);
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 4px;
+  font: 400 var(--text-sm)/1.6 var(--font-ui);
 }
-.quotes.quotes :global(.quote-turn-mark) {
+.keep[aria-pressed="true"] {
+  color: var(--accent);
+}
+.turnMark {
   position: absolute;
   bottom: 0;
-  left: 30px;
-  width: calc(100% - 34px);
-  height: 8px;
+  left: 26px;
+  width: calc(100% - 24px);
+  height: 7px;
   color: var(--accent);
   opacity: 0.65;
 }
-.quotes.quotes :global(.quote-feedback) {
-  margin: 10px 0 0 34px;
-  font: 400 11px/1.7 var(--font-ui);
+.hint {
+  margin: 8px 0 0 16px;
+  color: var(--muted);
+  font: 400 var(--text-xs)/1.8 var(--font-ui);
 }
-.quotes.quotes :global(.saved-quotes) {
-  max-width: 620px;
-  margin: 28px auto 0;
-  padding-top: 0;
-  border: 0;
+.collection {
+  min-width: 0;
+  padding: 8px 0 0 28px;
+  border-left: 1px solid var(--line);
 }
-.quotes.quotes :global(.saved-quotes h2) {
-  font: 500 15px/1.8 var(--font-editorial);
-  margin: 12px 0;
+.collectionTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
 }
-.quotes.quotes :global(.saved-quotes > button) {
+.collectionTop > svg {
+  color: var(--accent);
+  opacity: 0.65;
+  margin-right: 4px;
+}
+.collectionEyebrow {
+  color: var(--muted);
+  font: 400 var(--text-xs)/1.6 var(--font-ui);
+}
+.collection h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 6px 0 0;
+  font: 500 var(--text-subtitle)/1.6 var(--font-editorial);
+}
+.count {
+  color: var(--muted);
+  font: 400 var(--text-xs)/1.6 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+.collectionLine {
+  margin-top: 14px;
+}
+.savedList {
+  display: grid;
+  gap: 4px;
+  margin-top: 8px;
+}
+.savedQuote.savedQuote {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) 18px;
+  align-items: start;
+  gap: 12px;
   position: relative;
-  border: 0;
-  padding: 12px 0;
-  font: 400 12px/1.8 var(--font-ui);
+  padding: 20px 8px 20px 4px;
+  width: 100%;
+  text-align: left;
+  border-radius: 3px;
 }
-.quotes.quotes :global(.saved-quote-fold) {
+.savedQuote:hover,
+.savedQuote[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--wash) 30%, transparent);
+}
+.savedNumber {
+  padding-top: 3px;
+  color: var(--muted);
+  font: 400 var(--text-xs)/1.6 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+.savedWords {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+.savedWords > span {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  font: 400 var(--text-body)/1.9 var(--font-editorial);
+}
+.savedWords small {
+  color: var(--muted);
+  font: 400 var(--text-xs)/1.7 var(--font-ui);
+}
+.savedArrow {
+  color: var(--muted);
+  margin-top: 5px;
+}
+.selectedMark {
   position: absolute;
-  bottom: -4px;
-  left: 0;
+  bottom: 5px;
+  left: 40px;
+  width: 64px;
+  height: 6px;
+  color: var(--accent);
+  opacity: 0.5;
 }
-@media (max-width: 700px) {
+.emptyCollection {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  padding: 28px 4px;
+}
+.emptyCollection > svg {
+  width: 24px;
+  height: 24px;
+  color: var(--accent);
+  opacity: 0.65;
+}
+.emptyCollection p {
+  font: 400 var(--text-body)/1.8 var(--font-editorial);
+}
+.emptyCollection > span {
+  color: var(--muted);
+  font: 400 var(--text-sm)/1.8 var(--font-ui);
+}
+.collectionNote {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font: 400 var(--text-xs)/1.8 var(--font-ui);
+}
+@media (max-width: 1000px) {
+  .layout {
+    grid-template-columns: minmax(0, 1.6fr) minmax(240px, 1fr);
+    gap: 24px;
+  }
+  .letter {
+    padding: 28px 28px 48px;
+  }
+  .words blockquote {
+    font-size: 24px;
+  }
+  .quoteMark {
+    left: 7px;
+    top: 86px;
+    font-size: 34px;
+  }
+  .collection {
+    padding-left: 20px;
+  }
+}
+@media (max-width: 760px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    margin-top: 16px;
+  }
+  .letter {
+    min-height: 280px;
+    padding: 24px 28px 48px;
+  }
+  .quoteMark {
+    top: 78px;
+  }
+  .words {
+    margin-top: 28px;
+  }
+  .words blockquote {
+    font-size: 24px;
+  }
+  .collection {
+    border-left: 0;
+    padding: 0;
+  }
+  .savedList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 20px;
+  }
+}
+@media (max-width: 480px) {
   .quotes.quotes {
     margin: 8px auto 30px;
   }
-  .quotes.quotes :global(.quote-stage) {
-    margin-top: 14px;
+  .letter {
+    min-height: 280px;
+    padding: 22px 24px 64px;
   }
-  .quotes.quotes :global(.quote-letter) {
-    padding: 22px 25px 55px;
+  .words blockquote {
+    font-size: 22px;
   }
-  .quotes.quotes :global(.quote-stage blockquote) {
-    font-size: 20px;
+  .quoteMark {
+    left: 4px;
+    top: 76px;
+    font-size: 32px;
   }
-  .quotes.quotes :global(.big-quote) {
-    left: 7px;
+  .words figcaption {
+    padding-right: 0;
+    margin-top: 20px;
   }
-  .quotes.quotes :global(.quote-actions) {
-    margin-left: 14px;
-    gap: 12px;
+  .letter .sketch {
+    width: 64px;
+    height: 32px;
+    right: 20px;
+    bottom: 18px;
+    opacity: 0.5;
   }
-  .quotes.quotes :global(.quote-feedback) {
-    margin-left: 22px;
+  .toolbar {
+    padding: 12px 0 0;
+    gap: 8px;
+  }
+  .turnControls,
+  .keepControls {
+    gap: 6px;
+  }
+  .hint {
+    margin-left: 4px;
+  }
+  .savedList {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

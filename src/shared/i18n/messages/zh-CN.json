@@ -437,7 +437,17 @@
     "failed": "复制暂不可用，可以直接选中文字复制。",
     "saved": "已收藏在这个浏览器里。",
     "hint": "点击爱心，把喜欢的话留在这里。",
-    "collection": "留在心里的话"
+    "collection": "留在心里的话",
+    "readingLabel": "一言阅读",
+    "current": "此刻的一句",
+    "previous": "翻到上一句",
+    "keep": "记下这句",
+    "kept": "已记下",
+    "singleHint": "这一句，慢慢读。新的句子还在路上。",
+    "collectionEyebrow": "随手摘录",
+    "collectionEmpty": "留一处位置，给喜欢的句子。",
+    "collectionHelp": "点亮左侧的爱心，把这一句收进来。",
+    "collectionHint": "点击摘录，即可回到那一句。"
   },
   "projects": {
     "title": "把想法写进现实",
