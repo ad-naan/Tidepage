@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/test"
 	"fyne.io/fyne/v2/widget"
@@ -50,9 +51,12 @@ func checkPreviewLayout(t *testing.T, locale string) {
 			t.Fatalf("navigation did not open %s", page)
 		}
 		capture(t, a, page)
+		a.win.Resize(minimumWindowSize)
+		capture(t, a, page+"-compact")
 		if size := a.win.Content().MinSize(); size.Width > minimumWindowSize.Width || size.Height > minimumWindowSize.Height {
 			t.Fatalf("%s exceeds compact minimum: %v", page, size)
 		}
+		a.win.Resize(windowSize)
 	}
 	// Live data arrives after the overview is mounted. Both columns must
 	// contain their new rows without painting into the footer or one another.
@@ -67,10 +71,56 @@ func checkPreviewLayout(t *testing.T, locale string) {
 			t.Fatalf("live rows overflow at minimum window size: height %v, need %v", column.Size().Height, column.MinSize().Height)
 		}
 	}
+	a.state.Paused = true
+	a.refresh()
+	if a.publicStatus.Text != a.t.Text("paused") || a.pause.Text != a.t.Text("resume") {
+		t.Fatal("paused state must expose the resume action")
+	}
+	capture(t, a, "paused-compact")
+	a.state.Paused = false
+	a.state.Connection = "disconnected"
+	a.refresh()
+	if a.publicStatus.Text != a.t.Text("offline") {
+		t.Fatal("disconnected state must not show online")
+	}
+	capture(t, a, "offline-compact")
 	a.win.Resize(windowSize)
 	a.page("watch")
 	a.ruleDialog(-1)
 	capture(t, a, "add-application")
+}
+
+func TestApplicationIconDoesNotStretchWithItsRow(t *testing.T) {
+	app := test.NewApp()
+	defer app.Quit()
+	app.Settings().SetTheme(tideTheme{})
+	icon := appImage(protocol.App{ID: "editor"})
+	win := app.NewWindow("Icon layout")
+	defer win.Close()
+	win.SetContent(container.NewBorder(nil, nil, icon, nil, widget.NewLabel("Application")))
+	win.Show()
+	var checkImage func(fyne.CanvasObject)
+	images := 0
+	checkImage = func(object fyne.CanvasObject) {
+		switch object := object.(type) {
+		case *canvas.Image:
+			images++
+			if object.Size() != fyne.NewSize(24, 24) {
+				t.Fatalf("application image stretched to %v", object.Size())
+			}
+		case *fyne.Container:
+			for _, child := range object.Objects {
+				checkImage(child)
+			}
+		}
+	}
+	for _, size := range []fyne.Size{fyne.NewSize(320, 80), fyne.NewSize(480, 200)} {
+		win.Resize(size)
+		checkImage(icon)
+	}
+	if images != 2 {
+		t.Fatal("application image was not inspected at both row heights")
+	}
 }
 func capture(t *testing.T, a *application, name string) {
 	t.Helper()

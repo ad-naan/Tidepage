@@ -100,7 +100,7 @@ func (g *resizeGrip) Dragged(e *fyne.DragEvent) {
 }
 func (g *resizeGrip) DragEnd() { g.requested = fyne.Size{} }
 
-func windowControls(a *application, brand, nav fyne.CanvasObject) (fyne.CanvasObject, fyne.CanvasObject) {
+func windowControls(a *application, brand fyne.CanvasObject) (fyne.CanvasObject, fyne.CanvasObject) {
 	drag := newFrameHandle(brand, func() { windowCommand(a.win, scMoveCaption) })
 	minimize := widget.NewButtonWithIcon("", theme.WindowMinimizeIcon(), func() { windowCommand(a.win, scMinimize) })
 	maximize := widget.NewButtonWithIcon("", theme.WindowMaximizeIcon(), func() { windowCommand(a.win, scMaximize) })
@@ -108,7 +108,8 @@ func windowControls(a *application, brand, nav fyne.CanvasObject) (fyne.CanvasOb
 	for _, button := range []*widget.Button{minimize, maximize, closeButton} {
 		button.Importance = widget.LowImportance
 	}
-	bar := container.NewBorder(nil, nil, nil, container.NewHBox(nav, minimize, maximize, closeButton), drag)
+	controls := container.NewThemeOverride(row(4, minimize, maximize, closeButton), chromeTheme{})
+	bar := container.NewBorder(nil, nil, nil, controls, drag)
 	grip := &resizeGrip{win: a.win}
 	grip.ExtendBaseWidget(grip)
 	return bar, grip

@@ -10,6 +10,6 @@ import (
 
 func companionWindow(app fyne.App, title string) fyne.Window { return app.NewWindow(title) }
 
-func windowControls(_ *application, brand, nav fyne.CanvasObject) (fyne.CanvasObject, fyne.CanvasObject) {
-	return container.NewBorder(nil, nil, nil, nav, brand), layout.NewSpacer()
+func windowControls(_ *application, brand fyne.CanvasObject) (fyne.CanvasObject, fyne.CanvasObject) {
+	return container.NewStack(brand), layout.NewSpacer()
 }
