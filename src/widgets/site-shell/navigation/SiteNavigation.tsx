@@ -1,4 +1,5 @@
 "use client";
+import { DateTime } from "@/shared/ui/typography/DateTime";
 import { Button } from "@/shared/ui/button/Button";
 import { useEffect, useId, useRef, useState, type RefObject } from "react";
 import { useTranslations } from "next-intl";
@@ -330,7 +331,9 @@ export function SiteNavigation({
                       href={`/articles/${article.slug}`}
                       onClick={navigate}
                     >
-                      <small>{article.date.slice(5).replace("-", "/")}</small>
+                      <small>
+                        <DateTime value={article.date} />
+                      </small>
                       <span>{article.title}</span>
                     </Link>
                   ))}

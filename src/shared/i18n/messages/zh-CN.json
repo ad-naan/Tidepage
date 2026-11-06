@@ -60,6 +60,7 @@
     "departing": "纸船正在出发，带你驶向海岸……"
   },
   "ui": {
+    "dateTime": { "justNow": "刚刚", "unavailable": "时间未知" },
     "scroll": {
       "page": "页面",
       "content": "内容",
@@ -93,6 +94,14 @@
     },
     "loading": {
       "label": "正在加载内容，请稍候"
+    },
+    "linkPreview": {
+      "label": "链接预览",
+      "open": "在新标签页打开"
+    },
+    "progressive": {
+      "count": "已展示 {count} / {total} 项",
+      "more": "继续浏览"
     }
   },
   "nav": {
@@ -443,7 +452,11 @@
     "sessionExpired": "登录已过期，请重新登录后发送。",
     "rateLimited": "留言太快了，稍等一会儿再试。",
     "edit": "继续编辑",
-    "preview": "预览"
+    "preview": "预览",
+    "count": "共 {count} 条评论",
+    "loadedCount": "已加载 {count} 条评论",
+    "expand": "展开阅读完整评论",
+    "collapse": "收起长评论"
   },
   "quotes": {
     "title": "留给下一页的话",
@@ -510,6 +523,8 @@
     "added": "照片已放入这一页"
   },
   "identity": {
+    "welcome": "让好想法相遇",
+    "loginHelp": "登录后参与讨论，收藏想再读的内容。",
     "login": "登录",
     "title": "网站账号",
     "unavailable": "登录暂未开放，请稍后再试。",

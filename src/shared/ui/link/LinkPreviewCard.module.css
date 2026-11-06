@@ -1,10 +1,63 @@
-.preview.preview { padding: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); box-shadow: 0 12px 36px #00000016; }
-.content.content { display: flex; flex-direction: column; color: var(--ink); text-decoration: none; font: 400 var(--text-sm)/1.7 var(--font-ui); overflow-wrap: anywhere; }
-.artwork { width: 100%; aspect-ratio: 16 / 10; max-height: 220px; object-fit: cover; background: var(--soft); }
-.details { display: grid; gap: 8px; padding: 14px 16px; }
-.details strong { font-size: var(--text-body); font-weight: 500; }
-.description { color: var(--muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.site { display: flex; align-items: center; gap: 7px; padding-top: 10px; border-top: 1px solid var(--line); color: var(--muted); font-size: var(--text-xs); }
-.site > svg:last-child { margin-left: auto; flex-shrink: 0; }
-.url { color: var(--muted); font: 400 10px/1.6 var(--font-code); }
-.srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.preview.preview {
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper);
+  box-shadow: 0 12px 36px #00000016;
+}
+.content.content {
+  display: flex;
+  flex-direction: column;
+  color: var(--ink);
+  text-decoration: none;
+  font: 400 var(--text-sm)/1.7 var(--font-ui);
+  overflow-wrap: anywhere;
+}
+.artwork {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  max-height: 220px;
+  object-fit: cover;
+  background: var(--soft);
+}
+.details {
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px;
+}
+.details strong {
+  font-size: var(--text-body);
+  font-weight: 500;
+}
+.description {
+  color: var(--muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.site {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+.site > svg:last-child {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.url {
+  color: var(--muted);
+  font: 400 10px/1.6 var(--font-code);
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

@@ -1,11 +1,17 @@
 "use client";
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "motion/react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Highlighter, Quote, X } from "lucide-react";
 import { Button } from "@/shared/ui/button/Button";
 import type { DiscussionTarget } from "@/modules/engagement/domain/discussion";
-import { CommentThread } from "./CommentThread";
+import { useNearViewport } from "@/shared/hooks/useNearViewport";
+import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
+const CommentThread = dynamic(
+  () => import("./CommentThread").then((module) => module.CommentThread),
+  { loading: () => <LoadingSkeleton variant="rows" /> },
+);
 export function Discussion({
   target,
   compact = false,
@@ -13,7 +19,59 @@ export function Discussion({
   target: DiscussionTarget;
   compact?: boolean;
 }) {
-  return <CommentThread target={target} compact={compact} />;
+  const locale = useLocale();
+  return (
+    <DeferredDiscussion
+      key={`${target.type}:${target.id}:${locale}`}
+      target={target}
+      compact={compact}
+    />
+  );
+}
+function DeferredDiscussion({
+  target,
+  compact,
+}: {
+  target: DiscussionTarget;
+  compact: boolean;
+}) {
+  const { ref, ready, activate } = useNearViewport<HTMLDivElement>();
+  const [quote, setQuote] = useState<{ text: string; revision: number }>();
+  const [focusRequest, setFocusRequest] = useState(0);
+  useEffect(() => {
+    if (target.type !== "article") return;
+    function receive(event: Event) {
+      const value = (event as CustomEvent<string>).detail;
+      if (typeof value !== "string") return;
+      setQuote({ text: value.slice(0, 500), revision: Date.now() });
+      activate();
+      ref.current?.scrollIntoView({ block: "start", behavior: "instant" });
+    }
+    window.addEventListener("article-quote", receive);
+    function compose() {
+      activate();
+      setFocusRequest((value) => value + 1);
+    }
+    window.addEventListener("article-comment-compose", compose);
+    return () => {
+      window.removeEventListener("article-quote", receive);
+      window.removeEventListener("article-comment-compose", compose);
+    };
+  }, [target.type]);
+  return (
+    <div ref={ref} style={{ minHeight: ready ? undefined : 240 }}>
+      {ready ? (
+        <CommentThread
+          target={target}
+          compact={compact}
+          quote={quote}
+          focusRequest={focusRequest}
+        />
+      ) : (
+        <LoadingSkeleton variant="rows" />
+      )}
+    </div>
+  );
 }
 export function ReadingAnnotations() {
   const t = useTranslations("discussion");

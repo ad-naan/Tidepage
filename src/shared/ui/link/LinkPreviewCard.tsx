@@ -11,7 +11,12 @@ import { ExternalLink } from "./Anchor";
 import styles from "./LinkPreviewCard.module.css";
 
 const cache = new Map<string, { data: LinkPreview; expires: number }>();
-export function LinkPreviewCard({ anchor, onClose, onEnter, onLeave }: {
+export function LinkPreviewCard({
+  anchor,
+  onClose,
+  onEnter,
+  onLeave,
+}: {
   anchor: HTMLAnchorElement;
   onClose: () => void;
   onEnter: () => void;
@@ -22,22 +27,40 @@ export function LinkPreviewCard({ anchor, onClose, onEnter, onLeave }: {
   const t = useTranslations("ui.linkPreview");
   const url = new URL(anchor.href);
   const [data, setData] = useState<LinkPreview>(() => {
-    try { return JSON.parse(anchor.dataset.linkPreview || "{}"); } catch { return {}; }
+    try {
+      return JSON.parse(anchor.dataset.linkPreview || "{}");
+    } catch {
+      return {};
+    }
   });
   const [failedImage, setFailedImage] = useState(false);
   useEffect(() => {
     menu.setOpen(true);
     const previous = anchor.getAttribute("aria-describedby");
-    anchor.setAttribute("aria-describedby", [previous, id].filter(Boolean).join(" "));
+    anchor.setAttribute(
+      "aria-describedby",
+      [previous, id].filter(Boolean).join(" "),
+    );
     return () => {
       if (previous === null) anchor.removeAttribute("aria-describedby");
       else anchor.setAttribute("aria-describedby", previous);
     };
   }, [anchor, id]);
   useEffect(() => {
-    function dismiss(event: KeyboardEvent) { if (event.key === "Escape") onClose(); }
+    function dismiss(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
+        onClose();
+      }
+    }
     function outside(event: PointerEvent) {
-      if (event.target instanceof Element && !event.target.closest(`[data-ui-overlay-owner="${CSS.escape(id)}"]`) && !anchor.contains(event.target)) onClose();
+      if (
+        event.target instanceof Element &&
+        !event.target.closest(`[data-ui-overlay-owner="${CSS.escape(id)}"]`) &&
+        !anchor.contains(event.target)
+      )
+        onClose();
     }
     document.addEventListener("keydown", dismiss);
     document.addEventListener("pointerdown", outside);
@@ -47,6 +70,13 @@ export function LinkPreviewCard({ anchor, onClose, onEnter, onLeave }: {
     };
   }, [onClose, anchor, id]);
   useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.every((entry) => !entry.isIntersecting)) onClose();
+    });
+    observer.observe(anchor);
+    return () => observer.disconnect();
+  }, [anchor, onClose]);
+  useEffect(() => {
     const controller = new AbortController();
     const href = anchor.href;
     const existing = cache.get(href);
@@ -54,26 +84,76 @@ export function LinkPreviewCard({ anchor, onClose, onEnter, onLeave }: {
       setData((current) => ({ ...existing.data, ...current }));
       return;
     }
-    apiGet<LinkPreview>(`/api/v1/link-preview?url=${encodeURIComponent(href)}`, { signal: controller.signal }).then((result) => {
-      if (controller.signal.aborted) return;
-      if (cache.size >= 128) cache.delete(cache.keys().next().value!);
-      cache.set(href, { data: result, expires: Date.now() + 300_000 });
-      setData((current) => ({ ...result, ...current }));
-    }).catch(() => { /* The original link and hostname are always usable. */ });
+    apiGet<LinkPreview>(
+      `/api/v1/link-preview?url=${encodeURIComponent(href)}`,
+      { signal: controller.signal },
+    )
+      .then((result) => {
+        if (controller.signal.aborted) return;
+        if (cache.size >= 128) cache.delete(cache.keys().next().value!);
+        cache.set(href, { data: result, expires: Date.now() + 300_000 });
+        setData((current) => ({ ...result, ...current }));
+      })
+      .catch(() => {
+        /* The original link and hostname are always usable. */
+      });
     return () => controller.abort();
   }, [anchor.href]);
-  return <OverlayScope owner={id}>
-    <AnchoredPanel open={menu.open} anchor={anchor} id={id} label={t("label")} width={360} align="start" className={styles.preview} onPointerEnter={onEnter} onPointerLeave={onLeave}>
-      <ExternalLink href={url.href} preview={false} className={styles.content} data-external-link-preview onFocus={onEnter} onBlur={onLeave}>
-        {data.artworkUrl && !failedImage && <img className={styles.artwork} src={data.artworkUrl} alt={data.artworkAlt || ""} referrerPolicy="no-referrer" decoding="async" onError={() => setFailedImage(true)} />}
-        <span className={styles.details}>
-          <strong>{data.title || anchor.textContent?.trim() || url.hostname}</strong>
-          {data.description && <span className={styles.description}>{data.description}</span>}
-          <span className={styles.site}><Globe size={12} aria-hidden />{data.siteName || url.hostname}<ArrowUpRight size={13} aria-hidden /></span>
-          <span className={styles.url}>{url.hostname}{url.pathname === "/" ? "" : url.pathname}</span>
-          <span className={styles.srOnly}>{t("open")}</span>
-        </span>
-      </ExternalLink>
-    </AnchoredPanel>
-  </OverlayScope>;
+  return (
+    <OverlayScope owner={id}>
+      <AnchoredPanel
+        open={menu.open}
+        anchor={anchor}
+        id={id}
+        label={t("label")}
+        width={360}
+        align="start"
+        placement="auto"
+        className={styles.preview}
+        onPointerEnter={onEnter}
+        onPointerLeave={onLeave}
+      >
+        <ExternalLink
+          href={url.href}
+          preview={false}
+          className={styles.content}
+          data-external-link-preview
+          onFocus={onEnter}
+          onBlur={onLeave}
+        >
+          {data.artworkUrl && !failedImage && (
+            <img
+              className={styles.artwork}
+              src={data.artworkUrl}
+              alt={data.artworkAlt || ""}
+              referrerPolicy="no-referrer"
+              decoding="async"
+              onError={() => setFailedImage(true)}
+            />
+          )}
+          <span className={styles.details}>
+            <strong>
+              {data.title ||
+                anchor.getAttribute("aria-label") ||
+                anchor.innerText?.trim() ||
+                url.hostname}
+            </strong>
+            {data.description && (
+              <span className={styles.description}>{data.description}</span>
+            )}
+            <span className={styles.site}>
+              <Globe size={12} aria-hidden />
+              {data.siteName || url.hostname}
+              <ArrowUpRight size={13} aria-hidden />
+            </span>
+            <span className={styles.url}>
+              {url.hostname}
+              {url.pathname === "/" ? "" : url.pathname}
+            </span>
+            <span className={styles.srOnly}>{t("open")}</span>
+          </span>
+        </ExternalLink>
+      </AnchoredPanel>
+    </OverlayScope>
+  );
 }

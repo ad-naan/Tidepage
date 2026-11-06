@@ -1,3 +1,4 @@
+import { DateTime } from "@/shared/ui/typography/DateTime";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/shared/i18n/navigation";
 import {
@@ -45,9 +46,7 @@ export async function ArticleDetail({
         <div className="reading-meta">
           <AuthorSignature size="inline" />
           <span>·</span>
-          <time dateTime={article.date}>
-            {article.date.replaceAll("-", ".")}
-          </time>
+          <DateTime value={article.date} />
           <span>·</span>
           <Clock size={13} />
           <span>{t("minutes", { count: article.minutes })}</span>

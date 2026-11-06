@@ -127,7 +127,7 @@
   margin: 16px 0 0;
   font-size: 0.95em;
 }
-.rich.rich a {
+.rich.rich a:not([data-kind]) {
   color: var(--accent);
   overflow-wrap: anywhere;
   text-decoration: underline;
@@ -135,7 +135,7 @@
   text-decoration-thickness: 1px;
   text-underline-offset: 4px;
 }
-.rich.rich a:hover {
+.rich.rich a:not([data-kind]):hover {
   text-decoration-color: currentColor;
 }
 .rich.rich :not(pre) > code {
@@ -192,10 +192,10 @@
   font-weight: 600;
   margin-bottom: 6px;
 }
-.callout p {
+.rich .callout p {
   margin: 6px 0 0;
 }
-.callout p:first-child {
+.rich .callout p:first-child {
   margin-top: 0;
 }
 .rich.rich .tasks {
@@ -268,7 +268,7 @@
 .table tr:nth-child(even) td {
   background: color-mix(in srgb, var(--soft) 35%, transparent);
 }
-.table p {
+.table.table p {
   margin: 0;
   font: inherit;
 }
@@ -346,4 +346,8 @@
   width: 56px;
   height: 56px;
   margin: 2px;
+}
+
+.rich .tasks p {
+  margin: 0;
 }

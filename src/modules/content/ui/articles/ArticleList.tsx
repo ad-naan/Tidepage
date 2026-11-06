@@ -1,4 +1,5 @@
 "use client";
+import { DateTime } from "@/shared/ui/typography/DateTime";
 import { PencilLine } from "@/shared/ui/drawing/CoastalMarks";
 import { Link } from "@/shared/i18n/navigation";
 import { motion } from "motion/react";
@@ -25,27 +26,7 @@ export function ArticleList({
             href={`/articles/${article.slug}`}
             className={`article-row${lead && i === 0 ? " article-lead" : ""}`}
           >
-            <time dateTime={article.date}>
-              <span>{article.date.slice(8)}</span>
-              <small>
-                {
-                  [
-                    "JAN",
-                    "FEB",
-                    "MAR",
-                    "APR",
-                    "MAY",
-                    "JUN",
-                    "JUL",
-                    "AUG",
-                    "SEP",
-                    "OCT",
-                    "NOV",
-                    "DEC",
-                  ][Number(article.date.slice(5, 7)) - 1]
-                }
-              </small>
-            </time>
+            <DateTime value={article.date} layout="calendar" />
             <div className="article-info">
               <h3>{article.title}</h3>
               {lead && i === 0 && (

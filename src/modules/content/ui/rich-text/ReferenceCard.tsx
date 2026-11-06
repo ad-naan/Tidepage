@@ -18,7 +18,12 @@ export function ReferenceCard({ value }: { value: Embed }) {
     ? card.artworkAssetId
     : card.artworkUrl;
   return (
-    <ExternalLink href={card.url} className={styles.card} data-kind={card.kind}>
+    <ExternalLink
+      href={card.url}
+      preview={{ ...card, artworkUrl: artwork }}
+      className={styles.card}
+      data-kind={card.kind}
+    >
       <span className={styles.artwork}>
         {artwork ? (
           <img

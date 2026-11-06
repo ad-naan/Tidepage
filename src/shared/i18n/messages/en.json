@@ -60,6 +60,7 @@
     "departing": "Setting sail for the coast…"
   },
   "ui": {
+    "dateTime": { "justNow": "Just now", "unavailable": "Date unavailable" },
     "scroll": {
       "page": "Page",
       "content": "Content",
@@ -93,6 +94,14 @@
     },
     "loading": {
       "label": "Loading content, please wait"
+    },
+    "linkPreview": {
+      "label": "Link preview",
+      "open": "Open in a new tab"
+    },
+    "progressive": {
+      "count": "Showing {count} of {total}",
+      "more": "Show more"
     }
   },
   "nav": {
@@ -443,7 +452,11 @@
     "sessionExpired": "Your session expired. Please sign in again to post.",
     "rateLimited": "You're posting quickly. Please wait a moment and try again.",
     "edit": "Continue writing",
-    "preview": "Preview"
+    "preview": "Preview",
+    "count": "{count} comments",
+    "loadedCount": "{count} comments loaded",
+    "expand": "Read full comment",
+    "collapse": "Collapse comment"
   },
   "quotes": {
     "title": "For the next page",
@@ -510,6 +523,8 @@
     "added": "Photos added to this page"
   },
   "identity": {
+    "welcome": "A place for good ideas",
+    "loginHelp": "Sign in to join the conversation and save a good read.",
     "login": "Sign in",
     "title": "Site account",
     "unavailable": "Sign-in is currently unavailable. Please try again later.",

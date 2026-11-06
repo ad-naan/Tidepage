@@ -1,4 +1,5 @@
 "use client";
+import { ProgressiveList } from "@/shared/ui/loading/ProgressiveList";
 import { FileInput } from "@/shared/ui/field/Input";
 import { Button } from "@/shared/ui/button/Button";
 import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
@@ -126,13 +127,17 @@ export function GalleryView() {
         </span>
         <span>{t("source")}</span>
       </div>
-      <div className="masonry-gallery">
-        {filtered.map((photo, i) => (
+      <ProgressiveList
+        key={filter}
+        items={filtered}
+        className="masonry-gallery"
+      >
+        {(photo, i) => (
           <motion.figure
             key={photo.id}
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
+            transition={{ delay: Math.min(i, 5) * 0.05 }}
           >
             <PencilFrame />
             <Button
@@ -183,8 +188,8 @@ export function GalleryView() {
               </Button>
             </figcaption>
           </motion.figure>
-        ))}
-      </div>
+        )}
+      </ProgressiveList>
       <p className="gallery-ending">
         {t("ending")}
         <CoastGlyph kind="wind" />

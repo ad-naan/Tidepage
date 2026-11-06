@@ -2,7 +2,7 @@ import "server-only";
 import { and, asc, count, desc, eq, ilike, lte, or, sql } from "drizzle-orm";
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import { getDb, type Database } from "@/server/db/client";
-import { site } from "@/shared/config/site";
+import { dateKey, formatDate } from "@/shared/lib/date-time";
 import { noteImagesSchema } from "@/modules/content/domain/note-images";
 import {
   articleSchema,
@@ -35,9 +35,7 @@ function summary(
 ): ArticleSummary {
   return summarySchema.parse({
     ...row,
-    date: new Intl.DateTimeFormat("en-CA", { timeZone: site.timeZone }).format(
-      row.publishedAt!,
-    ),
+    date: dateKey(row.publishedAt!),
     updatedAt: row.updatedAt.toISOString(),
   });
 }
@@ -127,11 +125,7 @@ export function postgresContentRepository(
       ).map((row) => ({
         locale: row.locale,
         id: row.id,
-        date: new Intl.DateTimeFormat(locale, {
-          month: "long",
-          day: "2-digit",
-          timeZone: "UTC",
-        }).format(new Date(row.publishedOn)),
+        date: formatDate(row.publishedOn, locale),
         publishedOn: row.publishedOn,
         mood: row.mood,
         images: noteImagesSchema.parse(row.images),

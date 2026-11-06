@@ -23,7 +23,7 @@
 
 模型采用手工设定的曲线与顶点曲面塑形：脸颊、下巴和鼻尖是一张连续面，衣服采用轮廓放样，发束沿曲线扫掠；不是方块、球体的占位组合。角色关节当前为层级节点动画，尚未制作蒙皮骨骼、面部表情 morph 或自定义模型导入。
 
-`artifacts/coast-models/` 提供三套 GLB（海盐蓝卷发挎包、珊瑚粉齐发围巾、燕麦白短发），均包含 idle / walk / wave / sit 动作片段；`coastal-travelers.blend` 保留可编辑网格与材质，`coastal-travelers.png` 是 Blender 渲染的角色展示图。运行 `node --import tsx scripts/export-coast-models.ts` 从同一份运行时模型重新导出，运行 `blender --background --python scripts/render-coast-models.py` 生成 Blender 源文件和展示图。Blender 文件由 GLB 导入后整理生成；曲面造型的源定义仍在 TypeScript 中，二者不是自动双向同步。
+此前自建人物和海湾的离线模型未通过视觉验收，相关失败导出、重复渲染和生成脚本已经移出项目，不作为可用资产。当前运行时人物仍是待替换的旧模型。后续改用有明确授权的现成人物，核对实际外观、动作、尺寸和网页端成本后再接入；选型与授权记录集中保存在 [美术资源记录](art-direction/README.md)。
 
 地标位置、可行走边界、房屋和长椅碰撞区域在 `domain/coast-harbor.ts`；场景资产在 `runtime/createHarborLandscape.ts`，控制器在 `runtime/createHarborScene.ts`，界面在 `ui/HarborView.tsx`。导航不能穿过小屋、长椅或走进海中。后续调整资产尺寸时须同步碰撞范围并验证路线。
 

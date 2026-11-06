@@ -15,6 +15,15 @@
 .wide {
   width: min(900px, calc(100vw - 32px));
 }
+.compact.compact {
+  width: min(400px, calc(100vw - 32px));
+}
+.compact .content {
+  padding: 0 2px 4px;
+}
+.compact .heading {
+  margin-bottom: 18px;
+}
 .inner {
   position: relative;
   isolation: isolate;

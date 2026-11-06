@@ -3,7 +3,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import type { Editor } from "@tiptap/core";
 import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
-import { MessageCircle, Reply, X } from "lucide-react";
+import { MessageCircle, X } from "lucide-react";
 import type {
   Comment,
   CommentPage,
@@ -18,23 +18,28 @@ import {
   emptyDocument,
   type EditorNode,
 } from "@/modules/content/domain/editor-document";
-import { plainTextDocument } from "@/shared/contracts/rich-text";
-import { AuthorNameText } from "@/modules/identity/ui/AuthorSignature";
+import { commentLayout } from "@/modules/engagement/domain/comment-layout";
+import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
+import { CommentItem } from "./CommentItem";
 import styles from "./CommentThread.module.css";
 const RichTextComposer = dynamic(
   () =>
     import("@/modules/content/ui/rich-text/RichTextComposer").then(
       (module) => module.RichTextComposer,
     ),
-  { ssr: false },
+  { ssr: false, loading: () => <LoadingSkeleton variant="document" /> },
 );
 
 export function CommentThread({
   target,
   compact = false,
+  quote,
+  focusRequest,
 }: {
   target: DiscussionTarget;
   compact?: boolean;
+  quote?: { text: string; revision: number };
+  focusRequest?: number;
 }) {
   const locale = useLocale();
   // A target change remounts all state, drafts and pending requests together.
@@ -43,15 +48,21 @@ export function CommentThread({
       key={`${target.type}:${target.id}:${locale}`}
       target={target}
       compact={compact}
+      quote={quote}
+      focusRequest={focusRequest}
     />
   );
 }
 function Thread({
   target,
   compact,
+  quote,
+  focusRequest,
 }: {
   target: DiscussionTarget;
   compact: boolean;
+  quote?: { text: string; revision: number };
+  focusRequest?: number;
 }) {
   const t = useTranslations("comments");
   const locale = useLocale();
@@ -64,6 +75,9 @@ function Thread({
   const [draft, setDraft] = useState<EditorNode>(emptyDocument);
   const [composerKey, setComposerKey] = useState(0);
   const [preview, setPreview] = useState(false);
+  const [composerActive, setComposerActive] = useState(false);
+  const lastQuote = useRef<number | undefined>(undefined);
+  const focusComposer = useRef(false);
   const text = documentText(draft).trim();
   const [reply, setReply] = useState<Comment | null>(null);
   const [sending, setSending] = useState(false);
@@ -73,9 +87,13 @@ function Thread({
   const input = useRef<Editor | null>(null);
   const active = useRef(true);
   const request = useRef<AbortController | null>(null);
+  const form = useRef<HTMLFormElement>(null);
+  const loadingLock = useRef(false);
   const path = (cursor?: string) =>
     `/api/v1/comments?${new URLSearchParams({ type: target.type, id: target.id, locale, ...(cursor ? { after: cursor } : {}) })}` as const;
   async function load(cursor?: string) {
+    if (loadingLock.current) return;
+    loadingLock.current = true;
     request.current?.abort();
     const controller = new AbortController();
     request.current = controller;
@@ -100,6 +118,7 @@ function Thread({
     } catch {
       if (active.current && !controller.signal.aborted) setLoadError(true);
     } finally {
+      if (request.current === controller) loadingLock.current = false;
       if (active.current && !controller.signal.aborted) setLoading(false);
     }
   }
@@ -109,33 +128,43 @@ function Thread({
     return () => {
       active.current = false;
       request.current?.abort();
+      loadingLock.current = false;
     };
   }, []);
+  function insertQuote(editor: Editor) {
+    if (!quote || lastQuote.current === quote.revision) return;
+    lastQuote.current = quote.revision;
+    editor
+      ?.chain()
+      .focus("end")
+      .insertContent([
+        {
+          type: "blockquote",
+          content: [
+            {
+              type: "paragraph",
+              content: [{ type: "text", text: quote.text }],
+            },
+          ],
+        },
+        { type: "paragraph" },
+      ])
+      .run();
+  }
   useEffect(() => {
-    if (target.type !== "article") return;
-    function quote(event: Event) {
-      const text = (event as CustomEvent<string>).detail;
-      if (typeof text !== "string") return;
-      input.current
-        ?.chain()
-        .focus("end")
-        .insertContent([
-          {
-            type: "blockquote",
-            content: [
-              {
-                type: "paragraph",
-                content: [{ type: "text", text: text.slice(0, 500) }],
-              },
-            ],
-          },
-          { type: "paragraph" },
-        ])
-        .run();
-    }
-    window.addEventListener("article-quote", quote);
-    return () => window.removeEventListener("article-quote", quote);
-  }, [target.type]);
+    if (!quote) return;
+    setComposerActive(true);
+    setPreview(false);
+    focusComposer.current = true;
+    if (input.current) insertQuote(input.current);
+  }, [quote]);
+  useEffect(() => {
+    if (!focusRequest) return;
+    setComposerActive(true);
+    setPreview(false);
+    focusComposer.current = true;
+    input.current?.commands.focus("end");
+  }, [focusRequest]);
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     if (!principal) {
@@ -183,56 +212,34 @@ function Thread({
       <header className={styles.heading}>
         <MessageCircle size={17} aria-hidden />
         <h2 id={headingId}>{t("title")}</h2>
+        {!loading && !loadError && (
+          <span className={styles.count}>
+            {t(next ? "loadedCount" : "count", { count: items.length })}
+          </span>
+        )}
       </header>
       <p className={styles.intro}>{t("intro")}</p>
       <div className={styles.list} aria-busy={loading}>
-        {items.map((item) => (
-          <article key={item.id} className={styles.comment}>
-            <span className={styles.avatar} aria-hidden>
-              {item.author.slice(0, 1).toUpperCase()}
-            </span>
-            <div className={styles.commentContent}>
-              <div className={styles.meta}>
-                <strong>
-                  <AuthorNameText text={item.author} />
-                </strong>
-                <time dateTime={item.createdAt}>
-                  {new Intl.DateTimeFormat(locale, {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  }).format(new Date(item.createdAt))}
-                </time>
-              </div>
-              {item.replyTo && (
-                <span className={styles.replyTo}>
-                  {t("replyingTo", { name: item.replyTo })}
-                </span>
-              )}
-              <div className={styles.commentBody}>
-                <RichText
-                  document={item.document ?? plainTextDocument(item.body)}
-                  compact
-                />
-              </div>
-              <Button
-                className={styles.replyButton}
-                onClick={() => {
-                  setReply(item);
-                  setSent(false);
-                  input.current?.commands.focus();
-                }}
-              >
-                <Reply size={13} />
-                {t("reply")}
-              </Button>
-            </div>
-          </article>
+        {commentLayout(items).map(({ item, reply: isReply }) => (
+          <CommentItem
+            key={item.id}
+            item={item}
+            nested={isReply}
+            onReply={(item) => {
+              setReply(item);
+              setSent(false);
+              setComposerActive(true);
+              setPreview(false);
+              focusComposer.current = true;
+              form.current?.scrollIntoView({
+                block: "nearest",
+                behavior: "instant",
+              });
+              input.current?.commands.focus();
+            }}
+          />
         ))}
-        {loading && (
-          <p className={styles.status} role="status">
-            {t("loading")}
-          </p>
-        )}
+        {loading && <LoadingSkeleton variant="rows" />}
         {!loading && loadError && (
           <div className={styles.status} role="status">
             <p>{t("loadFailed")}</p>
@@ -257,7 +264,7 @@ function Thread({
           </Button>
         )}
       </div>
-      <form onSubmit={submit} className={styles.form}>
+      <form ref={form} onSubmit={submit} className={styles.form}>
         {reply && (
           <div className={styles.replyContext}>
             <span>{t("replyingTo", { name: reply.author })}</span>
@@ -274,30 +281,52 @@ function Thread({
             ? t("writingAs", { name: principal.displayName })
             : t("write")}
         </label>
-        <Button
-          className={styles.previewToggle}
-          aria-pressed={preview}
-          onClick={() => setPreview((value) => !value)}
-        >
-          {preview ? t("edit") : t("preview")}
-        </Button>
-        <div hidden={preview}>
-          <RichTextComposer
-            key={composerKey}
-            id={fieldId}
-            label={t("write")}
-            placeholder={t("placeholder")}
-            initial={draft}
-            disabled={sending}
-            onReady={(editor) => {
-              input.current = editor;
+        {composerActive && (
+          <Button
+            className={styles.previewToggle}
+            aria-pressed={preview}
+            onClick={() => setPreview((value) => !value)}
+          >
+            {preview ? t("edit") : t("preview")}
+          </Button>
+        )}
+        {!composerActive && (
+          <Button
+            className={styles.startWriting}
+            variant="quiet"
+            onClick={() => {
+              setComposerActive(true);
+              focusComposer.current = true;
             }}
-            onChange={(value) => {
-              setDraft(value);
-              setSent(false);
-            }}
-          />
-        </div>
+          >
+            {t("placeholder")}
+          </Button>
+        )}
+        {composerActive && (
+          <div hidden={preview}>
+            <RichTextComposer
+              key={composerKey}
+              id={fieldId}
+              label={t("write")}
+              placeholder={t("placeholder")}
+              initial={draft}
+              disabled={sending}
+              onReady={(editor) => {
+                input.current = editor;
+                if (!editor) return;
+                insertQuote(editor);
+                if (focusComposer.current) {
+                  editor.commands.focus("end");
+                  focusComposer.current = false;
+                }
+              }}
+              onChange={(value) => {
+                setDraft(value);
+                setSent(false);
+              }}
+            />
+          </div>
+        )}
         {preview && (
           <div className={styles.previewBody}>
             {text ? (

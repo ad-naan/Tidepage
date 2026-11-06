@@ -1,9 +1,13 @@
 "use client";
-import { useId, useMemo, useRef, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronDown, ChevronUp, Code2 } from "lucide-react";
 import { Button } from "@/shared/ui/button/Button";
-import { HighlightedCode } from "./HighlightedCode";
+import dynamic from "next/dynamic";
+const HighlightedCode = dynamic(() =>
+  import("./HighlightedCode").then((module) => module.HighlightedCode),
+);
+import { useNearViewport } from "@/shared/hooks/useNearViewport";
 import { CodeCopy } from "./CodeCopy";
 import styles from "./CodeBlock.module.css";
 
@@ -19,14 +23,19 @@ export function CodeBlock({
 }) {
   const t = useTranslations("code");
   const [expanded, setExpanded] = useState(false);
-  const figure = useRef<HTMLElement>(null);
+  const { ref: figure, ready } = useNearViewport<HTMLElement>();
   const id = useId();
   const text = code.replace(/\r\n/g, "\n").replace(/\n$/, "");
   const lines = text.split("\n").length;
   const foldable = lines > 18;
   const highlighted = useMemo(
-    () => <HighlightedCode code={text} language={language.toLowerCase()} />,
-    [text, language],
+    () =>
+      ready ? (
+        <HighlightedCode code={text} language={language.toLowerCase()} />
+      ) : (
+        text
+      ),
+    [text, language, ready],
   );
   function toggle() {
     setExpanded((current) => !current);

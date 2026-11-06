@@ -31,14 +31,17 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  padding: 16px 0;
-  border-bottom: 1px solid var(--line);
+  padding: 16px 0 8px;
+  scroll-margin-top: 100px;
 }
 .avatar {
   display: grid;
   place-items: center;
-  flex: 0 0 30px;
-  height: 30px;
+  flex: 0 0 32px;
+  height: 32px;
+  margin-top: 26px;
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--line));
+  box-shadow: 0 0 0 3px var(--paper);
   border-radius: 50%;
   background: var(--sage);
   font-size: var(--text-sm);
@@ -69,7 +72,14 @@
   font: inherit;
 }
 .commentBody {
-  margin: 8px 0;
+  width: fit-content;
+  max-width: 100%;
+  margin: 6px 0 2px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px 12px 12px 3px;
+  background: color-mix(in srgb, var(--soft) 38%, var(--paper));
+  overflow-wrap: anywhere;
 }
 .commentBody > div > div > :last-child {
   margin-bottom: 0;
@@ -105,6 +115,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
 }
 .form > label {
   font-size: var(--text-sm);
@@ -170,5 +182,74 @@
   }
   .formFooter {
     align-items: flex-start;
+  }
+}
+
+.count {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+.nested {
+  margin-left: 44px;
+  padding-top: 8px;
+}
+.nested .avatar {
+  flex-basis: 28px;
+  height: 28px;
+}
+.longComment > summary {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+  cursor: pointer;
+}
+.longComment[open] > summary {
+  margin-bottom: 12px;
+}
+.longComment[open] .excerpt {
+  display: none;
+}
+.excerpt {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: pre-wrap;
+  font-size: var(--text-body);
+  line-height: 1.85;
+}
+.expandLabel {
+  color: var(--accent);
+  font-size: var(--text-xs);
+}
+.startWriting.startWriting {
+  justify-content: flex-start;
+  min-height: 88px;
+  padding: 16px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+@media (max-width: 700px) {
+  .comment {
+    gap: 8px;
+  }
+  .nested {
+    margin-left: 20px;
+  }
+  .commentBody {
+    padding: 8px 10px;
+  }
+  .avatar {
+    flex-basis: 28px;
+    height: 28px;
+  }
+  .meta {
+    gap: 2px 8px;
+  }
+  .previewToggle.previewToggle {
+    margin-top: 0;
   }
 }

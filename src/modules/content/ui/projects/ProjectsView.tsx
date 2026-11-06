@@ -1,4 +1,5 @@
 "use client";
+import { ProgressiveList } from "@/shared/ui/loading/ProgressiveList";
 import { Button } from "@/shared/ui/button/Button";
 import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 import {
@@ -49,59 +50,65 @@ export function ProjectsView({ projects }: { projects: Project[] }) {
         />
         <PencilLine className="toolbar-shore" />
       </div>
-      <div className="project-grid">
-        {projects
-          .filter((p) => category === "all" || p.category === category)
-          .map((p) => (
-            <Button
-              key={p.id}
-              className="project-card"
-              onClick={() => setSelected(p)}
-              whileHover={{ y: -3 }}
-              whileTap={{ scale: 0.98 }}
-              transition={softSpring}
-            >
-              <PencilFrame kind="ticket" />
-              <div className={`project-cover ${p.color}`}>
-                <SketchLabel className="project-status" kind="wind">
-                  {p.status}
-                </SketchLabel>
-                <CoastalVignette kind={p.sketch} />
-                <span className="project-cover-label">{p.name}</span>
-                <span className="project-cover-caption">{p.subtitle}</span>
-                <span className="project-arrow">
-                  <ArrowUpRight size={22} />
-                </span>
+      <ProgressiveList
+        key={category}
+        items={projects.filter(
+          (p) => category === "all" || p.category === category,
+        )}
+        className="project-grid"
+        trailing={
+          <aside className="work-in-progress">
+            <CoastGlyph kind="leaf" />
+            <div>
+              <h3>{t("next")}</h3>
+              <p>{t("progress")}</p>
+            </div>
+          </aside>
+        }
+      >
+        {(p) => (
+          <Button
+            key={p.id}
+            className="project-card"
+            onClick={() => setSelected(p)}
+            whileHover={{ y: -3 }}
+            whileTap={{ scale: 0.98 }}
+            transition={softSpring}
+          >
+            <PencilFrame kind="ticket" />
+            <div className={`project-cover ${p.color}`}>
+              <SketchLabel className="project-status" kind="wind">
+                {p.status}
+              </SketchLabel>
+              <CoastalVignette kind={p.sketch} />
+              <span className="project-cover-label">{p.name}</span>
+              <span className="project-cover-caption">{p.subtitle}</span>
+              <span className="project-arrow">
+                <ArrowUpRight size={22} />
+              </span>
+            </div>
+            <div className="project-info">
+              <PencilLine kind="fold" className="project-fold" />
+              <h2>
+                {p.name}
+                <small>
+                  {p.category === "product" ||
+                  p.category === "open-source" ||
+                  p.category === "experiment"
+                    ? t(p.category)
+                    : p.category}
+                </small>
+              </h2>
+              <p>{p.description}</p>
+              <div className="tags">
+                {p.stack.map((s) => (
+                  <span key={s}>{s}</span>
+                ))}
               </div>
-              <div className="project-info">
-                <PencilLine kind="fold" className="project-fold" />
-                <h2>
-                  {p.name}
-                  <small>
-                    {p.category === "product" ||
-                    p.category === "open-source" ||
-                    p.category === "experiment"
-                      ? t(p.category)
-                      : p.category}
-                  </small>
-                </h2>
-                <p>{p.description}</p>
-                <div className="tags">
-                  {p.stack.map((s) => (
-                    <span key={s}>{s}</span>
-                  ))}
-                </div>
-              </div>
-            </Button>
-          ))}
-        <aside className="work-in-progress">
-          <CoastGlyph kind="leaf" />
-          <div>
-            <h3>{t("next")}</h3>
-            <p>{t("progress")}</p>
-          </div>
-        </aside>
-      </div>
+            </div>
+          </Button>
+        )}
+      </ProgressiveList>
       {selected && (
         <Dialog title={selected.name} onClose={() => setSelected(null)}>
           <div className="project-detail">

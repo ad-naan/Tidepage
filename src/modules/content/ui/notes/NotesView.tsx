@@ -1,4 +1,5 @@
 ﻿"use client";
+import { DateTime } from "@/shared/ui/typography/DateTime";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowUpRight, Bookmark, Images } from "lucide-react";
@@ -12,7 +13,13 @@ import { ContentHeading } from "@/modules/content/ui/layout/ContentHeading";
 import type { Note } from "@/modules/content/domain/models";
 import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
 import { Button } from "@/shared/ui/button/Button";
-import { NoteReader } from "./NoteReader";
+import dynamic from "next/dynamic";
+import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
+import { ProgressiveList } from "@/shared/ui/loading/ProgressiveList";
+const NoteReader = dynamic(
+  () => import("./NoteReader").then((module) => module.NoteReader),
+  { loading: () => <LoadingSkeleton variant="document" /> },
+);
 import {
   EngagementProvider,
   useEngagement,
@@ -77,8 +84,12 @@ function NotesContent({ notes }: { notes: Note[] }) {
         <PencilLine className={styles.shore} />
       </div>
       <EngagementStatus />
-      <div className={styles.grid}>
-        {visible.map((note) => {
+      <ProgressiveList
+        key={String(onlySaved)}
+        items={visible}
+        className={styles.grid}
+      >
+        {(note) => {
           const images = note.images;
           return (
             <article className={styles.card} key={note.id}>
@@ -119,9 +130,7 @@ function NotesContent({ notes }: { notes: Note[] }) {
                   </span>
                 </span>
                 <span className={styles.meta}>
-                  <time dateTime={note.publishedOn}>
-                    {note.publishedOn.replaceAll("-", ".")}
-                  </time>
+                  <DateTime value={note.publishedOn} />
                   <span>{note.mood}</span>
                 </span>
                 <span className={styles.preview}>
@@ -143,8 +152,8 @@ function NotesContent({ notes }: { notes: Note[] }) {
               </div>
             </article>
           );
-        })}
-      </div>
+        }}
+      </ProgressiveList>
       {!visible.length && (!onlySaved || (!loading && !error)) && (
         <div className={styles.empty}>
           <Bookmark size={28} />

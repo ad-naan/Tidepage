@@ -26,6 +26,7 @@ export function AnchoredPanel({
   className = "",
   onPointerEnter,
   onPointerLeave,
+  placement = "bottom",
 }: {
   open: boolean;
   anchor: HTMLElement | null;
@@ -38,6 +39,7 @@ export function AnchoredPanel({
   className?: string;
   onPointerEnter?: () => void;
   onPointerLeave?: () => void;
+  placement?: "bottom" | "auto";
 }) {
   const owner = useOverlayOwner();
   const reduce = useReducedMotion();
@@ -70,11 +72,20 @@ export function AnchoredPanel({
         align === "start" ? bounds.left : bounds.right - panelWidth;
       const boundaryBottom =
         boundary?.current?.getBoundingClientRect().bottom ?? bounds.bottom;
-      const top = Math.max(
+      let top = Math.max(
         offsetTop + 12,
         bounds.bottom + 14,
         boundaryBottom + 12,
       );
+      const below = offsetTop + viewportHeight - top - 16;
+      const above = bounds.top - offsetTop - 24;
+      const height = surface.current?.getBoundingClientRect().height || 320;
+      const flip = placement === "auto" && below < height && above > below;
+      if (flip)
+        top = Math.max(
+          offsetTop + 12,
+          bounds.top - Math.min(height, above) - 12,
+        );
       setPosition({
         left: Math.max(
           offsetLeft + 16,
@@ -82,7 +93,10 @@ export function AnchoredPanel({
         ),
         top,
         width: panelWidth,
-        maxHeight: Math.max(100, offsetTop + viewportHeight - top - 16),
+        maxHeight: Math.max(
+          100,
+          flip ? above : offsetTop + viewportHeight - top - 16,
+        ),
       });
     };
     const schedule = () => {
@@ -92,6 +106,8 @@ export function AnchoredPanel({
     measure();
     const observer = new ResizeObserver(schedule);
     observer.observe(anchor);
+    if (surface.current) observer.observe(surface.current);
+    schedule();
     if (boundary?.current && boundary.current !== anchor)
       observer.observe(boundary.current);
     window.addEventListener("resize", schedule);
@@ -106,7 +122,7 @@ export function AnchoredPanel({
       window.visualViewport?.removeEventListener("resize", schedule);
       window.visualViewport?.removeEventListener("scroll", schedule);
     };
-  }, [open, anchor, boundary, width, align]);
+  }, [open, anchor, boundary, width, align, placement, mounted]);
   if (!mounted) return null;
   return createPortal(
     <AnimatePresence>
@@ -134,6 +150,6 @@ export function AnchoredPanel({
         </motion.section>
       )}
     </AnimatePresence>,
-    document.body,
+    anchor?.closest("dialog[open]") ?? document.body,
   );
 }

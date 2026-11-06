@@ -1,7 +1,8 @@
 "use client";
+import { DateTime } from "@/shared/ui/typography/DateTime";
 
 import { useEffect, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Button } from "@/shared/ui/button/Button";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { apiGet } from "@/shared/http/client";
@@ -27,7 +28,6 @@ export function HarborSocial({
   const t = useTranslations("world.harbor.social");
   const connection = useTranslations("world.harbor.network");
   const places = useTranslations("world.harbor.places");
-  const locale = useLocale();
   const { principal, openLogin } = useIdentity();
   const [busy, setBusy] = useState(false);
   const [now, setNow] = useState(0);
@@ -270,13 +270,7 @@ export function HarborSocial({
                               </span>
                             )}
                           </div>
-                          <time dateTime={memory.occurredAt}>
-                            {new Intl.DateTimeFormat(locale, {
-                              dateStyle: "medium",
-                              timeStyle: "short",
-                              timeZone: "Asia/Shanghai",
-                            }).format(new Date(memory.occurredAt))}
-                          </time>
+                          <DateTime value={memory.occurredAt} mode="datetime" />
                           <span className={styles.note}>
                             {t("companions", { count: memory.companionCount })}
                           </span>

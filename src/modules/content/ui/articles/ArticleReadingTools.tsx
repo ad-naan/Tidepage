@@ -83,6 +83,7 @@ export function ArticleReadingTools({
           title={t("jumpComments")}
           onClick={() => {
             const region = document.getElementById("article-comments");
+            window.dispatchEvent(new Event("article-comment-compose"));
             region?.scrollIntoView({
               behavior: reduced ? "instant" : "smooth",
               block: "start",

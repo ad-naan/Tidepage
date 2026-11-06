@@ -9,7 +9,7 @@ import {
 } from "react";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { LogOut, UserRound } from "lucide-react";
+import { ArrowUpRight, LayoutDashboard, LogOut, UserRound } from "lucide-react";
 import type { Principal } from "@/modules/identity/domain/principal";
 import type { OAuthProviderId } from "@/modules/identity/domain/oauth";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
@@ -69,19 +69,45 @@ export function IdentityProvider({
     >
       {children}
       {open && (
-        <Dialog title={t("title")} onClose={() => setOpen(false)}>
-          <div className="login-content">
+        <Dialog
+          title={t("title")}
+          size="compact"
+          onClose={() => setOpen(false)}
+        >
+          <div className={styles.content}>
             {principal ? (
               <div className={styles.account}>
-                <p>
-                  <span className={styles.accountLabel}>{t("signedInAs")}</span>
-                  <AuthorNameText text={principal.displayName} />
-                </p>
+                <div className={styles.identityRow}>
+                  <span className={styles.avatar} aria-hidden>
+                    <UserRound size={21} strokeWidth={1.4} />
+                  </span>
+                  <div>
+                    <span className={styles.accountLabel}>
+                      {t("signedInAs")}
+                    </span>
+                    <strong className={styles.name}>
+                      <AuthorNameText text={principal.displayName} />
+                    </strong>
+                  </div>
+                </div>
                 {["admin", "author"].includes(principal.role) && (
-                  <Link href="/admin">{t("workbench")}</Link>
+                  <Link
+                    href="/admin"
+                    className={styles.workbench}
+                    onClick={() => setOpen(false)}
+                  >
+                    <LayoutDashboard size={16} aria-hidden />
+                    <span>{t("workbench")}</span>
+                    <ArrowUpRight size={16} aria-hidden />
+                  </Link>
                 )}
-                <Button onClick={signOut} disabled={signingOut}>
-                  <LogOut size={14} />
+                <Button
+                  className={styles.logout}
+                  variant="quiet"
+                  onClick={signOut}
+                  busy={signingOut}
+                >
+                  <LogOut size={16} aria-hidden />
                   {signingOut ? t("signingOut") : t("logout")}
                 </Button>
               </div>
@@ -107,7 +133,7 @@ export function LoginTrigger() {
   const { principal, openLogin } = useContext(IdentityContext);
   const t = useTranslations("identity");
   return (
-    <Button className="login-trigger" onClick={openLogin}>
+    <Button className="login-trigger" aria-label={principal ? t("title") : t("login")} aria-haspopup="dialog" onClick={openLogin}>
       <UserRound size={15} />
       <span>
         <AuthorNameText text={principal?.displayName ?? t("login")} />

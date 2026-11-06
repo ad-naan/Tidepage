@@ -1,4 +1,5 @@
 "use client";
+import { DateTime } from "@/shared/ui/typography/DateTime";
 import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
@@ -120,7 +121,7 @@ export function ArticleManagerView({
                       .filter(([, v]) => v.title)
                       .map(([key]) => key)
                       .join(" / ")}{" "}
-                    · {new Date(item.updatedAt).toLocaleDateString(locale)}
+                    · <DateTime value={item.updatedAt} mode="datetime" />
                   </p>
                 </div>
                 <div className={styles.actions}>

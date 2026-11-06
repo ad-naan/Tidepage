@@ -65,6 +65,7 @@ export function StickerPicker({
           label={t("title")}
           width={330}
           align="start"
+          placement="auto"
           className={styles.panel}
         >
           <div className={styles.heading}>

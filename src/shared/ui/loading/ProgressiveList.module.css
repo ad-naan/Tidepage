@@ -1,0 +1,10 @@
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-block: 20px;
+  color: var(--muted);
+  font: 400 var(--text-xs)/1.7 var(--font-ui);
+}

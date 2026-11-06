@@ -13,12 +13,14 @@ export function Dialog({
   onClose,
   wide = false,
   layout = "default",
+  size = "default",
 }: {
   children: ReactNode;
   title: string;
   onClose: () => void;
   wide?: boolean;
   layout?: "default" | "split";
+  size?: "default" | "compact";
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const t = useTranslations("ui.dialog");
@@ -37,7 +39,7 @@ export function Dialog({
   return (
     <dialog
       ref={ref}
-      className={`${styles.dialog} ${wide ? styles.wide : ""} ${layout === "split" ? styles.split : ""}`}
+      className={`${styles.dialog} ${wide ? styles.wide : ""} ${layout === "split" ? styles.split : ""} ${size === "compact" ? styles.compact : ""}`}
       onCancel={onClose}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();

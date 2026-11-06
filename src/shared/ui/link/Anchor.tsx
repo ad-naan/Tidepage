@@ -23,7 +23,13 @@ export function ExternalLink({
       target={target}
       rel={[...relationship].join(" ") || undefined}
       className={className}
-      data-link-preview={preview === false ? "off" : preview ? JSON.stringify(preview) : undefined}
+      data-link-preview={
+        preview === false
+          ? "off"
+          : preview
+            ? JSON.stringify(preview)
+            : undefined
+      }
     />
   );
 }

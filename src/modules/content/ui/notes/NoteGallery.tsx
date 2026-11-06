@@ -1,4 +1,5 @@
 ﻿"use client";
+import { DateTime } from "@/shared/ui/typography/DateTime";
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
@@ -106,7 +107,7 @@ export function NoteGallery({
             <span className={styles.eyebrow}>{t("aMoment")}</span>
             <CoastalVignette kind={note.sketch} className={styles.sketch} />
             <p className={styles.noPhoto}>{t("wordsOnly")}</p>
-            <time dateTime={note.publishedOn}>{note.date}</time>
+            <DateTime value={note.publishedOn} />
           </div>
         )}
         {images.length > 1 && (

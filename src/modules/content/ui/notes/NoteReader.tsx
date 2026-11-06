@@ -1,4 +1,5 @@
 "use client";
+import { DateTime } from "@/shared/ui/typography/DateTime";
 import { useRef } from "react";
 import { useTranslations } from "next-intl";
 import { MessageCircle } from "lucide-react";
@@ -43,9 +44,7 @@ export function NoteReader({
               </span>
               <div>
                 <AuthorSignature size="sm" />
-                <time dateTime={note.publishedOn}>
-                  {note.publishedOn.replaceAll("-", ".")}
-                </time>
+                <DateTime value={note.publishedOn} />
               </div>
               <span className={styles.mood}>{note.mood}</span>
             </header>

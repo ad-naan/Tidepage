@@ -13,3 +13,9 @@ next-env.d.ts
 /storage/
 aqtinstall.log
 desktop/dist/
+
+# DCC and Python scratch output
+__pycache__/
+*.py[cod]
+*.blend1
+*.blend2
