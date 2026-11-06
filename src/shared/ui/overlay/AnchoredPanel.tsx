@@ -79,7 +79,7 @@ export function AnchoredPanel({
       );
       const below = offsetTop + viewportHeight - top - 16;
       const above = bounds.top - offsetTop - 24;
-      const height = surface.current?.getBoundingClientRect().height || 320;
+      const height = surface.current?.scrollHeight || 320;
       const flip = placement === "auto" && below < height && above > below;
       if (flip)
         top = Math.max(

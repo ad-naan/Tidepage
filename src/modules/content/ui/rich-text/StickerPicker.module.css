@@ -2,11 +2,16 @@
   display: inline-flex;
 }
 .panel.panel {
+  display: flex;
+  flex-direction: column;
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 14px;
   box-shadow: 0 10px 32px #00000010;
+}
+.panel > :not(.grid) {
+  flex-shrink: 0;
 }
 .heading {
   display: flex;
@@ -33,6 +38,9 @@
   margin: 8px 0;
 }
 .grid {
+  flex: 1 1 240px;
+  min-height: 80px;
+  grid-auto-rows: 40px;
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 2px;

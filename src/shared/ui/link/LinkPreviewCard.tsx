@@ -91,7 +91,10 @@ export function LinkPreviewCard({
       .then((result) => {
         if (controller.signal.aborted) return;
         if (cache.size >= 128) cache.delete(cache.keys().next().value!);
-        cache.set(href, { data: result, expires: Date.now() + 300_000 });
+        cache.set(href, {
+          data: result,
+          expires: Date.now() + (result.title ? 300_000 : 15_000),
+        });
         setData((current) => ({ ...result, ...current }));
       })
       .catch(() => {

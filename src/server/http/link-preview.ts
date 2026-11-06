@@ -3,6 +3,8 @@ import { request as httpRequest } from "node:http";
 import { request as httpsRequest } from "node:https";
 import type { LinkPreview } from "@/shared/contracts/link-preview";
 import { publicTarget } from "./public-url";
+import { readHtmlHead } from "./html-head";
+import { log } from "@/server/observability/logger";
 
 function clean(value: string, limit: number) {
   return value
@@ -72,7 +74,7 @@ export function parseLinkPreview(html: string, pageUrl: string): LinkPreview {
   return result;
 }
 
-async function readPage(
+export async function readLinkPreview(
   value: string,
   signal: AbortSignal,
   redirects = 0,
@@ -105,7 +107,7 @@ async function readPage(
             return reject(new Error("Redirect limit"));
           // Every redirect is revalidated and pinned, including hostname changes.
           try {
-            void readPage(
+            void readLinkPreview(
               new URL(location, target.url).href,
               signal,
               redirects + 1,
@@ -125,25 +127,10 @@ async function readPage(
           reject(new Error("Not an HTML page"));
           return;
         }
-        const chunks: Buffer[] = [];
-        let size = 0;
-        response.on("data", (chunk: Buffer) => {
-          size += chunk.length;
-          if (size > 512 * 1024) {
-            response.destroy(new Error("Metadata exceeds limit"));
-            return;
-          }
-          chunks.push(chunk);
-        });
-        response.on("end", () =>
-          resolve(
-            parseLinkPreview(
-              Buffer.concat(chunks).toString("utf8"),
-              target.url.href,
-            ),
-          ),
+        void readHtmlHead(response).then(
+          (html) => resolve(parseLinkPreview(html, target.url.href)),
+          reject,
         );
-        response.on("error", reject);
       },
     );
     request.on("error", reject);
@@ -153,6 +140,19 @@ async function readPage(
 
 const cache = new Map<string, { value: LinkPreview; expires: number }>();
 const pending = new Map<string, Promise<LinkPreview>>();
+async function within<T>(work: Promise<T>, signal: AbortSignal): Promise<T> {
+  signal.throwIfAborted();
+  let aborted: () => void = () => {};
+  const deadline = new Promise<never>((_, reject) => {
+    aborted = () => reject(signal.reason);
+    signal.addEventListener("abort", aborted, { once: true });
+  });
+  try {
+    return await Promise.race([work, deadline]);
+  } finally {
+    signal.removeEventListener("abort", aborted);
+  }
+}
 export async function getLinkPreview(value: string): Promise<LinkPreview> {
   const url = new URL(value);
   url.hash = "";
@@ -162,33 +162,37 @@ export async function getLinkPreview(value: string): Promise<LinkPreview> {
   if (pending.has(key)) return pending.get(key)!;
   if (pending.size >= 8) return { siteName: url.hostname };
   const task = (async () => {
-    const signal = AbortSignal.timeout(5000);
+    const signal = AbortSignal.timeout(8000);
     let result: LinkPreview;
     try {
-      result = await Promise.race([
-        readPage(key, signal).then(async (preview) => {
-          if (preview.artworkUrl) {
-            try {
-              await publicTarget(preview.artworkUrl);
-            } catch {
-              delete preview.artworkUrl;
-            }
-          }
-          return preview;
-        }),
-        new Promise<never>((_, reject) =>
-          signal.addEventListener("abort", () => reject(signal.reason), {
-            once: true,
-          }),
-        ),
-      ]);
-    } catch {
+      result = await within(readLinkPreview(key, signal), signal);
+    } catch (error) {
+      log("warn", "link_preview.fetch_failed", {
+        component: "link-preview",
+        code: signal.aborted
+          ? "TIMEOUT"
+          : error instanceof Error && error.message === "Not a public address"
+            ? "DNS_BLOCKED"
+            : error instanceof Error && error.name === "AbortError"
+              ? "DNS_OR_NETWORK_TIMEOUT"
+              : "FETCH_FAILED",
+      });
       result = { siteName: url.hostname };
+    }
+    if (result.artworkUrl) {
+      try {
+        await within(
+          publicTarget(result.artworkUrl),
+          AbortSignal.timeout(2000),
+        );
+      } catch {
+        delete result.artworkUrl;
+      }
     }
     if (cache.size >= 256) cache.delete(cache.keys().next().value!);
     cache.set(key, {
       value: result,
-      expires: Date.now() + (result.title ? 3_600_000 : 60_000),
+      expires: Date.now() + (result.title ? 3_600_000 : 15_000),
     });
     return result;
   })().finally(() => pending.delete(key));

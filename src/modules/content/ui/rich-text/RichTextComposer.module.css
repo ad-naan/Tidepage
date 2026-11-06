@@ -9,12 +9,15 @@
 }
 .tools {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
   gap: 2px;
   padding: 5px 8px;
   border-bottom: 1px solid var(--line);
 }
-.tools button {
+.tools.tools button {
+  flex: 0 0 30px;
+  min-width: 30px;
   width: 30px;
   height: 28px;
   min-height: 28px;

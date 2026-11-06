@@ -1,7 +1,7 @@
 import "server-only";
-import { lookup } from "node:dns/promises";
 import { BlockList, isIP } from "node:net";
 import { safeWebUrl } from "@/shared/contracts/rich-text";
+import { resolveWebAddresses } from "./public-dns";
 
 const blocked = new BlockList();
 for (const [address, prefix] of [
@@ -44,13 +44,20 @@ export async function publicTarget(
   value: string,
   resolve: (
     hostname: string,
-  ) => Promise<{ address: string; family: number }[]> = (hostname) =>
-    lookup(hostname, { all: true, verbatim: true }),
+  ) => Promise<{ address: string; family: number }[]> = resolveWebAddresses,
 ) {
   const url = new URL(safeWebUrl.parse(value));
   if (url.port && url.port !== (url.protocol === "https:" ? "443" : "80"))
     throw new Error("Unsupported port");
   const hostname = url.hostname.replace(/^\[|\]$/g, "");
+  if (
+    !isIP(hostname) &&
+    (!hostname.includes(".") ||
+      /(?:^|\.)(?:localhost|local|lan|internal|invalid|test)\.?$/i.test(
+        hostname,
+      ))
+  )
+    throw new Error("Not a public hostname");
   const addresses = isIP(hostname)
     ? [{ address: hostname, family: isIP(hostname) }]
     : await resolve(hostname);
