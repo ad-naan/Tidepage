@@ -196,7 +196,12 @@ export function createHarborScene(options: {
   }
   function interact() {
     if (options.state().blocked || options.state().studio) return;
-    if (interaction === "bench" || interaction === "chair" || interaction === "squareLeft" || interaction === "squareRight")
+    if (
+      interaction === "bench" ||
+      interaction === "chair" ||
+      interaction === "squareLeft" ||
+      interaction === "squareRight"
+    )
       selectPose(pose === "sit" ? "idle" : "sit");
     else if (interaction === "door") {
       stand();

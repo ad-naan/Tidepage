@@ -88,6 +88,7 @@ export function AuthorPresence({
         <Button
           ref={trigger}
           className={styles.trigger}
+          aria-label={t("panels.activity")}
           aria-expanded={open}
           aria-controls={id}
           onPointerEnter={(event) => {
@@ -121,10 +122,11 @@ export function AuthorPresence({
           open={open}
           anchor={trigger.current}
           boundary={boundary}
-          width={390}
+          width={280}
           align="start"
           id={id}
           label={t("panels.activity")}
+          className={styles.panel}
           onPointerEnter={cancelClose}
           onPointerLeave={leave}
         >

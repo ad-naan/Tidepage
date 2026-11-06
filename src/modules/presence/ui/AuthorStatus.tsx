@@ -19,37 +19,37 @@ export function AuthorStatus() {
       : undefined;
   if (app)
     return (
-      <span className={styles.application}>
-        {app.icon ? (
-          <img
-            src={app.icon}
-            alt={t("usingApplication", { name: app.name })}
-            width={24}
-            height={24}
-            draggable={false}
-          />
-        ) : (
-          <Monitor
-            size={24}
-            role="img"
-            aria-label={t("usingApplication", { name: app.name })}
-          />
-        )}
-        <i aria-hidden="true" />
-      </span>
+      <>
+        <span className={styles.application}>
+          {app.icon ? (
+            <img
+              src={app.icon}
+              alt={t("usingApplication", { name: app.name })}
+              width={24}
+              height={24}
+              draggable={false}
+            />
+          ) : (
+            <Monitor
+              size={24}
+              role="img"
+              aria-label={t("usingApplication", { name: app.name })}
+            />
+          )}
+        </span>
+        <span className={styles.label}>{app.name}</span>
+      </>
     );
   return (
     <>
       <span
-        className={`living-state-mark ${styles.mark}`}
+        className={styles.mark}
         data-state={snapshot.status}
         aria-hidden="true"
       >
         <i />
       </span>
-      <span className="living-status">
-        <strong>{t(status)}</strong>
-      </span>
+      <span className={styles.label}>{t(status)}</span>
     </>
   );
 }

@@ -478,18 +478,20 @@ export function HarborView({ onVoyage }: { onVoyage: () => void }) {
               </div>
               <p>{t("network.help")}</p>
               <nav aria-label={t("guide.destinations")}>
-                {(Object.keys(harborDestinations) as HarborDestination[]).map((id) => (
-                  <Button
-                    key={id}
-                    onClick={() => {
-                      setHelp(false);
-                      controls.current?.goTo(id);
-                    }}
-                  >
-                    <Footprints size={15} />
-                    {t(`destinations.${id}`)}
-                  </Button>
-                ))}
+                {(Object.keys(harborDestinations) as HarborDestination[]).map(
+                  (id) => (
+                    <Button
+                      key={id}
+                      onClick={() => {
+                        setHelp(false);
+                        controls.current?.goTo(id);
+                      }}
+                    >
+                      <Footprints size={15} />
+                      {t(`destinations.${id}`)}
+                    </Button>
+                  ),
+                )}
               </nav>
               <p className={styles.localNote}>{t("guide.host")}</p>
               <Button variant="quiet" onClick={onVoyage}>

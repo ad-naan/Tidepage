@@ -1,27 +1,43 @@
-.mark[data-state]:not([data-state="online"]) > i {
-  background: var(--muted);
-  box-shadow: none;
-}
-.application {
-  position: relative;
+.mark {
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
-  flex-shrink: 0;
+  width: 8px;
+  height: 24px;
+  flex: 0 0 8px;
+}
+.mark > i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #67936a;
+}
+.mark[data-state]:not([data-state="online"]) > i {
+  background: var(--muted);
+  opacity: 0.7;
+}
+.application {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
   color: var(--muted);
 }
 .application img {
   display: block;
+  width: 24px;
+  height: 24px;
   object-fit: contain;
 }
-.application > i {
-  position: absolute;
-  right: -1px;
-  bottom: -1px;
-  width: 7px;
-  height: 7px;
-  border: 2px solid var(--paper);
-  border-radius: 50%;
-  background: #67936a;
+.label {
+  max-width: 92px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 400 var(--text-sm)/1.5 var(--font-ui);
+}
+@media (max-width: 700px) {
+  .label {
+    display: none;
+  }
 }

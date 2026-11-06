@@ -31,6 +31,7 @@ import { SiteNavigation } from "@/widgets/site-shell/navigation/SiteNavigation";
 import { HeaderBrand } from "./HeaderBrand";
 import { HeaderSky } from "./HeaderSky";
 import { ReadingProgress } from "@/widgets/site-shell/reading/ReadingProgress";
+import styles from "./SiteHeader.module.css";
 
 const surfaces = {
   search: { selector: ".living-search-trigger", width: 480, align: "end" },
@@ -134,9 +135,9 @@ export function SiteHeader({
         >
           <HeaderSky />
           <div className="living-header-row">
-            <div className="header-identity-group">
-              <HeaderBrand compact={condensed} />
-              <div className="living-context">
+            <div className={styles.identity}>
+              <HeaderBrand />
+              <div className={styles.context}>
                 <AuthorPresence boundary={header} />
               </div>
             </div>

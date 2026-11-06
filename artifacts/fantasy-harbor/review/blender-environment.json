@@ -1,0 +1,59 @@
+{
+  "ok": true,
+  "blender": "4.5.15 LTS",
+  "python": "3.11.15",
+  "background": true,
+  "file": "E:\\26Project\\adnaan-blog\\artifacts\\fantasy-harbor\\tidal-sanctuary.blend",
+  "engines": [
+    "BLENDER_EEVEE_NEXT",
+    "BLENDER_WORKBENCH",
+    "CYCLES"
+  ],
+  "engine": "CYCLES",
+  "gpu": {
+    "backend": "NONE",
+    "devices": [
+      "NVIDIA GeForce RTX 5060"
+    ]
+  },
+  "addons_enabled": [
+    "bl_pkg",
+    "cycles",
+    "io_anim_bvh",
+    "io_curve_svg",
+    "io_mesh_uv_layout",
+    "io_scene_fbx",
+    "io_scene_gltf2",
+    "pose_library"
+  ],
+  "rigify_available": true,
+  "units": {
+    "system": "METRIC",
+    "scale_length": 1.0,
+    "length": "METERS"
+  },
+  "color": {
+    "view": "AgX",
+    "look": "None",
+    "display": "sRGB"
+  },
+  "frame_range": [
+    1,
+    250,
+    24
+  ],
+  "objects": {
+    "EMPTY": 17,
+    "MESH": 64,
+    "LIGHT": 2,
+    "CAMERA": 1
+  },
+  "data": {
+    "meshes": 64,
+    "materials": 35,
+    "images": 8,
+    "actions": 0,
+    "node_groups": 0,
+    "collections": 0
+  }
+}

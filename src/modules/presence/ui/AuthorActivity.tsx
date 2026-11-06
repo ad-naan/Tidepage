@@ -8,10 +8,10 @@ export function AuthorActivity() {
   const t = useTranslations("activity");
   const { snapshot, connection } = useAuthorPresence();
   if (connection === "unavailable")
-    return <p className="presence-note">{t("unavailable")}</p>;
+    return <p className={styles.note}>{t("unavailable")}</p>;
   if (snapshot.status !== "online")
     return (
-      <p className="presence-note">
+      <p className={styles.note}>
         {t(connection === "connecting" ? "connecting" : snapshot.status)}
       </p>
     );

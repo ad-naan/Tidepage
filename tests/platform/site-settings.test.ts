@@ -70,18 +70,16 @@ test("site metadata reads only owner settings, isolates locales and reflects a s
       ])
       .returning();
     for (const user of [author, reader])
-      await db
-        .insert(workbenchRecordsTable)
-        .values({
-          ownerId: user.id,
-          key: "site-settings",
+      await db.insert(workbenchRecordsTable).values({
+        ownerId: user.id,
+        key: "site-settings",
+        revision: 1,
+        value: {
           revision: 1,
-          value: {
-            revision: 1,
-            translations: { "zh-CN": { siteName: "Not the site owner" } },
-          },
-          updatedAt: new Date("2099-01-01"),
-        });
+          translations: { "zh-CN": { siteName: "Not the site owner" } },
+        },
+        updatedAt: new Date("2099-01-01"),
+      });
     assert.deepEqual(
       await readPublicSiteIdentity("zh-CN", defaults, db),
       defaults,

@@ -149,7 +149,7 @@ export function createHarborModeler() {
     d: number,
     seed = 0,
   ) => {
-    const geometry = new THREE.SphereGeometry(1, 10, 7);
+    const geometry = new THREE.SphereGeometry(1, 8, 5);
     const position = geometry.getAttribute("position");
     for (let i = 0; i < position.count; i++) {
       const px = position.getX(i),

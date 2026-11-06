@@ -34,7 +34,10 @@ Object.values(kit.palette).forEach((material) => {
 kit.batch(root);
 const data = await new GLTFExporter().parseAsync(root, { binary: true });
 await mkdir("artifacts/fantasy-harbor", { recursive: true });
-await writeFile("artifacts/fantasy-harbor/tree-layout.json", JSON.stringify(harborTrees));
+await writeFile(
+  "artifacts/fantasy-harbor/tree-layout.json",
+  JSON.stringify(harborTrees),
+);
 await writeFile(
   "artifacts/fantasy-harbor/harbor-base.glb",
   Buffer.from(data as ArrayBuffer),

@@ -46,7 +46,9 @@ export function buildHarborTerrain(parent: THREE.Group, kit: HarborModeler) {
   for (const [x, z, w, d, phase] of [
     [-4.5, -3.9, 4, 2.8, 0.4],
     [3.4, -4.1, 5.2, 2.3, 1.3],
-    [0,-33,34,25,.7], [-30,-30,15,23,1.2], [30,-40,16,24,.3],
+    [0, -33, 34, 25, 0.7],
+    [-30, -30, 15, 23, 1.2],
+    [30, -40, 16, 24, 0.3],
   ])
     mesh(
       parent,
@@ -70,13 +72,13 @@ export function buildHarborTerrain(parent: THREE.Group, kit: HarborModeler) {
   for (const points of [
     [v3(0.25, 0, 3.8), v3(1.1, 0, 1.4), v3(3.8, 0, -0.55)],
     [v3(-0.2, 0, 3.1), v3(-2.4, 0, 0.4), v3(-4.9, 0, -1.35)],
-    [v3(-1.5,0,-3),v3(-2,0,-13),v3(0,0,-22)],
-    [v3(0,0,-22),v3(-16,0,-18),v3(-27,0,-29)],
-    [v3(0,0,-22),v3(18,0,-33),v3(28,0,-53)],
-    [v3(-27,0,-29),v3(-41,0,-36),v3(-42,0,-49)],
+    [v3(-1.5, 0, -3), v3(-2, 0, -13), v3(0, 0, -22)],
+    [v3(0, 0, -22), v3(-16, 0, -18), v3(-27, 0, -29)],
+    [v3(0, 0, -22), v3(18, 0, -33), v3(28, 0, -53)],
+    [v3(-27, 0, -29), v3(-41, 0, -36), v3(-42, 0, -49)],
   ]) {
     const curve = new THREE.CatmullRomCurve3(points);
-    const count = Math.ceil(curve.getLength()/.65);
+    const count = Math.ceil(curve.getLength() / 0.65);
     for (let i = 0; i <= count; i++) {
       const point = curve.getPoint(i / count);
       const stone = pebble(
