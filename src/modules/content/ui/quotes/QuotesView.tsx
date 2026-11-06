@@ -24,6 +24,7 @@ import type { Quote } from "@/modules/content/domain/models";
 import { useLocalState } from "@/shared/hooks/useLocalState";
 import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
 import { Button, IconButton } from "@/shared/ui/button/Button";
+import { ProgressiveList } from "@/shared/ui/loading/ProgressiveList";
 
 export function QuotesView({ quotes }: { quotes: Quote[] }) {
   const t = useTranslations("quotes");
@@ -176,34 +177,34 @@ export function QuotesView({ quotes }: { quotes: Quote[] }) {
           </div>
           <PencilLine className={styles.collectionLine} kind="trail" />
           {savedIndices.length ? (
-            <div className={styles.savedList}>
-              {savedIndices
-                .slice()
-                .reverse()
-                .map((value, i) => (
-                  <Button
-                    key={quotes[value].id}
-                    className={styles.savedQuote}
-                    aria-pressed={index === value}
-                    onClick={() => {
-                      setIndex(value);
-                      setCopied(false);
-                    }}
-                  >
-                    <span className={styles.savedNumber}>
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span className={styles.savedWords}>
-                      <span>{quotes[value].text}</span>
-                      <small>{quotes[value].author}</small>
-                    </span>
-                    <ArrowUpRight size={16} className={styles.savedArrow} />
-                    {index === value && (
-                      <HanddrawnMark className={styles.selectedMark} />
-                    )}
-                  </Button>
-                ))}
-            </div>
+            <ProgressiveList
+              items={savedIndices.slice().reverse()}
+              className={styles.savedList}
+            >
+              {(value, i) => (
+                <Button
+                  key={quotes[value].id}
+                  className={styles.savedQuote}
+                  aria-pressed={index === value}
+                  onClick={() => {
+                    setIndex(value);
+                    setCopied(false);
+                  }}
+                >
+                  <span className={styles.savedNumber}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className={styles.savedWords}>
+                    <span>{quotes[value].text}</span>
+                    <small>{quotes[value].author}</small>
+                  </span>
+                  <ArrowUpRight size={16} className={styles.savedArrow} />
+                  {index === value && (
+                    <HanddrawnMark className={styles.selectedMark} />
+                  )}
+                </Button>
+              )}
+            </ProgressiveList>
           ) : (
             <div className={styles.emptyCollection}>
               <CoastGlyph kind="leaf" />

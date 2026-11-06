@@ -17,6 +17,7 @@ import { ExternalLink } from "@/shared/ui/link/Anchor";
 import { CoastGlyph, PencilLine } from "@/shared/ui/drawing/CoastalMarks";
 import { profileLinks } from "@/shared/config/profile";
 import { FriendCard } from "./FriendCard";
+import { ProgressiveList } from "@/shared/ui/loading/ProgressiveList";
 import styles from "./FriendsView.module.css";
 
 const categories = ["all", "technology", "design", "life"] as const;
@@ -82,11 +83,15 @@ export function FriendsView({
               ).length,
             }))}
           />
-          <ul className={styles.grid} aria-label={t("directoryTitle")}>
-            {visible.map((friend) => (
-              <FriendCard key={friend.id} friend={friend} />
-            ))}
-          </ul>
+          <ProgressiveList
+            key={category}
+            items={visible}
+            as="ul"
+            className={styles.grid}
+            label={t("directoryTitle")}
+          >
+            {(friend) => <FriendCard key={friend.id} friend={friend} />}
+          </ProgressiveList>
           {!visible.length && (
             <p className={styles.empty} role="status">
               {t("empty")}

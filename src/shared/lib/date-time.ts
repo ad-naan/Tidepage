@@ -32,7 +32,11 @@ function parsed(value: DateInput) {
   if (typeof value === "string") {
     const calendar = value.slice(0, 10);
     const checked = new Date(`${calendar}T00:00:00Z`);
-    if (!Number.isFinite(checked.getTime()) || checked.toISOString().slice(0, 10) !== calendar) return null;
+    if (
+      !Number.isFinite(checked.getTime()) ||
+      checked.toISOString().slice(0, 10) !== calendar
+    )
+      return null;
   }
   const date = new Date(value instanceof Date ? value.getTime() : value);
   if (!Number.isFinite(date.getTime())) return null;
@@ -83,9 +87,13 @@ export function calendarParts(value: DateInput, locale: string) {
       input.date,
     );
   return {
-    day: get({ day: "2-digit" }),
+    day: formatter(locale, { timeZone: input.timeZone, day: "2-digit" })
+      .formatToParts(input.date)
+      .find((part) => part.type === "day")!.value,
     month: get({ month: "short" }),
-    year: get({ year: "numeric" }),
+    year: formatter(locale, { timeZone: input.timeZone, year: "numeric" })
+      .formatToParts(input.date)
+      .find((part) => part.type === "year")!.value,
   };
 }
 

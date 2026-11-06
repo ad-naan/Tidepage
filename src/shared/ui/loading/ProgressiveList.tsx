@@ -11,21 +11,25 @@ export function ProgressiveList<T>({
   pageSize = 12,
   className,
   trailing,
+  as: Container = "div",
+  label,
 }: {
   items: readonly T[];
   children: (item: T, index: number) => ReactNode;
   pageSize?: number;
   className?: string;
   trailing?: ReactNode;
+  as?: "div" | "ul";
+  label?: string;
 }) {
   const [count, setCount] = useState(pageSize);
   const t = useTranslations("ui.progressive");
   return (
     <>
-      <div className={className}>
+      <Container className={className} aria-label={label}>
         {items.slice(0, count).map(children)}
         {trailing}
-      </div>
+      </Container>
       {items.length > pageSize && (
         <div className={styles.footer}>
           <span role="status">

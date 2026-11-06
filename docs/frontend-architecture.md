@@ -38,26 +38,27 @@ src/
 
 ## 基础组件清单
 
-| 能力          | 统一入口                                          | 负责内容                                                                                          |
-| ------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| 操作按钮      | `shared/ui/button/Button`                         | Button、IconButton；默认 button 类型、busy/disabled、焦点、按压动效、原生属性与 ref               |
-| 表单输入      | `shared/ui/field/Input`、`Textarea`、`Field`      | Input、FileInput、RangeSlider、Textarea；输入语义、键盘焦点、无效与禁用状态，Field 组合标签和说明 |
-| 可见文件选择  | `shared/ui/field/UploadField`                     | 统一按钮与隐藏文件输入；业务层负责文件处理、进度与取消，不能直接显示浏览器默认文件控件            |
-| 日期与时间    | `shared/ui/date-picker/DatePicker`                | 日历、方向键跨月、确认 / 清除、可选小时与分钟；不使用可见原生日期控件                             |
-| 路由链接      | `shared/i18n/navigation`                          | 保留 locale、路由 loading 生命周期                                                                |
-| 普通/外部链接 | `shared/ui/link/Anchor`                           | Anchor 用于页内、邮件等；ExternalLink 统一新标签页的安全 rel                                      |
-| 选择器        | `shared/ui/select/Select`                         | Radix 仅在内部使用；Portal、键盘、typeahead、选中态与 busy                                        |
-| 分类筛选      | `shared/ui/filter-tabs/FilterTabs`                | pressed 按钮组、方向键定位、手绘选中态；不伪装成没有 tabpanel 的 ARIA tabs                        |
-| 对话框        | `shared/ui/dialog/Dialog`                         | native dialog 的焦点约束、Escape、背景点击、关闭后焦点恢复、纸边外观                              |
-| 锚点浮层      | `shared/ui/overlay/AnchoredPanel`、`OverlayScope` | Portal、定位、边界、焦点和嵌套归属；开关行为复用 useDisclosure                                    |
-| 展开内容      | `shared/ui/disclosure/Disclosure`                 | 原生 details/summary 语义与焦点                                                                   |
-| 操作提醒      | `shared/ui/feedback/NoticeProvider`               | notify、页面信息、读屏播报、消失/暂停/替换规则                                                    |
-| 文字与数值    | `shared/ui/typography`                            | Text 的语义字号；AnimatedNumber 的数字过渡                                                        |
-| 手绘材料      | `shared/ui/drawing`、`illustration`               | 铅笔滤镜、选中笔迹、纸边、潮痕、贝壳等符号与海岸小稿                                              |
-| 全局导航反馈  | `shared/ui/navigation/NavigationFeedback`         | 路由加载、随机文案、页面高度和页脚稳定                                                            |
-| 内容加载占位  | `shared/ui/loading/LoadingSkeleton`               | 页面 / 列表 / 正文 / 卡片骨架；延迟显现、降低动态效果、延迟读屏播报，避免短请求闪字               |
-| 站点偏好      | `shared/ui/preferences`                           | 语言与主题控件；状态仍由路由 / SiteShell 持有                                                     |
-| 滚动条        | `shared/ui/scroll-area/CustomScrollbars`          | 公共滚动区域与刷新通知                                                                            |
+| 能力          | 统一入口                                                | 负责内容                                                                                          |
+| ------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| 操作按钮      | `shared/ui/button/Button`                               | Button、IconButton；默认 button 类型、busy/disabled、焦点、按压动效、原生属性与 ref               |
+| 表单输入      | `shared/ui/field/Input`、`Textarea`、`Field`            | Input、FileInput、RangeSlider、Textarea；输入语义、键盘焦点、无效与禁用状态，Field 组合标签和说明 |
+| 可见文件选择  | `shared/ui/field/UploadField`                           | 统一按钮与隐藏文件输入；业务层负责文件处理、进度与取消，不能直接显示浏览器默认文件控件            |
+| 日期与时间    | `shared/ui/date-picker/DatePicker`                      | 日历、方向键跨月、确认 / 清除、可选小时与分钟；不使用可见原生日期控件                             |
+| 日期展示      | `shared/lib/date-time`、`shared/ui/typography/DateTime` | 统一时区、绝对日期、近期相对时间、完整时间提示与共享刷新时钟；业务视图不自行拼接日期格式          |
+| 路由链接      | `shared/i18n/navigation`                                | 保留 locale、路由 loading 生命周期                                                                |
+| 普通/外部链接 | `shared/ui/link/Anchor`                                 | Anchor 用于页内、邮件等；ExternalLink 统一新标签页的安全 rel                                      |
+| 选择器        | `shared/ui/select/Select`                               | Radix 仅在内部使用；Portal、键盘、typeahead、选中态与 busy                                        |
+| 分类筛选      | `shared/ui/filter-tabs/FilterTabs`                      | pressed 按钮组、方向键定位、手绘选中态；不伪装成没有 tabpanel 的 ARIA tabs                        |
+| 对话框        | `shared/ui/dialog/Dialog`                               | native dialog 的焦点约束、Escape、背景点击、关闭后焦点恢复、纸边外观                              |
+| 锚点浮层      | `shared/ui/overlay/AnchoredPanel`、`OverlayScope`       | Portal、定位、边界、焦点和嵌套归属；开关行为复用 useDisclosure                                    |
+| 展开内容      | `shared/ui/disclosure/Disclosure`                       | 原生 details/summary 语义与焦点                                                                   |
+| 操作提醒      | `shared/ui/feedback/NoticeProvider`                     | notify、页面信息、读屏播报、消失/暂停/替换规则                                                    |
+| 文字与数值    | `shared/ui/typography`                                  | Text 的语义字号；AnimatedNumber 的数字过渡                                                        |
+| 手绘材料      | `shared/ui/drawing`、`illustration`                     | 铅笔滤镜、选中笔迹、纸边、潮痕、贝壳等符号与海岸小稿                                              |
+| 全局导航反馈  | `shared/ui/navigation/NavigationFeedback`               | 路由加载、随机文案、页面高度和页脚稳定                                                            |
+| 内容加载占位  | `shared/ui/loading/LoadingSkeleton`                     | 页面 / 列表 / 正文 / 卡片骨架；延迟显现、降低动态效果、延迟读屏播报，避免短请求闪字               |
+| 站点偏好      | `shared/ui/preferences`                                 | 语言与主题控件；状态仍由路由 / SiteShell 持有                                                     |
+| 滚动条        | `shared/ui/scroll-area/CustomScrollbars`                | 公共滚动区域与刷新通知                                                                            |
 
 这是**当前站点使用到的基础交互清单**。以后出现日期选择、复杂表格、拖拽上传等需求，应先在这里增加对应基础组件，再供业务使用；不要为了清单完整提前制造无用途的组件。
 
@@ -104,6 +105,10 @@ import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 ## 共用正文
 
 业务无关的正文节点、标记、链接和校验定义位于 `shared/contracts/rich-text.ts`，领域层直接使用这个契约。文章元数据、站点设置与评论规则分别留在各自 domain；评论的精简块白名单位于 engagement/domain/comment-document.ts。UI 层复用 content/ui/rich-text 的渲染器，后台完整编辑器与评论精简编辑器使用相同标记定义。不要在每个页面重新写正文 CSS 或只读编辑器来充当阅读预览。
+
+站外 HTTP(S) 链接统一由 SiteShell 中的 `ExternalLinkPreview` 代理悬停和键盘聚焦，一次只挂载一个预览浮层。`ExternalLink` 可通过 `preview` 补充已有元数据；正文 ReadingLink、引用卡和其他外链复用这个入口。元数据在交互后请求，服务端校验公共地址、固定 DNS 结果、逐跳校验重定向，并限制大小、耗时、并发和缓存。抓取失败回退到链接文本与域名，不影响原链接打开。弹窗内预览挂到当前 dialog，Escape 优先关闭预览。
+
+评论区用 `useNearViewport` 接近视口时才挂载，复用原有游标分页；编辑器在开始输入、回复或引用时加载。正文代码高亮在接近视口时加载，原文保持可读、可复制。手记阅读窗口按需导入；手记、项目、相册、友联和一言收藏通过 `ProgressiveList` 限制初始挂载数，筛选变化重置批次。该组件只控制挂载数量，不替代服务端分页；文章保留原有服务端分页。媒体沿用原生懒加载。
 
 ## 自动执行
 

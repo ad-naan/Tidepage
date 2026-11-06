@@ -68,7 +68,9 @@ function DeferredDiscussion({
           focusRequest={focusRequest}
         />
       ) : (
-        <LoadingSkeleton variant="rows" />
+        <div aria-hidden="true">
+          <LoadingSkeleton variant="rows" />
+        </div>
       )}
     </div>
   );

@@ -133,7 +133,12 @@ export function LoginTrigger() {
   const { principal, openLogin } = useContext(IdentityContext);
   const t = useTranslations("identity");
   return (
-    <Button className="login-trigger" aria-label={principal ? t("title") : t("login")} aria-haspopup="dialog" onClick={openLogin}>
+    <Button
+      className="login-trigger"
+      aria-label={principal ? t("title") : t("login")}
+      aria-haspopup="dialog"
+      onClick={openLogin}
+    >
       <UserRound size={15} />
       <span>
         <AuthorNameText text={principal?.displayName ?? t("login")} />

@@ -7,6 +7,7 @@ import {
   type DateInput,
   type DateDisplay,
 } from "@/shared/lib/date-time";
+import styles from "./DateTime.module.css";
 
 /** Semantic timestamp: concise visible copy, exact accessible time, shared relative clock. */
 export function DateTime({
@@ -30,7 +31,7 @@ export function DateTime({
   const parts = layout === "calendar" ? calendarParts(value, locale) : null;
   return (
     <time
-      className={className}
+      className={`${parts ? styles.calendar : ""} ${className ?? ""}`}
       dateTime={presentation.dateTime}
       title={presentation.absolute}
       aria-label={
