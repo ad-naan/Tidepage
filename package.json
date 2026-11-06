@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "next dev --hostname 0.0.0.0",
     "realtime": "node --import tsx services/realtime/main.ts",
-    "test:realtime": "node --conditions=react-server --import tsx --test tests/platform/realtime*.test.ts",
+    "test:realtime": "node --conditions=react-server --import tsx --test tests/platform/realtime*.test.ts tests/platform/coast-realtime.test.ts",
     "build": "next build",
     "start": "next start --hostname 0.0.0.0",
     "typecheck": "next typegen && tsc --noEmit",

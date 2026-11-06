@@ -1,0 +1,62 @@
+[
+  {
+    "name": "sea-traveler",
+    "appearance": {
+      "version": 1,
+      "coat": "sea",
+      "skin": "warm",
+      "hairColor": "chestnut",
+      "hairStyle": "waves",
+      "accessory": "satchel"
+    },
+    "bytes": 1445636,
+    "triangles": 53452,
+    "meshes": 62,
+    "animations": [
+      "idle",
+      "walk",
+      "wave",
+      "sit"
+    ]
+  },
+  {
+    "name": "coral-traveler",
+    "appearance": {
+      "version": 1,
+      "coat": "coral",
+      "skin": "light",
+      "hairColor": "chestnut",
+      "hairStyle": "bob",
+      "accessory": "scarf"
+    },
+    "bytes": 1433032,
+    "triangles": 52916,
+    "meshes": 62,
+    "animations": [
+      "idle",
+      "walk",
+      "wave",
+      "sit"
+    ]
+  },
+  {
+    "name": "oat-traveler",
+    "appearance": {
+      "version": 1,
+      "coat": "cream",
+      "skin": "deep",
+      "hairColor": "ink",
+      "hairStyle": "crop",
+      "accessory": "none"
+    },
+    "bytes": 1341652,
+    "triangles": 49424,
+    "meshes": 55,
+    "animations": [
+      "idle",
+      "walk",
+      "wave",
+      "sit"
+    ]
+  }
+]

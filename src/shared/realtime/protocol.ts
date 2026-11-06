@@ -1,4 +1,8 @@
 import { z } from "zod";
+import type {
+  CoastClientEvents,
+  CoastServerEvents,
+} from "@/shared/contracts/coast-space";
 
 export const REALTIME_VERSION = 1;
 export const PRESENCE_TTL_MS = 75_000;
@@ -64,10 +68,10 @@ export type RealtimeAck =
         | "LEASE_EXPIRED"
         | "UNAVAILABLE";
     };
-export interface ServerEvents {
+export interface ServerEvents extends CoastServerEvents {
   "author:snapshot": (snapshot: PresenceSnapshot) => void;
 }
-export interface ClientEvents {
+export interface ClientEvents extends CoastClientEvents {
   "author:read": (ack: (snapshot: PresenceSnapshot) => void) => void;
   "author:update": (
     update: PresenceUpdate,

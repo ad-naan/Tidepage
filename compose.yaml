@@ -22,6 +22,8 @@ services:
       UPLOAD_DIR: /app/storage/uploads
       ADMIN_USER_ID: ${ADMIN_USER_ID:-}
       ADMIN_ACCESS_KEY: ${ADMIN_ACCESS_KEY:-}
+      # Same private key as the gateway: signs coastal identity and memory proofs.
+      REALTIME_AUTHOR_TOKEN: ${REALTIME_AUTHOR_TOKEN:?Set REALTIME_AUTHOR_TOKEN in .env}
     volumes:
       - ./storage:/app/storage
     expose:

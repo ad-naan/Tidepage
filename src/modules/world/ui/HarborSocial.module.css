@@ -1,0 +1,61 @@
+.invitation {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(360px, calc(100% - 32px));
+  padding: 18px;
+  border-radius: 6px 20px 8px 16px;
+  background: var(--harbor-paper);
+  box-shadow: 0 8px 32px #253a4324;
+  font-size: var(--text-sm);
+  z-index: 2;
+}
+.invitation p {
+  margin: 0 0 10px;
+  line-height: 1.8;
+}
+.content {
+  display: grid;
+  gap: 18px;
+}
+.note {
+  font-size: var(--text-sm);
+  line-height: 1.8;
+  color: var(--color-text-secondary, #526763);
+}
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.list {
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.list li {
+  display: grid;
+  gap: 10px;
+  padding: 16px 0;
+  border-bottom: 1px solid #52676328;
+}
+.list time {
+  font-size: var(--text-sm);
+}
+.badge {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  background: #7c9a8d26;
+  color: #365b4a;
+  font-size: var(--text-xs);
+}
+@media (max-width: 700px) {
+  .invitation {
+    top: 200px;
+  }
+}

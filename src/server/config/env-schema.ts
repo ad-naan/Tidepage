@@ -15,6 +15,7 @@ export const envSchema = z
     UPLOAD_DIR: z.string().min(1).default("./storage/uploads"),
     ADMIN_USER_ID: z.uuid().optional(),
     ADMIN_ACCESS_KEY: z.string().min(32).max(256).optional(),
+    REALTIME_AUTHOR_TOKEN: z.string().min(32).max(512).optional(),
     OAUTH_GITHUB_CLIENT_ID: z.string().min(1).max(128).optional(),
     OAUTH_GITHUB_CLIENT_SECRET: z.string().min(8).max(256).optional(),
     OAUTH_GITEE_CLIENT_ID: z.string().min(1).max(128).optional(),

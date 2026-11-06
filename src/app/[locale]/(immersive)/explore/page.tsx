@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
-import { CoastalExperience } from "@/modules/world/ui/CoastalExperience";
+import { CoastalSpaceView } from "@/modules/world/ui/CoastalSpaceView";
 import { getLocale, getTranslations } from "next-intl/server";
 import { pageMetadata } from "@/server/seo/metadata";
+import {
+  getCurrentPrincipal,
+  listConfiguredOAuthProviders,
+} from "@/modules/identity/server";
+import { IdentityProvider } from "@/modules/identity/ui/IdentityProvider";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -12,6 +17,14 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function ExplorePage() {
-  return <CoastalExperience />;
+export default async function ExplorePage() {
+  const principal = await getCurrentPrincipal();
+  return (
+    <IdentityProvider
+      principal={principal}
+      providers={listConfiguredOAuthProviders()}
+    >
+      <CoastalSpaceView />
+    </IdentityProvider>
+  );
 }

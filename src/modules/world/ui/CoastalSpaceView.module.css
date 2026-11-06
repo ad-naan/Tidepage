@@ -1,0 +1,12 @@
+.return {
+  position: fixed;
+  left: 24px;
+  top: 80px;
+  z-index: 5;
+  padding: 8px 12px;
+  border-radius: 16px 4px 12px 6px;
+  color: #30464a;
+  background: #f6efdfed;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+}

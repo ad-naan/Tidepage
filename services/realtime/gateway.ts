@@ -12,6 +12,12 @@ import {
 } from "../../src/shared/realtime/protocol";
 import { createLocalBus, createRedisBus } from "../../src/server/realtime/bus";
 import type { GatewayConfig } from "./config";
+import { attachCoastGateway } from "./coast-gateway";
+import {
+  memoryCoastStore,
+  redisCoastStore,
+  type CoastStore,
+} from "./coast-store";
 import {
   memoryPresenceStore,
   redisPresenceStore,
@@ -31,6 +37,7 @@ function validToken(candidate: unknown, token: string) {
 export async function createGateway(
   config: GatewayConfig,
   injectedStore?: PresenceStore,
+  injectedCoastStore?: CoastStore,
 ) {
   const redis = config.redisUrl
     ? createClient({
@@ -224,6 +231,12 @@ export async function createGateway(
         .catch(report);
     });
   });
+  const closeCoast = attachCoastGateway(
+    io,
+    injectedCoastStore ??
+      (redis ? redisCoastStore(redis, config.namespace) : memoryCoastStore()),
+    config.token,
+  );
   return {
     io,
     http,
@@ -237,6 +250,7 @@ export async function createGateway(
       return http.address();
     },
     async close() {
+      closeCoast();
       clearInterval(cleanup);
       await new Promise<void>((resolve) => io.close(() => resolve()));
       await bus.close();

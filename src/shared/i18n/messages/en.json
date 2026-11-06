@@ -344,7 +344,9 @@
     "CONFLICT": "Conflicting state, please refresh and retry",
     "RATE_LIMITED": "Too many requests, please try again later",
     "BODY_TOO_LARGE": "The request is too large",
-    "AUTHOR_NOT_CONFIGURED": "Author access is not configured"
+    "AUTHOR_NOT_CONFIGURED": "Author access is not configured",
+    "WORLD_UNAVAILABLE": "Coastal account services are not ready. Please try again later.",
+    "WORLD_PROOF_INVALID": "This memory proof expired or belongs to another account. Please check in again."
   },
   "notes": {
     "readMore": "Read this moment",
@@ -578,7 +580,161 @@
   },
   "world": {
     "name": "The Coast",
-    "description": "Sail the coast, find the lost lights, and discover a hidden bay under the stars.",
+    "description": "Bring your own character to Sunset Bay, take a quiet walk, and keep a coastal photograph.",
+    "harbor": {
+      "network": {
+        "title": "Coastal company",
+        "count": "{count, plural, one {# traveler in this bay} other {# travelers in this bay}}",
+        "alone": "A little quiet, just you and the sea.",
+        "connecting": "Walking toward the shared bay…",
+        "reconnecting": "The breeze feels distant. Reconnecting…",
+        "full": "This bay is full for now. Try again a little later.",
+        "unavailable": "The shared bay is unavailable. You can still take a walk.",
+        "superseded": "Your coastal visit is continuing in another window.",
+        "join": "Join others",
+        "leave": "Watch the sea alone",
+        "sharedTime": "Travelers share the bay's day and night",
+        "help": "Join others to see their outfits, footsteps and waves. The bay shares one day and night. You can return to a quiet visit at any time.",
+        "OUT_OF_REACH": "Move a little closer to the bench to take a seat.",
+        "SEAT_TAKEN": "The bench is full. There is still room on the beach."
+      },
+      "region": "Sunset Bay interactive space",
+      "title": "Sunset Bay",
+      "subtitle": "The Coast · A place to slow down",
+      "sunset": "Let the sea hold today.",
+      "evening": "The stars left a light for you.",
+      "welcome": "Walk along the shore, or simply stay a while.",
+      "close": "Close panel",
+      "actions": "Coastal actions",
+      "dress": "My look",
+      "wave": "Wave hello",
+      "sit": "Take a seat",
+      "stand": "Stand up",
+      "photo": "Take a photo",
+      "hint": "Click to walk · Drag to look around · WASD / arrow keys to move",
+      "voyage": "Board a boat and explore the islands",
+      "return": "Back to Sunset Bay",
+      "photoTitle": "Keep this moment",
+      "photoAlt": "My character on the Coast",
+      "photoCaption": "A little time by the sea, just for today.",
+      "download": "Save coastal photo",
+      "photoFailed": "The photo could not be captured. Please try again.",
+      "storageFailed": "Your look could not be saved. You may need to choose it again next time.",
+      "soundFailed": "The waves could not be played. Please try again later.",
+      "wardrobe": {
+        "title": "A look of your own",
+        "intro": "Pick your favorite colors, then take them to the shore.",
+        "coat": "Coat color",
+        "skin": "Skin tone",
+        "hairColor": "Hair color",
+        "hairStyle": "Hairstyle",
+        "accessory": "Carry along",
+        "saved": "Your look stays on this device.",
+        "done": "Ready for the shore"
+      },
+      "colors": {
+        "sea": "Sea blue",
+        "moss": "Moss green",
+        "coral": "Coral pink",
+        "cream": "Oat cream",
+        "light": "Light apricot",
+        "warm": "Warm brown",
+        "deep": "Deep brown",
+        "chestnut": "Chestnut",
+        "ink": "Ink black",
+        "honey": "Honey gold"
+      },
+      "hair": {
+        "crop": "Short crop",
+        "bob": "Soft bob",
+        "waves": "Gentle waves"
+      },
+      "accessories": {
+        "satchel": "Coastal satchel",
+        "scarf": "Warm scarf",
+        "none": "Travel light"
+      },
+      "guide": {
+        "title": "A walk by the sea",
+        "move": "Click the sand or boardwalk to walk, or use WASD / arrow keys.",
+        "camera": "Drag to look around, scroll to zoom; J / L to turn, I / K to tilt, Q / E to zoom.",
+        "destinations": "Walking destinations",
+        "host": "The cottage is a walking destination. Find the verified host in Fellow travelers when they are online, walk over and invite them for a photo."
+      },
+      "places": {
+        "bay": {
+          "name": "Where the sea breeze passes",
+          "description": "Take your time. The view will wait."
+        },
+        "dock": {
+          "name": "Arrival pier",
+          "description": "A little boat waits for the next journey."
+        },
+        "beach": {
+          "name": "Sunset beach",
+          "description": "Bring a journal and leave a little of today here."
+        },
+        "bench": {
+          "name": "Seaside bench",
+          "description": "A spare seat, and a little quiet."
+        },
+        "cottage": {
+          "name": "The host's cottage",
+          "description": "A light in the window. May arriving feel like coming home."
+        }
+      },
+      "social": {
+        "company": "Fellow travelers",
+        "journal": "Coastal journal",
+        "account": "My account",
+        "traveler": "Traveler · {code}",
+        "host": "Host",
+        "hostHint": "When the host is online, their verified account appears here with a host badge.",
+        "offline": "Join the shared bay to meet fellow travelers.",
+        "emptyCompany": "The bay is yours for now. Take a quiet walk.",
+        "approach": "Walk over",
+        "invite": "Invite for a photo",
+        "invitation": "Coastal photo invitation",
+        "invited": "{name} would like to take a coastal photo with you.",
+        "waiting": "Waiting for {name} to accept your photo invitation.",
+        "consent": "Accept to move both travelers to Sunset Beach for a 4-second countdown. Invitations expire in 30 seconds. Either person can cancel.",
+        "accept": "Take a photo together",
+        "decline": "Maybe next time",
+        "cancel": "Cancel photo",
+        "countdown": "A moment by the sea, captured in {count} seconds…",
+        "journalHint": "Your account keeps check-in and photo records here. Download photos to your device; the journal does not upload image files. Times use Beijing time.",
+        "loginHint": "Sign in to keep your coastal memories. Guests can still walk and take photos together.",
+        "login": "Sign in",
+        "loading": "Opening your journal…",
+        "loadFailed": "Your journal could not be opened. Please try again.",
+        "retry": "Try again",
+        "emptyJournal": "No coastal memories yet. Walk to a landmark and check in.",
+        "photoMemory": "A photo at {place}",
+        "visitMemory": "Checked in at {place}",
+        "withHost": "With the host",
+        "companions": "{count, plural, one {# fellow traveler nearby} other {# fellow travelers nearby}}",
+        "more": "Earlier memories",
+        "checkIn": "Check in here",
+        "saved": "Added to your coastal journal.",
+        "savePhoto": "Add to coastal journal",
+        "alreadySaved": "Added to journal",
+        "errors": {
+          "INVALID_PAYLOAD": "This action could not be completed. Please try again.",
+          "RATE_LIMITED": "Take a moment before trying again.",
+          "ROOM_FULL": "The bay is full. Please come back later.",
+          "SUPERSEDED": "Your visit continued in another window. Please rejoin.",
+          "UNAVAILABLE": "The coastal service is unavailable. Please try again later.",
+          "NOT_JOINED": "Join the shared bay first.",
+          "OUT_OF_REACH": "Walk a little closer to share a moment.",
+          "SEAT_TAKEN": "The bench is full.",
+          "AUTH_REQUIRED": "Sign in to save your coastal memories.",
+          "BUSY": "A photo is already pending. Wait for it to finish.",
+          "PHOTO_EXPIRED": "This photo session ended or expired. You can take another."
+        },
+        "declined": "Your fellow traveler declined this photo invitation.",
+        "cancelled": "The photo was cancelled or the invitation expired. Take a quiet walk."
+      }
+    },
     "ui": {
       "region": "The Coast explorable world",
       "exit": "Leave the coast and return home",

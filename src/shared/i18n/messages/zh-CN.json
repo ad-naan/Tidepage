@@ -344,7 +344,9 @@
     "CONFLICT": "资源状态冲突，请刷新后重试",
     "RATE_LIMITED": "请求过于频繁，请稍后再试",
     "BODY_TOO_LARGE": "上传内容过大",
-    "AUTHOR_NOT_CONFIGURED": "站主账号尚未配置"
+    "AUTHOR_NOT_CONFIGURED": "站主账号尚未配置",
+    "WORLD_UNAVAILABLE": "海岸账号服务暂未就绪，请稍后再试。",
+    "WORLD_PROOF_INVALID": "打卡凭证已过期或不属于当前账号，请重新打卡。"
   },
   "notes": {
     "readMore": "读这个瞬间",
@@ -578,7 +580,161 @@
   },
   "world": {
     "name": "光阴海岸",
-    "description": "驾船探索海岸，寻找灯芯，发现星光下的隐秘海湾。",
+    "description": "带着自己的角色，在落日海湾散步、坐一会儿，留下一张海岸照片。",
+    "harbor": {
+      "network": {
+        "title": "海湾同行",
+        "count": "这片海湾有 {count} 位旅人",
+        "alone": "留一点安静，独自看海。",
+        "connecting": "正在走向同行的海湾…",
+        "reconnecting": "海风有些远，正在重新连接…",
+        "full": "这片海湾暂时坐满了，可以稍后再来。",
+        "unavailable": "同行空间暂时无法抵达，可以继续散步。",
+        "superseded": "同行身份已在另一个窗口继续。",
+        "join": "加入同行",
+        "leave": "独自看海",
+        "sharedTime": "同行时共享海湾的昼夜",
+        "help": "加入同行后，可以看见彼此的装扮、脚步与挥手。海湾共享昼夜，你也随时可以独自看海。",
+        "OUT_OF_REACH": "再靠近长椅一点，就可以坐下了。",
+        "SEAT_TAKEN": "长椅暂时坐满了，可以在沙滩歇一会儿。"
+      },
+      "region": "落日海湾互动空间",
+      "title": "落日海湾",
+      "subtitle": "光阴海岸 · 一处可以慢下来的地方",
+      "sunset": "把今天，交给海风。",
+      "evening": "今晚，星光替你留灯。",
+      "welcome": "沿着沙滩走走，也可以什么都不做。",
+      "close": "收起面板",
+      "actions": "海岸动作",
+      "dress": "我的模样",
+      "wave": "挥挥手",
+      "sit": "去坐一会儿",
+      "stand": "起身走走",
+      "photo": "拍张照片",
+      "hint": "点击地面行走 · 拖动环顾 · WASD / 方向键移动",
+      "voyage": "登上小船，探索群岛",
+      "return": "回到落日海湾",
+      "photoTitle": "留住这一刻",
+      "photoAlt": "我的角色与光阴海岸风景",
+      "photoCaption": "今天也在海边，给自己留了一点时间。",
+      "download": "保存海岸照片",
+      "photoFailed": "照片暂时没有拍好，请再试一次。",
+      "storageFailed": "暂时无法保存装扮，离开后可能需要重新选择。",
+      "soundFailed": "海浪声暂时无法播放，可以稍后再试。",
+      "wardrobe": {
+        "title": "属于你的模样",
+        "intro": "挑一身喜欢的颜色，带着它去看海。",
+        "coat": "外套颜色",
+        "skin": "肤色",
+        "hairColor": "头发颜色",
+        "hairStyle": "发型",
+        "accessory": "随身物件",
+        "saved": "装扮会在这台设备上保留。",
+        "done": "就这样，去海边"
+      },
+      "colors": {
+        "sea": "海盐蓝",
+        "moss": "苔草绿",
+        "coral": "珊瑚粉",
+        "cream": "燕麦白",
+        "light": "浅杏色",
+        "warm": "暖棕色",
+        "deep": "深棕色",
+        "chestnut": "栗棕色",
+        "ink": "墨黑色",
+        "honey": "蜂蜜金"
+      },
+      "hair": {
+        "crop": "清爽短发",
+        "bob": "柔软齐发",
+        "waves": "蓬松卷发"
+      },
+      "accessories": {
+        "satchel": "海岸挎包",
+        "scarf": "暖风围巾",
+        "none": "轻装出发"
+      },
+      "guide": {
+        "title": "在海边走走",
+        "move": "点击沙滩或木栈道即可行走，也可使用 WASD / 方向键。",
+        "camera": "拖动环顾，滚轮缩放；J / L 转向，I / K 调整视角，Q / E 缩放。",
+        "destinations": "步行目的地",
+        "host": "小屋是一个散步目的地。真人站长上线后，可在「同行的人」中找到带站长标识的账号，走近并邀请合照。"
+      },
+      "places": {
+        "bay": {
+          "name": "海风经过的地方",
+          "description": "脚步慢一点，风景会等你。"
+        },
+        "dock": {
+          "name": "抵达码头",
+          "description": "小船在这里等着下一次出发。"
+        },
+        "beach": {
+          "name": "落日沙滩",
+          "description": "带一本手账，把今天轻轻放在这里。"
+        },
+        "bench": {
+          "name": "海边长椅",
+          "description": "留了一个座位，也留了一点安静。"
+        },
+        "cottage": {
+          "name": "站长小屋",
+          "description": "窗边亮着灯。愿每次抵达，都像回家。"
+        }
+      },
+      "social": {
+        "company": "同行的人",
+        "journal": "海岸手账",
+        "account": "我的账号",
+        "traveler": "旅人 · {code}",
+        "host": "站长",
+        "hostHint": "站长上线时会出现在这里，并带有经过账号验证的站长标识。",
+        "offline": "加入同行后，就能遇见这片海湾的旅人。",
+        "emptyCompany": "海湾现在只有你，慢慢走一会儿吧。",
+        "approach": "走向 TA",
+        "invite": "邀请合照",
+        "invitation": "海边合照邀请",
+        "invited": "{name} 邀请你一起拍张海岸照片。",
+        "waiting": "正在等 {name} 接受合照邀请。",
+        "consent": "接受后，两人会到落日沙滩取景，倒数 4 秒拍照。邀请 30 秒后失效，随时可以取消。",
+        "accept": "好呀，一起拍",
+        "decline": "这次先不了",
+        "cancel": "取消合照",
+        "countdown": "看向海风，{count} 秒后留下这一刻…",
+        "journalHint": "这里保存账号的打卡与合照记录。照片请下载到自己的设备，手账不会上传照片文件。时间按北京时间显示。",
+        "loginHint": "登录后，可以保存自己的海岸足迹。游客也可以散步和合照。",
+        "login": "登录账号",
+        "loading": "正在翻开手账…",
+        "loadFailed": "手账暂时没有打开，请稍后重试。",
+        "retry": "再试一次",
+        "emptyJournal": "还没有海岸足迹。走近一个地点，留下今天的打卡吧。",
+        "photoMemory": "在{place}的一张合照",
+        "visitMemory": "在{place}打卡",
+        "withHost": "与站长同行",
+        "companions": "附近有 {count} 位同行旅人",
+        "more": "翻看更早的足迹",
+        "checkIn": "在这里打卡",
+        "saved": "已记进你的海岸手账。",
+        "savePhoto": "记进海岸手账",
+        "alreadySaved": "已记进手账",
+        "errors": {
+          "INVALID_PAYLOAD": "这次操作没有完成，请重试。",
+          "RATE_LIMITED": "稍等一下，让海风慢慢来。",
+          "ROOM_FULL": "海湾暂时坐满了，请稍后再来。",
+          "SUPERSEDED": "同行身份已在其他窗口继续，请重新加入。",
+          "UNAVAILABLE": "暂时没能连上海岸服务，请稍后再试。",
+          "NOT_JOINED": "请先加入同行，再试一次。",
+          "OUT_OF_REACH": "再走近一点，就可以一起留下足迹了。",
+          "SEAT_TAKEN": "长椅已经坐满了。",
+          "AUTH_REQUIRED": "请登录后保存海岸足迹。",
+          "BUSY": "有一场合照正在等待，请等结束后再邀请。",
+          "PHOTO_EXPIRED": "这次合照已结束或过期，可以再拍一张。"
+        },
+        "declined": "对方这次想安静看海，合照邀请已结束。",
+        "cancelled": "合照已取消或邀请过期，可以继续在海边走走。"
+      }
+    },
     "ui": {
       "region": "光阴海岸探索世界",
       "exit": "离开海岸，回到首页",

@@ -1,4 +1,9 @@
 export type ApiResponse<T> = { data: T; meta: { requestId: string } };
+export type {
+  CoastIdentityTicket,
+  CoastMemory,
+  CoastMemoryPage,
+} from "./coast-memories";
 export type ApiFailure = {
   error: { code: string; message: string; details?: unknown };
   meta: { requestId: string };

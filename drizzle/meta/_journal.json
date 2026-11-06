@@ -50,6 +50,13 @@
       "when": 1793800315943,
       "tag": "0006_salty_lockjaw",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793934392566,
+      "tag": "0007_coast_memories",
+      "breakpoints": true
     }
   ]
 }
