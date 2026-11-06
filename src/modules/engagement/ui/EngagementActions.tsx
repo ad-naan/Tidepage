@@ -14,10 +14,12 @@ export function InteractionButton({
   target,
   kind,
   iconOnly = false,
+  showCount = !iconOnly,
 }: {
   target: EngagementTarget;
   kind: InteractionKind;
   iconOnly?: boolean;
+  showCount?: boolean;
 }) {
   const t = useTranslations("engagement");
   const { states, pending, loading, change } = useEngagement();
@@ -32,6 +34,8 @@ export function InteractionButton({
     <Button
       className={`${styles.action} ${iconOnly ? styles.iconOnly : ""}`}
       aria-label={label}
+      title={label}
+      data-count={(showCount && kind === "like") || undefined}
       aria-pressed={active}
       disabled={loading || !state}
       busy={pending.includes(key)}
@@ -41,10 +45,10 @@ export function InteractionButton({
       {!iconOnly && (
         <>
           <span>{label}</span>
-          {kind === "like" && state && (
-            <span className={styles.count}>{state.likeCount}</span>
-          )}
         </>
+      )}
+      {showCount && kind === "like" && state && (
+        <span className={styles.count}>{state.likeCount}</span>
       )}
     </Button>
   );

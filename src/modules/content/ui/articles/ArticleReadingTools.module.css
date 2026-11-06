@@ -1,0 +1,58 @@
+.tools {
+  padding-left: 6px;
+  margin-top: 14px;
+}
+.rule {
+  width: 136px;
+  height: 9px;
+  opacity: 0.65;
+  margin-bottom: 10px;
+}
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--ink);
+  font: 400 12px/1.6 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+.progress svg {
+  width: 18px;
+  height: 18px;
+}
+.top.top {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  color: var(--muted);
+  font: 400 11px/1.6 var(--font-ui);
+  min-height: 30px;
+  padding: 3px 0;
+}
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  margin-top: 14px;
+}
+.actions button {
+  min-height: 36px;
+  color: var(--muted);
+}
+.actions button:hover,
+.actions button[aria-pressed="true"] {
+  color: var(--accent);
+}
+.action.action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  width: 36px;
+  min-height: 36px;
+  padding: 4px;
+}
+.top:hover {
+  color: var(--accent);
+}

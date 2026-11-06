@@ -16,6 +16,8 @@ import {
 import { createContentTestStore } from "../fixtures/content";
 import { usersTable } from "../../src/modules/identity/infrastructure/schema";
 import type { Database } from "../../src/server/db/client";
+import { stickers } from "../../src/shared/config/stickers";
+import { access } from "node:fs/promises";
 
 const paragraph: EditorNode = {
   type: "paragraph",
@@ -177,4 +179,22 @@ test("rich comments round trip through PostgreSQL while existing plain comments 
   } finally {
     await fixture.close();
   }
+});
+
+test("registered stickers support image-only comments, round trip and reject arbitrary sources", async () => {
+  const document:EditorNode={type:"doc",content:[{type:"paragraph",content:[{type:"sticker",attrs:{id:"fluent:otter"}}]}]};
+  assert.equal(isEditorDocument(document),true);
+  const target={type:"page",id:"about"} as const;
+  assert.equal(newCommentSchema.safeParse({target,locale:"en",document}).success,true);
+  assert.ok(documentMarkdown(document).includes("/stickers/fluent/otter.webp"));
+  assert.equal(isEditorDocument({type:"doc",content:[{type:"sticker",attrs:{id:"https://example.com/tracker.png"}}]}),false);
+  assert.equal(new Set(stickers.map(item=>item.id)).size,stickers.length);
+  for(const sticker of stickers) await access(new URL(`../../public${sticker.src}`,import.meta.url));
+  const fixture=await createContentTestStore();
+  try {
+    const [user]=await fixture.db.insert(usersTable).values({displayName:"Reader"}).returning();
+    const store=discussionStore(fixture.db as unknown as Database);
+    await store.create(user.id,{target,locale:"en",document});
+    assert.deepEqual((await store.list({...target,locale:"en"})).items[0].document,document);
+  } finally {await fixture.close();}
 });

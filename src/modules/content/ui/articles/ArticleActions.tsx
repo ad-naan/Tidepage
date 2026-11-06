@@ -1,16 +1,18 @@
 "use client";
 import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import { useTranslations } from "next-intl";
-import { Copy } from "lucide-react";
-import { ContentEngagementActions } from "@/modules/engagement/ui/EngagementActions";
+import { Copy, Share2 } from "lucide-react";
+import { EngagementActions } from "@/modules/engagement/ui/EngagementActions";
 import { Button } from "@/shared/ui/button/Button";
 
-export function ArticleActions({
-  slug,
+export function ArticleShareButton({
   title,
+  iconOnly = false,
+  className = "",
 }: {
-  slug: string;
   title: string;
+  iconOnly?: boolean;
+  className?: string;
 }) {
   const t = useTranslations("articles");
   const { notify } = useNotice();
@@ -29,12 +31,34 @@ export function ArticleActions({
     }
   }
   return (
+    <Button
+      className={`${iconOnly ? "" : "button-outline"} ${className}`}
+      aria-label={t("share")}
+      title={t("share")}
+      onClick={share}
+    >
+      {iconOnly ? (
+        <Share2 size={18} />
+      ) : (
+        <>
+          <Copy size={15} />
+          {t("share")}
+        </>
+      )}
+    </Button>
+  );
+}
+export function ArticleActions({
+  slug,
+  title,
+}: {
+  slug: string;
+  title: string;
+}) {
+  return (
     <div className="article-actions">
-      <ContentEngagementActions target={{ type: "article", id: slug }} />
-      <Button className="button-outline" onClick={share}>
-        <Copy size={15} />
-        {t("share")}
-      </Button>
+      <EngagementActions target={{ type: "article", id: slug }} />
+      <ArticleShareButton title={title} />
     </div>
   );
 }

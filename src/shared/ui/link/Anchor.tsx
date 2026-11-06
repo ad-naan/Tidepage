@@ -1,4 +1,5 @@
 import type { ComponentProps } from "react";
+import type { LinkPreview } from "@/shared/contracts/link-preview";
 import styles from "./Anchor.module.css";
 export function Anchor({ className = "", ...props }: ComponentProps<"a">) {
   return <a {...props} className={`${styles.link} ${className}`} />;
@@ -8,8 +9,9 @@ export function ExternalLink({
   target = "_blank",
   rel,
   className = "",
+  preview,
   ...props
-}: ComponentProps<"a">) {
+}: ComponentProps<"a"> & { preview?: LinkPreview | false }) {
   const relationship = new Set((rel ?? "").split(/\s+/).filter(Boolean));
   if (target === "_blank") {
     relationship.add("noopener");
@@ -21,6 +23,7 @@ export function ExternalLink({
       target={target}
       rel={[...relationship].join(" ") || undefined}
       className={className}
+      data-link-preview={preview === false ? "off" : preview ? JSON.stringify(preview) : undefined}
     />
   );
 }

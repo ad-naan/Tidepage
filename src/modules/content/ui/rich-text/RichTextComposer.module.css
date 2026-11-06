@@ -84,3 +84,12 @@
   pointer-events: none;
   color: var(--muted);
 }
+
+.document img[data-sticker] {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  vertical-align: -0.4em;
+  margin: 0 2px;
+}

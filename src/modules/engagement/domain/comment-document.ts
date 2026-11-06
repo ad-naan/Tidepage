@@ -8,6 +8,7 @@ const commentNodes = new Set([
   "doc",
   "paragraph",
   "text",
+  "sticker",
   "hardBreak",
   "bulletList",
   "orderedList",

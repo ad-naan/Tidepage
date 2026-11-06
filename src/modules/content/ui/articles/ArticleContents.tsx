@@ -1,31 +1,31 @@
 "use client";
 import { Anchor } from "@/shared/ui/link/Anchor";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 import { useReducedMotion } from "motion/react";
 import { CoastGlyph } from "@/shared/ui/drawing/CoastalMarks";
 import { HanddrawnTree } from "@/shared/ui/drawing/HanddrawnTree";
-import { AnimatedNumber } from "@/shared/ui/typography/AnimatedNumber";
 import { useArticleReading } from "./useArticleReading";
+import { ArticleReadingTools } from "./ArticleReadingTools";
 import styles from "./ArticleContents.module.css";
-const rowHeight = 52;
-
+const rowHeight = 44;
 export function ArticleContents({
   titles,
   label,
+  slug,
+  title,
 }: {
   titles: string[];
   label: string;
+  slug: string;
+  title: string;
 }) {
-  const { active, percent, started } = useArticleReading();
-  const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
+  const { active, percent } = useArticleReading();
   const navigation = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
-  const condensed = started && !hovered && !focused;
   useEffect(() => {
     const nav = navigation.current;
     const link = nav?.querySelector<HTMLElement>('[aria-current="location"]');
-    if (!nav || !link || focused) return;
+    if (!nav || !link || nav.contains(document.activeElement)) return;
     if (
       link.offsetTop < nav.scrollTop ||
       link.offsetTop + rowHeight > nav.scrollTop + nav.clientHeight
@@ -34,68 +34,50 @@ export function ArticleContents({
         top: Math.max(0, link.offsetTop - nav.clientHeight / 2),
         behavior: reduced ? "instant" : "smooth",
       });
-  }, [active, focused, reduced]);
-  if (!titles.length) return null;
+  }, [active, reduced]);
   return (
-    <aside
-      className={styles.contents}
-      aria-label={label}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onFocusCapture={(event) =>
-        setFocused((event.target as HTMLElement).matches(":focus-visible"))
-      }
-      onBlurCapture={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node | null))
-          setFocused(false);
-      }}
-    >
-      <span className={styles.caption}>
-        <CoastGlyph kind="tide" />
-        {label}
-      </span>
-      <nav
-        ref={navigation}
-        className={styles.navigation}
-        aria-label={label}
-        data-condensed={condensed}
-        style={{ "--toc-row-height": `${rowHeight}px` } as CSSProperties}
-      >
-        <HanddrawnTree
-          className={styles.tree}
-          count={titles.length}
-          active={active}
-          expanded={!condensed}
-          percent={percent}
-          rowHeight={rowHeight}
-        />
-        <ol className={styles.items}>
-          {titles.map((title, index) => (
-            <li key={`${index}-${title}`}>
-              <Anchor
-                className={styles.row}
-                href={`#section-${index}`}
-                aria-label={`${String(index + 1).padStart(2, "0")} ${title}`}
-                aria-current={active === index ? "location" : undefined}
-              >
-                <span className={styles.number} aria-hidden="true">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span className={styles.copy} aria-hidden="true">
-                  <span className={styles.title}>{title}</span>
-                  <span className={styles.progress}>
-                    {active === index ? (
-                      <>
-                        <AnimatedNumber value={percent} />%
-                      </>
-                    ) : null}
-                  </span>
-                </span>
-              </Anchor>
-            </li>
-          ))}
-        </ol>
-      </nav>
+    <aside className={styles.contents} aria-label={label}>
+      {titles.length > 0 && (
+        <>
+          <span className={styles.caption}>
+            <CoastGlyph kind="tide" />
+            {label}
+          </span>
+          <nav
+            ref={navigation}
+            className={styles.navigation}
+            aria-label={label}
+            style={{ "--toc-row-height": `${rowHeight}px` } as CSSProperties}
+          >
+            <HanddrawnTree
+              className={styles.tree}
+              count={titles.length}
+              active={active}
+              expanded
+              percent={percent}
+              rowHeight={rowHeight}
+            />
+            <ol className={styles.items}>
+              {titles.map((chapter, index) => (
+                <li key={`${index}-${chapter}`}>
+                  <Anchor
+                    className={styles.row}
+                    href={`#section-${index}`}
+                    aria-label={`${String(index + 1).padStart(2, "0")} ${chapter}`}
+                    aria-current={active === index ? "location" : undefined}
+                  >
+                    <span className={styles.number} aria-hidden="true">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className={styles.title}>{chapter}</span>
+                  </Anchor>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </>
+      )}
+      <ArticleReadingTools slug={slug} title={title} percent={percent} />
     </aside>
   );
 }

@@ -26,6 +26,7 @@ import { OverlayScope } from "@/shared/ui/overlay/OverlayScope";
 import { useDisclosure } from "@/shared/hooks/useDisclosure";
 import { blockCommands, type BlockCommand } from "./block-commands";
 import styles from "./editor.module.css";
+import { StickerPicker } from "../../rich-text/StickerPicker";
 
 export function EditorToolbar({
   editor,
@@ -75,6 +76,7 @@ export function EditorToolbar({
             ? "h3"
             : "paragraph",
       table: e.isActive("table"),
+      codeBlock: e.isActive("codeBlock"),
       undo: e.can().undo(),
       redo: e.can().redo(),
     }),
@@ -185,6 +187,16 @@ export function EditorToolbar({
             <Link2 size={15} />
           </IconButton>
         </div>
+        <StickerPicker
+          disabled={state.codeBlock}
+          onSelect={(id) =>
+            editor
+              .chain()
+              .focus()
+              .insertContent({ type: "sticker", attrs: { id } })
+              .run()
+          }
+        />
         <OverlayScope owner={id}>
           <div ref={menu.ref} className={styles.insertTrigger}>
             <Button

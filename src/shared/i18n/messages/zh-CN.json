@@ -210,7 +210,11 @@
     "share": "分享文章",
     "copied": "链接已复制",
     "copyFallback": "请复制浏览器地址栏中的链接",
-    "filterLabel": "按内容分类"
+    "filterLabel": "按内容分类",
+    "readingProgress": "本文阅读进度",
+    "backToTop": "回到顶部",
+    "readingTools": "阅读工具",
+    "jumpComments": "跳到评论区"
   },
   "header": {
     "search": "搜索文章",
@@ -1459,6 +1463,59 @@
           ]
         }
       ]
+    }
+  },
+  "stickers": {
+    "title": "给这句话加点表情",
+    "open": "选择表情包",
+    "hint": "39 个小表情",
+    "search": "找一个表情…",
+    "categories": "表情分类",
+    "all": "全部",
+    "moods": "小情绪",
+    "daily": "日常",
+    "empty": "还没找到，换个词试试。",
+    "credit": "Fluent Emoji · Microsoft · MIT",
+    "items": {
+      "fluent-grinning-face": "开心",
+      "fluent-beaming-face-with-smiling-eyes": "笑眯眯",
+      "fluent-face-with-tears-of-joy": "笑哭",
+      "fluent-rolling-on-the-floor-laughing": "笑倒了",
+      "fluent-smiling-face-with-hearts": "喜欢",
+      "fluent-smiling-face-with-heart-eyes": "心动",
+      "fluent-star-struck": "星星眼",
+      "fluent-thinking-face": "让我想想",
+      "fluent-face-with-raised-eyebrow": "有点怀疑",
+      "fluent-face-with-monocle": "仔细看看",
+      "fluent-face-with-rolling-eyes": "白眼",
+      "fluent-smirking-face": "懂的都懂",
+      "fluent-winking-face": "眨眨眼",
+      "fluent-face-with-tongue": "略略略",
+      "fluent-squinting-face-with-tongue": "调皮",
+      "fluent-zany-face": "发疯一下",
+      "fluent-upside-down-face": "倒过来看",
+      "fluent-melting-face": "融化了",
+      "fluent-saluting-face": "收到",
+      "fluent-shushing-face": "嘘",
+      "fluent-face-with-hand-over-mouth": "捂嘴笑",
+      "fluent-face-holding-back-tears": "忍住眼泪",
+      "fluent-loudly-crying-face": "大哭",
+      "fluent-pleading-face": "拜托拜托",
+      "fluent-exploding-head": "脑袋炸了",
+      "fluent-flushed-face": "脸红",
+      "fluent-sleeping-face": "睡着了",
+      "fluent-yawning-face": "打哈欠",
+      "fluent-face-exhaling": "松口气",
+      "fluent-face-in-clouds": "脑袋放空",
+      "fluent-smiling-face-with-sunglasses": "酷一下",
+      "fluent-nerd-face": "认真研究",
+      "fluent-otter": "水獭路过",
+      "fluent-teacup-without-handle": "喝口茶",
+      "fluent-hot-beverage": "来杯热饮",
+      "fluent-sparkles": "闪闪发光",
+      "fluent-party-popper": "撒花",
+      "fluent-red-heart": "一颗心",
+      "fluent-hundred-points": "满分"
     }
   }
 }

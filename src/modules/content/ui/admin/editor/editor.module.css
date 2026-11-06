@@ -451,3 +451,12 @@
     top: 0;
   }
 }
+
+.document :global(img[data-sticker]) {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  vertical-align: -0.4em;
+  margin: 0 2px;
+  object-fit: contain;
+}

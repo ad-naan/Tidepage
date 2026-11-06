@@ -10,7 +10,8 @@ import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
 import { TableKit } from "@tiptap/extension-table";
 import Typography from "@tiptap/extension-typography";
-import { useTranslations } from "next-intl";
+import { useMessages, useTranslations } from "next-intl";
+import { StickerNode } from "../../rich-text/StickerNode";
 import { Bold, Italic, Link2 } from "lucide-react";
 import { Button, IconButton } from "@/shared/ui/button/Button";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
@@ -53,6 +54,7 @@ export function RichTextEditor({
   uploader?: ImageUploader;
 }) {
   const t = useTranslations("admin.editor");
+  const stickerLabels = useMessages().stickers.items as Record<string, string>;
   const { notify } = useNotice();
   const [imageOpen, setImageOpen] = useState(false);
   const [reference, setReference] = useState<{
@@ -188,6 +190,7 @@ export function RichTextEditor({
       SuperscriptMark,
       SubscriptMark,
       DetailsNode,
+      StickerNode.configure({ labels: stickerLabels }),
       Extension.create({
         name: "codeCaption",
         addGlobalAttributes() {

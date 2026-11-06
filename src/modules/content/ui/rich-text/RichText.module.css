@@ -327,3 +327,23 @@
     font-size: 14px;
   }
 }
+
+.sticker {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  vertical-align: -0.4em;
+  margin: 0 2px;
+}
+.stickersOnly {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.stickersOnly .sticker {
+  width: 56px;
+  height: 56px;
+  margin: 2px;
+}

@@ -19,6 +19,7 @@ import {
 import type { Article, ArticleSummary } from "@/modules/content/domain/models";
 import styles from "./ArticleDetail.module.css";
 import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
+import { EngagementProvider } from "@/modules/engagement/ui/EngagementProvider";
 export async function ArticleDetail({
   article,
   next,
@@ -55,32 +56,38 @@ export async function ArticleDetail({
         <CoastalVignette kind={article.sketch} />
         <PencilLine className="reading-header-shore" />
       </header>
-      <div className="reading-layout">
-        <div className="prose">
-          <RichText document={body} chapters />
-          <div className="article-end">
-            <CoastGlyph kind="shell" />
+      <EngagementProvider targets={[{ type: "article", id: article.slug }]}>
+        <div className="reading-layout">
+          <div className="prose">
+            <RichText document={body} chapters />
+            <div className="article-end">
+              <CoastGlyph kind="shell" />
+            </div>
+            <div className="tags">
+              {article.tags.map((t) => (
+                <Link
+                  key={t}
+                  href={`/articles?category=${encodeURIComponent(article.category)}`}
+                >
+                  #{t}
+                </Link>
+              ))}
+            </div>
+            <ArticleActions slug={article.slug} title={article.title} />
           </div>
-          <div className="tags">
-            {article.tags.map((t) => (
-              <Link
-                key={t}
-                href={`/articles?category=${encodeURIComponent(article.category)}`}
-              >
-                #{t}
-              </Link>
-            ))}
-          </div>
-          <ArticleActions slug={article.slug} title={article.title} />
+          <ArticleContents
+            titles={documentChapters(body).flatMap((chapter) =>
+              chapter.title ? [chapter.title] : [],
+            )}
+            label={t("toc")}
+            slug={article.slug}
+            title={article.title}
+          />
         </div>
-        <ArticleContents
-          titles={documentChapters(body).flatMap((chapter) =>
-            chapter.title ? [chapter.title] : [],
-          )}
-          label={t("toc")}
-        />
+      </EngagementProvider>
+      <div id="article-comments" className={styles.comments}>
+        <Discussion target={{ type: "article", id: article.slug }} />
       </div>
-      <Discussion target={{ type: "article", id: article.slug }} />
       {next && (
         <Link href={`/articles/${next.slug}`} className="next-article">
           <PencilLine className="next-shore" />

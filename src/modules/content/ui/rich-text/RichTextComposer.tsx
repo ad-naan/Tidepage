@@ -15,7 +15,9 @@ import {
   Link2,
   Code2,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useMessages, useTranslations } from "next-intl";
+import { StickerNode } from "./StickerNode";
+import { StickerPicker } from "./StickerPicker";
 import { IconButton, Button } from "@/shared/ui/button/Button";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { Field } from "@/shared/ui/field/Field";
@@ -46,6 +48,7 @@ export function RichTextComposer({
   onReady: (editor: Editor | null) => void;
 }) {
   const t = useTranslations("admin.editor");
+  const stickerLabels = useMessages().stickers.items as Record<string, string>;
   const [link, setLink] = useState<string | null>(null);
   const [invalid, setInvalid] = useState(false);
   const editor = useEditor({
@@ -65,6 +68,7 @@ export function RichTextComposer({
       HighlightMark,
       SuperscriptMark,
       SubscriptMark,
+      StickerNode.configure({ labels: stickerLabels }),
     ],
     editorProps: {
       attributes: {
@@ -106,6 +110,16 @@ export function RichTextComposer({
   return (
     <div className={styles.composer} aria-disabled={disabled}>
       <div className={styles.tools} role="toolbar" aria-label={t("toolbar")}>
+        <StickerPicker
+          disabled={disabled || state?.codeBlock}
+          onSelect={(id) =>
+            editor
+              .chain()
+              .focus()
+              .insertContent({ type: "sticker", attrs: { id } })
+              .run()
+          }
+        />
         {(
           [
             ["bold", Bold],

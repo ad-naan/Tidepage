@@ -12,6 +12,7 @@ import { spring } from "@/shared/lib/motion";
 import { SiteHeader } from "@/widgets/site-shell/header/SiteHeader";
 import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import { SiteFooter } from "@/widgets/site-shell/footer/SiteFooter";
+import { ExternalLinkPreview } from "@/shared/ui/link/ExternalLinkPreview";
 
 import type {
   ArticleSummary,
@@ -54,6 +55,7 @@ export function SiteShell({
   }, [pathname]);
   return (
     <MotionConfig transition={spring} reducedMotion="user">
+      <ExternalLinkPreview />
       <div
         className={`site-shell ${immersive ? "is-immersive" : ""}`}
         data-page={pathname === "/" ? "home" : "inner"}

@@ -10,7 +10,7 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  margin: 0 0 14px 6px;
+  margin: 0 0 12px 6px;
   color: var(--muted);
   font: 400 11px/1.8 var(--font-ui);
 }
@@ -20,7 +20,8 @@
 }
 .navigation {
   position: relative;
-  max-height: calc(100dvh - var(--reading-safe-top) - 58px);
+  max-height: calc(100dvh - var(--reading-safe-top) - 300px);
+  min-height: 44px;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
@@ -42,32 +43,20 @@
 }
 .row {
   display: grid;
-  grid-template-columns: 20px minmax(0, 1fr);
+  grid-template-columns: 18px minmax(0, 1fr);
   align-items: start;
-  gap: 8px;
+  gap: 7px;
   height: var(--toc-row-height);
   padding: 5px 2px 0 40px;
   border: 0;
-  font: 400 11px/1.55 var(--font-ui);
+  font: 400 12px/1.65 var(--font-ui);
   color: var(--muted);
   text-decoration: none;
 }
 .number {
   padding-top: 1px;
-  color: var(--muted);
-  font: 400 10px/1.6 var(--font-code);
-  opacity: 0.5;
-  transition:
-    opacity var(--motion-soft),
-    color var(--motion-soft);
-}
-.copy {
-  min-width: 0;
-  opacity: 1;
-  transform: translateX(0);
-  transition:
-    opacity var(--motion-soft),
-    transform var(--motion-soft);
+  font: 400 9px/1.8 var(--font-code);
+  opacity: 0.45;
 }
 .title {
   display: -webkit-box;
@@ -76,31 +65,11 @@
   overflow: hidden;
   text-wrap: pretty;
 }
-.progress {
-  display: block;
-  height: 13px;
-  color: var(--accent);
-  opacity: 0;
-  font: 400 10px/1.3 var(--font-code);
-  transition: opacity var(--motion-soft);
-}
-.navigation[data-condensed="true"] .copy {
-  opacity: 0;
-  transform: translateX(-7px);
-}
-.navigation[data-condensed="true"] .row[aria-current] .copy {
-  opacity: 1;
-  transform: translateX(0);
-}
 .row[aria-current] {
-  color: var(--ink);
+  color: var(--accent);
 }
 .row[aria-current] .number {
-  color: var(--accent);
   opacity: 0.9;
-}
-.navigation[data-condensed="true"] .row[aria-current] .progress {
-  opacity: 0.85;
 }
 .row:hover,
 .row:focus-visible {
@@ -110,13 +79,6 @@
   outline: 1px solid var(--accent);
   outline-offset: -1px;
   border-radius: 3px;
-}
-@media (prefers-reduced-motion: reduce) {
-  .copy,
-  .progress,
-  .number {
-    transition: none;
-  }
 }
 @media (max-width: 960px) {
   .contents {

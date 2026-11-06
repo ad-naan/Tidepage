@@ -1,5 +1,5 @@
 import { createElement, type ReactNode } from "react";
-import { useTranslations } from "next-intl";
+import { useMessages, useTranslations } from "next-intl";
 import {
   Info,
   Lightbulb,
@@ -23,6 +23,7 @@ import { ReferenceCard } from "./ReferenceCard";
 import { ReadingImage } from "./ReadingImage";
 import { ReadingLink } from "./ReadingLink";
 import styles from "./RichText.module.css";
+import { getSticker } from "@/shared/config/stickers";
 import { AuthorNameText } from "@/modules/identity/ui/AuthorSignature";
 
 function RenderNode({
@@ -33,6 +34,7 @@ function RenderNode({
   references: Record<string, Embed>;
 }) {
   const t = useTranslations("articleBlocks");
+  const stickerLabels = useMessages().stickers.items as Record<string, string>;
   const children = node.content?.map((child, index) => (
     <RenderNode key={index} node={child} references={references} />
   ));
@@ -87,7 +89,33 @@ function RenderNode({
   }
   switch (node.type) {
     case "paragraph":
-      return <p>{children}</p>;
+      return (
+        <p
+          className={
+            node.content?.length &&
+            node.content.every((child) => child.type === "sticker")
+              ? styles.stickersOnly
+              : undefined
+          }
+        >
+          {children}
+        </p>
+      );
+    case "sticker": {
+      const sticker = getSticker(node.attrs?.id);
+      return sticker ? (
+        <img
+          className={styles.sticker}
+          src={sticker.src}
+          alt={stickerLabels[sticker.key]}
+          title={stickerLabels[sticker.key]}
+          width={32}
+          height={32}
+          loading="lazy"
+          draggable={false}
+        />
+      ) : null;
+    }
     case "heading":
       return createElement(
         `h${Math.min(6, Math.max(2, Number(node.attrs?.level) || 2))}`,

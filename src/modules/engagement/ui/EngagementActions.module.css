@@ -24,6 +24,10 @@
   min-height: 36px;
   padding: 4px;
 }
+.action.iconOnly[data-count] {
+  width: auto;
+  min-width: 36px;
+}
 .count {
   color: var(--muted);
   font-variant-numeric: tabular-nums;

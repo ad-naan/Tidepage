@@ -210,7 +210,11 @@
     "share": "Share article",
     "copied": "Link copied",
     "copyFallback": "Please copy the link from your browser's address bar",
-    "filterLabel": "Filter writing"
+    "filterLabel": "Filter writing",
+    "readingProgress": "Article reading progress",
+    "backToTop": "Back to top",
+    "readingTools": "Reading tools",
+    "jumpComments": "Jump to comments"
   },
   "header": {
     "search": "Search articles",
@@ -1459,6 +1463,59 @@
           ]
         }
       ]
+    }
+  },
+  "stickers": {
+    "title": "A little expression",
+    "open": "Choose a sticker",
+    "hint": "39 little expressions",
+    "search": "Find an expression…",
+    "categories": "Sticker categories",
+    "all": "All",
+    "moods": "Moods",
+    "daily": "Everyday",
+    "empty": "Try another word.",
+    "credit": "Fluent Emoji · Microsoft · MIT",
+    "items": {
+      "fluent-grinning-face": "Grinning face",
+      "fluent-beaming-face-with-smiling-eyes": "Beaming face with smiling eyes",
+      "fluent-face-with-tears-of-joy": "Face with tears of joy",
+      "fluent-rolling-on-the-floor-laughing": "Rolling on the floor laughing",
+      "fluent-smiling-face-with-hearts": "Smiling face with hearts",
+      "fluent-smiling-face-with-heart-eyes": "Smiling face with heart-eyes",
+      "fluent-star-struck": "Star-struck",
+      "fluent-thinking-face": "Thinking face",
+      "fluent-face-with-raised-eyebrow": "Face with raised eyebrow",
+      "fluent-face-with-monocle": "Face with monocle",
+      "fluent-face-with-rolling-eyes": "Face with rolling eyes",
+      "fluent-smirking-face": "Smirking face",
+      "fluent-winking-face": "Winking face",
+      "fluent-face-with-tongue": "Face with tongue",
+      "fluent-squinting-face-with-tongue": "Squinting face with tongue",
+      "fluent-zany-face": "Zany face",
+      "fluent-upside-down-face": "Upside-down face",
+      "fluent-melting-face": "Melting face",
+      "fluent-saluting-face": "Saluting face",
+      "fluent-shushing-face": "Shushing face",
+      "fluent-face-with-hand-over-mouth": "Face with hand over mouth",
+      "fluent-face-holding-back-tears": "Face holding back tears",
+      "fluent-loudly-crying-face": "Loudly crying face",
+      "fluent-pleading-face": "Pleading face",
+      "fluent-exploding-head": "Exploding head",
+      "fluent-flushed-face": "Flushed face",
+      "fluent-sleeping-face": "Sleeping face",
+      "fluent-yawning-face": "Yawning face",
+      "fluent-face-exhaling": "Face exhaling",
+      "fluent-face-in-clouds": "Face in clouds",
+      "fluent-smiling-face-with-sunglasses": "Smiling face with sunglasses",
+      "fluent-nerd-face": "Nerd face",
+      "fluent-otter": "Otter",
+      "fluent-teacup-without-handle": "Teacup without handle",
+      "fluent-hot-beverage": "Hot beverage",
+      "fluent-sparkles": "Sparkles",
+      "fluent-party-popper": "Party popper",
+      "fluent-red-heart": "Red heart",
+      "fluent-hundred-points": "Hundred points"
     }
   }
 }

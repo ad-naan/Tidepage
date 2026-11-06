@@ -1,4 +1,5 @@
 import { documentText, type EditorNode } from "./editor-document";
+import { getSticker } from "@/shared/config/stickers";
 
 export function documentChapters(document: EditorNode) {
   const chapters: { title?: string; nodes: EditorNode[] }[] = [{ nodes: [] }];
@@ -50,6 +51,10 @@ export function documentMarkdown(node: EditorNode): string {
     return value;
   }
   switch (node.type) {
+    case "sticker": {
+      const sticker = getSticker(node.attrs?.id);
+      return sticker ? `![${sticker.name}](${sticker.src})` : "";
+    }
     case "doc":
       return inside().trim();
     case "paragraph":

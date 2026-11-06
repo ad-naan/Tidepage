@@ -78,6 +78,9 @@
   top: 0;
   left: 0;
 }
+.comments {
+  scroll-margin-top: var(--reading-safe-top);
+}
 @media (max-width: 1050px) {
   .reading.reading :global(.reading-layout) {
     grid-template-columns: minmax(0, 1fr) 210px;

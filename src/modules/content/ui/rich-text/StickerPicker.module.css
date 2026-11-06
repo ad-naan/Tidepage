@@ -1,0 +1,78 @@
+.root {
+  display: inline-flex;
+}
+.panel.panel {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 10px 32px #00000010;
+}
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+  gap: 10px;
+  font-family: var(--font-ui);
+}
+.heading strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.heading small {
+  font-size: 10px;
+  color: var(--muted);
+}
+.panel > input {
+  width: 100%;
+  font-size: 12px;
+  min-height: 32px;
+}
+.panel > div[role="group"] {
+  margin: 8px 0;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 4px 0;
+  margin-top: 8px;
+}
+.sticker.sticker {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  width: 100%;
+  min-height: 40px;
+  height: 40px;
+  padding: 4px;
+  border-radius: 5px;
+}
+.sticker:hover,
+.sticker:focus-visible {
+  background: var(--soft);
+}
+.sticker img {
+  display: block;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+.credit.credit {
+  display: block;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font: 400 10px/1.6 var(--font-ui);
+  text-decoration: none;
+}
+.empty {
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+  padding: 12px 0;
+}
