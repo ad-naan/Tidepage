@@ -41,23 +41,26 @@ async function postJson(
   provider: OAuthProviderId,
   url: string,
   body: Record<string, string>,
+  fetcher: typeof fetch,
 ) {
-  const response = await fetch(url, {
+  const response = await fetcher(url, {
     method: "POST",
     headers: {
       Accept: "application/json",
-      "Content-Type": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: JSON.stringify(body),
+    body: new URLSearchParams(body),
     signal: AbortSignal.timeout(8000),
   });
   const payload: unknown = await response.json().catch(() => null);
-  if (!response.ok)
+  if (!response.ok) {
     // 日志字段走白名单：provider 记入 component，避免结构漂移与敏感信息外泄。
     log("info", "oauth.token_failed", {
       component: provider,
       status: response.status,
     });
+    throw new AppError("OAUTH_EXCHANGE_FAILED", "第三方授权失败", 502);
+  }
   return payload as Record<string, unknown> | null;
 }
 
@@ -72,81 +75,79 @@ function str(value: unknown): string | null {
   return typeof value === "string" && value.length > 0 ? value : null;
 }
 
-async function githubProfile(client: OAuthClient, code: string) {
+async function githubProfile(
+  client: OAuthClient,
+  code: string,
+  fetcher: typeof fetch,
+) {
   const token = readAccessToken(
-    await postJson("github", "https://github.com/login/oauth/access_token", {
-      client_id: client.clientId,
-      client_secret: client.clientSecret,
-      code,
-      redirect_uri: client.redirectUri,
-    }),
+    await postJson(
+      "github",
+      "https://github.com/login/oauth/access_token",
+      {
+        client_id: client.clientId,
+        client_secret: client.clientSecret,
+        code,
+        redirect_uri: client.redirectUri,
+      },
+      fetcher,
+    ),
   );
   const headers = {
     Authorization: `Bearer ${token}`,
     Accept: "application/vnd.github+json",
     "User-Agent": "tidepage",
   };
-  const userResponse = await fetch("https://api.github.com/user", {
+  const userResponse = await fetcher("https://api.github.com/user", {
     headers,
     signal: AbortSignal.timeout(8000),
   });
+  if (!userResponse.ok)
+    throw new AppError("OAUTH_PROFILE_INVALID", "无法读取账号资料", 502);
   const user = (await userResponse.json().catch(() => null)) as Record<
     string,
     unknown
   > | null;
-  let email = str(user?.email);
-  if (!email) {
-    const emails = await fetch("https://api.github.com/user/emails", {
-      headers,
-      signal: AbortSignal.timeout(8000),
-    })
-      .then(
-        (r) => r.json() as Promise<unknown>,
-        () => null,
-      )
-      .catch(() => null);
-    if (Array.isArray(emails))
-      email = str(
-        emails.find(
-          (item): item is { email: string } =>
-            !!item &&
-            typeof item === "object" &&
-            (item as { primary?: unknown }).primary === true &&
-            typeof (item as { email?: unknown }).email === "string",
-        )?.email,
-      );
-  }
   return {
-    providerAccountId: String(user?.id ?? ""),
+    providerAccountId: accountId(user?.id),
     displayName: str(user?.name) ?? str(user?.login) ?? "",
-    email,
     avatarUrl: str(user?.avatar_url),
     profileUrl: str(user?.html_url),
   };
 }
 
-async function giteeProfile(client: OAuthClient, code: string) {
+async function giteeProfile(
+  client: OAuthClient,
+  code: string,
+  fetcher: typeof fetch,
+) {
   const token = readAccessToken(
-    await postJson("gitee", "https://gitee.com/oauth/token", {
-      grant_type: "authorization_code",
-      client_id: client.clientId,
-      client_secret: client.clientSecret,
-      code,
-      redirect_uri: client.redirectUri,
-    }),
+    await postJson(
+      "gitee",
+      "https://gitee.com/oauth/token",
+      {
+        grant_type: "authorization_code",
+        client_id: client.clientId,
+        client_secret: client.clientSecret,
+        code,
+        redirect_uri: client.redirectUri,
+      },
+      fetcher,
+    ),
   );
-  const userResponse = await fetch(
+  const userResponse = await fetcher(
     `https://gitee.com/api/v5/user?access_token=${encodeURIComponent(token)}`,
     { signal: AbortSignal.timeout(8000) },
   );
+  if (!userResponse.ok)
+    throw new AppError("OAUTH_PROFILE_INVALID", "无法读取账号资料", 502);
   const user = (await userResponse.json().catch(() => null)) as Record<
     string,
     unknown
   > | null;
   return {
-    providerAccountId: String(user?.id ?? ""),
+    providerAccountId: accountId(user?.id),
     displayName: str(user?.name) ?? str(user?.login) ?? "",
-    email: str(user?.email),
     avatarUrl: str(user?.avatar_url),
     profileUrl: str(user?.html_url),
   };
@@ -157,12 +158,20 @@ export async function fetchOAuthProfile(
   provider: OAuthProviderId,
   client: OAuthClient,
   code: string,
+  fetcher: typeof fetch = fetch,
 ): Promise<OAuthProfile> {
   const raw =
     provider === "github"
-      ? await githubProfile(client, code)
-      : await giteeProfile(client, code);
+      ? await githubProfile(client, code, fetcher)
+      : await giteeProfile(client, code, fetcher);
   if (!raw.providerAccountId || !raw.displayName)
     throw new AppError("OAUTH_PROFILE_INVALID", "无法读取账号资料", 502);
-  return { provider, ...raw, email: raw.email ?? null };
+  return { provider, ...raw };
+}
+
+function accountId(value: unknown): string {
+  if (typeof value === "number" && Number.isSafeInteger(value) && value > 0)
+    return String(value);
+  if (typeof value === "string" && /^[1-9][0-9]*$/.test(value)) return value;
+  return "";
 }

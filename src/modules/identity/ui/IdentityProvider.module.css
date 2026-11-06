@@ -54,3 +54,10 @@
   font-size: var(--text-sm);
   color: #b3552e;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .providerLink {
+    transition: none;
+    transform: none;
+  }
+}

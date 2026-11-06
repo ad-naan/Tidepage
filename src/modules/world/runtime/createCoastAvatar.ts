@@ -12,6 +12,7 @@ export function createCoastAvatar(appearance: CoastAvatar) {
   root.name = "coast-companion";
   const body = new THREE.Group();
   body.name = "body";
+  body.scale.set(0.78, 1, 0.88);
   root.add(body);
   const materials: THREE.MeshStandardMaterial[] = [];
   const geometries: THREE.BufferGeometry[] = [];
@@ -328,7 +329,8 @@ export function createCoastAvatar(appearance: CoastAvatar) {
   });
   const head = new THREE.Group();
   head.name = "head";
-  head.position.set(0, 1.7, 0.015);
+  head.position.set(0, 1.65, 0.015);
+  head.scale.setScalar(0.29);
   body.add(head);
   const gaussian = (value: number, center: number, width: number) =>
     Math.exp(-(((value - center) / width) ** 2));
@@ -372,6 +374,7 @@ export function createCoastAvatar(appearance: CoastAvatar) {
   }
   face.setAttribute("color", new THREE.Float32BufferAttribute(blushColors, 3));
   add(head, "continuous-cheeks-chin-nose", face, faceSkin);
+  const eyes: THREE.Group[] = [];
   for (const side of [-1, 1]) {
     petal(head, "ear", skin, side * 0.49, -0.035, -0.015, 0.095, 0.13, 0.075);
     petal(
@@ -387,6 +390,11 @@ export function createCoastAvatar(appearance: CoastAvatar) {
     );
     const eyeX = side * 0.19,
       eyeY = 0.015;
+    const eye = new THREE.Group();
+    eye.name = side < 0 ? "left-eye" : "right-eye";
+    eye.position.set(eyeX, eyeY, 0);
+    head.add(eye);
+    eyes.push(eye);
     const eyePatch = (
       name: string,
       material: THREE.Material,
@@ -395,7 +403,7 @@ export function createCoastAvatar(appearance: CoastAvatar) {
       offset: number,
     ) =>
       add(
-        head,
+        eye,
         name,
         sculptSurface(
           (u, v) => {
@@ -404,8 +412,8 @@ export function createCoastAvatar(appearance: CoastAvatar) {
             const x = eyeX + Math.cos(a) * r * w,
               y = eyeY + Math.sin(a) * r * h;
             return vector(
-              x,
-              y,
+              x - eyeX,
+              y - eyeY,
               faceDepth(x, y) +
                 offset +
                 Math.sqrt(Math.max(0, 1 - r * r)) * 0.012,
@@ -416,29 +424,30 @@ export function createCoastAvatar(appearance: CoastAvatar) {
         ),
         material,
       );
-    eyePatch("eye-outline", pupil, 0.084, 0.106, 0.008);
-    eyePatch("warm-iris", iris, 0.068, 0.089, 0.014);
-    eyePatch("pupil", pupil, 0.046, 0.075, 0.024);
+    eyePatch("eye-outline", pupil, 0.083, 0.041, 0.008);
+    eyePatch("eye-sclera", eyeWhite, 0.076, 0.034, 0.014);
+    eyePatch("warm-iris", iris, 0.032, 0.033, 0.021);
+    eyePatch("pupil", pupil, 0.017, 0.023, 0.028);
     petal(
-      head,
+      eye,
       "eye-catchlight",
       eyeWhite,
-      eyeX - 0.022,
-      eyeY + 0.039,
-      faceDepth(eyeX - 0.022, eyeY + 0.039) + 0.04,
-      0.022,
-      0.028,
+      -0.009,
+      0.012,
+      faceDepth(eyeX - 0.009, eyeY + 0.012) + 0.04,
+      0.008,
+      0.01,
       0.01,
     );
     petal(
-      head,
+      eye,
       "eye-catchlight-small",
       eyeWhite,
-      eyeX + 0.025,
-      eyeY - 0.04,
-      faceDepth(eyeX + 0.025, eyeY - 0.04) + 0.035,
       0.01,
-      0.012,
+      -0.012,
+      faceDepth(eyeX + 0.01, eyeY - 0.012) + 0.035,
+      0.004,
+      0.004,
       0.006,
     );
     line(
@@ -652,35 +661,51 @@ export function createCoastAvatar(appearance: CoastAvatar) {
     scarf.visible = next.accessory === "scarf";
   }
   dress(appearance);
+  let lastPose: AvatarPose = "idle",
+    jumpStarted = 0;
   return {
     root,
     dress,
     update: (time: number, pose: AvatarPose, reduced: boolean) => {
       const t = reduced ? 0 : time,
-        walking = pose === "walk",
+        walking = pose === "walk" || pose === "run",
         sitting = pose === "sit";
+      if (pose === "jump" && lastPose !== "jump") jumpStarted = time;
+      lastPose = pose;
+      const stride = pose === "run" ? t * 12 : t * 8;
       body.position.y = sitting
         ? -0.22
         : walking
-          ? Math.abs(Math.sin(t * 8)) * 0.035
+          ? Math.abs(Math.sin(stride)) * (pose === "run" ? 0.065 : 0.035)
           : Math.sin(t * 1.6) * 0.009;
+      if (pose === "jump")
+        body.position.y =
+          Math.sin(
+            THREE.MathUtils.clamp((time - jumpStarted) / 0.75, 0, 1) * Math.PI,
+          ) * 0.7;
       body.rotation.z = walking ? Math.sin(t * 8) * 0.025 : 0;
       head.rotation.z = !reduced && pose === "wave" ? -0.07 : 0;
+      // Short natural blinks; reduced motion holds a calm open gaze.
+      const cycle = t % 5.7;
+      const blink = Math.exp(-(((cycle - 5.35) / 0.075) ** 2));
+      eyes.forEach((eye) => {
+        eye.scale.y = 1 - blink * 0.94;
+      });
       legs.forEach(({ thigh, shin }, i) => {
         thigh.rotation.x = sitting
           ? -Math.PI / 2
           : walking
-            ? Math.sin(t * 8 + i * Math.PI) * 0.48
+            ? Math.sin(stride + i * Math.PI) * (pose === "run" ? 0.7 : 0.48)
             : 0;
         shin.rotation.x = sitting
           ? Math.PI / 2
           : walking
-            ? Math.max(0, -Math.sin(t * 8 + i * Math.PI)) * 0.45
+            ? Math.max(0, -Math.sin(stride + i * Math.PI)) * 0.45
             : 0;
       });
       arms.forEach(({ upper, forearm }, i) => {
         upper.rotation.x = walking
-          ? -Math.sin(t * 8 + i * Math.PI) * 0.37
+          ? -Math.sin(stride + i * Math.PI) * (pose === "run" ? 0.58 : 0.37)
           : sitting
             ? -0.4
             : 0;

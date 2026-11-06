@@ -1,23 +1,38 @@
 "use client";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import type { OAuthProviderId } from "../domain/oauth";
+import type { Principal } from "../domain/principal";
 import { apiSend } from "@/shared/http/client";
 import { Button } from "@/shared/ui/button/Button";
-import { Input } from "@/shared/ui/field/Input";
-import { Field } from "@/shared/ui/field/Field";
+import { Link } from "@/shared/i18n/navigation";
+import { OAuthLoginOptions } from "./OAuthLoginOptions";
 import styles from "./AuthorLoginView.module.css";
 
-export function AuthorLoginView() {
+export function AuthorLoginView({
+  providers,
+  principal,
+}: {
+  providers: readonly OAuthProviderId[];
+  principal: Principal | null;
+}) {
   const t = useTranslations("admin.access");
-  const [key, setKey] = useState("");
+  const pathname = usePathname();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
-  async function login(event: FormEvent) {
-    event.preventDefault();
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("login") !== "error") return;
+    setError(true);
+    url.searchParams.delete("login");
+    window.history.replaceState(null, "", url.pathname + url.search + url.hash);
+  }, []);
+  async function signOut() {
     setBusy(true);
     setError(false);
     try {
-      await apiSend("/api/v1/author/session", "POST", { key });
+      await apiSend("/api/v1/auth/session", "DELETE");
       window.location.reload();
     } catch {
       setError(true);
@@ -26,24 +41,24 @@ export function AuthorLoginView() {
   }
   return (
     <main className={styles.page}>
-      <form onSubmit={login} className={styles.form}>
-        <h1>{t("title")}</h1>
+      <section className={styles.form} aria-labelledby="author-login-title">
+        <h1 id="author-login-title">{t("title")}</h1>
         <p>{t("help")}</p>
-        <Field id="author-key" label={t("key")}>
-          <Input
-            id="author-key"
-            type="password"
-            autoComplete="current-password"
-            value={key}
-            onChange={(event) => setKey(event.target.value)}
-            required
-          />
-        </Field>
+        {principal ? (
+          <>
+            <p role="status">
+              {t("forbidden", { name: principal.displayName })}
+            </p>
+            <Button busy={busy} onClick={signOut}>
+              {t("switchAccount")}
+            </Button>
+          </>
+        ) : (
+          <OAuthLoginOptions providers={providers} returnTo={pathname ?? "/"} />
+        )}
         {error && <p role="alert">{t("error")}</p>}
-        <Button type="submit" variant="primary" busy={busy}>
-          {t("signIn")}
-        </Button>
-      </form>
+        <Link href="/">{t("backToSite")}</Link>
+      </section>
     </main>
   );
 }

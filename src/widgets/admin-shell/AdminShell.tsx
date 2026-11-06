@@ -69,7 +69,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <Button
             size="sm"
             onClick={async () => {
-              await apiSend("/api/v1/author/session", "DELETE");
+              await apiSend("/api/v1/auth/session", "DELETE");
               window.location.reload();
             }}
           >

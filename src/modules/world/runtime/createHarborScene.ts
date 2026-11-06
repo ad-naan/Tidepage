@@ -14,6 +14,13 @@ import {
   harborRoute,
   harborSpawn,
   harborWalkable,
+  harborInside,
+  harborSeating,
+  harborStandingPoint,
+  harborInteractions,
+  HARBOR_RUN_SPEED,
+  HARBOR_WALK_SPEED,
+  type HarborInteraction,
   type HarborPlace,
   type HarborPoint,
 } from "../domain/coast-harbor";
@@ -34,6 +41,8 @@ export type HarborControls = {
   walkTo: (point: HarborPoint) => void;
   synchronize: (snapshot: CoastSnapshot, selfId: string) => void;
   clearCompanions: () => void;
+  jump: () => void;
+  interact: () => void;
   networkIntent: () => CoastIntent;
   dispose: () => void;
 };
@@ -43,6 +52,8 @@ export function createHarborScene(options: {
   state: () => HarborState;
   onPlace: (place: HarborPlace | null) => void;
   onPose: (pose: AvatarPose) => void;
+  onInteraction: (interaction: HarborInteraction | null) => void;
+  onVoyage: () => void;
   onError: () => void;
 }): HarborControls {
   const renderer = new THREE.WebGLRenderer({
@@ -52,7 +63,7 @@ export function createHarborScene(options: {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.12;
+  renderer.toneMappingExposure = 1.02;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
   const canvas = renderer.domElement;
@@ -68,7 +79,7 @@ export function createHarborScene(options: {
   const sun = new THREE.DirectionalLight(0xffd0a0, 3);
   sun.position.set(-12, 18, -18);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(1024, 1024);
+  sun.shadow.mapSize.set(2048, 2048);
   Object.assign(sun.shadow.camera, {
     left: -16,
     right: 16,
@@ -83,7 +94,7 @@ export function createHarborScene(options: {
   const fill = new THREE.DirectionalLight(0xc9e2ed, 1.3);
   fill.position.set(5, 8, 12);
   scene.add(fill);
-  const environment = createCoastEnvironment(scene);
+  const environment = createCoastEnvironment(scene, true);
   const landscape = createHarborLandscape(scene);
   const avatar = createCoastAvatar(options.state().appearance);
   const companions = createCoastCompanions(scene);
@@ -102,8 +113,11 @@ export function createHarborScene(options: {
   const keys = new Set<string>();
   let route: HarborPoint[] = [];
   let arrival: "sit" | null = null;
+  let seatingTarget = harborSeating[0];
   let pose: AvatarPose = "idle";
   let waveUntil = 0;
+  let jumpUntil = 0;
+  let interaction: HarborInteraction | null = null;
   let previous = performance.now();
   let elapsed = 0;
   let frame = 0;
@@ -131,12 +145,10 @@ export function createHarborScene(options: {
     options.onPose(next);
   };
   const stand = () => {
-    if (pose === "sit")
-      avatar.root.position.set(
-        avatar.root.position.x,
-        0.49,
-        harborPlaces.bench.z,
-      );
+    if (pose === "sit") {
+      const point = harborStandingPoint(avatar.root.position);
+      avatar.root.position.set(point.x, 0.49, point.z);
+    }
     setPose("idle");
   };
   function goTo(place: HarborPlace) {
@@ -151,12 +163,50 @@ export function createHarborScene(options: {
     keys.clear();
     arrival = null;
     if (next === "sit") {
-      route = harborRoute(avatar.root.position, harborPlaces.bench);
+      seatingTarget = [...harborSeating].sort(
+        (a, b) =>
+          Math.hypot(
+            a.approach.x - avatar.root.position.x,
+            a.approach.z - avatar.root.position.z,
+          ) -
+          Math.hypot(
+            b.approach.x - avatar.root.position.x,
+            b.approach.z - avatar.root.position.z,
+          ),
+      )[0];
+      route = harborRoute(avatar.root.position, seatingTarget.approach);
       arrival = "sit";
     } else {
       setPose(next);
       waveUntil = performance.now() + 2500;
     }
+  }
+  function jump() {
+    if (
+      options.state().blocked ||
+      options.state().studio ||
+      performance.now() < jumpUntil
+    )
+      return;
+    stand();
+    jumpUntil = performance.now() + 750;
+    setPose("jump");
+  }
+  function interact() {
+    if (options.state().blocked || options.state().studio) return;
+    if (interaction === "bench" || interaction === "chair")
+      selectPose(pose === "sit" ? "idle" : "sit");
+    else if (interaction === "door") {
+      stand();
+      route = harborRoute(
+        avatar.root.position,
+        harborInside(avatar.root.position.x, avatar.root.position.z)
+          ? { x: 4.5, z: 0.1 }
+          : { x: 4.5, z: -2.7 },
+      );
+    } else if (interaction === "sail") options.onVoyage();
+    else if (interaction === "hearth" || interaction === "crystal")
+      landscape.interact(interaction);
   }
   const relevantKeys = new Set([
     "w",
@@ -173,20 +223,37 @@ export function createHarborScene(options: {
     "k",
     "q",
     "e",
+    "r",
+    "shift",
+    " ",
   ]);
   const onKeyDown = (event: KeyboardEvent) => {
     if (
       event.target instanceof HTMLElement &&
       (event.target.closest(
-        "button, input, textarea, select, [role=combobox], [role=dialog]",
+        "input, textarea, select, [role=combobox], [role=dialog]",
       ) ||
         event.target.isContentEditable)
     )
       return;
     const state = options.state();
     const key = event.key.toLowerCase();
+    if (
+      key === " " &&
+      event.target instanceof HTMLElement &&
+      event.target.closest("button")
+    )
+      return;
     if (state.blocked || state.studio || !relevantKeys.has(key)) return;
     event.preventDefault();
+    if (key === "e") {
+      if (!event.repeat) interact();
+      return;
+    }
+    if (key === " ") {
+      if (!event.repeat) jump();
+      return;
+    }
     keys.add(key);
     if (
       [
@@ -326,7 +393,7 @@ export function createHarborScene(options: {
       );
       distance = THREE.MathUtils.clamp(
         distance +
-          ((keys.has("q") ? 1 : 0) - (keys.has("e") ? 1 : 0)) * delta * 6,
+          ((keys.has("q") ? 1 : 0) - (keys.has("r") ? 1 : 0)) * delta * 6,
         6,
         22,
       );
@@ -350,9 +417,16 @@ export function createHarborScene(options: {
       }
       const length = Math.hypot(dx, dz);
       if (length > 0) {
-        const step = Math.min(2.4 * delta, route.length ? length : Infinity);
-        const nx = avatar.root.position.x + (dx / length) * step;
-        const nz = avatar.root.position.z + (dz / length) * step;
+        const speed = keys.has("shift") ? HARBOR_RUN_SPEED : HARBOR_WALK_SPEED;
+        const step = Math.min(speed * delta, route.length ? length : Infinity);
+        let nx = avatar.root.position.x + (dx / length) * step;
+        let nz = avatar.root.position.z + (dz / length) * step;
+        if (!harborWalkable(nx, nz)) {
+          if (harborWalkable(nx, avatar.root.position.z))
+            nz = avatar.root.position.z;
+          else if (harborWalkable(avatar.root.position.x, nz))
+            nx = avatar.root.position.x;
+        }
         if (harborWalkable(nx, nz)) {
           inputDirection = { x: dx / length, z: dz / length };
           avatar.root.position.x = nx;
@@ -363,19 +437,27 @@ export function createHarborScene(options: {
               Math.sin(facing - avatar.root.rotation.y),
               Math.cos(facing - avatar.root.rotation.y),
             ) * Math.min(1, delta * 12);
-          setPose("walk");
+          setPose(keys.has("shift") ? "run" : "walk");
         } else {
           route = [];
           arrival = null;
           setPose("idle");
         }
       } else if (!route.length && arrival === "sit") {
-        avatar.root.position.set(-5, 0.49, -2.45);
-        avatar.root.rotation.y = 0;
+        const seat =
+          seatingTarget.seats[Math.floor(seatingTarget.seats.length / 2)];
+        avatar.root.position.set(seat.x, 0.49, seat.z);
+        avatar.root.rotation.y = seatingTarget.yaw;
         setPose("sit");
         arrival = null;
-      } else if (pose === "walk" || (pose === "wave" && now > waveUntil))
+      } else if (
+        pose === "walk" ||
+        pose === "run" ||
+        (pose === "jump" && now > jumpUntil) ||
+        (pose === "wave" && now > waveUntil)
+      )
         setPose("idle");
+      if (now < jumpUntil) setPose("jump");
     }
     if (authority) {
       const gap = Math.hypot(
@@ -399,6 +481,27 @@ export function createHarborScene(options: {
       }
     }
     companions.update(now / 1000, delta, state.reduced);
+    const near =
+      (
+        Object.entries(harborInteractions) as [
+          HarborInteraction,
+          { x: number; z: number; radius: number },
+        ][]
+      )
+        .map(([id, point]) => ({
+          id,
+          distance: Math.hypot(
+            point.x - avatar.root.position.x,
+            point.z - avatar.root.position.z,
+          ),
+          radius: point.radius,
+        }))
+        .filter((point) => point.distance < point.radius)
+        .sort((a, b) => a.distance - b.distance)[0]?.id ?? null;
+    if (near !== interaction) {
+      interaction = near;
+      options.onInteraction(near);
+    }
     const place =
       (Object.entries(harborPlaces) as [HarborPlace, HarborPoint][]).find(
         ([, point]) =>
@@ -425,7 +528,7 @@ export function createHarborScene(options: {
       .set(0xd8b49b)
       .lerp(new THREE.Color(0x0a1628), night);
     avatar.update(elapsed, pose, state.reduced);
-    landscape.update(state.reduced ? 0 : elapsed, night);
+    landscape.update(elapsed, night, avatar.root.position, state.reduced);
     environment.update(
       state.reduced ? 0 : elapsed,
       night,
@@ -441,12 +544,13 @@ export function createHarborScene(options: {
     const cameraHeading = state.studio
       ? avatar.root.rotation.y + 0.18
       : heading;
-    const cameraElevation = state.studio ? 0.12 : elevation;
+    const inside = harborInside(p.x, p.z);
+    const cameraElevation = state.studio ? 0.12 : inside ? 0.72 : elevation;
     const cameraDistance = state.studio
       ? camera.aspect < 0.8
         ? 8.1
         : 4.5
-      : distance * (camera.aspect < 0.8 ? 1.15 : 1);
+      : (inside ? 7 : distance) * (camera.aspect < 0.8 ? 1.15 : 1);
     // Leave the right third clear for the nonmodal wardrobe on desktop.
     if (state.studio && camera.aspect > 1.1) desiredTarget.x += 0.9;
     target.lerp(desiredTarget, state.reduced ? 1 : 1 - Math.exp(-delta * 5));
@@ -485,6 +589,8 @@ export function createHarborScene(options: {
       keys.clear();
     },
     pose: selectPose,
+    jump,
+    interact,
     synchronize: (snapshot, selfId) => {
       const self = snapshot.players.find((player) => player.id === selfId);
       if (!self) return;
@@ -519,7 +625,15 @@ export function createHarborScene(options: {
           state.studio || state.blocked || document.hidden
             ? { x: 0, z: 0 }
             : inputDirection,
-        action: pose === "sit" ? "sit" : pose === "wave" ? "wave" : "idle",
+        action:
+          pose === "sit"
+            ? "sit"
+            : pose === "wave"
+              ? "wave"
+              : pose === "jump"
+                ? "jump"
+                : "idle",
+        running: keys.has("shift") && !state.blocked && !state.studio,
       };
     },
     capture: () =>
@@ -570,7 +684,12 @@ export function createHarborScene(options: {
         (scene.background as THREE.Color)
           .set(0xd8b49b)
           .lerp(new THREE.Color(0x0a1628), blend);
-        landscape.update(0, blend);
+        landscape.update(
+          elapsed,
+          blend,
+          new THREE.Vector3(-4.5, 0.49, 3.2),
+          options.state().reduced,
+        );
         environment.update(0, blend, new THREE.Vector3(1000, 0, 1000), 0);
         renderer.setPixelRatio(1);
         renderer.setSize(1440, 960, false);

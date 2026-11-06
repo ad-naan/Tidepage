@@ -13,10 +13,11 @@ import {
   photoLocksPlayer,
 } from "./coast-photo";
 import {
-  harborPlaces,
-  harborSeats,
+  harborSeating,
+  harborStandingPoint,
   harborWalkable,
   HARBOR_WALK_SPEED,
+  HARBOR_RUN_SPEED,
 } from "./coast-harbor";
 
 export const COAST_CAPACITY = 12;
@@ -30,6 +31,7 @@ export type CoastSession = {
   seenAt: number;
   steppedAt: number;
   waveUntil: number;
+  jumpUntil?: number;
   sequence: number;
   input: CoastInput;
   player: CoastPlayer;
@@ -80,19 +82,28 @@ export function advanceCoastRoom(room: CoastRoom, now: number) {
       now - session.seenAt < 600 &&
       Math.hypot(input.direction.x, input.direction.z) > 0.001;
     if (moving) {
-      const steps = Math.max(1, Math.ceil((HARBOR_WALK_SPEED * delta) / 0.08));
+      const speed = input.running ? HARBOR_RUN_SPEED : HARBOR_WALK_SPEED;
+      const steps = Math.max(1, Math.ceil((speed * delta) / 0.08));
       let moved = false;
       for (let step = 0; step < steps; step++) {
-        const x = p.x + (input.direction.x * HARBOR_WALK_SPEED * delta) / steps;
-        const z = p.z + (input.direction.z * HARBOR_WALK_SPEED * delta) / steps;
-        if (!harborWalkable(x, z)) break;
-        p.x = x;
-        p.z = z;
-        moved = true;
+        const x = p.x + (input.direction.x * speed * delta) / steps;
+        const z = p.z + (input.direction.z * speed * delta) / steps;
+        if (harborWalkable(x, z)) {
+          p.x = x;
+          p.z = z;
+          moved = true;
+        } else if (harborWalkable(x, p.z)) {
+          p.x = x;
+          moved = true;
+        } else if (harborWalkable(p.x, z)) {
+          p.z = z;
+          moved = true;
+        } else break;
       }
       p.yaw = Math.atan2(input.direction.x, input.direction.z);
-      p.pose = moved ? "walk" : "idle";
+      p.pose = moved ? (input.running ? "run" : "walk") : "idle";
     } else p.pose = session.waveUntil > now ? "wave" : "idle";
+    if ((session.jumpUntil ?? 0) > now) p.pose = "jump";
     if (previous !== `${p.x},${p.z},${p.yaw},${p.pose}`) room.revision++;
   }
   advanceCoastPhotos(room, now);
@@ -159,7 +170,7 @@ export function joinCoastRoom(
   cancelCoastPhotos(room, session.player.id);
   session.player.appearance = appearance;
   if (session.player.pose === "sit") {
-    session.player.z = harborPlaces.bench.z;
+    Object.assign(session.player, harborStandingPoint(session.player));
   }
   session.player.pose = "idle";
   session.seenAt = now;
@@ -167,6 +178,7 @@ export function joinCoastRoom(
   session.expiresAt = now + COAST_RESUME_MS;
   session.sequence = -1;
   session.waveUntil = 0;
+  session.jumpUntil = 0;
   session.input = idleInput();
   room.revision++;
   return session;
@@ -192,30 +204,38 @@ export function applyCoastInput(
   }
   const p = session.player;
   if (input.action === "sit" && p.pose !== "sit") {
-    if (
-      Math.hypot(p.x - harborPlaces.bench.x, p.z - harborPlaces.bench.z) > 1.6
-    )
-      return "OUT_OF_REACH";
-    const seat = harborSeats.find((point) =>
+    const seating = harborSeating.find(
+      (group) =>
+        Math.hypot(p.x - group.approach.x, p.z - group.approach.z) < 1.6,
+    );
+    if (!seating) return "OUT_OF_REACH";
+    const seat = seating.seats.find((point) =>
       Object.values(room.sessions).every(
         (s) =>
           !s.owner ||
           s.player.id === id ||
           s.player.pose !== "sit" ||
-          Math.abs(s.player.x - point.x) > 0.4,
+          Math.hypot(s.player.x - point.x, s.player.z - point.z) > 0.4,
       ),
     );
     if (!seat) return "SEAT_TAKEN";
     p.x = seat.x;
     p.z = seat.z;
-    p.yaw = 0;
+    p.yaw = seating.yaw;
     p.pose = "sit";
   } else if (input.action !== "sit" && p.pose === "sit") {
-    p.z = harborPlaces.bench.z;
+    Object.assign(p, harborStandingPoint(p));
     p.pose = "idle";
   }
   if (input.action === "wave" && session.input.action !== "wave")
     session.waveUntil = now + 2500;
+  if (
+    input.action === "jump" &&
+    session.input.action !== "jump" &&
+    (session.jumpUntil ?? 0) <= now &&
+    p.pose !== "sit"
+  )
+    session.jumpUntil = now + 750;
   if (input.action === "idle") session.waveUntil = 0;
   session.sequence = input.sequence;
   session.input = input;

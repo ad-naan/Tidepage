@@ -1,6 +1,6 @@
 # 工作台实现与后续边界
 
-入口：`/zh-CN/admin`、`/en/admin`。站主通过访问密钥建立服务器会话。工作副本保存到 PostgreSQL，图片保存到配置的本地资源目录；不再读写 IndexedDB。公开内容发布和真实模型调用尚未接通，保存操作只更新工作副本。
+入口：`/zh-CN/admin`、`/en/admin`。站主通过 GitHub/Gitee OAuth 建立与前台共用的服务器会话。工作副本保存到 PostgreSQL，图片保存到配置的本地资源目录；不再读写 IndexedDB。公开内容发布和真实模型调用尚未接通，保存操作只更新工作副本。
 
 ## 已实现
 
@@ -54,7 +54,7 @@ Tiptap 实例独立于外层表单，不在每个输入事务把整篇 JSON 写�
 
 ## 站主配置
 
-首次运行 `pnpm run admin:setup`，命令会建立站主记录并将 `ADMIN_USER_ID`、`ADMIN_ACCESS_KEY` 写入 Git 忽略的 `.env.local`，不打印密钥。重启后进入后台，使用该文件中的密钥登录。会话 cookie 为 HttpOnly，生产 HTTPS 使用 Secure；数据库只存会话令牌的哈希，默认有效期 12 小时。后台可退出登录。
+在 `.env.local` 配置 GitHub/Gitee OAuth 应用的 client ID 与 secret（见 `.env.example`），回调为 `<SITE_URL>/api/v1/auth/github/callback` 或 `/gitee/callback`。运行 `pnpm admin:setup --github <用户名> --gitee <用户名>`，将平台固定数字 ID 绑定到同一个站主账号；已有站主记录、内容归属和展示名保留。只使用一种平台时只传对应参数。多名管理员时用 `--user-id <uuid>` 明确选择；身份已属于其他账号时命令会拒绝，不自动合并数据。已核实数字 ID 时可使用 `--github-id <id>` / `--gitee-id <id>` 离线绑定。后续前台与后台统一第三方登录；普通访客首次登录只创建 reader，无后台权限。旧访问密钥登录接口与管理员环境变量已移除。会话 cookie 为 HttpOnly，生产 HTTPS 使用 Secure；数据库只存会话令牌的哈希，默认有效期 12 小时。后台可退出登录。
 
 `shared/lib/workbench-store.ts` 封装工作副本的读取和条件更新，确保内容与预期版本来自同一次读取；业务组件不自行实现数据库或存储适配器。旧浏览器工作区不会被读取或清除。
 
@@ -68,4 +68,4 @@ Tiptap 实例独立于外层表单，不在每个输入事务把整篇 JSON 写�
 
 运行 `pnpm run check`、`pnpm run build`；浏览器验证双语独立正文、跨语言撤销、刷新恢复、冲突、图片插入 / 裁剪 / 对齐、流式停止、未保存离开、回收站恢复、Dialog 长短内容、日历键盘及桌面 / 手机。
 
-先稳定前端，再按模块推进身份授权、内容修订发布、资源服务和创作 Agent。公网使用前需真实后台鉴权；目前 UI 没有修改服务器数据的能力。
+先稳定前端，再按模块推进身份授权、内容修订发布、资源服务和创作 Agent。后台变更接口在服务端检查会话角色和请求来源。

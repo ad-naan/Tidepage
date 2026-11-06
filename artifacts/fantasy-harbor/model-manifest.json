@@ -1,0 +1,13 @@
+{
+  "meshes": 64,
+  "triangles": 259258,
+  "units": "metres",
+  "source": "tidal-sanctuary.blend",
+  "runtime": "/models/tidal-sanctuary.glb",
+  "interactionNodes": [
+    "harbor_door",
+    "harbor_house_roof",
+    "harbor_house_shell",
+    "harbor_hearth"
+  ]
+}

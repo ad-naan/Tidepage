@@ -58,7 +58,7 @@ test("walking routes connect every destination and avoid furniture, house and wa
     }
   for (const point of [
     { x: 40, z: 40 },
-    { x: 4, z: -3 },
+    { x: 1.6, z: -3 },
     { x: -5, z: -2.5 },
   ]) {
     assert.equal(harborWalkable(point.x, point.z), false);

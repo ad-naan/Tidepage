@@ -12,7 +12,14 @@ export const coastAvatarSchema = z
   })
   .strict();
 export type CoastAppearance = z.infer<typeof coastAvatarSchema>;
-export const coastPoseSchema = z.enum(["idle", "walk", "sit", "wave"]);
+export const coastPoseSchema = z.enum([
+  "idle",
+  "walk",
+  "run",
+  "jump",
+  "sit",
+  "wave",
+]);
 export type CoastPose = z.infer<typeof coastPoseSchema>;
 export const coastJoinSchema = z
   .object({
@@ -32,7 +39,8 @@ export const coastInputSchema = z
       .object({ x: z.number().min(-1).max(1), z: z.number().min(-1).max(1) })
       .strict()
       .refine((d) => Math.hypot(d.x, d.z) <= 1.001),
-    action: z.enum(["idle", "wave", "sit"]),
+    action: z.enum(["idle", "wave", "sit", "jump"]),
+    running: z.boolean().optional(),
   })
   .strict();
 export type CoastInput = z.infer<typeof coastInputSchema>;

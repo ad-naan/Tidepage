@@ -4,6 +4,7 @@ import { log } from "@/server/observability/logger";
 import {
   parseOAuthProviderId,
   safeReturnPath,
+  oauthFailurePath,
 } from "@/modules/identity/domain/oauth";
 import {
   clearOAuthState,
@@ -19,7 +20,7 @@ function failureRedirect(returnTo: string) {
   return new Response(null, {
     status: 303,
     headers: {
-      Location: `${returnTo}${returnTo.includes("?") ? "&" : "?"}login=error`,
+      Location: oauthFailurePath(returnTo),
       "Cache-Control": "no-store",
     },
   });

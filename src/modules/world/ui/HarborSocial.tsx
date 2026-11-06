@@ -25,6 +25,7 @@ export function HarborSocial({
   version: number;
 }) {
   const t = useTranslations("world.harbor.social");
+  const connection = useTranslations("world.harbor.network");
   const places = useTranslations("world.harbor.places");
   const locale = useLocale();
   const { principal, openLogin } = useIdentity();
@@ -148,6 +149,26 @@ export function HarborSocial({
       {panel === "company" && (
         <Dialog title={t("company")} onClose={onClose}>
           <div className={styles.content}>
+            <p role="status">
+              {network.phase === "online"
+                ? connection("count", { count: network.count })
+                : connection(network.phase)}
+            </p>
+            <Button
+              disabled={!network.configured}
+              aria-pressed={network.phase === "online"}
+              onClick={() =>
+                ["online", "connecting", "reconnecting"].includes(network.phase)
+                  ? network.setEnabled(false)
+                  : network.retry()
+              }
+            >
+              {connection(
+                ["online", "connecting", "reconnecting"].includes(network.phase)
+                  ? "leave"
+                  : "join",
+              )}
+            </Button>
             <p className={styles.note}>{t("hostHint")}</p>
             {network.phase !== "online" ? (
               <p>{t("offline")}</p>

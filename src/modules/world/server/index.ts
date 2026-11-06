@@ -8,7 +8,6 @@ export const coastRoutes = createCoastRoutes({
   authorize: () => requirePrincipal(),
   policy: () => ({
     secret: getEnv().REALTIME_AUTHOR_TOKEN,
-    hostId: getEnv().ADMIN_USER_ID,
   }),
   store: () => coastMemoryStore(),
 });

@@ -42,10 +42,14 @@ NEXT_PUBLIC_REALTIME_URL=https://example.com
 
 CACHE_NAMESPACE=tidepage:prod:v1
 
-# 可选：作者账号初始化
-# ADMIN_USER_ID=
-# ADMIN_ACCESS_KEY=
+# 网站与后台统一 OAuth 登录（至少配置一对）
+# OAUTH_GITHUB_CLIENT_ID=
+# OAUTH_GITHUB_CLIENT_SECRET=
+# OAUTH_GITEE_CLIENT_ID=
+# OAUTH_GITEE_CLIENT_SECRET=
 ```
+
+OAuth 回调地址为 `<SITE_URL>/api/v1/auth/github/callback` 或 `<SITE_URL>/api/v1/auth/gitee/callback`，开发和生产分别注册应用。在连接相同数据库的环境执行 `pnpm admin:setup --github <站主用户名> --gitee <站主用户名>`，将两种身份绑定到同一个站主。可只传一种平台，之后重复执行追加另一种。站主权限保存在数据库，无需管理员环境变量。
 
 要点：
 

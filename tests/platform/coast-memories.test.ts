@@ -177,13 +177,12 @@ test("coastal journal routes enforce account ownership, same-origin, verified ho
       .returning();
     const db = fixture.db as unknown as Database;
     let principal: Principal | null = null;
-    let hostId = owner.id;
     const routes = createCoastRoutes({
       authorize: async () => {
         if (!principal) throw unauthorizedError();
         return principal;
       },
-      policy: () => ({ secret, hostId }),
+      policy: () => ({ secret }),
       store: () => coastMemoryStore(db),
       clock: () => now,
     });
@@ -216,7 +215,7 @@ test("coastal journal routes enforce account ownership, same-origin, verified ho
       readCoastIdentity(signed.data.ticket, secret, now)?.host,
       true,
     );
-    hostId = other.id;
+    principal = { ...principal, role: "author" };
     const unassigned = await (
       await routes.ticket(request("ticket"), context)
     ).json();
@@ -225,7 +224,6 @@ test("coastal journal routes enforce account ownership, same-origin, verified ho
       false,
     );
     principal = { ...principal, role: "reader" };
-    hostId = owner.id;
     const reader = await (
       await routes.ticket(request("ticket"), context)
     ).json();

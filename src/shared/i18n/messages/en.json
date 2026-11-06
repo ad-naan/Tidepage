@@ -344,7 +344,6 @@
     "CONFLICT": "Conflicting state, please refresh and retry",
     "RATE_LIMITED": "Too many requests, please try again later",
     "BODY_TOO_LARGE": "The request is too large",
-    "AUTHOR_NOT_CONFIGURED": "Author access is not configured",
     "WORLD_UNAVAILABLE": "Coastal account services are not ready. Please try again later.",
     "WORLD_PROOF_INVALID": "This memory proof expired or belongs to another account. Please check in again."
   },
@@ -492,15 +491,16 @@
   },
   "identity": {
     "login": "Sign in",
-    "title": "Reader account",
-    "unavailable": "Reader sign-in is not available yet.",
+    "title": "Site account",
+    "unavailable": "Sign-in is currently unavailable. Please try again later.",
     "choose": "Continue with:",
     "githubLogin": "Continue with GitHub",
     "giteeLogin": "Continue with Gitee",
     "signedInAs": "Signed in as",
     "logout": "Sign out",
     "signingOut": "Signing out…",
-    "loginFailed": "Sign-in did not complete. Please try again."
+    "loginFailed": "Sign-in did not complete. Please try again.",
+    "workbench": "Open workbench"
   },
   "discussion": {
     "reactionsTitle": "What did this piece bring to mind?",
@@ -656,10 +656,10 @@
       },
       "guide": {
         "title": "A walk by the sea",
-        "move": "Click the sand or boardwalk to walk, or use WASD / arrow keys.",
-        "camera": "Drag to look around, scroll to zoom; J / L to turn, I / K to tilt, Q / E to zoom.",
+        "move": "Click the ground or use WASD / arrows. Hold Shift to run, Space to jump. Near an object, press E or tap its interaction icon.",
+        "camera": "Drag to look, scroll to zoom; J / L turn, I / K tilt, Q / R zoom.",
         "destinations": "Walking destinations",
-        "host": "The cottage is a walking destination. Find the verified host in Fellow travelers when they are online, walk over and invite them for a photo."
+        "host": "The sea-house opens as you approach. Tend its hearth, resonate with tidal crystals, or board a boat at the pier. A verified host appears under Companions when online."
       },
       "places": {
         "bay": {
@@ -733,6 +733,16 @@
         },
         "declined": "Your fellow traveler declined this photo invitation.",
         "cancelled": "The photo was cancelled or the invitation expired. Take a quiet walk."
+      },
+      "jump": "Jump",
+      "interact": {
+        "key": "E",
+        "bench": "Sit / stand",
+        "chair": "Sit to read / stand",
+        "door": "Enter / leave",
+        "hearth": "Tend the hearth",
+        "crystal": "Resonate with the crystal",
+        "sail": "Board the boat"
       }
     },
     "ui": {
@@ -1292,11 +1302,12 @@
     },
     "access": {
       "title": "Open your workspace",
-      "help": "Sign in with your author access key to manage drafts and media.",
-      "key": "Author access key",
-      "signIn": "Sign in",
+      "help": "Sign in with a linked GitHub or Gitee owner account. Your session is shared with the site.",
       "signOut": "Sign out",
-      "error": "Sign-in failed. Check your key or try again later."
+      "error": "Sign-in did not complete. Please try again.",
+      "forbidden": "The account “{name}” does not have workbench access. Switch to a linked owner account.",
+      "switchAccount": "Sign out to switch accounts",
+      "backToSite": "Back to site"
     }
   },
   "code": {

@@ -5,6 +5,11 @@ import { useTranslations } from "next-intl";
 import { useReducedMotion } from "motion/react";
 import {
   ArrowLeft,
+  ArrowUp,
+  DoorOpen,
+  Flame,
+  Gem,
+  Sailboat,
   Camera,
   Compass,
   Hand,
@@ -35,7 +40,11 @@ import {
   restoreAvatar,
   type AvatarPose,
 } from "../domain/coast-avatar";
-import { harborPlaces, type HarborPlace } from "../domain/coast-harbor";
+import {
+  harborPlaces,
+  type HarborPlace,
+  type HarborInteraction,
+} from "../domain/coast-harbor";
 import { createSeaAudio } from "../runtime/coast-audio";
 import type { HarborControls } from "../runtime/createHarborScene";
 import { HarborWardrobe } from "./HarborWardrobe";
@@ -59,6 +68,9 @@ export function HarborView({ onVoyage }: { onVoyage: () => void }) {
   const [sound, setSound] = useState(false);
   const [pose, setPose] = useState<AvatarPose>("idle");
   const [place, setPlace] = useState<HarborPlace | null>(null);
+  const [interaction, setInteraction] = useState<HarborInteraction | null>(
+    null,
+  );
   const [photo, setPhoto] = useState<string | null>(null);
   const [capturing, setCapturing] = useState(false);
   const [socialPanel, setSocialPanel] = useState<"company" | "journal" | null>(
@@ -197,6 +209,8 @@ export function HarborView({ onVoyage }: { onVoyage: () => void }) {
             state: () => current.current,
             onPlace: setPlace,
             onPose: setPose,
+            onInteraction: setInteraction,
+            onVoyage,
             onError: () => setFailed(true),
           });
           setReady(true);
@@ -274,15 +288,12 @@ export function HarborView({ onVoyage }: { onVoyage: () => void }) {
       }
       aria-label={t("region")}
     >
+      <h1 className={styles.srOnly}>{t("title")}</h1>
       <div ref={host} className={styles.canvas} />
       <div className={styles.topbar}>
         <Link href="/" className={styles.home} aria-label={world("exit")}>
           <ArrowLeft size={18} />
         </Link>
-        <div className={styles.identity}>
-          <h1>{t("title")}</h1>
-          <span>{t("subtitle")}</span>
-        </div>
         <div className={styles.settings}>
           <IconButton aria-label={t("social.account")} onClick={openLogin}>
             <UserRound size={18} />
@@ -292,6 +303,19 @@ export function HarborView({ onVoyage }: { onVoyage: () => void }) {
             onClick={() => setSocialPanel("journal")}
           >
             <BookOpen size={18} />
+          </IconButton>
+          <IconButton
+            aria-label={t("social.company")}
+            title={t("social.company")}
+            data-online={network.phase === "online"}
+            onClick={() => setSocialPanel("company")}
+          >
+            <UsersRound size={18} />
+            {network.phase === "online" && (
+              <span className={styles.count} aria-hidden="true">
+                {network.count}
+              </span>
+            )}
           </IconButton>
           <IconButton
             aria-label={sound ? world("soundOff") : world("soundOn")}
@@ -336,64 +360,11 @@ export function HarborView({ onVoyage }: { onVoyage: () => void }) {
       )}
       {ready && !failed && (
         <>
-          {!studio && !help && (
-            <section
-              className={styles.presence}
-              aria-label={t("network.title")}
-            >
-              <p role="status">
-                {network.phase === "online"
-                  ? t("network.count", { count: network.count })
-                  : t(`network.${network.phase}`)}
-              </p>
-              <Button
-                disabled={!network.configured}
-                aria-pressed={network.phase === "online"}
-                onClick={() =>
-                  ["online", "connecting", "reconnecting"].includes(
-                    network.phase,
-                  )
-                    ? network.setEnabled(false)
-                    : network.retry()
-                }
-              >
-                <UsersRound size={15} />
-                {t(
-                  ["online", "connecting", "reconnecting"].includes(
-                    network.phase,
-                  )
-                    ? "network.leave"
-                    : "network.join",
-                )}
-              </Button>
-              <Button onClick={() => setSocialPanel("company")}>
-                <Camera size={15} />
-                {t("social.company")}
-              </Button>
-            </section>
-          )}
-          {!studio && !help && (
-            <>
-              <div className={styles.caption}>
-                <span>{t(night ? "evening" : "sunset")}</span>
-                <p>{t("welcome")}</p>
-              </div>
-              <div className={styles.location} aria-live="polite">
-                <span>{t(`places.${place ?? "bay"}.name`)}</span>
-                <p>{t(`places.${place ?? "bay"}.description`)}</p>
-                {place && (
-                  <Button
-                    busy={saving}
-                    disabled={network.phase !== "online"}
-                    onClick={() => saveMemory({ place })}
-                  >
-                    <Stamp size={15} />
-                    {t("social.checkIn")}
-                  </Button>
-                )}
-              </div>
-            </>
-          )}
+          <span className={styles.srOnly} role="status">
+            {network.phase === "online"
+              ? t("network.count", { count: network.count })
+              : t(`network.${network.phase}`)}
+          </span>
           {studio && (
             <HarborWardrobe
               appearance={appearance}
@@ -401,13 +372,14 @@ export function HarborView({ onVoyage }: { onVoyage: () => void }) {
               onClose={() => setStudio(false)}
             />
           )}
-          {!studio && (
+          {!studio && !help && !socialPanel && !photo && (
             <div
               className={styles.actions}
               role="group"
               aria-label={t("actions")}
             >
               <Button
+                aria-label={t("dress")}
                 onClick={() => {
                   setHelp(false);
                   setStudio(true);
@@ -416,11 +388,15 @@ export function HarborView({ onVoyage }: { onVoyage: () => void }) {
                 <Shirt size={18} />
                 <span>{t("dress")}</span>
               </Button>
-              <Button onClick={() => controls.current?.pose("wave")}>
+              <Button
+                aria-label={t("wave")}
+                onClick={() => controls.current?.pose("wave")}
+              >
                 <Hand size={18} />
                 <span>{t("wave")}</span>
               </Button>
               <Button
+                aria-label={t(pose === "sit" ? "stand" : "sit")}
                 aria-pressed={pose === "sit"}
                 onClick={() =>
                   controls.current?.pose(pose === "sit" ? "idle" : "sit")
@@ -434,6 +410,7 @@ export function HarborView({ onVoyage }: { onVoyage: () => void }) {
                 <span>{t(pose === "sit" ? "stand" : "sit")}</span>
               </Button>
               <Button
+                aria-label={t("photo")}
                 onClick={capture}
                 busy={capturing}
                 disabled={network.photo?.state === "scheduled"}
@@ -441,9 +418,36 @@ export function HarborView({ onVoyage }: { onVoyage: () => void }) {
                 <Camera size={18} />
                 <span>{t("photo")}</span>
               </Button>
+              <Button
+                aria-label={t("jump")}
+                onClick={() => controls.current?.jump()}
+              >
+                <ArrowUp size={18} />
+                <span>{t("jump")}</span>
+              </Button>
             </div>
           )}
-          {!studio && !help && <p className={styles.hint}>{t("hint")}</p>}
+          {interaction && !studio && !help && !socialPanel && !photo && (
+            <Button
+              className={styles.context}
+              aria-label={t(`interact.${interaction}`)}
+              onClick={() => controls.current?.interact()}
+            >
+              {interaction === "door" ? (
+                <DoorOpen size={19} />
+              ) : interaction === "hearth" ? (
+                <Flame size={19} />
+              ) : interaction === "crystal" ? (
+                <Gem size={19} />
+              ) : interaction === "sail" ? (
+                <Sailboat size={19} />
+              ) : (
+                <Armchair size={19} />
+              )}
+              <kbd>{t("interact.key")}</kbd>
+              <span>{t(`interact.${interaction}`)}</span>
+            </Button>
+          )}
           {help && (
             <section className={styles.guide} aria-label={t("guide.title")}>
               <div className={styles.panelHeading}>
@@ -457,6 +461,20 @@ export function HarborView({ onVoyage }: { onVoyage: () => void }) {
               </div>
               <p>{t("guide.move")}</p>
               <p>{t("guide.camera")}</p>
+              <div className={styles.location}>
+                <span>{t(`places.${place ?? "bay"}.name`)}</span>
+                <p>{t(`places.${place ?? "bay"}.description`)}</p>
+                {place && (
+                  <Button
+                    busy={saving}
+                    disabled={network.phase !== "online"}
+                    onClick={() => saveMemory({ place })}
+                  >
+                    <Stamp size={15} />
+                    {t("social.checkIn")}
+                  </Button>
+                )}
+              </div>
               <p>{t("network.help")}</p>
               <nav aria-label={t("guide.destinations")}>
                 {(Object.keys(harborPlaces) as HarborPlace[]).map((id) => (

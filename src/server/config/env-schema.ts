@@ -4,6 +4,11 @@ const optionalUrl = z.preprocess(
   (value) => (value === "" ? undefined : value),
   z.url().optional(),
 );
+const optionalOAuthValue = (min: number, max: number) =>
+  z.preprocess(
+    (value) => (value === "" ? undefined : value),
+    z.string().min(min).max(max).optional(),
+  );
 export const envSchema = z
   .object({
     NODE_ENV: z
@@ -13,13 +18,11 @@ export const envSchema = z
     DATABASE_URL: z.url(),
     DATABASE_POOL_MAX: z.coerce.number().int().min(1).max(50).default(10),
     UPLOAD_DIR: z.string().min(1).default("./storage/uploads"),
-    ADMIN_USER_ID: z.uuid().optional(),
-    ADMIN_ACCESS_KEY: z.string().min(32).max(256).optional(),
     REALTIME_AUTHOR_TOKEN: z.string().min(32).max(512).optional(),
-    OAUTH_GITHUB_CLIENT_ID: z.string().min(1).max(128).optional(),
-    OAUTH_GITHUB_CLIENT_SECRET: z.string().min(8).max(256).optional(),
-    OAUTH_GITEE_CLIENT_ID: z.string().min(1).max(128).optional(),
-    OAUTH_GITEE_CLIENT_SECRET: z.string().min(8).max(256).optional(),
+    OAUTH_GITHUB_CLIENT_ID: optionalOAuthValue(1, 128),
+    OAUTH_GITHUB_CLIENT_SECRET: optionalOAuthValue(8, 256),
+    OAUTH_GITEE_CLIENT_ID: optionalOAuthValue(1, 128),
+    OAUTH_GITEE_CLIENT_SECRET: optionalOAuthValue(8, 256),
     REDIS_URL: optionalUrl,
     CACHE_NAMESPACE: z
       .string()

@@ -17,7 +17,7 @@ import type { coastMemoryStore } from "./memories";
 
 export function createCoastRoutes(dependencies: {
   authorize: () => Promise<Principal>;
-  policy: () => { secret?: string; hostId?: string };
+  policy: () => { secret?: string };
   store: () => ReturnType<typeof coastMemoryStore>;
   clock?: () => number;
 }) {
@@ -39,9 +39,7 @@ export function createCoastRoutes(dependencies: {
             {
               subject: user.id,
               name: user.displayName.trim().slice(0, 60) || "·",
-              host:
-                user.role === "admin" &&
-                user.id === dependencies.policy().hostId,
+              host: user.role === "admin",
             },
             secret(),
             clock(),

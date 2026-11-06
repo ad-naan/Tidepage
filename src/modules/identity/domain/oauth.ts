@@ -16,7 +16,6 @@ export type OAuthProfile = {
   provider: OAuthProviderId;
   providerAccountId: string;
   displayName: string;
-  email: string | null;
   avatarUrl: string | null;
   profileUrl: string | null;
 };
@@ -41,7 +40,7 @@ export function buildAuthorizeUrl(
   url.searchParams.set("redirect_uri", client.redirectUri);
   url.searchParams.set("state", state);
   if (provider === "github") {
-    url.searchParams.set("scope", "read:user user:email");
+    url.searchParams.set("scope", "read:user");
   } else {
     url.searchParams.set("response_type", "code");
     url.searchParams.set("scope", "user_info");
@@ -58,8 +57,15 @@ export function safeReturnPath(value: string | null | undefined): string {
     !value.startsWith("/") ||
     value.startsWith("//") ||
     value.includes("\\") ||
+    /[\u0000-\u0020\u007f]/.test(value) ||
     value.length > 512
   )
     return "/";
   return value;
+}
+
+export function oauthFailurePath(returnTo: string): string {
+  const url = new URL(safeReturnPath(returnTo), "https://return.invalid");
+  url.searchParams.set("login", "error");
+  return url.pathname + url.search + url.hash;
 }

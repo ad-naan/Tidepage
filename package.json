@@ -18,7 +18,7 @@
     "db:migrate": "node --conditions=react-server --import tsx scripts/db-migrate.ts",
     "db:check": "node --conditions=react-server --import tsx scripts/db-check.ts",
     "db:studio": "drizzle-kit studio",
-    "admin:setup": "node --import tsx scripts/admin-setup.ts",
+    "admin:setup": "node --conditions=react-server --import tsx scripts/admin-setup.ts",
     "infra:up": "docker compose up -d",
     "infra:down": "docker compose down",
     "format": "prettier --write .",

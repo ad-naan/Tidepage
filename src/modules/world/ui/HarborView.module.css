@@ -41,23 +41,16 @@
   height: 44px;
   color: #30464a;
 }
-.identity {
-  text-shadow: 0 1px 12px #f6e7cd;
-}
-.world[data-night="true"] .identity,
-.world[data-night="true"] .caption {
-  color: #f6efdf;
-  text-shadow: 0 1px 8px #1c303e;
-}
-.identity h1 {
-  margin: 0;
-  font-family: var(--font-editorial);
-  font-size: var(--text-title);
-  font-weight: 500;
-  line-height: 1.5;
-}
-.identity span {
-  font-size: var(--text-sm);
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 .settings {
   margin-left: auto;
@@ -66,104 +59,130 @@
   gap: 4px;
 }
 .settings button {
+  position: relative;
   width: 38px;
   height: 38px;
 }
-.caption {
+.count {
   position: absolute;
-  left: 32px;
-  top: 27%;
-  max-width: 340px;
-  pointer-events: none;
-  text-shadow: 0 1px 16px #f7e8d0;
-}
-.world[data-photo-active="true"] .caption {
-  display: none;
-}
-.caption > span {
-  font-family: var(--font-editorial);
-  font-size: 28px;
-  font-weight: 500;
-}
-.caption p {
-  font-size: var(--text-sm);
-  line-height: 1.8;
-  margin-top: 8px;
+  top: 0;
+  right: 0;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 2px;
+  border-radius: 50%;
+  background: #526b61;
+  color: #fff8e9;
+  font-size: 9px;
+  line-height: 14px;
 }
 .location {
-  position: absolute;
-  bottom: 112px;
-  left: 32px;
-  max-width: 290px;
-  padding: 12px 16px;
-  background: var(--harbor-paper);
-  border-radius: 3px 18px 7px 14px;
+  padding: 12px 0;
+  border-block: 1px solid #52676324;
 }
 .location > span {
-  font-size: var(--text-body);
   font-family: var(--font-editorial);
-  font-weight: 500;
+  font-size: var(--text-body);
 }
 .location p {
-  margin: 4px 0 0;
-  font-size: var(--text-sm);
-  line-height: 1.8;
-}
-.presence {
-  position: absolute;
-  right: 32px;
-  bottom: 112px;
-  max-width: 240px;
-  padding: 12px 16px;
-  border-radius: 16px 4px 12px 7px;
-  background: var(--harbor-paper);
-  font-size: var(--text-sm);
-}
-.presence p {
-  margin: 0 0 8px;
-  line-height: 1.8;
-}
-.presence button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: var(--text-sm);
+  margin-top: 6px;
 }
 .actions {
   position: absolute;
-  bottom: 36px;
+  bottom: max(24px, env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 10px;
+  padding: 5px;
   background: var(--harbor-paper);
+  border: 1px solid #ffffff55;
   border-radius: 40px;
-  box-shadow: 0 4px 24px #243e4920;
+  box-shadow: 0 4px 24px #243e4918;
+  backdrop-filter: blur(12px);
 }
 .actions button {
-  display: flex;
-  gap: 8px;
-  padding: 12px 16px;
-  border-radius: 28px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+}
+.actions button > span {
+  position: absolute;
+  bottom: calc(100% + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 10px;
+  border-radius: 12px;
+  background: var(--harbor-paper);
   font-size: var(--text-sm);
   white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+.actions button:focus-visible > span {
+  opacity: 1;
+}
+@media (hover: hover) {
+  .actions button:hover > span {
+    opacity: 1;
+  }
 }
 .actions button:hover,
 .actions button[aria-pressed="true"] {
   background: #7c9a8d26;
 }
-.hint {
+.context {
   position: absolute;
-  bottom: 12px;
-  left: 16px;
-  right: 16px;
-  text-align: center;
+  bottom: max(92px, calc(env(safe-area-inset-bottom) + 68px));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 48px;
+  min-height: 44px;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 24px;
+  background: var(--harbor-paper);
+  box-shadow: 0 2px 20px #243e4920;
+}
+.context kbd {
+  padding: 2px 5px;
+  border: 1px solid #52676338;
+  border-radius: 4px;
+  font: inherit;
   font-size: var(--text-xs);
-  color: #f8f2e4;
-  text-shadow: 0 1px 5px #243e49;
+}
+.context > span {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  padding: 5px 10px;
+  background: var(--harbor-paper);
+  border-radius: 14px;
+  white-space: nowrap;
+  font-size: var(--text-sm);
+  opacity: 0;
   pointer-events: none;
+}
+.context:focus-visible > span {
+  opacity: 1;
+}
+@media (hover: hover) {
+  .context:hover > span {
+    opacity: 1;
+  }
+}
+@media (pointer: coarse) {
+  .context kbd {
+    display: none;
+  }
 }
 .center {
   position: absolute;
@@ -302,53 +321,16 @@
   font-size: var(--text-sm);
 }
 @media (max-width: 700px) {
-  .presence {
-    right: 16px;
-    top: 80px;
-    bottom: auto;
-    max-width: min(240px, calc(100% - 32px));
-    padding: 8px 12px;
-  }
-  .presence p {
-    margin-bottom: 4px;
-  }
   .topbar {
     inset: 16px 16px auto;
     gap: 12px;
-  }
-  .identity h1 {
-    font-size: var(--text-subtitle);
-  }
-  .identity span {
-    display: none;
   }
   .settings {
     gap: 0;
   }
   .settings button {
-    width: 34px;
-  }
-  .caption {
-    top: 22%;
-    left: 24px;
-    max-width: 260px;
-  }
-  .caption > span {
-    font-size: var(--text-title);
-  }
-  .location {
-    left: 16px;
-    bottom: 112px;
-    max-width: min(270px, calc(100% - 32px));
-  }
-  .actions {
-    bottom: 38px;
-    padding: 6px;
-    gap: 0;
-  }
-  .actions button {
-    padding: 12px;
-    gap: 6px;
+    width: 36px;
+    height: 40px;
   }
   .wardrobe {
     top: auto;
@@ -385,15 +367,7 @@
     inset-inline: 12px;
   }
   .settings button {
-    width: 30px;
-  }
-  .actions button {
-    flex-direction: column;
-    gap: 4px;
-    padding: 8px 14px;
-  }
-  .identity h1 {
-    font-size: var(--text-body);
+    width: 34px;
   }
   .palette > div {
     gap: 0;
@@ -402,5 +376,6 @@
 @media (prefers-reduced-motion: reduce) {
   .world * {
     scroll-behavior: auto;
+    transition: none;
   }
 }

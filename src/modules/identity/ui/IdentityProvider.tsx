@@ -14,7 +14,8 @@ import type { Principal } from "@/modules/identity/domain/principal";
 import type { OAuthProviderId } from "@/modules/identity/domain/oauth";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { Button } from "@/shared/ui/button/Button";
-import { Anchor } from "@/shared/ui/link/Anchor";
+import { Link } from "@/shared/i18n/navigation";
+import { OAuthLoginOptions } from "./OAuthLoginOptions";
 import styles from "./IdentityProvider.module.css";
 
 const IdentityContext = createContext<{
@@ -42,13 +43,9 @@ export function IdentityProvider({
     const url = new URL(window.location.href);
     if (url.searchParams.get("login") !== "error") return;
     setFailed(true);
+    setOpen(true);
     url.searchParams.delete("login");
-    window.history.replaceState(
-      null,
-      "",
-      url.pathname +
-        (url.searchParams.toString() ? `?${url.searchParams}` : ""),
-    );
+    window.history.replaceState(null, "", url.pathname + url.search + url.hash);
   }, []);
 
   const signOut = useCallback(async () => {
@@ -79,29 +76,24 @@ export function IdentityProvider({
                   <span className={styles.accountLabel}>{t("signedInAs")}</span>
                   {principal.displayName}
                 </p>
+                {["admin", "author"].includes(principal.role) && (
+                  <Link href="/admin">{t("workbench")}</Link>
+                )}
                 <Button onClick={signOut} disabled={signingOut}>
                   <LogOut size={14} />
                   {signingOut ? t("signingOut") : t("logout")}
                 </Button>
               </div>
-            ) : providers.length > 0 ? (
-              <div className={styles.providers}>
-                <p>{t("choose")}</p>
-                {providers.map((provider) => (
-                  <Anchor
-                    key={provider}
-                    className={styles.providerLink}
-                    href={`/api/v1/auth/${provider}?returnTo=${encodeURIComponent(pathname ?? "/")}`}
-                  >
-                    {provider === "github" ? t("githubLogin") : t("giteeLogin")}
-                  </Anchor>
-                ))}
-              </div>
             ) : (
-              <p>{t("unavailable")}</p>
+              <OAuthLoginOptions
+                providers={providers}
+                returnTo={pathname ?? "/"}
+              />
             )}
-            {failed && !principal && (
-              <p className={styles.error}>{t("loginFailed")}</p>
+            {failed && (
+              <p role="alert" className={styles.error}>
+                {t("loginFailed")}
+              </p>
             )}
           </div>
         </Dialog>

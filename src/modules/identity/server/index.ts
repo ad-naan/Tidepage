@@ -10,8 +10,7 @@ import {
   usersTable,
 } from "@/modules/identity/infrastructure/schema";
 import type { Principal, Role } from "@/modules/identity/domain/principal";
-export { createAuthorSession, deleteAuthorSession } from "./author-session";
-export { loginWithOAuth } from "./reader-session";
+export { loginWithOAuth } from "./oauth-session";
 export { revokeCurrentSession } from "./session";
 export {
   buildAuthorizeUrl,

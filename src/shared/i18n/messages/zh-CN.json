@@ -344,7 +344,6 @@
     "CONFLICT": "资源状态冲突，请刷新后重试",
     "RATE_LIMITED": "请求过于频繁，请稍后再试",
     "BODY_TOO_LARGE": "上传内容过大",
-    "AUTHOR_NOT_CONFIGURED": "站主账号尚未配置",
     "WORLD_UNAVAILABLE": "海岸账号服务暂未就绪，请稍后再试。",
     "WORLD_PROOF_INVALID": "打卡凭证已过期或不属于当前账号，请重新打卡。"
   },
@@ -492,15 +491,16 @@
   },
   "identity": {
     "login": "登录",
-    "title": "阅读账号",
-    "unavailable": "访客登录暂未开放。",
+    "title": "网站账号",
+    "unavailable": "登录暂未开放，请稍后再试。",
     "choose": "选择一种方式继续：",
     "githubLogin": "通过 GitHub 登录",
     "giteeLogin": "通过 Gitee 登录",
     "signedInAs": "当前身份",
     "logout": "退出登录",
     "signingOut": "正在退出…",
-    "loginFailed": "登录没有完成，请再试一次。"
+    "loginFailed": "登录没有完成，请再试一次。",
+    "workbench": "进入工作台"
   },
   "discussion": {
     "reactionsTitle": "这篇文章，让你想到了什么？",
@@ -656,10 +656,10 @@
       },
       "guide": {
         "title": "在海边走走",
-        "move": "点击沙滩或木栈道即可行走，也可使用 WASD / 方向键。",
-        "camera": "拖动环顾，滚轮缩放；J / L 转向，I / K 调整视角，Q / E 缩放。",
+        "move": "点击地面行走，或使用 WASD / 方向键；按住 Shift 奔跑，空格跳跃。走近物件后按 E，也可点击出现的图标。",
+        "camera": "拖动环顾，滚轮缩放；J / L 转向，I / K 调整视角，Q / R 缩放。",
         "destinations": "步行目的地",
-        "host": "小屋是一个散步目的地。真人站长上线后，可在「同行的人」中找到带站长标识的账号，走近并邀请合照。"
+        "host": "走近小屋，门会为你打开。靠近炉火或潮汐水晶可以互动；回到码头可登船探索。真人站长上线后会显示在「同行的人」中。"
       },
       "places": {
         "bay": {
@@ -733,6 +733,16 @@
         },
         "declined": "对方这次想安静看海，合照邀请已结束。",
         "cancelled": "合照已取消或邀请过期，可以继续在海边走走。"
+      },
+      "jump": "轻轻跃起",
+      "interact": {
+        "key": "E",
+        "bench": "坐下 / 起身",
+        "chair": "坐下阅读 / 起身",
+        "door": "进屋 / 离开",
+        "hearth": "拨动炉火",
+        "crystal": "唤醒潮汐水晶",
+        "sail": "登船探索"
       }
     },
     "ui": {
@@ -1292,11 +1302,12 @@
     },
     "access": {
       "title": "进入工作台",
-      "help": "使用站主访问密钥登录，管理草稿与媒体资源。",
-      "key": "站主访问密钥",
-      "signIn": "登录",
+      "help": "使用已绑定的 GitHub 或 Gitee 站主账号登录。前台与工作台共用登录状态。",
       "signOut": "退出登录",
-      "error": "登录失败，请检查密钥或稍后再试。"
+      "error": "登录没有完成，请重试。",
+      "forbidden": "当前账号「{name}」没有工作台权限。请切换到已绑定的站主账号。",
+      "switchAccount": "退出并切换账号",
+      "backToSite": "返回网站"
     }
   },
   "code": {
