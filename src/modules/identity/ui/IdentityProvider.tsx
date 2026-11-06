@@ -16,6 +16,7 @@ import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { Button } from "@/shared/ui/button/Button";
 import { Link } from "@/shared/i18n/navigation";
 import { OAuthLoginOptions } from "./OAuthLoginOptions";
+import { AuthorNameText } from "./AuthorSignature";
 import styles from "./IdentityProvider.module.css";
 
 const IdentityContext = createContext<{
@@ -74,7 +75,7 @@ export function IdentityProvider({
               <div className={styles.account}>
                 <p>
                   <span className={styles.accountLabel}>{t("signedInAs")}</span>
-                  {principal.displayName}
+                  <AuthorNameText text={principal.displayName} />
                 </p>
                 {["admin", "author"].includes(principal.role) && (
                   <Link href="/admin">{t("workbench")}</Link>
@@ -108,7 +109,9 @@ export function LoginTrigger() {
   return (
     <Button className="login-trigger" onClick={openLogin}>
       <UserRound size={15} />
-      <span>{principal?.displayName ?? t("login")}</span>
+      <span>
+        <AuthorNameText text={principal?.displayName ?? t("login")} />
+      </span>
     </Button>
   );
 }

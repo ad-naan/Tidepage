@@ -6,7 +6,16 @@ import { usersTable } from "../../src/modules/identity/infrastructure/schema";
 import { workbenchRecordsTable } from "../../src/server/workbench/schema";
 import { workbenchRecords } from "../../src/server/workbench/records";
 import { resolveSiteIdentity } from "../../src/modules/site-settings/domain/identity";
-import { readPublicSiteIdentity } from "../../src/modules/site-settings/server";
+import {
+  readPublicSiteIdentity,
+  readPublicSiteFields,
+} from "../../src/modules/site-settings/server";
+import {
+  parsePageSections,
+  resolvePersonalPage,
+  resolveSitePage,
+  type PersonalPage,
+} from "../../src/modules/site-settings/domain/pages";
 import { pageMetadata } from "../../src/server/seo/metadata";
 
 process.env.DATABASE_URL = "postgresql://test:test@localhost/test";
@@ -15,6 +24,81 @@ const defaults = {
   title: "光阴副本集 · adnaan",
   description: "Default description",
 };
+
+test("editable personal and site pages preserve sections, interests and locale isolation after saving", async () => {
+  const fixture = await createContentTestStore();
+  const db = fixture.db as unknown as Database;
+  const personal: PersonalPage = {
+    title: "Hello",
+    intro: "Intro",
+    identity: "Engineer",
+    personality: "INFJ",
+    signature: "Tea?",
+    interests: [{ label: "Music", description: "Songs" }],
+    sections: [{ title: "Default", paragraphs: ["Default paragraph"] }],
+  };
+  const sections = [
+    { title: "My walks", paragraphs: ["A quiet walk.", "Then tea."] },
+    { title: "Reading", paragraphs: ["A new book."] },
+  ];
+  try {
+    const [owner] = await db
+      .insert(usersTable)
+      .values({ displayName: "Owner", role: "admin" })
+      .returning();
+    await workbenchRecords(db).write(owner.id, "site-settings", 0, {
+      revision: 1,
+      translations: {
+        "zh-CN": {
+          aboutTitle: "Hi, I'm adnaan",
+          aboutSections: JSON.stringify(sections),
+          aboutInterest1: "Tea",
+          aboutInterestNote1: "Slow afternoons",
+          siteAboutTitle: "This coast",
+          siteAboutSections: JSON.stringify(sections.slice(1)),
+          contact: "private contact",
+        },
+      },
+    });
+    const fields = await readPublicSiteFields("zh-CN", db);
+    assert.equal(fields.contact, undefined);
+    const page = resolvePersonalPage(fields, personal);
+    assert.equal(page.title, "Hi, I'm adnaan");
+    assert.equal(page.personality, "INFJ");
+    assert.deepEqual(page.sections, sections);
+    assert.deepEqual(page.interests, [
+      { label: "Tea", description: "Slow afternoons" },
+    ]);
+    assert.deepEqual(
+      resolveSitePage(fields, {
+        title: "Site",
+        intro: "Site intro",
+        sections: [],
+      }).sections,
+      sections.slice(1),
+    );
+    assert.deepEqual(
+      resolvePersonalPage(await readPublicSiteFields("en", db), personal),
+      personal,
+    );
+  } finally {
+    await fixture.close();
+  }
+});
+
+test("page sections accept existing plain text and safely fall back for invalid structured content", () => {
+  const fallback = [{ title: "Fallback", paragraphs: ["A paragraph"] }];
+  assert.deepEqual(parsePageSections("First paragraph\n\nSecond paragraph"), [
+    { title: "", paragraphs: ["First paragraph", "Second paragraph"] },
+  ]);
+  assert.deepEqual(parsePageSections("[]", fallback), []);
+  for (const value of [
+    "",
+    "[broken]",
+    JSON.stringify([{ title: "Wrong", paragraphs: "not an array" }]),
+  ])
+    assert.deepEqual(parsePageSections(value, fallback), fallback);
+});
 
 test("public site copy trims overrides, falls back for empty fields and exposes only metadata", () => {
   assert.deepEqual(

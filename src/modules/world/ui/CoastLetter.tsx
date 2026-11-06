@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/shared/ui/button/Button";
+import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
 import { Link } from "@/shared/i18n/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { useTranslations } from "next-intl";
@@ -66,7 +67,9 @@ export function CoastLetter() {
             </div>
             <h2>{greeting("greeting")}</h2>
             <p>{t("body")}</p>
-            <span className="letter-signature">adnaan</span>
+            <div className="letter-signature">
+              <AuthorSignature />
+            </div>
             <Link href="/about" onClick={() => setOpen(false)}>
               {t("link")} <ArrowRight size={15} />
             </Link>

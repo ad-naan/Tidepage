@@ -1,0 +1,119 @@
+.page {
+  margin: 32px auto 48px;
+}
+.header {
+  max-width: 760px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid var(--line);
+}
+.header > p {
+  color: var(--accent);
+  font: 400 11px/1.6 var(--font-ui);
+  letter-spacing: 0.12em;
+  margin: 0 0 16px;
+}
+.header h1 {
+  margin: 0 0 16px;
+  font: 400 clamp(28px, 3vw, 36px)/1.6 var(--font-editorial);
+  text-wrap: balance;
+}
+.header > div {
+  color: var(--muted);
+  font: 400 14px/1.95 var(--font-ui);
+  max-width: 42em;
+}
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 760px) 200px;
+  gap: 48px;
+  justify-content: space-between;
+  padding-top: 32px;
+}
+.story section + section {
+  margin-top: 30px;
+}
+.story h2 {
+  font: 500 20px/1.6 var(--font-editorial);
+  margin: 0 0 14px;
+}
+.story p {
+  font: 400 15px/2 var(--font-ui);
+  margin: 0 0 16px;
+  text-wrap: pretty;
+}
+.signature {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.signature > span {
+  color: var(--accent);
+}
+.signature a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+.guide > img {
+  border-radius: 18px;
+  margin-bottom: 24px;
+}
+.guide h2 {
+  font: 400 12px/1.6 var(--font-ui);
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+.guide a {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  padding: 12px 20px 12px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  text-decoration: none;
+  font: 400 13px/1.6 var(--font-ui);
+}
+.guide a > svg {
+  position: absolute;
+  right: 0;
+  top: 16px;
+  color: var(--muted);
+}
+.guide small {
+  color: var(--muted);
+  font-size: 11px;
+}
+.guide a:hover,
+.signature a:hover {
+  color: var(--accent);
+}
+.guide a:focus-visible,
+.signature a:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 4px;
+}
+@media (max-width: 700px) {
+  .page {
+    margin-top: 20px;
+  }
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .story p {
+    font-size: 14px;
+  }
+  .guide {
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+  }
+  .guide > img {
+    width: 64px;
+    height: 64px;
+    float: right;
+  }
+}

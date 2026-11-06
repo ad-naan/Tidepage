@@ -1,88 +1,117 @@
-import { Anchor } from "@/shared/ui/link/Anchor";
-import { PencilLine, CoastGlyph } from "@/shared/ui/drawing/CoastalMarks";
-import { HanddrawnMark } from "@/shared/ui/drawing/HanddrawnMark";
-import { ContentHeading } from "@/modules/content/ui/layout/ContentHeading";
-import styles from "./AboutView.module.css";
-import { Link } from "@/shared/i18n/navigation";
-import { ArrowRight } from "lucide-react";
-
-import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
-import { profile } from "@/shared/config/profile";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import { ArrowUpRight } from "lucide-react";
+import { getPersonalPage } from "@/modules/site-settings/server";
+import {
+  AuthorSignature,
+  AuthorNameText,
+} from "@/modules/identity/ui/AuthorSignature";
 import { Discussion } from "@/modules/engagement/ui/Discussion";
-import { ContentEngagementActions } from "@/modules/engagement/ui/EngagementActions";
+import { Link } from "@/shared/i18n/navigation";
+import { ExternalLink } from "@/shared/ui/link/Anchor";
+import { profile, profileLinks } from "@/shared/config/profile";
+import styles from "./AboutView.module.css";
+
+import { HobbySketch } from "./HobbySketch";
 
 export async function AboutView() {
-  const t = await getTranslations("about");
-  const sections = t.raw("sections") as Array<{
-    title: string;
-    paragraphs: string[];
-  }>;
+  const locale = await getLocale();
+  const [page, t] = await Promise.all([
+    getPersonalPage(locale),
+    getTranslations("about"),
+  ]);
   return (
-    <div className={`inner-page memoir-page ${styles.about}`}>
-      <ContentHeading
-        room="about"
-        title={t("title")}
-        description={t("description")}
-      />
-      <div className="memoir-byline">
-        <span className="memoir-avatar">
-          <CoastGlyph kind="leaf" />
-        </span>
+    <div className={styles.about}>
+      <header className={styles.hero}>
         <div>
-          <strong>{profile.name}</strong>
-          <span>{t("byline")}</span>
+          <p className={styles.eyebrow}>{t("eyebrow")}</p>
+          <h1>
+            <AuthorNameText text={page.title} />
+          </h1>
+          <div className={styles.identity}>
+            <span>{page.identity}</span>
+            <span className={styles.personality}>{page.personality}</span>
+          </div>
+          <p className={styles.intro}>
+            <AuthorNameText text={page.intro} />
+          </p>
+          <div className={styles.links}>
+            <ExternalLink href={profileLinks[0].href}>
+              {t("github")}
+              <ArrowUpRight size={13} aria-hidden="true" />
+            </ExternalLink>
+            <Link href="/projects">
+              {t("projects")}
+              <ArrowUpRight size={13} aria-hidden="true" />
+            </Link>
+          </div>
         </div>
-        <span className="memoir-status">
-          <span className="live-dot" />
-          {t("status")}
-        </span>
-      </div>
-      <div className="memoir-layout">
-        <PencilLine className="memoir-shore" />
-        <article className="memoir-text">
-          {sections.map((section, i) => (
-            <section id={`memoir-${i}`} key={section.title}>
-              <h2>
-                {section.title}
-                <HanddrawnMark className="chapter-mark" />
-              </h2>
-              {section.paragraphs.map((p) => (
-                <p key={p}>{p}</p>
+        <figure className={styles.portrait}>
+          <img
+            src={profile.avatar}
+            width={108}
+            height={108}
+            alt={t("avatar")}
+          />
+          <figcaption>{t("portraitNote")}</figcaption>
+        </figure>
+      </header>
+      <section
+        className={styles.interests}
+        aria-labelledby="about-interests-title"
+      >
+        <div className={styles.interestHeading}><h2 id="about-interests-title">{t("offscreen")}</h2><span>{t("offscreenNote")}</span></div>
+        <div className={styles.interestGrid}>
+          {page.interests.map((interest, index) => {
+            return (
+              <div className={styles.interest} key={index}>
+                <HobbySketch index={index} />
+                <div><span className={styles.interestNumber}>{String(index+1).padStart(2,"0")} /</span><h3>{interest.label}</h3><p>{interest.description}</p></div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+      <div className={styles.body}>
+        <article className={styles.story}>
+          {page.sections.map((section, index) => (
+            <section key={index} id={`about-section-${index}`}>
+              {section.title && (
+                <h2>
+                  <AuthorNameText text={section.title} />
+                </h2>
+              )}
+              {section.paragraphs.map((p, i) => (
+                <p key={i}>
+                  <AuthorNameText text={p} />
+                </p>
               ))}
             </section>
           ))}
-          <div className="memoir-signature">
-            <p>{t("signature")}</p>
-            <span>adnaan</span>
+          <div className={styles.signoff}>
+            <p>
+              <AuthorNameText text={page.signature} />
+            </p>
+            <AuthorSignature size="md" />
           </div>
         </article>
-        <aside className="memoir-margin">
-          <span className="memoir-margin-label">{t("marginLabel")}</span>
-          {sections.map((section, i) => (
-            <Anchor href={`#memoir-${i}`} key={section.title}>
-              {section.title}
-            </Anchor>
-          ))}
-          <CoastalVignette kind="tree" />
-          <p>
-            {t("motto1")}
-            <br />
-            {t("motto2")}
-          </p>
+        <aside className={styles.margin}>
+          <img
+            src="/brand/tidepage-icon.png"
+            width={112}
+            height={112}
+            alt={t("otterAlt")}
+            loading="lazy"
+          />
+          <p>{t("otterNote")}</p>
+          <Link href="/site">
+            {t("aboutSite")}
+            <ArrowUpRight size={13} aria-hidden="true" />
+          </Link>
         </aside>
       </div>
-      <ContentEngagementActions target={{ type: "page", id: "about" }} />
-      <Discussion target={{ type: "page", id: "about" }} />
-      <div className="memoir-next">
-        <PencilLine className="memoir-shore" />
-        <div>
-          <span>{t("nextLabel")}</span>
-          <p>{t("nextText")}</p>
-        </div>
-        <Link href="/notes">
-          {t("nextLink")} <ArrowRight size={17} />
-        </Link>
+      <div className={styles.conversation}>
+        <p>{t("conversation")}</p>
+        <Discussion target={{ type: "page", id: "about" }} />
       </div>
     </div>
   );

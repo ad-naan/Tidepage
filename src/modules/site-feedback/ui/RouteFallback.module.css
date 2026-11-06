@@ -17,13 +17,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  font: 300 36px/1.2 var(--font-hand);
   color: var(--ink);
-}
-.brand > span {
-  font: 400 22px/1 var(--font-ui);
-  color: var(--accent);
-  transform: rotate(12deg);
 }
 .edition {
   letter-spacing: 0.1em;

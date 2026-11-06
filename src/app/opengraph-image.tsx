@@ -1,8 +1,13 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 export const alt = "光阴副本集 · adnaan";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export default function OpenGraphImage() {
+export default async function OpenGraphImage() {
+  const signature = await readFile(
+    join(process.cwd(), "public/brand/adnaan-signature.png"),
+  );
   return new ImageResponse(
     <div
       style={{
@@ -16,16 +21,13 @@ export default function OpenGraphImage() {
         color: "#343a36",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          fontSize: 90,
-          fontStyle: "italic",
-          letterSpacing: -5,
-        }}
-      >
-        adnaan<span style={{ color: "#d68549", marginLeft: 8 }}>⌁</span>
-      </div>
+      <img
+        src={`data:image/png;base64,${signature.toString("base64")}`}
+        width={400}
+        height={110}
+        alt="adnaan"
+        style={{ objectFit: "contain", objectPosition: "left" }}
+      />
       <div
         style={{
           display: "flex",

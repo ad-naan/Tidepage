@@ -26,14 +26,13 @@
   padding: 12px 28px;
   border-bottom: 1px solid var(--line);
 }
-.brand {
-  font: 300 28px/1 var(--font-hand);
-}
-.brand span {
-  color: var(--accent);
-}
 .top > span {
   font-size: var(--text-sm);
+}
+.brand {
+  display: inline-flex;
+  color: var(--ink);
+  text-decoration: none;
 }
 .top > small {
   font-size: var(--text-xs);

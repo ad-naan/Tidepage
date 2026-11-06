@@ -1,95 +1,111 @@
-﻿{
-    "installed_skills":  [
-                             {
-                                 "path":  "C:\\Users\\Administrator\\.codex\\skills\\blender-director\\SKILL.md",
-                                 "upstream_ref":  "main",
-                                 "name":  "blender-director",
-                                 "source":  "https://github.com/arjun988/blender-skills",
-                                 "sha256":  "BA10AE3243590F94FB114B6CB1E476F8F0510F0A99DE100E8C14651D081BC008"
-                             },
-                             {
-                                 "path":  "C:\\Users\\Administrator\\.codex\\skills\\character-artist\\SKILL.md",
-                                 "upstream_ref":  "main",
-                                 "name":  "character-artist",
-                                 "source":  "https://github.com/arjun988/blender-skills",
-                                 "sha256":  "BF51F1A2BE3E8804B83A7EF97278E37308870AAFF81C7AA2A3E012FF8C837054"
-                             },
-                             {
-                                 "path":  "C:\\Users\\Administrator\\.codex\\skills\\environment-artist\\SKILL.md",
-                                 "upstream_ref":  "main",
-                                 "name":  "environment-artist",
-                                 "source":  "https://github.com/arjun988/blender-skills",
-                                 "sha256":  "989C55A26E5DB78BF719BFBBE0BA00E0FB1319A4816BCE07C08A11472B2CD321"
-                             },
-                             {
-                                 "path":  "C:\\Users\\Administrator\\.codex\\skills\\scene-assembly\\SKILL.md",
-                                 "upstream_ref":  "main",
-                                 "name":  "scene-assembly",
-                                 "source":  "https://github.com/arjun988/blender-skills",
-                                 "sha256":  "9AAD0EBDEAC897304989B9A06EFDAA566A76962EF9409E6E4076474DEC23E34F"
-                             },
-                             {
-                                 "path":  "C:\\Users\\Administrator\\.codex\\skills\\qa-review\\SKILL.md",
-                                 "upstream_ref":  "main",
-                                 "name":  "qa-review",
-                                 "source":  "https://github.com/arjun988/blender-skills",
-                                 "sha256":  "14BD366E4C7831973D67E74580EBFEAFB1749CE1530EF64BA900D097AC38FCE0"
-                             },
-                             {
-                                 "path":  "C:\\Users\\Administrator\\.codex\\skills\\collision-proxy\\SKILL.md",
-                                 "upstream_ref":  "main",
-                                 "name":  "collision-proxy",
-                                 "source":  "https://github.com/arjun988/blender-skills",
-                                 "sha256":  "35C3B05EA2B31591CFE9C480730E2963887D7DCC88C80EB891D0C4ABDC820AF6"
-                             },
-                             {
-                                 "path":  "C:\\Users\\Administrator\\.codex\\skills\\vegetation-artist\\SKILL.md",
-                                 "upstream_ref":  "main",
-                                 "name":  "vegetation-artist",
-                                 "source":  "https://github.com/arjun988/blender-skills",
-                                 "sha256":  "3B1F43F0F456B95F5C00F1372F64DB75F34967C581B02068D80EE6EF63D476EC"
-                             },
-                             {
-                                 "path":  "C:\\Users\\Administrator\\.codex\\skills\\export-pipeline\\SKILL.md",
-                                 "upstream_ref":  "main",
-                                 "name":  "export-pipeline",
-                                 "source":  "https://github.com/arjun988/blender-skills",
-                                 "sha256":  "5E754B14B0CAD83A6A9FA939C64082BE3B2358C74F4CDAD637C8BD179D3314E1"
-                             },
-                             {
-                                 "path":  "C:\\Users\\Administrator\\.codex\\skills\\blender-core\\SKILL.md",
-                                 "upstream_ref":  "main",
-                                 "name":  "blender-core",
-                                 "source":  "https://github.com/EL4CTEO/blender-skills",
-                                 "sha256":  "91588E225931C2DF924819D02A7B9CA896568F0E4D458A09364B1611B709527F"
-                             },
-                             {
-                                 "path":  "C:\\Users\\Administrator\\.codex\\skills\\blender-asset-qa\\SKILL.md",
-                                 "upstream_ref":  "main",
-                                 "name":  "blender-asset-qa",
-                                 "source":  "https://github.com/EL4CTEO/blender-skills",
-                                 "sha256":  "968E4435EEBA040F0952CC335C8E9E7182E1D7008AA4295F202DDB836FA49EC9"
-                             },
-                             {
-                                 "path":  "C:\\Users\\Administrator\\.codex\\skills\\concept-target-visual-gate\\SKILL.md",
-                                 "upstream_ref":  "main",
-                                 "name":  "concept-target-visual-gate",
-                                 "source":  "https://github.com/oh-ashen-one/blender-agent-skills",
-                                 "sha256":  "C309A8CB586F50EB502CAD782F6821709230CCF2148E99837501073A4440A9FD"
-                             },
-                             {
-                                 "path":  "C:\\Users\\Administrator\\.codex\\skills\\blender-staged-scene-construction\\SKILL.md",
-                                 "upstream_ref":  "main",
-                                 "name":  "blender-staged-scene-construction",
-                                 "source":  "https://github.com/oh-ashen-one/blender-agent-skills",
-                                 "sha256":  "BED00098142D5544B8656E7C3F7CD373601C2F80F6867E92D5666A19FC8917D1"
-                             }
-                         ],
-    "mcp_available":  false,
-    "installed_count":  12,
-    "activation":  "Automatic discovery from the next user turn; manually read in this turn",
-    "blender":  "4.5.15 portable",
-    "qa_upstream_target":  "5.2+",
-    "qa_compatibility":  "Being tested on 4.5; no claim of full 5.2 compatibility",
-    "shared_reference_count":  9
+{
+  "installed_skills": [
+    {
+      "path": "C:\\Users\\Administrator\\.codex\\skills\\blender-director\\SKILL.md",
+      "upstream_ref": "main",
+      "name": "blender-director",
+      "source": "https://github.com/arjun988/blender-skills",
+      "sha256": "983edef0e9e925a8ff7da930a8e4de2ad63467bef43bc309ad3cddd1fb18e120"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.codex\\skills\\character-artist\\SKILL.md",
+      "upstream_ref": "main",
+      "name": "character-artist",
+      "source": "https://github.com/arjun988/blender-skills",
+      "sha256": "bf51f1a2be3e8804b83a7ef97278e37308870aaff81c7aa2a3e012ff8c837054"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.codex\\skills\\environment-artist\\SKILL.md",
+      "upstream_ref": "main",
+      "name": "environment-artist",
+      "source": "https://github.com/arjun988/blender-skills",
+      "sha256": "989c55a26e5db78bf719bfbbe0ba00e0fb1319a4816bce07c08a11472b2cd321"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.codex\\skills\\scene-assembly\\SKILL.md",
+      "upstream_ref": "main",
+      "name": "scene-assembly",
+      "source": "https://github.com/arjun988/blender-skills",
+      "sha256": "9aad0ebdeac897304989b9a06efdaa566a76962ef9409e6e4076474dec23e34f"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.codex\\skills\\qa-review\\SKILL.md",
+      "upstream_ref": "main",
+      "name": "qa-review",
+      "source": "https://github.com/arjun988/blender-skills",
+      "sha256": "14bd366e4c7831973d67e74580ebfeafb1749ce1530ef64ba900d097ac38fce0"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.codex\\skills\\collision-proxy\\SKILL.md",
+      "upstream_ref": "main",
+      "name": "collision-proxy",
+      "source": "https://github.com/arjun988/blender-skills",
+      "sha256": "35c3b05ea2b31591cfe9c480730e2963887d7dcc88c80eb891d0c4abdc820af6"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.codex\\skills\\vegetation-artist\\SKILL.md",
+      "upstream_ref": "main",
+      "name": "vegetation-artist",
+      "source": "https://github.com/arjun988/blender-skills",
+      "sha256": "3b1f43f0f456b95f5c00f1372f64db75f34967c581b02068d80ee6ef63d476ec"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.codex\\skills\\export-pipeline\\SKILL.md",
+      "upstream_ref": "main",
+      "name": "export-pipeline",
+      "source": "https://github.com/arjun988/blender-skills",
+      "sha256": "5e754b14b0cad83a6a9fa939c64082be3b2358c74f4cdad637c8bd179d3314e1"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.codex\\skills\\blender-core\\SKILL.md",
+      "upstream_ref": "main",
+      "name": "blender-core",
+      "source": "https://github.com/EL4CTEO/blender-skills",
+      "sha256": "91588e225931c2df924819d02a7b9ca896568f0e4d458a09364b1611b709527f"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.codex\\skills\\blender-asset-qa\\SKILL.md",
+      "upstream_ref": "main",
+      "name": "blender-asset-qa",
+      "source": "https://github.com/EL4CTEO/blender-skills",
+      "sha256": "968e4435eeba040f0952cc335c8e9e7182e1d7008aa4295f202ddb836fa49ec9"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.codex\\skills\\concept-target-visual-gate\\SKILL.md",
+      "upstream_ref": "main",
+      "name": "concept-target-visual-gate",
+      "source": "https://github.com/oh-ashen-one/blender-agent-skills",
+      "sha256": "c309a8cb586f50eb502cad782f6821709230ccf2148e99837501073a4440a9fd"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.codex\\skills\\blender-staged-scene-construction\\SKILL.md",
+      "upstream_ref": "main",
+      "name": "blender-staged-scene-construction",
+      "source": "https://github.com/oh-ashen-one/blender-agent-skills",
+      "sha256": "cb4974761f1a02f50b2bd2410a57bb2ec719cf4eb060518b51362f271ce2e53f"
+    }
+  ],
+  "mcp_available": false,
+  "installed_count": 12,
+  "activation": "Automatic discovery from the next user turn; manually read in this turn",
+  "blender": "4.5.15 portable",
+  "qa_upstream_target": "5.2+",
+  "qa_compatibility": "env_report, qa_check and review_shots executed on Blender 4.5.15; review_shots media_type assignment adapted in-memory only",
+  "shared_reference_count": 9,
+  "host_frontmatter_repairs": [
+    {
+      "name": "blender-director",
+      "reason": "Removed duplicate metadata.role key, retaining upstream orchestrator value",
+      "upstream_backup": "C:\\Users\\Administrator\\.codex\\skills\\blender-director\\SKILL.upstream.md"
+    },
+    {
+      "name": "blender-staged-scene-construction",
+      "reason": "Quoted description containing a colon so strict YAML parsers accept it",
+      "upstream_backup": "C:\\Users\\Administrator\\.codex\\skills\\blender-staged-scene-construction\\SKILL.upstream.md"
+    }
+  ],
+  "strict_frontmatter_validation": {
+    "checked": 12,
+    "errors": 0
+  }
 }

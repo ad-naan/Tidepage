@@ -1,0 +1,42 @@
+{
+  "stage": "01-layout-greybox",
+  "not_finished_art": true,
+  "units": "metres",
+  "bounds_m": [
+    150,
+    115
+  ],
+  "courtyard_diameter_m": 18,
+  "scale_mannequins": 12,
+  "mannequin_height_m": 1.75,
+  "door_clearance_m": [
+    1.2,
+    2.25
+  ],
+  "main_path_width_m": 3.2,
+  "arrival_pier_length_m": 21,
+  "route_lengths_m": {
+    "arrival_to_courtyard": 14.0,
+    "courtyard_to_homes": 16.6,
+    "courtyard_to_grove": 38.3,
+    "grove_to_lookout": 26.5,
+    "homes_to_ruins": 53.3,
+    "rear_loop": 84.4,
+    "west_promonade": 49.1,
+    "east_promonade": 55.2
+  },
+  "main_path_centerline_wall_crossings": [],
+  "source": "01-bay-layout.blend",
+  "runtime_modified": false,
+  "status": "LAYOUT_CAN_PROCEED_WITH_NOTES; final art and engine integration are not approved",
+  "independent_review": "01-layout-review.txt",
+  "open_items": [
+    "residential clearances",
+    "doorway continuity",
+    "pier arrival bottleneck",
+    "secondary path endpoints",
+    "lookout sight lines",
+    "actual engine traversal"
+  ],
+  "final_environment_approved": false
+}

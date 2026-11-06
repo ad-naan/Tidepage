@@ -18,6 +18,7 @@ import {
   type CoastReceiptAck,
 } from "@/shared/contracts/coast-space";
 import type { HarborPlace } from "../domain/coast-harbor";
+import { coastMovementInput } from "../domain/coast-movement";
 import type { CoastAvatar } from "../domain/coast-avatar";
 import type { HarborControls } from "../runtime/createHarborScene";
 
@@ -111,6 +112,7 @@ export function useCoastConnection(options: {
       sentAppearance = "",
       metadata = "",
       photoSignature = "";
+    let movementVersion: 1 | 2 = 1;
     let identityAt = 0,
       identityPending = false;
     const identityTicket = () =>
@@ -277,6 +279,7 @@ export function useCoastConnection(options: {
             return;
           }
           joined = true;
+          movementVersion = result.movementVersion === 2 ? 2 : 1;
           revision = -1;
           playerId = result.playerId;
           setSelfId(playerId);
@@ -367,10 +370,15 @@ export function useCoastConnection(options: {
         .timeout(2500)
         .volatile.emit(
           "world:input",
-          { ...intent, sequence: ++sequence },
+          coastMovementInput(intent, ++sequence, movementVersion),
           (err: Error | null, result: CoastAck) => {
             inputPending = false;
-            if (!cancelled && !err && result && !result.ok) error(result.code);
+            if (!cancelled && !err && result && !result.ok) {
+              if (result.code === "INVALID_PAYLOAD" && movementVersion === 2) {
+                movementVersion = 1;
+                lastIntent = "";
+              } else error(result.code);
+            }
           },
         );
     }, 100);

@@ -29,6 +29,7 @@ import { HanddrawnMark } from "@/shared/ui/drawing/HanddrawnMark";
 import styles from "./AdminShell.module.css";
 import { Button } from "@/shared/ui/button/Button";
 import { apiSend } from "@/shared/http/client";
+import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
 const entries = [
   ["overview", "/admin", Compass],
   ["articles", "/admin/articles", FileText],
@@ -61,7 +62,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
       <div className={styles.shell}>
         <header className={styles.top}>
           <Link href="/admin" className={styles.brand}>
-            adnaan<span>.</span>
+            <AuthorSignature size="sm" />
           </Link>
           <span>{t("name")}</span>
           <small>{t("localMode")}</small>

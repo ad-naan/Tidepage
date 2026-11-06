@@ -8,6 +8,7 @@ import { Link } from "@/shared/i18n/navigation";
 import { FooterPresence } from "./FooterPresence";
 import { FooterPreferences } from "./FooterPreferences";
 import styles from "./SiteFooter.module.css";
+import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
 
 export function SiteFooter({
   theme,
@@ -48,7 +49,7 @@ export function SiteFooter({
             className={styles.signature}
             aria-label={header("wordmark")}
           >
-            adnaan<span>⌁</span>
+            <AuthorSignature size="sm" mark />
           </Link>
           <div className={styles.caption}>
             <span className={styles.captionLine}>

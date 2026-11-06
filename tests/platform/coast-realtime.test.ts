@@ -82,6 +82,7 @@ test(
         third = await join(outsider);
       assert.ok(first.ok && second.ok && third.ok);
       if (!first.ok || !second.ok || !third.ok) return;
+      assert.equal(first.movementVersion, 2);
       assert.equal(
         first.snapshot.players.find((p) => p.id === first.playerId)?.host,
         true,

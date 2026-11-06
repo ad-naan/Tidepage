@@ -37,17 +37,20 @@
   transition: stroke-dashoffset 0.45s ease;
 }
 .primary a[aria-current="page"] .mark,
+.primary a[data-active="true"] .mark,
 .primary a:hover .mark,
 .more[data-active="true"] .mark {
   opacity: 0.8;
 }
 .primary a[aria-current="page"] .mark path,
+.primary a[data-active="true"] .mark path,
 .primary a:hover .mark path,
 .more[data-active="true"] .mark path {
   stroke-dashoffset: 0;
 }
 .primary a:hover,
 .primary a[aria-current="page"],
+.primary a[data-active="true"],
 .more:hover,
 .more[data-active="true"] {
   color: var(--ink);
@@ -56,6 +59,62 @@
   display: flex;
   align-items: center;
   gap: 5px;
+}
+.homeEntry {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.homeToggle {
+  display: inline-grid;
+  place-items: center;
+  min-width: 16px;
+  min-height: 32px;
+  padding: 0;
+  color: var(--muted);
+}
+.homeToggle:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+}
+.homePreview {
+  padding: 7px 6px 2px;
+}
+.homeIntro {
+  padding: 4px 8px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.homeIntro > p {
+  margin: 3px 0 0;
+  font: 400 11px/1.7 var(--font-ui);
+  color: var(--muted);
+}
+.dropdown .homeLinks a {
+  padding: 12px 8px;
+  align-items: flex-start;
+  color: var(--ink);
+}
+.homeLinks small {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font: 400 11px/1.8 var(--font-ui);
+}
+.homeLinks svg {
+  margin-top: 3px;
+}
+.dropdown .homeBack {
+  border-top: 1px solid var(--line);
+  margin-top: 3px;
+  padding: 10px 8px 4px;
+  color: var(--accent);
+  font-size: 11px;
+}
+@media (max-width: 1050px) {
+  .navigation,
+  .primary {
+    gap: 16px;
+  }
 }
 .more .chevron {
   opacity: 0.6;

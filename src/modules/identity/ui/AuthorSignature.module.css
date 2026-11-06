@@ -1,0 +1,17 @@
+.name {
+  position: relative;
+  vertical-align: baseline;
+}
+.marked {
+  margin-right: 0.42em;
+  transform: rotate(-5deg);
+  transform-origin: left center;
+}
+.arrow {
+  position: absolute;
+  right: -0.38em;
+  top: 0.42em;
+  width: 0.46em;
+  height: 0.34em;
+  color: var(--accent);
+}

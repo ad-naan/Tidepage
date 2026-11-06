@@ -4,7 +4,7 @@ import { useEffect, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, ArrowUpRight, RotateCcw } from "lucide-react";
 import { Link } from "@/shared/i18n/navigation";
-import { profile } from "@/shared/config/profile";
+import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
 import { useLocalState } from "@/shared/hooks/useLocalState";
 import { Button } from "@/shared/ui/button/Button";
 import { ThemeToggle } from "@/shared/ui/preferences/ThemeToggle";
@@ -31,8 +31,7 @@ export function RouteFallback({
     <main id="main-content" className={styles.page}>
       <header className={styles.header}>
         <Link href="/" className={styles.brand} aria-label={t("home")}>
-          {profile.name}
-          <span aria-hidden="true">↗</span>
+          <AuthorSignature mark />
         </Link>
         <div className={styles.headerTools}>
           <Text variant="caption" tone="muted" className={styles.edition}>

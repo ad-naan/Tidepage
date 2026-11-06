@@ -18,6 +18,7 @@ import {
 } from "@/modules/engagement/ui/Discussion";
 import type { Article, ArticleSummary } from "@/modules/content/domain/models";
 import styles from "./ArticleDetail.module.css";
+import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
 export async function ArticleDetail({
   article,
   next,
@@ -40,7 +41,7 @@ export async function ArticleDetail({
         </SketchLabel>
         <h1>{article.title}</h1>
         <div className="reading-meta">
-          <span>adnaan</span>
+          <AuthorSignature size="inline" />
           <span>·</span>
           <time dateTime={article.date}>
             {article.date.replaceAll("-", ".")}

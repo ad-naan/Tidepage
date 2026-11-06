@@ -141,6 +141,7 @@ export function attachCoastGateway(
             ok: true,
             playerId: session.player.id,
             resumeToken: token,
+            movementVersion: 2,
             snapshot: coastRoomSnapshot(room, now, session.player.id),
           };
         });

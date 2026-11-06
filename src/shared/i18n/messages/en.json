@@ -122,9 +122,22 @@
       "more": {
         "title": "Along the coast"
       },
-      "empty": "Another page is on its way."
+      "empty": "Another page is on its way.",
+      "home": {
+        "title": "Start here",
+        "open": "Back to home"
+      }
     },
-    "friends": "Friends"
+    "friends": "Friends",
+    "site": "This site",
+    "homeMenu": "Open home navigation",
+    "homeDescription": "Meet the writer and explore this little coastline.",
+    "homeAbout": "About me",
+    "homeAboutDescription": "Music, books, walks, and a cup of tea.",
+    "homeSite": "This site",
+    "homeSiteDescription": "The name, the otter, and the story of the shore.",
+    "homeBack": "Back to home",
+    "homePreviewTitle": "Start here"
   },
   "categories": {
     "all": "All",
@@ -537,47 +550,59 @@
     "unavailable": "Comments are not connected yet."
   },
   "about": {
-    "title": "A little about me",
-    "description": "About me, and this still-growing Fragments of Time.",
-    "byline": "A note to everyone who stops by",
-    "status": "Still turning the page",
-    "motto1": "Give memory a place to stay,",
-    "motto2": "and tomorrow a little hope.",
-    "marginLabel": "About this copy",
-    "signature": "Keep this page well. The next one continues.",
-    "nextLabel": "The story isn't finished",
-    "nextText": "Recent thoughts live in the notes.",
-    "nextLink": "Read the next page",
-    "sections": [
-      {
-        "title": "Keep a copy of the life that's happening",
-        "paragraphs": [
-          "I'm adnaan, welcome to my blog. This is where I keep the articles I've written, stray thoughts, projects in progress, and the everyday moments worth keeping.",
-          "I want to record the process of making: how an idea starts, how a problem gets taken apart, which detours didn't work, and which moments make me want to keep going. Looking back later, these records will show how I got here, little by little."
-        ]
-      },
-      {
-        "title": "Making things, and meeting myself along the way",
-        "paragraphs": [
-          "Code is one way I express ideas. Turning a vague thought into something you can touch, and slowly polishing a small detail until it feels right — the process itself is worth recording.",
-          "I also want room for life beyond code. A photo, a piece of music, a question I haven't figured out yet — all of it can live here. Together with the code, they make a more complete me."
-        ]
-      },
-      {
-        "title": "Set the past in order, then turn the page",
-        "paragraphs": [
-          "This blog takes its theme from JJ Lin's “Turn of the Page”. To me it's about time, making peace with yourself, and still being willing to start again after a journey ends.",
-          "I hope this “copy” keeps what deserves to be kept, and reminds me: the road already walked is part of me now — no need to stay stuck on the same page. Slower is fine, pausing is fine, but I can always keep writing."
-        ]
-      },
-      {
-        "title": "From my writing, to our meeting",
-        "paragraphs": [
-          "The thoughts here may be unfinished. I'm happy to open them up and hear different experiences and answers. One conversation might give a question I faced alone a brand-new way out.",
-          "If a passage or a small project happens to touch your life a little, you're welcome to leave an echo. Thank you for stopping by, and for being part of this still-growing story."
-        ]
-      }
-    ]
+    "title": "About me",
+    "description": "Meet adnaan: code, music, reading, walks, and a cup of tea.",
+    "eyebrow": "About me · A small introduction",
+    "github": "My code",
+    "projects": "Things I've been making",
+    "avatar": "adnaan's profile picture",
+    "portraitNote": "Take a seat. Let the tea steep.",
+    "offscreen": "Away from the screen",
+    "otterAlt": "The little otter keeping watch by the page",
+    "otterNote": "This otter keeps an eye on the pages for me. As for why a coastline belongs in a blog—",
+    "aboutSite": "About this little place",
+    "conversation": "Heard a good song or read a good book lately? Or just leave a line to say you stopped by.",
+    "profile": {
+      "title": "Hi, I'm adnaan",
+      "identity": "Full-stack engineer · UI/UX enthusiast",
+      "personality": "INFJ",
+      "intro": "I write code and care about how things feel to use. I like turning half-formed ideas into small, useful things. Away from the screen, there is music, reading, a walk, and a cup of tea.",
+      "signature": "If we get along, let's take our time over the next cup of tea.",
+      "interests": [
+        {
+          "label": "Music",
+          "description": "A little background sound, and somewhere for a feeling to land."
+        },
+        {
+          "label": "Reading",
+          "description": "Following someone else's sentences somewhere I haven't been."
+        },
+        {
+          "label": "Walking",
+          "description": "Stepping away from the screen and letting an idea catch its breath."
+        },
+        {
+          "label": "Tea",
+          "description": "Make the tea first. Some things can wait a little longer."
+        }
+      ],
+      "sections": [
+        {
+          "title": "Making an idea real is a good kind of happiness",
+          "paragraphs": [
+            "I enjoy programming, and I care about how an interface looks and how a feature feels to use. Making something work and making it feel right belong together.",
+            "This is where I leave traces of experiments: a small project, a stubborn question finally untangled, or an unfinished thought that deserves a page of its own."
+          ]
+        },
+        {
+          "title": "There is a person on the other side of the code",
+          "paragraphs": [
+            "I'm an INFJ, though I'd rather be known through these little records than four letters. A piece of music, a sentence in a book, or an idea from a walk belongs here too.",
+            "We can talk about code, trade a book or song recommendation, or simply share something about today. Finding someone willing to have an unhurried conversation online is already a nice thing."
+          ]
+        }
+      ]
+    }
   },
   "world": {
     "name": "The Coast",
@@ -1228,14 +1253,15 @@
       "back": "Back to list"
     },
     "settings": {
-      "description": "When the owner saves the site name, default SEO title and description, page titles, sharing metadata and RSS update on the next request. Languages are configured separately; blank fields use the defaults. Other fields remain working copies.",
+      "description": "Site identity, SEO, personal and site pages update publicly after saving. Languages are edited separately. Other profile fields remain working copies.",
       "saved": "Site settings saved",
       "tabsLabel": "Settings groups",
       "tabs": {
         "profile": "Profile",
         "basic": "Basics",
         "home": "Home and navigation",
-        "about": "About"
+        "about": "About",
+        "siteAbout": "This site"
       },
       "fields": {
         "name": "Name",
@@ -1255,9 +1281,32 @@
         "featuredSlugs": "Featured article slugs (comma separated)",
         "navigationOrder": "Existing navigation order (comma separated)",
         "footer": "Footer text",
-        "aboutTitle": "About title",
-        "aboutSections": "About sections",
-        "signature": "Signature"
+        "aboutTitle": "Personal page title",
+        "aboutSections": "Personal page sections",
+        "signature": "Closing note",
+        "aboutIntro": "Personal introduction",
+        "aboutIdentity": "Personal identity",
+        "aboutPersonality": "Personal label",
+        "siteAboutTitle": "Site page title",
+        "siteAboutIntro": "Site introduction",
+        "siteAboutSections": "Site page sections",
+        "aboutInterest1": "Everyday thing one",
+        "aboutInterestNote1": "Description one",
+        "aboutInterest2": "Everyday thing two",
+        "aboutInterestNote2": "Description two",
+        "aboutInterest3": "Everyday thing three",
+        "aboutInterestNote3": "Description three",
+        "aboutInterest4": "Everyday thing four",
+        "aboutInterestNote4": "Description four"
+      },
+      "pageEditor": {
+        "sectionTitle": "Section title",
+        "paragraphs": "Paragraphs",
+        "paragraphHint": "Separate paragraphs with a blank line.",
+        "add": "Add a section",
+        "remove": "Remove section",
+        "up": "Move section up",
+        "down": "Move section down"
       }
     },
     "future": {
@@ -1331,5 +1380,58 @@
     "expand": "Expand all",
     "collapse": "Collapse code",
     "region": "{language} code, scroll horizontally"
+  },
+  "siteAbout": {
+    "title": "About this site",
+    "description": "The story behind Fragments of Time, its coastline, and its little otter.",
+    "eyebrow": "About this site · A small coastline",
+    "meetAuthor": "Meet the person writing here",
+    "mascotAlt": "The Fragments of Time otter mascot",
+    "guideTitle": "Wander around",
+    "stops": {
+      "articles": {
+        "name": "Articles",
+        "description": "Space to think one question through"
+      },
+      "notes": {
+        "name": "Notes",
+        "description": "Moments that haven't become essays"
+      },
+      "projects": {
+        "name": "Projects",
+        "description": "Small ideas made tangible"
+      },
+      "gallery": {
+        "name": "Gallery",
+        "description": "Places where my eyes lingered"
+      }
+    },
+    "content": {
+      "title": "A few fragments of everyday life",
+      "intro": "This is adnaan's personal blog. Some pages are for technology, others for life. There is also a coastline, and a not-very-busy otter.",
+      "sections": [
+        {
+          "title": "Why “Fragments of Time”?",
+          "paragraphs": [
+            "Once a moment has passed, it can be hard to remember it whole. A paragraph or a photograph leaves a small copy of who we were at the time.",
+            "Not everything here needs a lesson. Something finished, something that failed, or simply a good song on an ordinary day can all have a page."
+          ]
+        },
+        {
+          "title": "A coastline and an otter, just because",
+          "paragraphs": [
+            "Paper, pencil lines, and a warm sunset set the tone. Alongside the writing, I wanted somewhere a visitor could pause for a moment.",
+            "So there is a coastline, and an otter to watch over it. They won't choose your reading for you. If you don't feel like reading, take a little walk along the shore."
+          ]
+        },
+        {
+          "title": "A record that keeps changing",
+          "paragraphs": [
+            "Articles hold longer questions; notes keep smaller thoughts. Projects trace the making, and photographs collect places where I stopped to look.",
+            "The site will change as I do. Thank you for stopping on one of its pages and giving something written alone a reader on the other side."
+          ]
+        }
+      ]
+    }
   }
 }

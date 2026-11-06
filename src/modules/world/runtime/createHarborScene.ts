@@ -27,6 +27,7 @@ import {
   type HarborPoint,
 } from "../domain/coast-harbor";
 import type { CoastAvatar, AvatarPose } from "../domain/coast-avatar";
+import { harborInputKey } from "../domain/coast-movement";
 
 type HarborState = {
   appearance: CoastAvatar;
@@ -244,7 +245,7 @@ export function createHarborScene(options: {
     )
       return;
     const state = options.state();
-    const key = event.key.toLowerCase();
+    const key = harborInputKey(event);
     if (
       key === " " &&
       event.target instanceof HTMLElement &&
@@ -279,8 +280,7 @@ export function createHarborScene(options: {
       arrival = null;
     }
   };
-  const onKeyUp = (event: KeyboardEvent) =>
-    keys.delete(event.key.toLowerCase());
+  const onKeyUp = (event: KeyboardEvent) => keys.delete(harborInputKey(event));
   const clearInput = () => {
     keys.clear();
     dragging = null;

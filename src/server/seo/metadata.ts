@@ -3,7 +3,11 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getEnv } from "@/server/config/env";
 import { site } from "@/shared/config/site";
-import { getPublicSiteIdentity } from "@/modules/site-settings/server";
+import {
+  getPublicSiteIdentity,
+  getPersonalPage,
+  getSitePage,
+} from "@/modules/site-settings/server";
 import type { SiteIdentity } from "@/modules/site-settings/domain/identity";
 import {
   defaultLocale,
@@ -77,6 +81,7 @@ export function pageMetadata(
   };
 }
 const pages = {
+  "/site": { title: "siteAbout.title", description: "siteAbout.description" },
   "/explore": { title: "world.name", description: "world.description" },
   "/friends": { title: "nav.friends", description: "friends.description" },
   "/": { title: "site.name", description: "site.description" },
@@ -92,10 +97,17 @@ export async function getPageMetadata(path: keyof typeof pages) {
   const t = await getTranslations();
   const page = pages[path];
   const identity = await getPublicSiteIdentity(locale);
+  const contentPage =
+    path === "/about"
+      ? await getPersonalPage(locale)
+      : path === "/site"
+        ? await getSitePage(locale)
+        : null;
   return pageMetadata(
     path,
-    t(page.title),
-    path === "/" ? identity.description : t(page.description),
+    contentPage?.title ?? t(page.title),
+    contentPage?.intro ??
+      (path === "/" ? identity.description : t(page.description)),
     locale,
     locales,
     identity,

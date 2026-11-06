@@ -124,7 +124,13 @@ export type CoastReceiptAck =
   | { ok: true; receipt: string }
   | { ok: false; code: CoastErrorCode | CoastSocialError };
 export type CoastJoinAck =
-  | { ok: true; playerId: string; resumeToken: string; snapshot: CoastSnapshot }
+  | {
+      ok: true;
+      playerId: string;
+      resumeToken: string;
+      snapshot: CoastSnapshot;
+      movementVersion?: 2;
+    }
   | { ok: false; code: CoastErrorCode };
 export interface CoastClientEvents {
   "world:identity": (

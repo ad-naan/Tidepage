@@ -170,23 +170,7 @@
 }
 
 .titlePanel[data-panel="intro"] > span:first-child {
-  position: relative;
   width: max-content;
-  font:
-    italic 400 clamp(48px, 4vw, 58px)/1.3 "Brush Script MT",
-    "Segoe Script",
-    cursive;
-  letter-spacing: -2px;
-  transform: rotate(-5deg);
-  transform-origin: left center;
-}
-.signatureArrow {
-  position: absolute;
-  right: -22px;
-  top: 22px;
-  width: 26px;
-  height: 19px;
-  color: var(--accent);
 }
 .titlePanel[data-panel="intro"] .lastLine {
   margin-top: var(--space-3);
@@ -242,9 +226,6 @@
   font: 300 16px/1 var(--font-hand);
 }
 @media (max-width: 700px) {
-  .titlePanel[data-panel="intro"] > span:first-child {
-    font-size: 48px;
-  }
   .titlePanel[data-panel="intro"] .lastLine {
     font-size: 13px;
   }

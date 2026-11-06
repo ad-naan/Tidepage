@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/shared/i18n/navigation";
 import { HeroSketch } from "@/modules/world/ui/CoastIllustration";
 import { ProfileLinks } from "./ProfileLinks";
+import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
 import styles from "./HomeHero.module.css";
 
 const modes = ["intro", "theme"] as const;
@@ -76,22 +77,10 @@ export function HomeHero() {
                 transition={transition}
               >
                 <span>
-                  {t(`hero.${panel}.line1`)}
-                  {panel === "intro" && (
-                    <svg
-                      className={styles.signatureArrow}
-                      viewBox="0 0 22 16"
-                      fill="none"
-                      aria-hidden="true"
-                    >
-                      <path
-                        d="m2 6 8 4-4-7 13 6-5 2"
-                        stroke="currentColor"
-                        strokeWidth="1.4"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                  {panel === "intro" ? (
+                    <AuthorSignature size="hero" mark />
+                  ) : (
+                    t(`hero.${panel}.line1`)
                   )}
                 </span>
                 <span className={styles.lastLine}>

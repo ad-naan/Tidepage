@@ -15,9 +15,15 @@ export const navigationItems = [
   { href: "/quotes", key: "quotes" },
   { href: "/gallery", key: "gallery" },
   { href: "/about", key: "about" },
+  { href: "/site", key: "site" },
   { href: "/friends", key: "friends" },
 ] as const;
 export const publicPages = [
+  {
+    path: "/site",
+    title: "此站点",
+    description: "关于这片海岸、光阴副本集与站点里的小水獭。",
+  },
   {
     path: "/friends",
     title: "友联",

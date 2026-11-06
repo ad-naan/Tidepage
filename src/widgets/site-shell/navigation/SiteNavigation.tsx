@@ -14,15 +14,23 @@ import { OverlayScope } from "@/shared/ui/overlay/OverlayScope";
 import { AnchoredPanel } from "@/shared/ui/overlay/AnchoredPanel";
 import { HanddrawnMark } from "@/shared/ui/drawing/HanddrawnMark";
 import styles from "./SiteNavigation.module.css";
+import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
 
 const primaryKeys = new Set(["articles", "notes", "projects"]);
+const homePages = [
+  { href: "/", key: "home" },
+  { href: "/about", key: "about" },
+  { href: "/site", key: "site" },
+] as const;
 const primary = navigationItems.filter((item) => primaryKeys.has(item.key));
 const secondary = navigationItems.filter(
-  (item) => item.key !== "home" && !primaryKeys.has(item.key),
+  (item) =>
+    !["home", "about", "site"].includes(item.key) && !primaryKeys.has(item.key),
 );
 type Preview = "articles" | "notes" | "projects";
-type Mode = Preview | "more";
+type Mode = Preview | "home" | "more";
 const widths: Record<Mode, number> = {
+  home: 370,
   articles: 350,
   notes: 310,
   projects: 320,
@@ -55,6 +63,10 @@ export function SiteNavigation({
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
   const moreActive = secondary.some((item) => isActive(item.href));
+  const homeActive = ["/", "/about", "/site"].includes(pathname);
+  const homeLabel = homePages.find(item => isActive(item.href))?.key ?? "home";
+  const moreLabel = secondary.find(item => isActive(item.href))?.key ?? "more";
+  const mobileLabel = navigationItems.find(item => isActive(item.href))?.key ?? "browse";
   function cancelClose() {
     if (leaveTimer.current) clearTimeout(leaveTimer.current);
   }
@@ -119,6 +131,47 @@ export function SiteNavigation({
         }}
       >
         <div className={styles.primary}>
+          <div className={styles.homeEntry}>
+            <Link
+              href="/"
+              data-active={homeActive}
+              aria-current={pathname === "/" ? "page" : undefined}
+              aria-expanded={open && mode === "home"}
+              aria-controls={id}
+              aria-keyshortcuts="ArrowDown"
+              onPointerEnter={(event) => {
+                if (event.pointerType !== "touch")
+                  hover("home", event.currentTarget);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "ArrowDown") {
+                  event.preventDefault();
+                  intent.current = "click";
+                  reveal("home", event.currentTarget, true);
+                }
+              }}
+              onClick={navigate}
+            >
+              {t(homeLabel)}
+              <HanddrawnMark className={styles.mark} />
+            </Link>
+            <Button
+              className={styles.homeToggle}
+              aria-label={t("homeMenu")}
+              aria-expanded={open && mode === "home"}
+              aria-controls={id}
+              onClick={(event) => {
+                if (open && mode === "home" && intent.current === "click") {
+                  setOpen(false);
+                  return;
+                }
+                intent.current = "click";
+                reveal("home", event.currentTarget, true);
+              }}
+            >
+              <ChevronDown size={10} aria-hidden="true" />
+            </Button>
+          </div>
           {primary.map((item) => (
             <Link
               key={item.key}
@@ -165,8 +218,8 @@ export function SiteNavigation({
           aria-controls={id}
           data-active={moreActive}
         >
-          <span className={styles.desktopLabel}>{t("more")}</span>
-          <span className={styles.mobileLabel}>{t("browse")}</span>
+          <span className={styles.desktopLabel}>{t(moreLabel)}</span>
+          <span className={styles.mobileLabel}>{t(mobileLabel)}</span>
           <ChevronDown
             className={styles.chevron}
             size={11}
@@ -187,6 +240,18 @@ export function SiteNavigation({
         >
           {mode === "more" && (
             <>
+              {homePages.map((item) => (
+                <Link
+                  className={styles.mobileItem}
+                  href={item.href}
+                  key={item.key}
+                  onClick={navigate}
+                  aria-current={isActive(item.href) ? "page" : undefined}
+                >
+                  {t(item.key)}
+                  <ArrowUpRight size={12} aria-hidden="true" />
+                </Link>
+              ))}
               {primary.map((item) => (
                 <Link
                   key={item.key}
@@ -212,7 +277,43 @@ export function SiteNavigation({
               ))}
             </>
           )}
-          {mode !== "more" && (
+          {mode === "home" && (
+            <div className={styles.homePreview}>
+              <div className={styles.homeIntro}>
+                <AuthorSignature size="sm" />
+                <p>{t("homeDescription")}</p>
+              </div>
+              <div className={styles.homeLinks}>
+                <Link
+                  href="/about"
+                  onClick={navigate}
+                  aria-current={pathname === "/about" ? "page" : undefined}
+                >
+                  <span>
+                    {t("homeAbout")}
+                    <small>{t("homeAboutDescription")}</small>
+                  </span>
+                  <ArrowUpRight size={14} aria-hidden="true" />
+                </Link>
+                <Link
+                  href="/site"
+                  onClick={navigate}
+                  aria-current={pathname === "/site" ? "page" : undefined}
+                >
+                  <span>
+                    {t("homeSite")}
+                    <small>{t("homeSiteDescription")}</small>
+                  </span>
+                  <ArrowUpRight size={14} aria-hidden="true" />
+                </Link>
+              </div>
+              <Link className={styles.homeBack} href="/" onClick={navigate}>
+                {t("homeBack")}
+                <ArrowUpRight size={12} aria-hidden="true" />
+              </Link>
+            </div>
+          )}
+          {mode !== "more" && mode !== "home" && (
             <>
               <div className={styles.previewHeading}>
                 <span>{t(`preview.${mode}.title`)}</span>

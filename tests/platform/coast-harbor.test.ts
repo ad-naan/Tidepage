@@ -13,6 +13,46 @@ import {
   harborRoute,
 } from "../../src/modules/world/domain/coast-harbor";
 import { createCoastAvatar } from "../../src/modules/world/runtime/createCoastAvatar";
+import {
+  coastMovementInput,
+  harborInputKey,
+} from "../../src/modules/world/domain/coast-movement";
+import { z } from "zod";
+import { coastInputSchema } from "../../src/shared/contracts/coast-space";
+
+test("movement remains valid on strict legacy gateways and negotiates running and jumping", () => {
+  const legacy = z
+    .object({
+      sequence: z.number(),
+      direction: z.object({ x: z.number(), z: z.number() }).strict(),
+      action: z.enum(["idle", "sit", "wave"]),
+    })
+    .strict();
+  for (const action of ["idle", "jump", "sit", "wave"] as const) {
+    const intent = { direction: { x: 0, z: -1 }, action, running: true };
+    const oldInput = coastMovementInput(intent, 1, 1);
+    assert.equal(legacy.safeParse(oldInput).success, true);
+    assert.equal("running" in oldInput, false);
+    assert.deepEqual(oldInput.direction, intent.direction);
+    const newInput = coastMovementInput(intent, 2, 2);
+    assert.equal(coastInputSchema.safeParse(newInput).success, true);
+    assert.equal(newInput.action, action);
+    assert.equal(newInput.running, true);
+  }
+});
+
+test("physical movement keys survive IME composition and shifted keyboard layouts", () => {
+  for (const key of ["W", "A", "S", "D", "E", "J", "L", "I", "K", "Q", "R"]) {
+    assert.equal(
+      harborInputKey({ code: `Key${key}`, key: "Process" }),
+      key.toLowerCase(),
+    );
+  }
+  assert.equal(harborInputKey({ code: "KeyW", key: "z" }), "w");
+  assert.equal(harborInputKey({ code: "Space", key: "Process" }), " ");
+  assert.equal(harborInputKey({ code: "ShiftRight", key: "Shift" }), "shift");
+  assert.equal(harborInputKey({ code: "ArrowUp", key: "ArrowUp" }), "arrowup");
+});
 
 test("saved outfits reject unsupported versions and arbitrary asset values", () => {
   for (const value of [
