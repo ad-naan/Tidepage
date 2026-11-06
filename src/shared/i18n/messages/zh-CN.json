@@ -437,7 +437,9 @@
     "sent": "评论已发表。",
     "sendFailed": "评论未能发表，内容已保留，请重试。",
     "sessionExpired": "登录已过期，请重新登录后发送。",
-    "rateLimited": "留言太快了，稍等一会儿再试。"
+    "rateLimited": "留言太快了，稍等一会儿再试。",
+    "edit": "继续编辑",
+    "preview": "预览"
   },
   "quotes": {
     "title": "留给下一页的话",
@@ -557,7 +559,7 @@
     "projects": "最近做的小东西",
     "avatar": "adnaan 的个人头像",
     "portraitNote": "先坐一会儿，茶慢慢喝。",
-    "offscreen": "不在写代码的时候",
+    "offscreen": "屏幕之外",
     "otterAlt": "站在页边的水獭吉祥物",
     "otterNote": "这只水獭替我在页边看门。至于这片海岸为什么会出现在博客里——",
     "aboutSite": "去看看此站点",
@@ -602,7 +604,9 @@
           ]
         }
       ]
-    }
+    },
+    "offscreenNote": "留一些时间，给生活的小事。",
+    "offscreenAside": "慢一点，也很好。"
   },
   "world": {
     "name": "光阴海岸",
@@ -923,7 +927,15 @@
     "table": "文章表格，可横向滚动",
     "preview": "展开网页摘要",
     "visit": "访问网站",
-    "film": "观影推荐"
+    "film": "观影推荐",
+    "web": "网页摘记",
+    "movie": "一部电影",
+    "music": "一段音乐",
+    "enlargeImage": "放大图片：{alt}",
+    "image": "图片",
+    "completed": "已完成",
+    "incomplete": "未完成",
+    "details": "展开内容"
   },
   "feedback": {
     "dismiss": "收起这条提醒",
@@ -1090,7 +1102,11 @@
         "ordered": "有序列表",
         "tasks": "待办列表",
         "quote": "引用",
-        "code": "代码块"
+        "code": "行内代码",
+        "underline": "下划线",
+        "highlight": "荧光标记",
+        "superscript": "上标",
+        "subscript": "下标"
       },
       "blocks": {
         "heading": "标题",
@@ -1106,7 +1122,8 @@
         "subheading": "三级标题",
         "ordered": "有序列表",
         "callout": "提示块",
-        "divider": "分割线"
+        "divider": "分割线",
+        "details": "折叠内容"
       },
       "inlineLink": "文字链接",
       "addRow": "添加行",
@@ -1167,7 +1184,15 @@
         "list": "无序列表",
         "quote": "引用"
       },
-      "insertMenu": "插入"
+      "insertMenu": "插入",
+      "detailsTitle": "展开这一段",
+      "calloutTone": "提示类型",
+      "tones": {
+        "note": "旁注",
+        "tip": "小提示",
+        "warning": "留意",
+        "important": "重点"
+      }
     },
     "media": {
       "upload": "添加图片",
@@ -1297,7 +1322,9 @@
         "aboutInterest3": "生活小事三",
         "aboutInterestNote3": "小事三的介绍",
         "aboutInterest4": "生活小事四",
-        "aboutInterestNote4": "小事四的介绍"
+        "aboutInterestNote4": "小事四的介绍",
+        "aboutBody": "自述正文",
+        "siteAboutBody": "此站点正文"
       },
       "pageEditor": {
         "sectionTitle": "小节标题",

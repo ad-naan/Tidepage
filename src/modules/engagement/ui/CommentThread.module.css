@@ -68,6 +68,12 @@
   margin: 6px 0;
   font: inherit;
 }
+.commentBody {
+  margin: 8px 0;
+}
+.commentBody > div > div > :last-child {
+  margin-bottom: 0;
+}
 .replyButton.replyButton {
   display: inline-flex;
   align-items: center;
@@ -102,6 +108,27 @@
 }
 .form > label {
   font-size: var(--text-sm);
+}
+.previewToggle.previewToggle {
+  align-self: flex-end;
+  min-height: 28px;
+  margin-top: -32px;
+  padding: 2px 6px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.previewToggle[aria-pressed="true"] {
+  color: var(--accent);
+}
+.previewBody {
+  min-height: 150px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+.previewBody > p {
+  color: var(--muted);
+  font-size: 14px;
 }
 .form textarea {
   width: 100%;

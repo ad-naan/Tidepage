@@ -32,7 +32,19 @@ export function documentMarkdown(node: EditorNode): string {
       } else if (mark.type === "bold") value = `**${value}**`;
       else if (mark.type === "italic") value = `*${value}*`;
       else if (mark.type === "strike") value = `~~${value}~~`;
-      else if (mark.type === "link")
+      else if (
+        ["underline", "highlight", "superscript", "subscript"].includes(
+          mark.type,
+        )
+      ) {
+        const tag = {
+          underline: "u",
+          highlight: "mark",
+          superscript: "sup",
+          subscript: "sub",
+        }[mark.type];
+        value = `<${tag}>${value}</${tag}>`;
+      } else if (mark.type === "link")
         value = `[${value}](${String(mark.attrs?.href).replaceAll("(", "%28").replaceAll(")", "%29")})`;
     }
     return value;
@@ -59,7 +71,6 @@ export function documentMarkdown(node: EditorNode): string {
       return `${fence}${String(node.attrs?.language ?? "").replace(/[^\w+-]/g, "")}\n${code}\n${fence}\n\n`;
     }
     case "blockquote":
-    case "callout":
       return (
         inside()
           .trim()
@@ -67,6 +78,17 @@ export function documentMarkdown(node: EditorNode): string {
           .map((line) => `> ${line}`)
           .join("\n") + "\n\n"
       );
+    case "callout":
+      return `> **${escape(String(node.attrs?.title || node.attrs?.tone || ""))}**\n>\n${inside()
+        .trim()
+        .split("\n")
+        .map((line) => `> ${line}`)
+        .join("\n")}\n\n`;
+    case "details":
+      return `<details>\n<summary>${String(node.attrs?.summary ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")}</summary>\n\n${inside()}\n</details>\n\n`;
     case "orderedList":
     case "bulletList":
     case "taskList":

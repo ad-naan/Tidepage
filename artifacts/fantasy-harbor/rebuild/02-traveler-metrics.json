@@ -1,0 +1,9 @@
+{
+  "meshes": 101,
+  "triangles": 62451,
+  "materials": 12,
+  "height_m": 1.78,
+  "source": "MakeHuman CC0 continuous body mesh",
+  "status": "AWAITING_GEOMETRY_AND_VISUAL_QA",
+  "rig_bones": 16
+}

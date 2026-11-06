@@ -57,6 +57,13 @@
       "when": 1793934392566,
       "tag": "0007_coast_memories",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793977502250,
+      "tag": "0008_comment_documents",
+      "breakpoints": true
     }
   ]
 }

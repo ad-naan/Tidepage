@@ -1,125 +1,260 @@
-.rich {
+.rich.rich {
   min-width: 0;
   overflow-wrap: break-word;
-  font: 400 var(--text-reading)/var(--leading-reading) var(--font-reading);
+  font: 400 16.5px/1.95 var(--font-reading);
   color: var(--ink);
+  font-kerning: normal;
 }
-.rich > div,
-.rich > section {
+.rich.rich > div,
+.rich.rich > section {
   min-width: 0;
 }
-.rich p {
+.rich.rich p {
   font: inherit;
-  letter-spacing: normal;
-  margin: 0 0 20px;
+  letter-spacing: 0;
+  margin: 0 0 1.35em;
+  text-wrap: pretty;
 }
-.rich h2,
-.rich h3,
-.rich h4,
-.rich h5,
-.rich h6 {
+.rich.rich h2,
+.rich.rich h3,
+.rich.rich h4,
+.rich.rich h5,
+.rich.rich h6 {
   position: relative;
-  margin: 32px 0 14px;
+  margin: 1.85em 0 0.7em;
   font-family: var(--font-reading);
   font-weight: 600;
   line-height: 1.5;
-  letter-spacing: normal;
+  letter-spacing: -0.025em;
+  text-wrap: pretty;
 }
-.rich h2 {
-  font-size: 23px;
+.rich.rich h2 {
+  font-size: 25px;
 }
-.rich h3 {
-  font-size: 19px;
+.rich.rich h3 {
+  font-size: 21px;
 }
-.rich h4,
-.rich h5,
-.rich h6 {
+.rich.rich h4 {
+  font-size: 18px;
+}
+.rich.rich h5,
+.rich.rich h6 {
   font-size: 16px;
 }
-.rich ul,
-.rich ol {
-  padding-left: 22px;
-  margin: 0 0 20px;
+.rich.rich h5 {
+  color: var(--muted);
 }
-.rich ul {
+.rich.rich h6 {
+  color: var(--muted);
+  font-weight: 500;
+}
+.rich.rich ul,
+.rich.rich ol {
+  padding-left: 1.6em;
+  margin: 0 0 1.4em;
+}
+.rich.rich ul {
   list-style: disc;
 }
-.rich ol {
+.rich.rich ol {
   list-style: decimal;
 }
-.rich li {
-  margin: 6px 0;
+.rich.rich li {
+  margin: 0.45em 0;
+  padding-left: 0.2em;
 }
-.rich li > p {
+.rich.rich li::marker {
+  color: color-mix(in srgb, var(--accent) 65%, var(--muted));
+  font-size: 0.85em;
+  font-weight: 500;
+}
+.rich.rich li > p {
   margin: 0;
 }
-.rich strong {
-  font-weight: 600;
-}
-.rich blockquote {
-  margin: 24px 0;
-  padding: 2px 0 2px 22px;
-  border-left: 2px solid color-mix(in srgb, var(--accent) 40%, var(--line));
-  font-family: var(--font-editorial);
-}
-.rich blockquote p:last-child {
-  margin-bottom: 0;
-}
-.callout {
-  margin: 24px 0;
-  padding: 14px 18px;
-  border-left: 2px solid var(--accent);
-  background: color-mix(in srgb, var(--wash) 20%, transparent);
-  font: 400 15px/1.8 var(--font-ui);
-}
-.callout p {
-  margin: 8px 0 0;
-}
-.rich > :first-child > :first-child {
-  margin-top: 0;
-}
-.rich ul ul {
+.rich.rich ul ul {
   list-style: circle;
 }
-.rich li > ul,
-.rich li > ol {
-  margin: 8px 0;
+.rich.rich ul ul ul {
+  list-style: square;
 }
-.rich a {
+.rich.rich li > ul,
+.rich.rich li > ol {
+  margin: 0.5em 0;
+}
+.rich.rich strong {
+  font-weight: 600;
+  color: var(--ink);
+}
+.rich.rich em {
+  text-underline-offset: 0.2em;
+}
+.rich.rich s {
+  color: var(--muted);
+  text-decoration-thickness: 1px;
+}
+.rich.rich u {
+  text-decoration-color: color-mix(in srgb, var(--accent) 60%, var(--line));
+  text-underline-offset: 0.25em;
+  text-decoration-thickness: 1px;
+}
+.rich.rich mark {
+  color: inherit;
+  background: color-mix(in srgb, var(--accent) 19%, transparent);
+  border-radius: 2px;
+  padding: 0.04em 0.15em;
+  box-decoration-break: clone;
+}
+.rich.rich sup,
+.rich.rich sub {
+  font-size: 0.7em;
+  line-height: 0;
+}
+.rich.rich blockquote {
+  position: relative;
+  margin: 30px 0;
+  padding: 4px 0 4px 24px;
+  border-left: 2px solid color-mix(in srgb, var(--accent) 55%, var(--line));
+  color: color-mix(in srgb, var(--ink) 80%, var(--muted));
+  font: 400 17px/2 var(--font-editorial);
+}
+.rich.rich blockquote p {
+  margin: 0 0 1em;
+}
+.rich.rich blockquote p:last-child {
+  margin-bottom: 0;
+}
+.rich.rich blockquote blockquote {
+  margin: 16px 0 0;
+  font-size: 0.95em;
+}
+.rich.rich a {
+  color: var(--accent);
   overflow-wrap: anywhere;
-  text-underline-offset: 3px;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
 }
-.rich :not(pre) > code {
-  padding: 2px 5px;
-  border: 1px solid color-mix(in srgb, var(--line) 65%, transparent);
+.rich.rich a:hover {
+  text-decoration-color: currentColor;
+}
+.rich.rich :not(pre) > code {
+  padding: 0.12em 0.35em;
   border-radius: 4px;
-  background: color-mix(in srgb, var(--soft) 70%, transparent);
+  background: color-mix(in srgb, var(--soft) 90%, var(--paper));
   font: 400 0.85em/1.5 var(--font-code);
+  color: color-mix(in srgb, var(--ink) 90%, var(--accent));
+  box-decoration-break: clone;
 }
-.rich pre code {
+.rich.rich pre code {
   font-family: var(--font-code);
 }
-.rich hr {
-  margin: 32px 0;
+.rich.rich hr {
+  width: 100%;
+  margin: 40px 0;
   border: 0;
   border-top: 1px solid var(--line);
+}
+.rich.rich > :first-child > :first-child {
+  margin-top: 0;
+}
+.callout {
+  --callout-color: var(--accent);
+  display: flex;
+  gap: 12px;
+  margin: 28px 0;
+  padding: 18px 20px;
+  border: 1px solid color-mix(in srgb, var(--callout-color) 20%, var(--line));
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--callout-color) 5%, var(--paper));
+  font: 400 14px/1.9 var(--font-ui);
+}
+.callout[data-tone="tip"] {
+  --callout-color: #70866a;
+}
+.callout[data-tone="warning"] {
+  --callout-color: #b48843;
+}
+.callout[data-tone="important"] {
+  --callout-color: #a47687;
+}
+.calloutIcon {
+  color: var(--callout-color);
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+.callout > div {
+  flex: 1;
+  min-width: 0;
+}
+.callout strong {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.callout p {
+  margin: 6px 0 0;
+}
+.callout p:first-child {
+  margin-top: 0;
+}
+.rich.rich .tasks {
+  list-style: none;
+  padding: 0;
+}
+.tasks > li {
+  display: flex;
+  gap: 10px;
+  padding: 0;
+}
+.tasks > li > div {
+  min-width: 0;
+  flex: 1;
+}
+.check {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--muted);
+  margin-top: 0.45em;
+}
+.tasks > li[data-checked="true"] {
+  color: var(--muted);
+}
+.tasks > li[data-checked="true"] .check {
+  color: var(--accent);
+}
+.details {
+  border-block: 1px solid var(--line);
+  margin: 28px 0;
+}
+.details > summary {
+  padding: 14px 4px;
+  font: 500 14px/1.8 var(--font-ui);
+  color: var(--ink);
+}
+.details > summary::marker {
+  color: var(--accent);
+  font-size: 0.8em;
+}
+.details > div {
+  padding: 6px 4px 10px 22px;
 }
 .table {
   max-width: 100%;
   overflow-x: auto;
-  margin: 24px 0;
+  margin: 28px 0;
   border: 1px solid var(--line);
-  border-radius: 4px;
+  border-radius: 7px;
 }
 .table table {
   width: 100%;
   border-collapse: collapse;
-  font: 400 14px/1.75 var(--font-ui);
+  font: 400 14px/1.85 var(--font-ui);
 }
 .table td,
 .table th {
-  min-width: 100px;
-  padding: 11px 14px;
+  min-width: 110px;
+  padding: 12px 16px;
   border: 0;
   border-bottom: 1px solid var(--line);
   text-align: left;
@@ -128,6 +263,10 @@
 .table th {
   background: var(--soft);
   font-weight: 600;
+  white-space: nowrap;
+}
+.table tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--soft) 35%, transparent);
 }
 .table p {
   margin: 0;
@@ -140,36 +279,51 @@
   outline: 1px solid var(--accent);
   outline-offset: 3px;
 }
-.image {
-  margin: 24px 0;
+.rich.rich.compact {
+  font-size: 14px;
+  line-height: 1.85;
 }
-.image img {
-  display: block;
-  width: auto;
-  max-width: 100%;
-  height: auto;
-  margin-inline: auto;
-  border-radius: 4px;
+.compact p {
+  margin-bottom: 0.8em;
 }
-.image figcaption {
-  margin-top: 8px;
-  color: var(--muted);
-  text-align: center;
-  font: 400 12px/1.8 var(--font-ui);
+.compact h2,
+.compact h3,
+.compact h4 {
+  font-size: 16px;
+}
+.compact blockquote {
+  margin: 14px 0;
+  padding-left: 14px;
+  font-size: 14px;
 }
 @media (max-width: 700px) {
-  .rich {
+  .rich.rich {
     font-size: 15.5px;
-    line-height: 1.85;
+    line-height: 1.9;
   }
-  .rich h2 {
-    font-size: 21px;
+  .rich.rich h2 {
+    font-size: 23px;
   }
-  .rich h3 {
-    font-size: 18px;
+  .rich.rich h3 {
+    font-size: 20px;
+  }
+  .rich.rich h4 {
+    font-size: 17px;
+  }
+  .rich.rich blockquote {
+    font-size: 16px;
+    padding-left: 18px;
   }
   .table td,
   .table th {
-    padding: 8px;
+    padding: 10px 12px;
+  }
+  .callout {
+    padding: 14px;
+    gap: 10px;
+    font-size: 13px;
+  }
+  .rich.rich.compact {
+    font-size: 14px;
   }
 }

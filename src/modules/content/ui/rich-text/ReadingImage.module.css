@@ -1,0 +1,63 @@
+.figure {
+  max-width: 100%;
+  margin: 30px auto;
+}
+.figure[data-align="left"] {
+  margin-left: 0;
+}
+.figure[data-align="right"] {
+  margin-right: 0;
+}
+.zoom.zoom {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+  border-radius: 7px;
+  overflow: hidden;
+}
+.zoom img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.expand {
+  display: grid;
+  place-items: center;
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+  background: var(--paper);
+  color: var(--ink);
+  opacity: 0;
+  transition: opacity 180ms;
+}
+.zoom:hover .expand,
+.zoom:focus-visible .expand {
+  opacity: 0.9;
+}
+.figure figcaption {
+  margin-top: 10px;
+  color: var(--muted);
+  font: 400 12px/1.8 var(--font-ui);
+  text-align: center;
+}
+.full {
+  display: block;
+  max-width: 100%;
+  max-height: 75vh;
+  object-fit: contain;
+  margin: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .expand {
+    transition: none;
+  }
+}

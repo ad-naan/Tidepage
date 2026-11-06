@@ -12,6 +12,7 @@ import {
 } from "../../src/modules/site-settings/server";
 import {
   parsePageSections,
+  sectionsDocument,
   resolvePersonalPage,
   resolveSitePage,
   type PersonalPage,
@@ -79,7 +80,7 @@ test("editable personal and site pages preserve sections, interests and locale i
     );
     assert.deepEqual(
       resolvePersonalPage(await readPublicSiteFields("en", db), personal),
-      personal,
+      { ...personal, body: sectionsDocument(personal.sections) },
     );
   } finally {
     await fixture.close();

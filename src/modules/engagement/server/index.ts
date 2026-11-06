@@ -29,6 +29,7 @@ export function discussionStore(db: Database = getDb()) {
   const fields = {
     id: comments.id,
     body: comments.body,
+    document: comments.document,
     author: usersTable.displayName,
     createdAt: comments.createdAt,
     parentId: comments.parentId,
@@ -87,6 +88,7 @@ export function discussionStore(db: Database = getDb()) {
           locale: input.locale,
           userId,
           body: input.body,
+          document: input.document,
           parentId: input.parentId,
         })
         .returning({ id: comments.id });

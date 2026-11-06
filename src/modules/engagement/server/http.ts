@@ -31,7 +31,7 @@ export function createDiscussionRoutes(dependencies: {
       const user = await dependencies.authorize();
       await enforceRateLimit(request, `comment:${user.id}`, 10, 60);
       const input = newCommentSchema.parse(
-        await boundedJson(request, 16 * 1024),
+        await boundedJson(request, 32 * 1024),
       );
       await dependencies.requireTarget(input.target, input.locale);
       return jsonData(

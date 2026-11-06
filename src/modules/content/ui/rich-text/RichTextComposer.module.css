@@ -1,0 +1,86 @@
+.composer {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--paper) 75%, transparent);
+  overflow: hidden;
+}
+.composer:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+}
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--line);
+}
+.tools button {
+  width: 30px;
+  height: 28px;
+  min-height: 28px;
+  padding: 3px;
+  color: var(--muted);
+}
+.tools button[aria-pressed="true"] {
+  color: var(--accent);
+  background: var(--wash);
+}
+.document :global(.tiptap) {
+  min-height: 100px;
+  max-height: 340px;
+  overflow: auto;
+  padding: 12px 14px;
+  font: 400 14px/1.85 var(--font-reading);
+  overflow-wrap: anywhere;
+  outline: none;
+}
+.document p {
+  margin: 0 0 8px;
+}
+.document p:last-child {
+  margin-bottom: 0;
+}
+.document ul,
+.document ol {
+  padding-left: 22px;
+  margin: 10px 0;
+}
+.document ul {
+  list-style: disc;
+}
+.document ol {
+  list-style: decimal;
+}
+.document blockquote {
+  border-left: 2px solid var(--accent);
+  margin: 12px 0;
+  padding-left: 14px;
+  color: var(--muted);
+}
+.document pre {
+  padding: 12px;
+  border-radius: 4px;
+  background: var(--soft);
+  font: 400 12px/1.8 var(--font-code);
+  white-space: pre-wrap;
+}
+.document code {
+  background: var(--soft);
+  font-family: var(--font-code);
+  font-size: 0.85em;
+}
+.document mark {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  color: inherit;
+}
+.document a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.document :global(p.is-editor-empty:first-child::before) {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  color: var(--muted);
+}

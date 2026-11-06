@@ -11,6 +11,8 @@ import { RichText } from "@/modules/content/ui/rich-text/RichText";
 import { NoteGallery } from "./NoteGallery";
 import { EngagementActions } from "@/modules/engagement/ui/EngagementActions";
 import styles from "./NoteReader.module.css";
+import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
+import { plainTextDocument } from "@/shared/contracts/rich-text";
 
 export function NoteReader({
   note,
@@ -40,7 +42,7 @@ export function NoteReader({
                 {profile.name.slice(0, 1).toUpperCase()}
               </span>
               <div>
-                <strong>{profile.name}</strong>
+                <AuthorSignature size="sm" />
                 <time dateTime={note.publishedOn}>
                   {note.publishedOn.replaceAll("-", ".")}
                 </time>
@@ -51,7 +53,7 @@ export function NoteReader({
               {body?.content?.length ? (
                 <RichText document={body} />
               ) : note.text ? (
-                <p>{note.text}</p>
+                <RichText document={plainTextDocument(note.text)} />
               ) : null}
               {note.tag && <span className={styles.tag}>#{note.tag}</span>}
             </article>
@@ -70,7 +72,7 @@ export function NoteReader({
                     block: "start",
                   });
                   comments.current
-                    ?.querySelector<HTMLTextAreaElement>("textarea")
+                    ?.querySelector<HTMLElement>('[role="textbox"]')
                     ?.focus({ preventScroll: true });
                 }}
               >

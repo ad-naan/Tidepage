@@ -45,10 +45,12 @@ export async function readPublicSiteFields(
           "aboutIdentity",
           "aboutPersonality",
           "aboutSections",
+          "aboutBody",
           "signature",
           "siteAboutTitle",
           "siteAboutIntro",
           "siteAboutSections",
+          "siteAboutBody",
         ].includes(key) || /^aboutInterest(?:Note)?[1-4]$/.test(key),
     ),
   );

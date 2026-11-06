@@ -28,6 +28,12 @@ import {
 import { ReferenceCard, AssetImageNode, CalloutNode } from "./ReferenceNode";
 import { ReferenceDialog } from "./ReferenceDialog";
 import styles from "./editor.module.css";
+import {
+  HighlightMark,
+  SuperscriptMark,
+  SubscriptMark,
+  DetailsNode,
+} from "./ReadingExtensions";
 
 export function RichTextEditor({
   initial,
@@ -178,6 +184,10 @@ export function RichTextEditor({
       }),
       AssetImageNode,
       CalloutNode,
+      HighlightMark,
+      SuperscriptMark,
+      SubscriptMark,
+      DetailsNode,
       Extension.create({
         name: "codeCaption",
         addGlobalAttributes() {
@@ -314,6 +324,14 @@ export function RichTextEditor({
     else if (key === "callout")
       chain
         .insertContent({ type: "callout", content: [{ type: "paragraph" }] })
+        .run();
+    else if (key === "details")
+      chain
+        .insertContent({
+          type: "details",
+          attrs: { summary: t("detailsTitle") },
+          content: [{ type: "paragraph" }],
+        })
         .run();
     else if (key === "code") chain.toggleCodeBlock().run();
     else if (key === "divider") chain.setHorizontalRule().run();

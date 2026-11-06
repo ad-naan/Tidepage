@@ -21,7 +21,7 @@ import { UnsavedChangesGuard } from "@/shared/ui/navigation/UnsavedChangesGuard"
 import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import styles from "./SiteSettingsView.module.css";
 import { settingsDraftSchema as schema } from "@/modules/site-settings/domain/models";
-import { PageSectionsEditor } from "./PageSectionsEditor";
+import { PageDocumentEditor } from "./PageDocumentEditor";
 export function SiteSettingsView({
   pageDefaults,
 }: {
@@ -36,6 +36,7 @@ export function SiteSettingsView({
   const [value, setValue] = useState<z.infer<typeof schema> | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [assetField, setAssetField] = useState<string | null>(null);
   useEffect(() => {
@@ -104,10 +105,10 @@ export function SiteSettingsView({
       "aboutInterestNote3",
       "aboutInterest4",
       "aboutInterestNote4",
-      "aboutSections",
+      "aboutBody",
       "signature",
     ],
-    siteAbout: ["siteAboutTitle", "siteAboutIntro", "siteAboutSections"],
+    siteAbout: ["siteAboutTitle", "siteAboutIntro", "siteAboutBody"],
   };
   function updateField(key: string, content: string) {
     if (!value) return;
@@ -131,7 +132,7 @@ export function SiteSettingsView({
         <Button
           variant="quiet"
           busy={busy}
-          disabled={!value}
+          disabled={!value || uploading}
           onClick={async () => {
             if (!value) return;
             setBusy(true);
@@ -183,12 +184,18 @@ export function SiteSettingsView({
             onValueChange={setLocale}
           />
           {(fields as Record<string, string[]>)[tab].map((key) =>
-            key === "aboutSections" || key === "siteAboutSections" ? (
-              <PageSectionsEditor
+            key === "aboutBody" || key === "siteAboutBody" ? (
+              <PageDocumentEditor
                 key={`${locale}:${key}`}
                 label={(copy.fields as Record<string, string>)[key]}
                 value={value.translations[locale]?.[key] ?? ""}
+                legacy={
+                  value.translations[locale]?.[
+                    key === "aboutBody" ? "aboutSections" : "siteAboutSections"
+                  ]
+                }
                 onChange={(content) => updateField(key, content)}
+                onUploading={setUploading}
               />
             ) : (
               <Field

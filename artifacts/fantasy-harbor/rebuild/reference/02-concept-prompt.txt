@@ -1,0 +1,12 @@
+Use case: stylized-concept.
+Asset type: fixed art-direction reference sheet for a real playable Blender-built fantasy coastal multiplayer world, never a substitute for actual mesh renders.
+Primary request: appealing young adult human traveler and expansive inhabitable fantasy bay; mature high-quality stylized 3D game art, physically coherent handcrafted forms.
+Scene/backdrop: one continuous 150m crescent bay with a long arrival pier, curved cream-sand shore, turquoise shallows, a welcoming lantern courtyard, intimate sea cottages with clay shingle roofs and actual doorways, distant coastal cliffs, a grove with individual-leaf trees and old tidal stone arches. Spaces for 12 friends, broad connected footpaths and quiet seating.
+Subject: Left third: full-length front three-quarter character design on pale neutral studio ground, 1.75m adult, 7-head proportions, natural connected anatomy, elegant face with real eyelids, nose and lips, warm brown eyes, chestnut swept layered hair, tailored desaturated sea-teal travel jacket over ivory knit, dark fitted trousers, ankle boots, small leather shoulder bag. Right two-thirds: eye-level harbor vista with foreground pier timbers, middle cottage and foliage, distant headland and courtyard; a small rear-view traveler establishes human scale.
+Style/medium: polished detailed game-production concept, plausible geometry and fabric folds, understated fantasy, attractive human face, refined PBR surfaces; no chibi aesthetic.
+Composition/framing: landscape 16:9, character fully visible, bay horizon from 1.7m eye height, clear near/mid/far layering, cottages resting on foundations with roofs continuously seated on walls.
+Lighting/mood: warm late-afternoon sun from upper left, cool sky fill, soft atmospheric separation, inviting lived-in atmosphere.
+Color palette: sea-teal, warm ivory, chestnut leather, moss and sage foliage, terracotta and weathered grey stone; restrained saturation.
+Text (verbatim): none.
+Constraints: readable playable spaces, actual human anatomy, empty passageways, 1m-wide doors, architectural joints make physical sense.
+Avoid: giant head, toddler proportions, capsule limbs, ball-cluster trees, spherical cheeks, tiny disembodied face, cylindrical neck, floating roofs, walls through roofs, dark empty eye sockets, toy buildings, UI text, watermarks, impossible arches.

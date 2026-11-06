@@ -82,38 +82,58 @@
   color: var(--muted);
 }
 .interests {
-  padding: 28px 0 30px;
+  position: relative;
+  display: grid;
+  grid-template-columns: 200px minmax(0, 620px);
+  gap: 40px;
+  padding: 30px 0 32px;
+  margin: 12px 0 0;
   border-block: 1px solid var(--line);
 }
-.interests > h2 {
-  margin: 0 0 24px;
+.interestHeading > span {
+  display: block;
   color: var(--muted);
-  font: 400 var(--text-xs)/1.6 var(--font-ui);
+  font: 400 11px/1.8 var(--font-ui);
+  margin-bottom: 10px;
 }
-.interestGrid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 28px;
-}
-.interest {
-  position: relative;
-  padding-left: 30px;
-}
-.interest > svg {
-  position: absolute;
-  left: 0;
-  top: 2px;
-  color: var(--accent);
-}
-.interest h3 {
-  margin: 0 0 8px;
-  font: 500 14px/1.6 var(--font-ui);
-}
-.interest p {
+.interestHeading h2 {
   margin: 0;
-  max-width: 20em;
-  font: 400 12px/1.85 var(--font-ui);
-  color: var(--muted);
+  max-width: 8em;
+  font: 400 22px/1.8 var(--font-editorial);
+  text-wrap: pretty;
+}
+.interestCopy {
+  padding-top: 2px;
+}
+.interestCopy p {
+  margin: 0 0 15px;
+  font: 400 15px/2.25 var(--font-reading);
+  color: color-mix(in srgb, var(--ink) 85%, var(--muted));
+  text-wrap: pretty;
+}
+.interestCopy p:last-child {
+  margin-bottom: 0;
+}
+.interestCopy em {
+  font-style: normal;
+  color: var(--ink);
+  margin-right: 0.55em;
+  background: linear-gradient(
+    transparent 75%,
+    color-mix(in srgb, var(--accent) 20%, transparent) 75%,
+    color-mix(in srgb, var(--accent) 20%, transparent) 90%,
+    transparent 90%
+  );
+}
+.interestAside {
+  position: absolute;
+  right: 0;
+  bottom: 18px;
+  max-width: 9em;
+  color: var(--accent);
+  opacity: 0.7;
+  transform: rotate(-5deg);
+  font: 400 12px/1.9 var(--font-editorial);
 }
 .body {
   display: grid;
@@ -121,19 +141,6 @@
   justify-content: space-between;
   gap: 48px;
   margin-top: 40px;
-}
-.story section + section {
-  margin-top: 32px;
-}
-.story h2 {
-  margin: 0 0 14px;
-  font: 500 21px/1.6 var(--font-editorial);
-}
-.story p {
-  margin: 0 0 16px;
-  font: 400 15px/2 var(--font-ui);
-  color: color-mix(in srgb, var(--ink) 88%, var(--muted));
-  text-wrap: pretty;
 }
 .signoff {
   display: flex;
@@ -210,16 +217,13 @@
     font-size: 14px;
   }
   .interestGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    row-gap: 26px;
+    grid-template-columns: 1fr;
+    row-gap: 8px;
   }
   .body {
     grid-template-columns: 1fr;
     gap: 26px;
     margin-top: 30px;
-  }
-  .story p {
-    font-size: 14px;
   }
   .margin {
     display: grid;
@@ -241,5 +245,29 @@
   }
   .signoff {
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 1100px) {
+  .interestAside {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  .interests {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 24px 0;
+  }
+  .interestHeading h2 {
+    max-width: none;
+    font-size: 20px;
+  }
+  .interestHeading > span {
+    margin-bottom: 6px;
+  }
+  .interestCopy p {
+    font-size: 14px;
+    line-height: 2.1;
   }
 }

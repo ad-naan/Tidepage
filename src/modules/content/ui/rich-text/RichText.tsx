@@ -1,23 +1,49 @@
 import { createElement, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { ExternalLink } from "@/shared/ui/link/Anchor";
+import {
+  Info,
+  Lightbulb,
+  TriangleAlert,
+  Bookmark,
+  Square,
+  SquareCheck,
+} from "lucide-react";
+import { Disclosure } from "@/shared/ui/disclosure/Disclosure";
 import {
   documentText,
   safeWebUrl,
+  embedSchema,
   type EditorNode,
+  type Embed,
 } from "@/modules/content/domain/editor-document";
 import { documentChapters } from "@/modules/content/domain/document-presentation";
 import { CodeBlock } from "@/shared/ui/code/CodeBlock";
 import { isUploadedAssetId } from "@/modules/media/domain/asset-path";
+import { ReferenceCard } from "./ReferenceCard";
+import { ReadingImage } from "./ReadingImage";
+import { ReadingLink } from "./ReadingLink";
 import styles from "./RichText.module.css";
+import { AuthorNameText } from "@/modules/identity/ui/AuthorSignature";
 
-function RenderNode({ node }: { node: EditorNode }) {
+function RenderNode({
+  node,
+  references,
+}: {
+  node: EditorNode;
+  references: Record<string, Embed>;
+}) {
   const t = useTranslations("articleBlocks");
   const children = node.content?.map((child, index) => (
-    <RenderNode key={index} node={child} />
+    <RenderNode key={index} node={child} references={references} />
   ));
   if (node.type === "text") {
-    let content: ReactNode = node.text;
+    let content: ReactNode = node.marks?.some(
+      (mark) => mark.type === "code",
+    ) ? (
+      node.text
+    ) : (
+      <AuthorNameText text={node.text ?? ""} />
+    );
     for (const mark of node.marks ?? []) {
       switch (mark.type) {
         case "bold":
@@ -32,15 +58,27 @@ function RenderNode({ node }: { node: EditorNode }) {
         case "underline":
           content = <u>{content}</u>;
           break;
+        case "highlight":
+          content = <mark>{content}</mark>;
+          break;
+        case "superscript":
+          content = <sup>{content}</sup>;
+          break;
+        case "subscript":
+          content = <sub>{content}</sub>;
+          break;
         case "code":
           content = <code>{content}</code>;
           break;
         case "link":
           if (safeWebUrl.safeParse(mark.attrs?.href).success)
             content = (
-              <ExternalLink href={String(mark.attrs?.href)}>
+              <ReadingLink
+                href={String(mark.attrs?.href)}
+                preview={references[String(mark.attrs?.href)]}
+              >
                 {content}
-              </ExternalLink>
+              </ReadingLink>
             );
           break;
       }
@@ -61,30 +99,66 @@ function RenderNode({ node }: { node: EditorNode }) {
     case "horizontalRule":
       return <hr />;
     case "bulletList":
-    case "taskList":
       return <ul>{children}</ul>;
+    case "taskList":
+      return <ul className={styles.tasks}>{children}</ul>;
     case "orderedList":
       return <ol start={Number(node.attrs?.start) || 1}>{children}</ol>;
     case "listItem":
+      return <li>{children}</li>;
     case "taskItem":
       return (
-        <li>
-          {node.type === "taskItem" && (
-            <span aria-hidden>{node.attrs?.checked ? "☑ " : "☐ "}</span>
-          )}
-          {children}
+        <li data-checked={Boolean(node.attrs?.checked)}>
+          <span
+            className={styles.check}
+            role="img"
+            aria-label={node.attrs?.checked ? t("completed") : t("incomplete")}
+          >
+            {node.attrs?.checked ? (
+              <SquareCheck size={17} />
+            ) : (
+              <Square size={17} />
+            )}
+          </span>
+          <div>{children}</div>
         </li>
       );
     case "blockquote":
       return <blockquote>{children}</blockquote>;
-    case "callout":
+    case "callout": {
+      const tone = ["note", "tip", "warning", "important"].includes(
+        String(node.attrs?.tone),
+      )
+        ? String(node.attrs?.tone)
+        : "note";
+      const Icon =
+        tone === "tip"
+          ? Lightbulb
+          : tone === "warning"
+            ? TriangleAlert
+            : tone === "important"
+              ? Bookmark
+              : Info;
       return (
-        <aside className={styles.callout}>
-          {node.attrs?.title ? (
-            <strong>{String(node.attrs.title)}</strong>
-          ) : null}
-          {children}
+        <aside className={styles.callout} data-tone={tone}>
+          <Icon size={18} className={styles.calloutIcon} aria-hidden="true" />
+          <div>
+            {node.attrs?.title ? (
+              <strong>{String(node.attrs.title)}</strong>
+            ) : null}
+            {children}
+          </div>
         </aside>
+      );
+    }
+    case "details":
+      return (
+        <Disclosure
+          className={styles.details}
+          summary={String(node.attrs?.summary || t("details"))}
+        >
+          <div>{children}</div>
+        </Disclosure>
       );
     case "codeBlock":
       return (
@@ -132,49 +206,53 @@ function RenderNode({ node }: { node: EditorNode }) {
       const src = String(node.attrs?.assetId ?? "");
       if (!isUploadedAssetId(src)) return null;
       return (
-        <figure className={styles.image}>
-          <img src={src} alt={String(node.attrs?.alt ?? "")} loading="lazy" />
-          {node.attrs?.caption ? (
-            <figcaption>{String(node.attrs.caption)}</figcaption>
-          ) : null}
-        </figure>
+        <ReadingImage
+          src={src}
+          alt={String(node.attrs?.alt ?? "")}
+          caption={String(node.attrs?.caption || "")}
+          width={Number(node.attrs?.width ?? 100)}
+          align={String(node.attrs?.align || "center")}
+        />
       );
     }
     case "referenceCard":
-      return (
-        <aside className={styles.callout}>
-          <ExternalLink href={String(node.attrs?.url)}>
-            {String(node.attrs?.title)}
-          </ExternalLink>
-          <p>{String(node.attrs?.description ?? "")}</p>
-        </aside>
-      );
+      return <ReferenceCard value={node.attrs as Embed} />;
     default:
       return <>{children}</>;
   }
 }
-
 export function RichText({
   document,
   chapters = false,
+  compact = false,
 }: {
   document: EditorNode;
   chapters?: boolean;
+  compact?: boolean;
 }) {
   let index = 0;
+  const references: Record<string, Embed> = {};
+  function collect(node: EditorNode) {
+    if (node.type === "referenceCard") {
+      const result = embedSchema.safeParse(node.attrs);
+      if (result.success) references[result.data.url] = result.data;
+    }
+    node.content?.forEach(collect);
+  }
+  collect(document);
   return (
-    <div className={styles.rich}>
+    <div className={`${styles.rich} ${compact ? styles.compact : ""}`}>
       {documentChapters(document).map((chapter, i) =>
         chapters && chapter.title ? (
           <section key={i} id={`section-${index++}`}>
             {chapter.nodes.map((node, j) => (
-              <RenderNode key={j} node={node} />
+              <RenderNode key={j} node={node} references={references} />
             ))}
           </section>
         ) : (
           <div key={i}>
             {chapter.nodes.map((node, j) => (
-              <RenderNode key={j} node={node} />
+              <RenderNode key={j} node={node} references={references} />
             ))}
           </div>
         ),

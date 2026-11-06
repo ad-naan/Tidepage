@@ -15,6 +15,7 @@ import {
 import { AssetImage } from "@/modules/media/ui/admin/AssetImage";
 import { Button } from "@/shared/ui/button/Button";
 import { Input } from "@/shared/ui/field/Input";
+import { Select } from "@/shared/ui/select/Select";
 import { ExternalLink } from "@/shared/ui/link/Anchor";
 import { ImageNodeView } from "./ImageNodeView";
 import styles from "./editor.module.css";
@@ -182,6 +183,14 @@ function CalloutView({ node, editor, updateAttributes }: NodeViewProps) {
             aria-label={t("calloutTitle")}
             value={String(node.attrs.title)}
             onChange={(e) => updateAttributes({ title: e.target.value })}
+          />
+          <Select
+            label={t("calloutTone")}
+            value={String(node.attrs.tone)}
+            options={(["note", "tip", "warning", "important"] as const).map(
+              (value) => ({ value, label: t(`tones.${value}`) }),
+            )}
+            onValueChange={(tone) => updateAttributes({ tone })}
           />
         </div>
       ) : (

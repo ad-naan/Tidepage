@@ -33,7 +33,7 @@
   margin: 10px 0;
 }
 .document {
-  font: 400 var(--text-reading)/1.95 var(--font-editorial);
+  font: 400 16.5px/1.95 var(--font-reading);
   min-height: 340px;
   overflow-wrap: anywhere;
 }
@@ -59,18 +59,18 @@
 .document :global(h1),
 .document :global(h2),
 .document :global(h3) {
-  font-family: var(--font-editorial);
-  font-weight: 500;
-  margin: 24px 0 12px;
+  font-family: var(--font-reading);
+  font-weight: 600;
+  margin: 32px 0 14px;
 }
 .document :global(h1) {
   font-size: 26px;
 }
 .document :global(h2) {
-  font-size: 22px;
+  font-size: 25px;
 }
 .document :global(h3) {
-  font-size: 18px;
+  font-size: 21px;
 }
 .document :global(ul),
 .document :global(ol) {
@@ -101,6 +101,30 @@
 .document :global(a) {
   color: var(--accent);
   text-decoration: underline;
+}
+.document :global(mark) {
+  background: color-mix(in srgb, var(--accent) 19%, transparent);
+  color: inherit;
+  border-radius: 2px;
+  padding: 0.04em 0.15em;
+}
+.detailsBlock {
+  border-block: 1px solid var(--line);
+  padding: 12px 0;
+  margin: 24px 0;
+}
+.detailsBlock > div:first-child {
+  margin-bottom: 12px;
+}
+.callout > div[contenteditable="false"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.callout > div[contenteditable="false"] > input {
+  flex: 1;
+  min-width: 140px;
 }
 .document :global(hr) {
   border: 0;

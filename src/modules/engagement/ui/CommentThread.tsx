@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useId, useRef, useState } from "react";
+import type { Editor } from "@tiptap/core";
+import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
 import { MessageCircle, Reply, X } from "lucide-react";
 import type {
@@ -10,8 +12,22 @@ import type {
 import { useIdentity } from "@/modules/identity/ui/IdentityProvider";
 import { apiGet, apiSend, ApiClientError } from "@/shared/http/client";
 import { Button, IconButton } from "@/shared/ui/button/Button";
-import { Textarea } from "@/shared/ui/field/Textarea";
+import { RichText } from "@/modules/content/ui/rich-text/RichText";
+import {
+  documentText,
+  emptyDocument,
+  type EditorNode,
+} from "@/modules/content/domain/editor-document";
+import { plainTextDocument } from "@/shared/contracts/rich-text";
+import { AuthorNameText } from "@/modules/identity/ui/AuthorSignature";
 import styles from "./CommentThread.module.css";
+const RichTextComposer = dynamic(
+  () =>
+    import("@/modules/content/ui/rich-text/RichTextComposer").then(
+      (module) => module.RichTextComposer,
+    ),
+  { ssr: false },
+);
 
 export function CommentThread({
   target,
@@ -45,13 +61,16 @@ function Thread({
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [sendError, setSendError] = useState("");
-  const [draft, setDraft] = useState("");
+  const [draft, setDraft] = useState<EditorNode>(emptyDocument);
+  const [composerKey, setComposerKey] = useState(0);
+  const [preview, setPreview] = useState(false);
+  const text = documentText(draft).trim();
   const [reply, setReply] = useState<Comment | null>(null);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const fieldId = useId();
   const headingId = useId();
-  const input = useRef<HTMLTextAreaElement>(null);
+  const input = useRef<Editor | null>(null);
   const active = useRef(true);
   const request = useRef<AbortController | null>(null);
   const path = (cursor?: string) =>
@@ -97,13 +116,22 @@ function Thread({
     function quote(event: Event) {
       const text = (event as CustomEvent<string>).detail;
       if (typeof text !== "string") return;
-      setDraft((previous) =>
-        `${previous}${previous ? "\n\n" : ""}> ${text.slice(0, 500)}\n\n`.slice(
-          0,
-          2000,
-        ),
-      );
-      input.current?.focus();
+      input.current
+        ?.chain()
+        .focus("end")
+        .insertContent([
+          {
+            type: "blockquote",
+            content: [
+              {
+                type: "paragraph",
+                content: [{ type: "text", text: text.slice(0, 500) }],
+              },
+            ],
+          },
+          { type: "paragraph" },
+        ])
+        .run();
     }
     window.addEventListener("article-quote", quote);
     return () => window.removeEventListener("article-quote", quote);
@@ -114,7 +142,7 @@ function Thread({
       openLogin();
       return;
     }
-    if (!draft.trim() || sending) return;
+    if (!text || text.length > 2000 || sending) return;
     setSending(true);
     setSendError("");
     setSent(false);
@@ -122,12 +150,14 @@ function Thread({
       const comment = await apiSend<Comment>("/api/v1/comments", "POST", {
         target,
         locale,
-        body: draft.trim(),
+        document: draft,
         ...(reply ? { parentId: reply.id } : {}),
       });
       if (!active.current) return;
       setItems((previous) => [...previous, comment]);
-      setDraft("");
+      setDraft(emptyDocument());
+      setComposerKey((key) => key + 1);
+      setPreview(false);
       setReply(null);
       setSent(true);
     } catch (error) {
@@ -163,7 +193,9 @@ function Thread({
             </span>
             <div className={styles.commentContent}>
               <div className={styles.meta}>
-                <strong>{item.author}</strong>
+                <strong>
+                  <AuthorNameText text={item.author} />
+                </strong>
                 <time dateTime={item.createdAt}>
                   {new Intl.DateTimeFormat(locale, {
                     dateStyle: "medium",
@@ -176,13 +208,18 @@ function Thread({
                   {t("replyingTo", { name: item.replyTo })}
                 </span>
               )}
-              <p>{item.body}</p>
+              <div className={styles.commentBody}>
+                <RichText
+                  document={item.document ?? plainTextDocument(item.body)}
+                  compact
+                />
+              </div>
               <Button
                 className={styles.replyButton}
                 onClick={() => {
                   setReply(item);
                   setSent(false);
-                  input.current?.focus();
+                  input.current?.commands.focus();
                 }}
               >
                 <Reply size={13} />
@@ -237,22 +274,42 @@ function Thread({
             ? t("writingAs", { name: principal.displayName })
             : t("write")}
         </label>
-        <Textarea
-          ref={input}
-          id={fieldId}
-          rows={compact ? 3 : 4}
-          maxLength={2000}
-          placeholder={t("placeholder")}
-          value={draft}
-          disabled={sending}
-          onChange={(event) => {
-            setDraft(event.target.value);
-            setSent(false);
-          }}
-        />
+        <Button
+          className={styles.previewToggle}
+          aria-pressed={preview}
+          onClick={() => setPreview((value) => !value)}
+        >
+          {preview ? t("edit") : t("preview")}
+        </Button>
+        <div hidden={preview}>
+          <RichTextComposer
+            key={composerKey}
+            id={fieldId}
+            label={t("write")}
+            placeholder={t("placeholder")}
+            initial={draft}
+            disabled={sending}
+            onReady={(editor) => {
+              input.current = editor;
+            }}
+            onChange={(value) => {
+              setDraft(value);
+              setSent(false);
+            }}
+          />
+        </div>
+        {preview && (
+          <div className={styles.previewBody}>
+            {text ? (
+              <RichText document={draft} compact />
+            ) : (
+              <p>{t("placeholder")}</p>
+            )}
+          </div>
+        )}
         <div className={styles.formFooter}>
           <span className={styles.hint}>
-            {principal ? t("limit", { count: draft.length }) : t("loginHint")}
+            {principal ? t("limit", { count: text.length }) : t("loginHint")}
           </span>
           {principal ? (
             <Button
@@ -260,7 +317,7 @@ function Thread({
               variant="primary"
               size="sm"
               busy={sending}
-              disabled={!draft.trim()}
+              disabled={!text || text.length > 2000}
             >
               {t("submit")}
             </Button>

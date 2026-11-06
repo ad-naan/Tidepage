@@ -49,7 +49,7 @@
 | 作者活动详情                       | `src/widgets/site-shell/header/ActivityDetails.tsx`                        |
 | 页脚与偏好、访客人数的排列         | `src/widgets/site-shell/footer/SiteFooter.tsx`、配套 CSS                   |
 | 各内容页的编号、标题、小插画       | `src/modules/content/ui/layout/ContentHeading.tsx`                         |
-| 文章中的网址、电影、代码块         | `src/modules/content/ui/articles/ArticleBlocks.tsx`、配套 CSS              |
+| 文章中的网址、电影、代码块         | `src/modules/content/ui/rich-text/RichText.tsx`、配套 CSS                  |
 | 评论、手记回应                     | `src/modules/engagement/ui/Discussion.tsx`、`NoteReplies.tsx`              |
 | 唱片、唱臂、音乐播放器             | `src/modules/media/ui/player/`                                             |
 | 首页海岸插画、水獭                 | `src/modules/world/ui/CoastIllustration.tsx`、`OtterDrawing.tsx`           |

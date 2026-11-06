@@ -22,7 +22,7 @@
 .reading.reading :global(.reading-header h1) {
   max-width: none;
   margin: 10px 0 0;
-  font: 500 clamp(26px, 2.3vw, 32px)/1.55 var(--font-editorial);
+  font: 500 clamp(28px, 2.6vw, 36px)/1.55 var(--font-editorial);
   text-wrap: balance;
   letter-spacing: -0.02em;
 }

@@ -7,6 +7,7 @@ import {
 } from "@/modules/identity/ui/AuthorSignature";
 import { Link } from "@/shared/i18n/navigation";
 import styles from "./SiteAboutView.module.css";
+import { RichText } from "../rich-text/RichText";
 
 export async function SiteAboutView() {
   const locale = await getLocale();
@@ -26,16 +27,7 @@ export async function SiteAboutView() {
       </header>
       <div className={styles.layout}>
         <article className={styles.story}>
-          {page.sections.map((section, index) => (
-            <section key={index}>
-              <h2>{section.title}</h2>
-              {section.paragraphs.map((p, i) => (
-                <p key={i}>
-                  <AuthorNameText text={p} />
-                </p>
-              ))}
-            </section>
-          ))}
+          {page.body && <RichText document={page.body} />}
           <div className={styles.signature}>
             <AuthorSignature size="md" />
             <Link href="/about">

@@ -48,6 +48,7 @@ import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import { AssetImage } from "@/modules/media/ui/admin/AssetImage";
 import { MediaPicker } from "@/modules/media/ui/admin/MediaPicker";
 import { RichTextEditor } from "./editor/RichTextEditor";
+import { RichText } from "@/modules/content/ui/rich-text/RichText";
 import { loadArticleDrafts, saveArticleDraft } from "./draft-store";
 import { imageUploader } from "@/modules/media/ui/admin/media-client";
 import styles from "./ArticleEditorView.module.css";
@@ -437,11 +438,7 @@ export function ArticleEditorView({
             </div>
           ))}
           {preview && (
-            <RichTextEditor
-              key={`preview-${locale}`}
-              initial={translation.body}
-              readOnly
-            />
+            <RichText key={`preview-${locale}`} document={translation.body} />
           )}
         </section>
         <aside

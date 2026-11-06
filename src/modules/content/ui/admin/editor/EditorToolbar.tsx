@@ -11,6 +11,11 @@ import {
   Redo2,
   Plus,
   Keyboard,
+  Underline,
+  Highlighter,
+  Superscript,
+  Subscript,
+  Code,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button, IconButton } from "@/shared/ui/button/Button";
@@ -56,6 +61,11 @@ export function EditorToolbar({
       bold: e.isActive("bold"),
       italic: e.isActive("italic"),
       strike: e.isActive("strike"),
+      underline: e.isActive("underline"),
+      highlight: e.isActive("highlight"),
+      superscript: e.isActive("superscript"),
+      subscript: e.isActive("subscript"),
+      code: e.isActive("code"),
       link: e.isActive("link"),
       block: e.isActive("heading", { level: 1 })
         ? "h1"
@@ -140,6 +150,27 @@ export function EditorToolbar({
               pressEffect={false}
               onPointerDown={(e) => e.preventDefault()}
               onClick={action}
+            >
+              <Icon size={15} />
+            </IconButton>
+          ))}
+          {(
+            [
+              ["underline", Underline],
+              ["highlight", Highlighter],
+              ["code", Code],
+              ["superscript", Superscript],
+              ["subscript", Subscript],
+            ] as const
+          ).map(([key, Icon]) => (
+            <IconButton
+              key={key}
+              aria-label={t(`format.${key}`)}
+              title={t(`format.${key}`)}
+              aria-pressed={state[key]}
+              pressEffect={false}
+              onPointerDown={(e) => e.preventDefault()}
+              onClick={() => editor.chain().focus().toggleMark(key).run()}
             >
               <Icon size={15} />
             </IconButton>

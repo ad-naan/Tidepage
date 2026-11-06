@@ -3,6 +3,7 @@ import {
   pgTable,
   uuid,
   text,
+  jsonb,
   timestamp,
   index,
   check,
@@ -13,6 +14,7 @@ import {
 import { usersTable } from "@/modules/identity/server/schema";
 import type { DiscussionTarget } from "@/modules/engagement/domain/discussion";
 import type { Locale } from "@/shared/i18n/config";
+import type { EditorNode } from "@/shared/contracts/rich-text";
 
 export const commentsTable = pgTable(
   "comments",
@@ -26,6 +28,7 @@ export const commentsTable = pgTable(
       .references(() => usersTable.id, { onDelete: "cascade" }),
     parentId: uuid("parent_id"),
     body: text("body").notNull(),
+    document: jsonb("document").$type<EditorNode>(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

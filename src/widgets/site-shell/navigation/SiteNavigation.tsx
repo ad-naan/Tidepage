@@ -64,9 +64,12 @@ export function SiteNavigation({
     pathname === href || pathname.startsWith(`${href}/`);
   const moreActive = secondary.some((item) => isActive(item.href));
   const homeActive = ["/", "/about", "/site"].includes(pathname);
-  const homeLabel = homePages.find(item => isActive(item.href))?.key ?? "home";
-  const moreLabel = secondary.find(item => isActive(item.href))?.key ?? "more";
-  const mobileLabel = navigationItems.find(item => isActive(item.href))?.key ?? "browse";
+  const homeLabel =
+    homePages.find((item) => isActive(item.href))?.key ?? "home";
+  const moreLabel =
+    secondary.find((item) => isActive(item.href))?.key ?? "more";
+  const mobileLabel =
+    navigationItems.find((item) => isActive(item.href))?.key ?? "browse";
   function cancelClose() {
     if (leaveTimer.current) clearTimeout(leaveTimer.current);
   }

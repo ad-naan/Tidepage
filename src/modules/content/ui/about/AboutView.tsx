@@ -11,7 +11,7 @@ import { ExternalLink } from "@/shared/ui/link/Anchor";
 import { profile, profileLinks } from "@/shared/config/profile";
 import styles from "./AboutView.module.css";
 
-import { HobbySketch } from "./HobbySketch";
+import { RichText } from "../rich-text/RichText";
 
 export async function AboutView() {
   const locale = await getLocale();
@@ -59,34 +59,29 @@ export async function AboutView() {
         className={styles.interests}
         aria-labelledby="about-interests-title"
       >
-        <div className={styles.interestHeading}><h2 id="about-interests-title">{t("offscreen")}</h2><span>{t("offscreenNote")}</span></div>
-        <div className={styles.interestGrid}>
-          {page.interests.map((interest, index) => {
-            return (
-              <div className={styles.interest} key={index}>
-                <HobbySketch index={index} />
-                <div><span className={styles.interestNumber}>{String(index+1).padStart(2,"0")} /</span><h3>{interest.label}</h3><p>{interest.description}</p></div>
-              </div>
-            );
-          })}
+        <div className={styles.interestHeading}>
+          <span>{t("offscreen")}</span>
+          <h2 id="about-interests-title">{t("offscreenNote")}</h2>
         </div>
+        <div className={styles.interestCopy}>
+          {[page.interests.slice(0, 2), page.interests.slice(2)].map(
+            (pair, index) => (
+              <p key={index}>
+                {pair.map((interest, i) => (
+                  <span key={i}>
+                    <em>{interest.label}</em>
+                    {interest.description}{" "}
+                  </span>
+                ))}
+              </p>
+            ),
+          )}
+        </div>
+        <span className={styles.interestAside}>{t("offscreenAside")}</span>
       </section>
       <div className={styles.body}>
         <article className={styles.story}>
-          {page.sections.map((section, index) => (
-            <section key={index} id={`about-section-${index}`}>
-              {section.title && (
-                <h2>
-                  <AuthorNameText text={section.title} />
-                </h2>
-              )}
-              {section.paragraphs.map((p, i) => (
-                <p key={i}>
-                  <AuthorNameText text={p} />
-                </p>
-              ))}
-            </section>
-          ))}
+          {page.body && <RichText document={page.body} />}
           <div className={styles.signoff}>
             <p>
               <AuthorNameText text={page.signature} />

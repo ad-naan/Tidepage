@@ -1,0 +1,117 @@
+.card.card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  margin: 28px 0;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  color: var(--ink);
+  text-decoration: none;
+  background: color-mix(in srgb, var(--paper) 88%, var(--soft));
+  font-family: var(--font-ui);
+  transition:
+    border-color 180ms,
+    background 180ms;
+}
+.card:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  background: var(--soft);
+}
+.artwork {
+  display: grid;
+  place-items: center;
+  flex: 0 0 88px;
+  width: 88px;
+  height: 88px;
+  color: var(--muted);
+  overflow: hidden;
+  background: var(--soft);
+  border-radius: 5px;
+}
+.artwork img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.card[data-kind="movie"] .artwork {
+  height: 126px;
+}
+.card[data-kind="music"] .artwork {
+  border-radius: 50%;
+}
+.body {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+.body strong {
+  font: 500 16px/1.65 var(--font-ui);
+  text-wrap: pretty;
+}
+.body em {
+  color: var(--muted);
+  font: italic 12px/1.6 var(--font-editorial);
+}
+.creator {
+  font-size: 11px;
+  color: var(--muted);
+}
+.description {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.85;
+  margin-top: 3px;
+}
+.host {
+  margin-top: 5px;
+  color: var(--muted);
+  font: 400 10px/1.6 var(--font-code);
+}
+.arrow {
+  flex-shrink: 0;
+  color: var(--accent);
+  align-self: flex-start;
+  margin-top: 3px;
+}
+@media (max-width: 600px) {
+  .card.card {
+    gap: 13px;
+    padding: 15px;
+  }
+  .artwork {
+    flex-basis: 60px;
+    width: 60px;
+    height: 60px;
+  }
+  .card[data-kind="movie"] .artwork {
+    height: 87px;
+  }
+  .body strong {
+    font-size: 14px;
+  }
+  .arrow {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+}

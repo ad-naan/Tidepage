@@ -13,6 +13,7 @@ import {
   Globe2,
   Minus,
   MessageSquare,
+  ChevronsUpDown,
 } from "lucide-react";
 
 export const blockCommands = [
@@ -23,6 +24,11 @@ export const blockCommands = [
   { key: "tasks", icon: ListTodo, keywords: "task todo checkbox 待办" },
   { key: "quote", icon: Quote, keywords: "quote blockquote 引用" },
   { key: "callout", icon: MessageSquare, keywords: "callout note 提示" },
+  {
+    key: "details",
+    icon: ChevronsUpDown,
+    keywords: "details collapse disclosure 折叠 展开",
+  },
   { key: "code", icon: Code2, keywords: "code block 代码" },
   { key: "divider", icon: Minus, keywords: "divider hr 分割线" },
   { key: "table", icon: Table, keywords: "table 表格" },

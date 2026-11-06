@@ -437,7 +437,9 @@
     "sent": "Comment posted.",
     "sendFailed": "Your comment was not posted. Your text is kept; please retry.",
     "sessionExpired": "Your session expired. Please sign in again to post.",
-    "rateLimited": "You're posting quickly. Please wait a moment and try again."
+    "rateLimited": "You're posting quickly. Please wait a moment and try again.",
+    "edit": "Continue writing",
+    "preview": "Preview"
   },
   "quotes": {
     "title": "For the next page",
@@ -602,7 +604,9 @@
           ]
         }
       ]
-    }
+    },
+    "offscreenNote": "A little time for ordinary things.",
+    "offscreenAside": "There is room to slow down."
   },
   "world": {
     "name": "The Coast",
@@ -923,7 +927,15 @@
     "table": "Article table, scroll horizontally",
     "preview": "Preview this reference",
     "visit": "Visit website",
-    "film": "A film to watch"
+    "film": "A film to watch",
+    "web": "Web reference",
+    "movie": "Film",
+    "music": "Music",
+    "enlargeImage": "Enlarge image: {alt}",
+    "image": "Image",
+    "completed": "Completed",
+    "incomplete": "Not completed",
+    "details": "Read more"
   },
   "feedback": {
     "dismiss": "Dismiss this note",
@@ -1090,7 +1102,11 @@
         "ordered": "Ordered list",
         "tasks": "Task list",
         "quote": "Quote",
-        "code": "Code block"
+        "code": "Inline code",
+        "underline": "Underline",
+        "highlight": "Highlight",
+        "superscript": "Superscript",
+        "subscript": "Subscript"
       },
       "blocks": {
         "heading": "Heading",
@@ -1106,7 +1122,8 @@
         "subheading": "Heading 3",
         "ordered": "Ordered list",
         "callout": "Callout",
-        "divider": "Divider"
+        "divider": "Divider",
+        "details": "Collapsible content"
       },
       "inlineLink": "Text link",
       "addRow": "Add row",
@@ -1167,7 +1184,15 @@
         "list": "Bullet list",
         "quote": "Quote"
       },
-      "insertMenu": "Insert"
+      "insertMenu": "Insert",
+      "detailsTitle": "Read this aside",
+      "calloutTone": "Callout style",
+      "tones": {
+        "note": "Note",
+        "tip": "Tip",
+        "warning": "Warning",
+        "important": "Important"
+      }
     },
     "media": {
       "upload": "Add images",
@@ -1297,7 +1322,9 @@
         "aboutInterest3": "Everyday thing three",
         "aboutInterestNote3": "Description three",
         "aboutInterest4": "Everyday thing four",
-        "aboutInterestNote4": "Description four"
+        "aboutInterestNote4": "Description four",
+        "aboutBody": "About me — body",
+        "siteAboutBody": "About this site — body"
       },
       "pageEditor": {
         "sectionTitle": "Section title",

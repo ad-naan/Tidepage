@@ -101,6 +101,10 @@ import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 
 交互文案位于语言目录的 `comments`、`engagement`、`notes.reader`、`admin.noteImages`。互动复用 IdentityProvider；访客发言、点赞和收藏需要配置现有 GitHub/Gitee OAuth 登录。
 
+## 共用正文
+
+业务无关的正文节点、标记、链接和校验定义位于 `shared/contracts/rich-text.ts`，领域层直接使用这个契约。文章元数据、站点设置与评论规则分别留在各自 domain；评论的精简块白名单位于 engagement/domain/comment-document.ts。UI 层复用 content/ui/rich-text 的渲染器，后台完整编辑器与评论精简编辑器使用相同标记定义。不要在每个页面重新写正文 CSS 或只读编辑器来充当阅读预览。
+
 ## 自动执行
 
 `pnpm run check:architecture` 会检查分层、客户端/服务端依赖、旧目录，以及原生控件的归属。业务和组合层不能直接写 `button`、`motion.button`、`input`、`textarea`、`select`、`a`、`dialog`、`details/summary`，必须使用统一出口。原生标签只允许出现在它自己的基础实现中；不能另建一个“临时基础组件”绕过检查。

@@ -76,7 +76,7 @@ Loading 开始前保留正文高度，加载时隐藏页脚，避免正文被 fa
 - `code`：代码、语言与说明，可复制并反馈成功或失败。
 - 阅读用代码块统一使用 `shared/ui/code/CodeBlock`：语法高亮、行号、语言与行数、复制完整源码；超过 18 行默认收拢成 12 行预览，支持展开和收起。正文结构化节点与原分节内容共用，不在文章组件内维护第二套代码样式。
 
-内容块存放在 section 的可选 `blocks` 数组中，与段落一起存入 PostgreSQL 的 sections JSONB。旧正文无需迁移，API 列表摘要仍不包含正文。`ArticleBlocks` 使用 React 渲染已验证的结构，禁止直接注入任意 HTML。链接限 HTTP(S)，外部图片限 HTTPS；Markdown 发布端输出相同的引用和代码。
+内容块存放在 section 的可选 `blocks` 数组中，与段落一起存入 PostgreSQL 的 sections JSONB。旧正文无需迁移，API 列表摘要仍不包含正文。旧分节内容通过 `articleDocument` 适配成通用文档，由 `RichText` 使用 React 渲染已验证的结构，禁止直接注入任意 HTML。链接限 HTTP(S)，外部图片限 HTTPS；Markdown 发布端输出相同的引用和代码。
 
 内容块校验位于 `content/domain/blocks.ts`。网站卡片使用作者提供、发布时保存的元数据；当前没有任意 URL 抓取接口，也不承诺每个外站都允许 iframe 嵌入。编辑器和 Agent 应写入同一 schema，元数据抓取放在服务端发布流程中。
 
@@ -123,3 +123,13 @@ Loading 开始前保留正文高度，加载时隐藏页脚，避免正文被 fa
 ## 目录与统一出口
 
 组件已按职责迁移，旧 `src/components` 与 `primitives.tsx` 已移除。完整放置规则、基础组件清单、命名和检查规则见 [前端架构](frontend-architecture.md)。本文中的组件名均按职责定位：页头页脚在 widgets，业务视图在 modules，基础控件在 shared/ui。
+
+## 共用富文本体系
+
+文章、手记、项目、自述、此站点与评论共用 `shared/contracts/rich-text.ts` 的文档结构、链接校验与文本提取。领域元数据分别保存，正文不能另造 HTML 或 Markdown 私有格式。
+
+`modules/content/ui/rich-text/RichText` 同时用于公开阅读与后台预览，字号、字重、列表、表格、引用、行内代码、高亮、上下标及折叠段落只维护一份阅读样式。长文正文为 16.5px / 1.95，窄屏 15.5px / 1.9；评论通过 compact 模式使用 14px。代码块继续复用共享 CodeBlock。
+
+提示块提供旁注、提示、留意、重点四种语义；网页、电影与音乐引用卡片保留封面、作者、年份、来源和摘要。行内链接可悬停或聚焦预览，同 URL 的引用节点提供已有元数据；没有元数据时显示链接文字与真实地址，不自动抓取外站。正文图片遵守编辑器保存的宽度和对齐，并支持键盘打开大图与 Escape 关闭。
+
+后台自述和此站点正文使用完整编辑器，JSON 文档存入站点设置的 aboutBody / siteAboutBody；旧 sections 读取时适配，编辑后写入文档格式。每种语言独立保存。评论使用精简工具栏和同一个渲染器，保存 document JSONB，body 由服务端从文档提取，不能由客户端伪造另一份正文。旧评论继续按纯文本展示。评论限制 2000 字和 24KB 文档，不开放图片、引用卡片、表格或任意 HTML。

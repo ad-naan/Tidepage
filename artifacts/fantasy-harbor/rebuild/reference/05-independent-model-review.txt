@@ -1,0 +1,47 @@
+﻿INDEPENDENT MODEL REVIEW — ROUND 05
+Evidence opened: reference/04-cartoon-traveler-concept.png; 04-Cartoon_Front.png; 04-Cartoon_Profile.png; 04-Cartoon_Portrait.png; reference/02-traveler-and-bay-concept.png; 03-Bay_Arrival.png; 03-Bay_Aerial.png; 03-Bay_Courtyard.png.
+These are actual submitted Blender stills. Runtime behavior, exported assets, hidden topology and animation are outside this visual review.
+
+TARGET CHANGE
+The user explicitly changed the character brief to a cute cartoon little person. Character identity, proportion and finish are now judged against 04-cartoon-traveler-concept.png; the earlier adult-anatomy requirement is superseded. The right-side environment of 02-traveler-and-bay-concept.png remains the bay target. Both references are generated concepts, not renders of these models. This authorized change is recorded rather than silently weakening the previous target.
+
+VERDICT: NOT APPROVED
+The character now has a recognizable travel outfit, separate fingers, a face and modeled hair, and the scene contains a pier, cottages, trees, paths and arches. These are useful asset categories, but their presence is not target fidelity. The submitted images still show major silhouette, proportion and composition mismatches. No implementation-complete claim is justified.
+
+GATED SCORECARD (pass threshold remains 7/10 per gate)
+Character — silhouette/proportion/identity: 3.5/10, FAIL.
+Character — lighting: BLOCKED; material: BLOCKED; detail: BLOCKED.
+Bay — silhouette/proportion/composition: 2.5/10, FAIL.
+Bay — lighting: BLOCKED; material: BLOCKED; detail: BLOCKED.
+A blocked gate is ungraded, not passed. Scores are not averaged to overcome a structural failure.
+
+1. SILHOUETTE / PROPORTION / COMPOSITION — FIX FIRST
+CHARACTER
+The target's appeal is a rounded youthful face with large open expressive eyes, compact rounded nose, lively smile, sweeping dark-brown hair, soft jacket silhouette and relaxed trousers. The model instead reads as an elongated narrow-eyed adult face on a slim toy body. Its cheek/chin length and pronounced nose profile work against the requested cute expression. The giant cranial mass alone does not produce the target's proportions.
+Priority corrections:
+- Rebuild the facial masses around large, rounded eye openings and irises, fuller cheeks, shorter lower face, softer jaw and a smaller rounded nose. Establish a warm open smile, not a thin horizontal mouth slit. Review front AND profile before adding detail.
+- Replace the flat front fringe slab and repeated parallel hanging rear locks with a unified scalp volume and a few broad, curved, overlapping swept locks. Match the target's rounded silhouette, sideburn transition and volume over the forehead; current rear hair reads like a vertical mop attached high on the skull.
+- Give the jacket a coherent raised collar, shoulder-to-sleeve transition, shaped front opening and longer rounded hem. Pale exposed shapes across both shoulders and the neck opening read as intersections or gaps. Inspect and eliminate those artifacts. The forearms emerge abruptly from broad sleeves; extend proper cuffs and make wrist transitions deliberate.
+- Relax the trousers into fabric volume at thighs/knees and add clear turned-up ankle cuffs. Current pinched calves and smooth tight legs read as leggings. Round and refine the boot forms and sole transitions rather than keeping slab-like sole outlines.
+- Pose hands naturally with shorter, softly tapered digits and a clear palm/wrist silhouette. The current splayed narrow fingers are distracting. Supply a rear view after corrections; none was submitted this round.
+
+BAY
+The aerial view exposes the primary mismatch: a flat, mostly empty park island ringed by a uniform wall of rock blocks. Four detached similar cottages and widely spaced small trees do not form the target's layered coastal settlement. The concept has an enclosing water bay, a curving inhabited shore, buildings and terraces stepping upward, a spreading tree canopy, substantial ruined arches at the water edge and distant cliff/lighthouse depth. The arrival view looks into one centered cottage, obscuring the bay instead of revealing its sweep.
+Priority corrections:
+- Rework the terrain and settlement layout before scattering props. Establish a curved inner water basin/beach, irregular rock shore, terraced village bank and taller distant cliff masses. Avoid a continuous same-height rock fence and a huge empty level lawn.
+- Group buildings into a connected, varied village composition: stagger footprints, elevations, roof heights, facade setbacks and routes. Place substantial foreground architecture on one side of the pier view, opening the center toward water and the far shore.
+- Make one broad leafy tree an intentional middle-ground anchor; current thin flat umbrella crowns and repeated trunks leave most of the scene empty. Use fuller layered crowns and vegetation clusters with clear scale variation.
+- Bring arches into a coherent coastal ruin composition with varied surviving heights, masonry thickness, broken ends and rocky footings. Current small freestanding identical arches at the back read as park ornaments.
+- Supply the missing distant lighthouse/clifftop silhouette and a human-scale route through the terraces. Restore foreground/middle/background overlap. Render a concept-comparable arrival camera; the current front-on cottage view is insufficient for that comparison.
+
+2. LIGHTING — OBSERVATIONS ONLY UNTIL GATE 1 PASSES
+Both sets of renders use a dull grey-blue world with weak color separation. The bay loses the target's warm sunny coastal atmosphere, clear sky and illuminated water. Use directional warm sunlight, cooler sky fill and controlled exposure after the layout is corrected. Keep shadow-side forms readable and establish distance haze. The character should receive a soft warm key and controlled fill that reveal rounded cheeks, hair layers and cloth form without washing skin into pale grey.
+
+3. MATERIALS — OBSERVATIONS ONLY UNTIL PRIOR GATES PASS
+Character skin is uniformly pale and waxy; hair is light, flat brown rather than rich layered chestnut; clothing is largely smooth color. Bay plaster, sand and grass are broad uniform fields, with obvious repeated wavy patterning on cottage walls. Water reads as a blurred blue plane, without a convincing shore/shallow/deep transition or wave edge. After geometry correction, differentiate skin, cloth, knit, leather, aged timber, plaster, masonry and foliage with appropriate roughness and restrained scale-correct variation. Do not use stronger noise as a substitute for construction.
+
+4. DETAIL — OBSERVATIONS ONLY UNTIL PRIOR GATES PASS
+Target-specific life is still absent: climbing greenery, flowers in beds, terrace walls/stairs, usable thresholds, cafe furniture, working-waterfront ropes/nets/crates and a boat. Add these in purposeful clusters after layout, not as a blanket scatter. Verify the courtyard center: its conspicuous black star-like area reads as a hole or overlapping-face artifact in the supplied render. Also inspect cottage base contact; dark gaps along the courtyard buildings make them appear lightly suspended. These visible defects need a close-up plus mesh inspection before being called fixed.
+
+NEXT ACCEPTANCE EVIDENCE
+Submit revised front/profile/rear/portrait character renders and comparable arrival/courtyard/aerial bay renders. Include a character in the scene to verify shared scale. Reopen and judge actual new renders; do not substitute the concepts, a change list, or export success for visual evidence. Only after the structure gate reaches 7/10 should lighting, material and detail receive approval scores. Current status remains NOT PASSED.
