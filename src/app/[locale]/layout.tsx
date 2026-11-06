@@ -7,6 +7,7 @@ import { DocumentLanguage } from "@/shared/i18n/DocumentLanguage";
 import { JsonLd } from "@/server/seo/JsonLd";
 import { siteGraph } from "@/server/seo/structured-data";
 import { isLocale } from "@/shared/i18n/config";
+import { getPublicSiteIdentity } from "@/modules/site-settings/server";
 export default async function LocaleLayout({
   children,
   params,
@@ -18,6 +19,7 @@ export default async function LocaleLayout({
   if (!isLocale(locale)) notFound();
   setRequestLocale(locale);
   const messages = (await catalogs[locale]()).default;
+  const identity = await getPublicSiteIdentity(locale);
   return (
     <NextIntlClientProvider
       key={locale}
@@ -26,12 +28,7 @@ export default async function LocaleLayout({
       timeZone="Asia/Shanghai"
     >
       <DocumentLanguage locale={locale} />
-      <JsonLd
-        data={siteGraph(locale, {
-          name: messages.site.name,
-          description: messages.site.description,
-        })}
-      />
+      <JsonLd data={siteGraph(locale, identity)} />
       <NoticeProvider>{children}</NoticeProvider>
     </NextIntlClientProvider>
   );

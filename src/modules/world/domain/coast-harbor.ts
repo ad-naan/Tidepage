@@ -6,6 +6,14 @@ export const harborPlaces = {
   cottage: { x: 3.6, z: 0.4 },
 } as const;
 export type HarborPlace = keyof typeof harborPlaces;
+export const harborDestinations = {
+  ...harborPlaces,
+  square: { x: 0, z: -22 },
+  grove: { x: -22, z: -31 },
+  ruins: { x: 28, z: -53 },
+  lookout: { x: -42, z: -49 },
+} as const;
+export type HarborDestination = keyof typeof harborDestinations;
 export const harborSpawn: HarborPoint = { x: 0, z: 5 };
 export const harborSeats = [-6.1, -5, -3.9].map((x) => ({ x, z: -2.45 }));
 export const harborSeating = [
@@ -15,17 +23,22 @@ export const harborSeating = [
     seats: [{ x: 2.35, z: -3.5 }],
     yaw: Math.PI,
   },
+  { approach: {x: -6, z: -22.5}, seats: [-7.1,-6,-4.9].map((x) => ({x,z:-23.45})), yaw: 0 },
+  { approach: {x: 6, z: -22.5}, seats: [4.9,6,7.1].map((x) => ({x,z:-23.45})), yaw: 0 },
 ];
 export function harborStandingPoint(point: HarborPoint): HarborPoint {
-  return Math.hypot(point.x - 2.35, point.z + 3.5) < 0.5
-    ? harborSeating[1].approach
-    : { x: point.x, z: harborPlaces.bench.z };
+  const group = [...harborSeating].sort((a,b) =>
+    Math.min(...a.seats.map((s) => Math.hypot(s.x-point.x,s.z-point.z))) -
+    Math.min(...b.seats.map((s) => Math.hypot(s.x-point.x,s.z-point.z))))[0];
+  return {x: group.seats.length > 1 ? point.x : group.approach.x, z: group.approach.z};
 }
 export const HARBOR_WALK_SPEED = 2.4;
 export const HARBOR_RUN_SPEED = 4.2;
 export const harborInteractions = {
   bench: { x: -5, z: -1.5, radius: 1.7 },
   chair: { x: 3.15, z: -3.5, radius: 1.15 },
+  squareLeft: {x: -6, z: -22.5, radius: 1.7},
+  squareRight: {x: 6, z: -22.5, radius: 1.7},
   door: { x: 4.5, z: -0.7, radius: 1.5 },
   hearth: { x: 5.1, z: -2.1, radius: 1.1 },
   crystal: { x: -1.6, z: -4.5, radius: 1.6 },
@@ -42,10 +55,17 @@ export const harborTrees = [
   { x: 0.3, z: -7, scale: 0.84, phase: 5 },
   { x: 8, z: -4.5, scale: 0.92, phase: 9 },
   { x: 7.2, z: -5.6, scale: 0.75, phase: 2 },
+  {x:-24,z:-14,scale:1.5,phase:3}, {x:-31,z:-18,scale:1.8,phase:7},
+  {x:-39,z:-24,scale:1.6,phase:2}, {x:21,z:-20,scale:1.5,phase:5},
+  {x:30,z:-27,scale:1.8,phase:4}, {x:38,z:-30,scale:1.7,phase:8},
+  {x:-11,z:-31,scale:1.4,phase:2}, {x:-17,z:-42,scale:1.8,phase:6},
+  {x:7,z:-40,scale:1.4,phase:5}, {x:15,z:-47,scale:1.6,phase:4},
+  {x:-38,z:-49,scale:1.6,phase:8}, {x:-45,z:-43,scale:1.7,phase:2},
+  {x:28,z:-58,scale:1.8,phase:4}, {x:36,z:-61,scale:1.4,phase:7},
 ] as const;
 
 export function harborWalkable(x: number, z: number) {
-  const land = (x / 10) ** 2 + ((z + 1) / 7.2) ** 2 < 0.9;
+  const land = (x / 62) ** 2 + ((z + 39) / 46) ** 2 < 0.9;
   const dock = Math.abs(x) < 1.1 && z >= 3 && z <= 10;
   const footprint = x > 1.3 && x < 6.8 && z > -6 && z < -0.5;
   const doorway = x > 4 && x < 5 && z > -2 && z < -0.4;
@@ -57,10 +77,13 @@ export function harborWalkable(x: number, z: number) {
   const cottage =
     footprint && !(doorway || (interior && !bed && !desk && !fireplace));
   const bench = x > -6.6 && x < -3.4 && z > -3 && z < -2;
+  const squareBenches = harborSeating.slice(2).some((group) => Math.abs(x-group.approach.x)<1.7 && Math.abs(z-group.seats[0].z)<.55);
+  const pond = ((x+30)/6.5)**2 + ((z+32)/8)**2 < 1;
+  const cottages = [ {x:-15,z:-23},{x:15,z:-28},{x:24,z:-43} ].some((c) => Math.abs(x-c.x)<3.1 && Math.abs(z-c.z)<3);
   const trunk = harborTrees.some(
     (tree) => Math.hypot(x - tree.x, z - tree.z) < 0.22 * tree.scale + 0.28,
   );
-  return (land || dock) && !cottage && !bench && !trunk && !chair;
+  return (land || dock) && !cottage && !bench && !trunk && !chair && !squareBenches && !pond && !cottages;
 }
 
 /** Bounded half-metre grid shared by pointer navigation and destination controls. */
@@ -78,8 +101,8 @@ export function harborRoute(
   const costs = new Map([[key(sx, sz), 0]]);
   const parents = new Map<string, string>();
   const closed = new Set<string>();
-  while (open.length && closed.size < 2400) {
-    open.sort((a, b) => b.score - a.score);
+  while (open.length && closed.size < 120_000) {
+    open.sort((a, b) => b.score - a.score || a.cost - b.cost);
     const current = open.pop()!;
     const id = key(current.x, current.z);
     if (closed.has(id)) continue;

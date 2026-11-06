@@ -49,8 +49,8 @@ export const coastPlayerSchema = z
   .object({
     id: z.uuid(),
     appearance: coastAvatarSchema,
-    x: z.number().min(-20).max(20),
-    z: z.number().min(-20).max(20),
+    x: z.number().min(-128).max(128),
+    z: z.number().min(-128).max(128),
     yaw: z.number().min(-Math.PI).max(Math.PI),
     pose: coastPoseSchema,
     name: z.string().min(1).max(60).nullable().default(null),

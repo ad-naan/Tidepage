@@ -1,5 +1,6 @@
 import { writeFile, mkdir } from "node:fs/promises";
 import * as THREE from "three";
+import { harborTrees } from "../src/modules/world/domain/coast-harbor";
 import { GLTFExporter } from "three/addons/exporters/GLTFExporter.js";
 import { createHarborModeler } from "../src/modules/world/runtime/harborModeling";
 import { buildHarborArchitecture } from "../src/modules/world/runtime/harborArchitecture";
@@ -33,6 +34,7 @@ Object.values(kit.palette).forEach((material) => {
 kit.batch(root);
 const data = await new GLTFExporter().parseAsync(root, { binary: true });
 await mkdir("artifacts/fantasy-harbor", { recursive: true });
+await writeFile("artifacts/fantasy-harbor/tree-layout.json", JSON.stringify(harborTrees));
 await writeFile(
   "artifacts/fantasy-harbor/harbor-base.glb",
   Buffer.from(data as ArrayBuffer),

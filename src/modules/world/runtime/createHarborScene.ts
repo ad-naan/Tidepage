@@ -11,6 +11,7 @@ import type {
 } from "@/shared/contracts/coast-space";
 import {
   harborPlaces,
+  harborDestinations,
   harborRoute,
   harborSpawn,
   harborWalkable,
@@ -22,6 +23,7 @@ import {
   HARBOR_WALK_SPEED,
   type HarborInteraction,
   type HarborPlace,
+  type HarborDestination,
   type HarborPoint,
 } from "../domain/coast-harbor";
 import type { CoastAvatar, AvatarPose } from "../domain/coast-avatar";
@@ -34,7 +36,7 @@ type HarborState = {
   reduced: boolean;
 };
 export type HarborControls = {
-  goTo: (place: HarborPlace) => void;
+  goTo: (place: HarborDestination) => void;
   pose: (pose: "idle" | "wave" | "sit") => void;
   capture: () => Promise<Blob>;
   captureTogether: (composition: CoastPhotoComposition) => Promise<Blob>;
@@ -151,9 +153,9 @@ export function createHarborScene(options: {
     }
     setPose("idle");
   };
-  function goTo(place: HarborPlace) {
+  function goTo(place: HarborDestination) {
     stand();
-    route = harborRoute(avatar.root.position, harborPlaces[place]);
+    route = harborRoute(avatar.root.position, harborDestinations[place]);
     arrival = null;
     keys.clear();
   }
@@ -194,7 +196,7 @@ export function createHarborScene(options: {
   }
   function interact() {
     if (options.state().blocked || options.state().studio) return;
-    if (interaction === "bench" || interaction === "chair")
+    if (interaction === "bench" || interaction === "chair" || interaction === "squareLeft" || interaction === "squareRight")
       selectPose(pose === "sit" ? "idle" : "sit");
     else if (interaction === "door") {
       stand();

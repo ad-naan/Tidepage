@@ -123,16 +123,10 @@ def solid(ob, thickness=.05, bevel=0):
     return ob
 
 def cube(name, pos, size, mat, parent=None, bevel=.035):
-    bpy.ops.mesh.primitive_cube_add(size=1, location=xyz(pos))
-    ob = bpy.context.object
-    ob.name = name
-    # Scale mesh data directly: no dependency-graph evaluation for every small shingle.
-    for vertex in ob.data.vertices:
-        vertex.co.x *= size[0]
-        vertex.co.y *= size[2]
-        vertex.co.z *= size[1]
-    ob.parent = parent
-    ob.data.materials.append(mat)
+    w,h,d=[v/2 for v in size]
+    verts=[(-w,-h,-d),(w,-h,-d),(w,h,-d),(-w,h,-d),(-w,-h,d),(w,-h,d),(w,h,d),(-w,h,d)]
+    ob=mesh(name,verts,[(0,3,2,1),(4,5,6,7),(0,1,5,4),(3,7,6,2),(0,4,7,3),(1,2,6,5)],mat,parent,False)
+    ob.location=xyz(pos)
     if bevel:
         mod = ob.modifiers.new("Hand-worn edge", "BEVEL")
         mod.width = bevel
@@ -175,17 +169,17 @@ def ring(name, center, rx, ry, mat, parent=None, radius=.04, count=48):
         center[1] + ry * math.sin(i / count * math.tau), center[2]) for i in range(count + 1)],
         radius, mat, parent)
 
+leaf_buffers=defaultdict(lambda: [[],[]])
 def leaf(name, pos, length, angle, mat, parent):
     # Folded six-sided lanceolate leaves, with a raised midrib.
     verts = [(0, 0, 0), (-.15, .045, .29), (-.12, .02, .61), (0, -.04, 1),
              (.12, .02, .61), (.15, .045, .29), (0, .1, .4)]
-    ob = mesh(name, verts, [(0, 1, 6), (1, 2, 6), (2, 3, 6), (3, 4, 6), (4, 5, 6), (5, 0, 6)], mat, parent)
-    ob.location = xyz(pos)
-    ob.scale = (length * .9, length, length)
-    ob.rotation_euler = (.1 * math.sin(angle), .2 * math.cos(angle), angle)
-    # Thin leaves show their underside too, without transparent sorting artifacts.
+    points,faces=leaf_buffers[mat.name]
+    offset=len(points)
+    for x,y,z in verts:
+        points.append((pos[0]+length*(x*math.cos(angle)+z*math.sin(angle)),pos[1]+length*y,pos[2]+length*(-x*math.sin(angle)+z*math.cos(angle))))
+    faces.extend(tuple(offset+j for j in face) for face in [(0,1,6),(1,2,6),(2,3,6),(3,4,6),(4,5,6),(5,0,6)])
     mat.use_backface_culling = False
-    return ob
 
 # Bring in the exact walkable shore, pier and bench used by the simulation.
 print("AUTHORING base and organic sea-house", flush=True)
@@ -246,6 +240,7 @@ grid("arched-doorway-spandrel", lambda u, v: (
     floor + 1.3 + math.sqrt(max(0, 1 - (2*u-1)**2))*1.25
         + v * (3.05 - 1.3 - math.sqrt(max(0, 1 - (2*u-1)**2))*1.25), front_z),
     36, 4, M["plaster"], shell)
+grid("upper-curved-lime-gable",lambda u,v:(1.6+u*4.8,3.4+v*(roof_point((.55+u*4.8)/5.9,0)[1]-.13-3.4),front_z),36,5,M["plaster"],shell)
 for x in [1.65, 6.35]:
     curve("crooked-front-post", [(x, .46, -1.15), (x + .04, 1.7, -1.13), (x-.1, 3.42, -1.12)], .105, M["wood"], shell)
 curve("front-arched-beam", [(x, y-.08, -.95) for x,y,_ in [roof_point(u/40,0) for u in range(41)]], .135, M["wood"], roof)
@@ -282,7 +277,7 @@ def window(x, y, z, parent):
     curve("window-mullion", [(x-.34,y,z+.08), (x+.34,y,z+.08)], .024,M["oak"],parent)
 window(2.42, 2.03, -1.17, shell)
 window(5.96, 2.03, -1.17, shell)
-window(4, 3.9, -.87, roof)
+window(4, 3.9, -1.17, roof)
 
 def lantern(pos, scale=1, parent=None):
     x,y,z = pos
@@ -324,7 +319,7 @@ lantern((2.7,1.76,-4.5),.7,interior)
 # Six wind-shaped trees: swept trunks, roots, thin leaves and suspended seed lamps.
 print("AUTHORING folded-leaf grove", flush=True)
 grove=empty("harbor_magic_grove")
-placements=[(-8,-3.7,1.03,1),(-7,-5.4,.87,3),(-2.4,-6.5,1.08,7),(.3,-7,.84,5),(8,-4.5,.92,9),(7.2,-5.6,.75,2)]
+placements=[(t['x'],t['z'],t['scale'],t['phase']) for t in json.loads((OUT/'tree-layout.json').read_text())]
 for ti,(tx,tz,scale,phase) in enumerate(placements):
     def pt(x,y,z): return (tx+x*scale, .44+y*scale, tz+z*scale)
     trunk=[pt(0,0,0),pt(.25,1.1,.05),pt(-.17,2.15,.12),pt(.28,3.5,0),pt(.1,4.6,-.1)]
@@ -338,21 +333,24 @@ for ti,(tx,tz,scale,phase) in enumerate(placements):
         bx,bz=math.cos(a)*1.65,math.sin(a)*1.4
         height=3.1+(branch%3)*.5
         curve("swept-canopy-bough",[pt(.1,2.4,0),pt(bx*.55,height+.25,bz*.55),pt(bx,height,bz)],.1*scale,M["wood"],grove,[1,.55,.08],5)
-        for spray in range(5):
+        for spray in range(8):
             sa=a+spray*.8
             sx=bx+math.cos(sa)*.5
             sz=bz+math.sin(sa)*.5
             sy=height+.12+math.sin(spray*2)*.15
             curve("leaf-bearing-twig",[pt(bx*.8,height+.1,bz*.8),pt(sx,sy,sz)],.022*scale,M["oak"],grove,[1,.05])
-            for k in range(10):
+            for k in range(22):
                 ka=k*2.4+sa
-                position=pt(sx+math.cos(ka)*(.12+k*.036),sy+math.sin(k*1.5)*.17,sz+math.sin(ka)*(.12+k*.036))
+                position=pt(sx+math.cos(ka)*(.12+k*.036),sy+math.sin(k*1.5)*.2-k*.009,sz+math.sin(ka)*(.12+k*.036))
                 leaf("folded-willow-leaf",position,(.28+random.random()*.18)*scale,ka,
                     M["lilac"] if (ti+branch+spray)%4==0 else M["mint"] if k%4 else M["leaf"],grove)
         if branch in [1,4,7] and ti in [0,2,4]:
             pos=pt(bx,height-.65,bz)
             curve("lantern-thread",[pt(bx,height-.05,bz), (pos[0],pos[1]+.3,pos[2])],.008,M["brass"],grove)
             lantern(pos,.8,grove)
+
+for name,(points,faces) in leaf_buffers.items():
+    mesh("sculpted-leaf-canopy__"+name,points,faces,bpy.data.materials[name],grove)
 
 ruins=empty("harbor_tidal_ruins")
 print("AUTHORING ruins and floating islands", flush=True)
@@ -440,7 +438,7 @@ mesh_objects=[ob for ob in scene.objects if ob.type=="MESH"]
 triangles=sum(sum(len(p.vertices)-2 for p in ob.data.polygons) for ob in mesh_objects)
 print("ASSET_BUDGET",len(mesh_objects),triangles,flush=True)
 bpy.ops.object.select_all(action="SELECT")
-bpy.ops.export_scene.gltf(filepath=str(PUBLIC/"tidal-sanctuary.glb"),export_format="GLB",
+bpy.ops.export_scene.gltf(filepath=str(OUT/"tidal-sanctuary-candidate.glb"),export_format="GLB",
     export_apply=True,export_animations=False,export_yup=True,export_extras=True,
     export_texcoords=True,export_normals=True,export_materials="EXPORT")
 (OUT/"model-manifest.json").write_text(json.dumps({"meshes":len(mesh_objects),"triangles":triangles,

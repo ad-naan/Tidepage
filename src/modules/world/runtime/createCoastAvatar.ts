@@ -12,7 +12,7 @@ export function createCoastAvatar(appearance: CoastAvatar) {
   root.name = "coast-companion";
   const body = new THREE.Group();
   body.name = "body";
-  body.scale.set(0.78, 1, 0.88);
+  body.scale.set(1, 1, 1);
   root.add(body);
   const materials: THREE.MeshStandardMaterial[] = [];
   const geometries: THREE.BufferGeometry[] = [];
@@ -329,8 +329,8 @@ export function createCoastAvatar(appearance: CoastAvatar) {
   });
   const head = new THREE.Group();
   head.name = "head";
-  head.position.set(0, 1.65, 0.015);
-  head.scale.setScalar(0.29);
+  head.position.set(0, 1.7, 0.015);
+  head.scale.setScalar(1);
   body.add(head);
   const gaussian = (value: number, center: number, width: number) =>
     Math.exp(-(((value - center) / width) ** 2));

@@ -1,8 +1,9 @@
 {
   "site": {
-    "name": "Tidepage",
-    "description": "Code, products and everyday life by adnaan. Step into an explorable coast of stories.",
-    "skip": "Skip to main content"
+    "name": "Fragments of Time",
+    "description": "Experiences become stories; ideas become things. A collection of adnaan's notes on code, design, and everyday life.",
+    "skip": "Skip to main content",
+    "title": "Fragments of Time · adnaan"
   },
   "common": {
     "loading": "Turning to a new page…",
@@ -11,7 +12,7 @@
   "error": {
     "title": "A little rough weather.\nLet's turn this page again.",
     "description": "This page couldn't open just now. Give the breeze a moment and try again, or find your way back to familiar shores.",
-    "edition": "Tidepage · Coastal navigation",
+    "edition": "Fragments of Time · Coastal navigation",
     "eyebrow": "A MOMENT ASHORE / TRY AGAIN",
     "annotation": "A little pause between stories.",
     "note": "The coast is here. The story continues.",
@@ -21,7 +22,7 @@
   "notFound": {
     "title": "This page has\ndrifted out to sea.",
     "description": "The page may have moved, or its story hasn't been written yet. Follow the coast back to somewhere familiar.",
-    "edition": "Tidepage · Coastal navigation",
+    "edition": "Fragments of Time · Coastal navigation",
     "eyebrow": "404 / A LITTLE DETOUR",
     "annotation": "Even a detour can lead to the sea.",
     "note": "A wrong turn might lead to the next story.",
@@ -211,7 +212,7 @@
     "dark": "Switch to dark mode",
     "explore": "Explore the coast",
     "tools": "{label} tools",
-    "wordmark": "adnaan · Tidepage, home",
+    "wordmark": "adnaan · Fragments of Time, home",
     "reading": "Now reading",
     "backToArticles": "Back to articles",
     "now": "Right now",
@@ -291,7 +292,7 @@
   "letter": {
     "open": "There's a letter by the otter. Open the foreword",
     "discovery": "A letter",
-    "eyebrow": "Tidepage · Foreword",
+    "eyebrow": "Fragments of Time · Foreword",
     "close": "Tuck the letter away",
     "body": "The otter keeps this letter for me. It's about why I write, and the person I'd like to leave behind in these words.",
     "link": "Read my story"
@@ -537,7 +538,7 @@
   },
   "about": {
     "title": "A little about me",
-    "description": "About me, and this still-growing Tidepage.",
+    "description": "About me, and this still-growing Fragments of Time.",
     "byline": "A note to everyone who stops by",
     "status": "Still turning the page",
     "motto1": "Give memory a place to stay,",
@@ -735,10 +736,22 @@
         "cancelled": "The photo was cancelled or the invitation expired. Take a quiet walk."
       },
       "jump": "Jump",
+      "destinations": {
+        "dock": "Arrival pier",
+        "beach": "Tidal beach",
+        "bench": "Seaside bench",
+        "cottage": "Sea-house",
+        "square": "Travelers' courtyard",
+        "grove": "Moonlit grove and tide pool",
+        "ruins": "Ancient tidal ring",
+        "lookout": "West coast lookout"
+      },
       "interact": {
         "key": "E",
         "bench": "Sit / stand",
         "chair": "Sit to read / stand",
+        "squareLeft": "Sit in the courtyard",
+        "squareRight": "Sit in the courtyard",
         "door": "Enter / leave",
         "hearth": "Tend the hearth",
         "crystal": "Resonate with the crystal",
@@ -940,7 +953,7 @@
     "contact": "Visit adnaan on GitHub"
   },
   "admin": {
-    "name": "Tidepage studio",
+    "name": "Fragments of Time studio",
     "localMode": "Site workspace",
     "localDetail": "Drafts are saved in the site database and images in the server media directory. Saved working copies remain available for editing and preview.",
     "visit": "View site",
@@ -1215,8 +1228,8 @@
       "back": "Back to list"
     },
     "settings": {
-      "description": "Organize public details in each language. Saving keeps a working copy without changing the site.",
-      "saved": "Settings working copy saved to the site",
+      "description": "When the owner saves the site name, default SEO title and description, page titles, sharing metadata and RSS update on the next request. Languages are configured separately; blank fields use the defaults. Other fields remain working copies.",
+      "saved": "Site settings saved",
       "tabsLabel": "Settings groups",
       "tabs": {
         "profile": "Profile",

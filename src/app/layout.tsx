@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { getEnv } from "@/server/config/env";
+import { getPublicSiteIdentity } from "@/modules/site-settings/server";
 import { localeRegistry } from "@/shared/i18n/config";
 import { locales, type Locale } from "@/shared/i18n/config";
 import { catalogs } from "@/i18n/catalogs";
@@ -28,11 +29,11 @@ import "@/styles/tokens.css";
 import "@/styles/design-contract.css";
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
-  const t = await getTranslations("site");
+  const identity = await getPublicSiteIdentity(locale);
   return {
     metadataBase: new URL(getEnv().SITE_URL),
-    title: { default: t("name"), template: "%s · Tidepage" },
-    description: t("description"),
+    title: { default: identity.title, template: `%s · ${identity.name}` },
+    description: identity.description,
     robots: {
       index: getEnv().INDEXING_ENABLED,
       follow: getEnv().INDEXING_ENABLED,

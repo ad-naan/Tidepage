@@ -41,8 +41,9 @@ import {
   type AvatarPose,
 } from "../domain/coast-avatar";
 import {
-  harborPlaces,
+  harborDestinations,
   type HarborPlace,
+  type HarborDestination,
   type HarborInteraction,
 } from "../domain/coast-harbor";
 import { createSeaAudio } from "../runtime/coast-audio";
@@ -477,7 +478,7 @@ export function HarborView({ onVoyage }: { onVoyage: () => void }) {
               </div>
               <p>{t("network.help")}</p>
               <nav aria-label={t("guide.destinations")}>
-                {(Object.keys(harborPlaces) as HarborPlace[]).map((id) => (
+                {(Object.keys(harborDestinations) as HarborDestination[]).map((id) => (
                   <Button
                     key={id}
                     onClick={() => {
@@ -486,7 +487,7 @@ export function HarborView({ onVoyage }: { onVoyage: () => void }) {
                     }}
                   >
                     <Footprints size={15} />
-                    {t(`places.${id}.name`)}
+                    {t(`destinations.${id}`)}
                   </Button>
                 ))}
               </nav>

@@ -1,8 +1,9 @@
 {
   "site": {
-    "name": "Tidepage · 潮页",
-    "description": "adnaan 的潮页。记录技术、产品与生活，走进一片可以探索的光阴海岸。",
-    "skip": "跳到主要内容"
+    "name": "光阴副本集",
+    "description": "把经历写成文字，把想法做成作品。这里收藏 adnaan 关于技术、设计与日常的光阴副本。",
+    "skip": "跳到主要内容",
+    "title": "光阴副本集 · adnaan"
   },
   "common": {
     "loading": "正在翻开新的一页…",
@@ -537,7 +538,7 @@
   },
   "about": {
     "title": "我的自述",
-    "description": "关于我，也关于这份仍在更新的潮页。",
+    "description": "关于我，也关于这份仍在更新的光阴副本集。",
     "byline": "写给来到这里的你",
     "status": "这一页，还在继续",
     "motto1": "让记忆有处安放，",
@@ -735,10 +736,22 @@
         "cancelled": "合照已取消或邀请过期，可以继续在海边走走。"
       },
       "jump": "轻轻跃起",
+      "destinations": {
+        "dock": "抵达码头",
+        "beach": "潮汐沙滩",
+        "bench": "海边长椅",
+        "cottage": "海湾小屋",
+        "square": "旅人集会庭院",
+        "grove": "月光林与潮池",
+        "ruins": "潮汐石环遗迹",
+        "lookout": "西岸观景台"
+      },
       "interact": {
         "key": "E",
         "bench": "坐下 / 起身",
         "chair": "坐下阅读 / 起身",
+        "squareLeft": "坐在庭院长椅",
+        "squareRight": "坐在庭院长椅",
         "door": "进屋 / 离开",
         "hearth": "拨动炉火",
         "crystal": "唤醒潮汐水晶",
@@ -940,7 +953,7 @@
     "contact": "前往 adnaan 的 GitHub"
   },
   "admin": {
-    "name": "潮页工作台",
+    "name": "光阴副本集工作台",
     "localMode": "站点工作区",
     "localDetail": "草稿保存在站点数据库，图片保存在服务器媒体目录。保存工作副本后，可继续编辑和预览。",
     "visit": "查看网站",
@@ -1215,8 +1228,8 @@
       "back": "返回列表"
     },
     "settings": {
-      "description": "先整理各语言的公开资料。保存只保留工作副本，不改变前台。",
-      "saved": "设置工作副本已保存到站点",
+      "description": "站主保存站点名称、默认 SEO 标题和简介后，将更新网页标题、分享信息与 RSS。中英文独立设置；留空使用默认文案。其余字段仍保存为工作副本。",
+      "saved": "站点设置已保存",
       "tabsLabel": "设置分组",
       "tabs": {
         "profile": "个人资料",

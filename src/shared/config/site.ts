@@ -1,10 +1,11 @@
 export const site = {
-  name: "Tidepage",
+  name: "光阴副本集",
+  title: "光阴副本集 · adnaan",
   author: "adnaan",
   language: "zh-CN",
   timeZone: "Asia/Shanghai",
   description:
-    "adnaan 的光阴副本。记录技术、产品与生活，把这一页留好，下一页继续。",
+    "把经历写成文字，把想法做成作品。这里收藏 adnaan 关于技术、设计与日常的光阴副本。",
 } as const;
 export const navigationItems = [
   { href: "/", key: "home" },

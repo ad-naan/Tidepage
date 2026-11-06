@@ -25,7 +25,7 @@ Object.defineProperty(globalThis, "FileReader", {
   configurable: true,
 });
 
-const output = path.resolve("artifacts/coast-models");
+const output = path.resolve(process.argv[2] ?? "artifacts/coast-models");
 await mkdir(output, { recursive: true });
 const variants: { name: string; appearance: CoastAvatar }[] = [
   { name: "sea-traveler", appearance: defaultAvatar },

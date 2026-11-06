@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getEnv } from "@/server/config/env";
 import { site } from "@/shared/config/site";
+import { getPublicSiteIdentity } from "@/modules/site-settings/server";
+import type { SiteIdentity } from "@/modules/site-settings/domain/identity";
 import {
   defaultLocale,
   locales,
@@ -34,9 +36,12 @@ export function pageMetadata(
   description: string = site.description,
   locale: Locale = defaultLocale,
   available: readonly Locale[] = locales,
+  identity: SiteIdentity = site,
 ): Metadata {
+  const fullTitle =
+    path === "/" ? identity.title : `${title} · ${identity.name}`;
   return {
-    title,
+    title: { absolute: fullTitle },
     description,
     alternates: {
       canonical: localizedUrl(locale, path),
@@ -49,29 +54,30 @@ export function pageMetadata(
     },
     openGraph: {
       type: "website",
-      siteName: site.name,
+      siteName: identity.name,
       locale: localeRegistry[locale].openGraph,
       url: localizedUrl(locale, path),
-      title,
+      title: fullTitle,
       description,
       images: [
         {
           url: absoluteUrl("/opengraph-image"),
           width: 1200,
           height: 630,
-          alt: site.name,
+          alt: identity.name,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: fullTitle,
       description,
       images: [absoluteUrl("/opengraph-image")],
     },
   };
 }
 const pages = {
+  "/explore": { title: "world.name", description: "world.description" },
   "/friends": { title: "nav.friends", description: "friends.description" },
   "/": { title: "site.name", description: "site.description" },
   "/articles": { title: "nav.articles", description: "articles.description" },
@@ -85,18 +91,27 @@ export async function getPageMetadata(path: keyof typeof pages) {
   const locale = await getLocale();
   const t = await getTranslations();
   const page = pages[path];
-  return pageMetadata(path, t(page.title), t(page.description), locale);
+  const identity = await getPublicSiteIdentity(locale);
+  return pageMetadata(
+    path,
+    t(page.title),
+    path === "/" ? identity.description : t(page.description),
+    locale,
+    locales,
+    identity,
+  );
 }
-export function articleMetadata(
+export async function articleMetadata(
   article: Article,
   available: readonly Locale[],
-): Metadata {
+): Promise<Metadata> {
   const base = pageMetadata(
     `/articles/${article.slug}`,
     article.title,
     article.excerpt,
     article.locale,
     available,
+    await getPublicSiteIdentity(article.locale),
   );
   return {
     ...base,
