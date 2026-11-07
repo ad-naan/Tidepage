@@ -1,12 +1,13 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { friendLinkSchema } from "../../src/modules/friends/domain/models";
+import { friendDraftSchema } from "../../src/modules/friends/domain/models";
 
 test("friend destinations reject malformed, executable and credential-bearing URLs without throwing", () => {
   const friend = {
     id: "friend",
-    name: "A friend",
-    description: "A small corner",
+    revision: 0,
+    sortOrder: 0,
+    translations: { en: { name: "A friend", description: "A small corner" } },
     category: "life",
   };
   for (const url of [
@@ -17,13 +18,13 @@ test("friend destinations reject malformed, executable and credential-bearing UR
     "https://user:password@friend.example",
   ]) {
     assert.equal(
-      friendLinkSchema.safeParse({ ...friend, url }).success,
+      friendDraftSchema.safeParse({ ...friend, url }).success,
       false,
       url,
     );
   }
   assert.equal(
-    friendLinkSchema.safeParse({ ...friend, url: "https://friend.example/" })
+    friendDraftSchema.safeParse({ ...friend, url: "https://friend.example/" })
       .success,
     true,
   );

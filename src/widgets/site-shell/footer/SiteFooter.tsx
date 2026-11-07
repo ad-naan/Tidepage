@@ -5,18 +5,20 @@ import { Anchor } from "@/shared/ui/link/Anchor";
 import { useLocale, useTranslations } from "next-intl";
 import { Heart, Mail, Rss, ArrowUpRight } from "lucide-react";
 import { Link } from "@/shared/i18n/navigation";
-import { FooterPresence } from "./FooterPresence";
 import { FooterPreferences } from "./FooterPreferences";
 import styles from "./SiteFooter.module.css";
 import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
+import { feedPath } from "@/shared/config/site";
 
 export function SiteFooter({
+  year,
   theme,
   showCoast = false,
   onThemeChange,
   onContact,
   onHeart,
 }: {
+  year: string;
   theme: "light" | "dark";
   showCoast?: boolean;
   onThemeChange: () => void;
@@ -53,7 +55,7 @@ export function SiteFooter({
           </Link>
           <div className={styles.caption}>
             <span className={styles.captionLine}>
-              © 2026
+              © {year}
               {showCoast && (
                 <Link href="/explore" className={styles.coastLink}>
                   {t("coast")}
@@ -66,7 +68,7 @@ export function SiteFooter({
             <Button aria-label={t("heart")} onClick={onHeart}>
               <Heart size={13} />
             </Button>
-            <Anchor href={`/feed.xml?locale=${locale}`} aria-label={t("rss")}>
+            <Anchor href={feedPath(locale)} aria-label={t("rss")}>
               <Rss size={13} />
             </Anchor>
             <Button aria-label={t("contact")} onClick={onContact}>
@@ -76,10 +78,6 @@ export function SiteFooter({
         </div>
         <div className={styles.tools}>
           <FooterPreferences theme={theme} onThemeChange={onThemeChange} />
-          <span className={styles.separator} aria-hidden="true">
-            ✧
-          </span>
-          <FooterPresence />
         </div>
       </div>
     </footer>

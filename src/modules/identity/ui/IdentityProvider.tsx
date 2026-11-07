@@ -15,6 +15,7 @@ import type { OAuthProviderId } from "@/modules/identity/domain/oauth";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { Button } from "@/shared/ui/button/Button";
 import { Link } from "@/shared/i18n/navigation";
+import { apiSend } from "@/shared/http/client";
 import { OAuthLoginOptions } from "./OAuthLoginOptions";
 import { AuthorNameText } from "./AuthorSignature";
 import styles from "./IdentityProvider.module.css";
@@ -52,10 +53,7 @@ export function IdentityProvider({
   const signOut = useCallback(async () => {
     setSigningOut(true);
     try {
-      const response = await fetch("/api/v1/auth/session", {
-        method: "DELETE",
-      });
-      if (!response.ok) throw new Error("logout failed");
+      await apiSend("/api/v1/auth/session", "DELETE");
       window.location.reload();
     } catch {
       setSigningOut(false);

@@ -10,7 +10,6 @@ import {
   type ServerEvents,
   type RealtimeAck,
 } from "../../src/shared/realtime/protocol";
-import { createLocalBus, createRedisBus } from "../../src/server/realtime/bus";
 import type { GatewayConfig } from "./config";
 import { attachCoastGateway } from "./coast-gateway";
 import {
@@ -68,16 +67,6 @@ export async function createGateway(
     } finally {
       clearTimeout(deadline);
     }
-  }
-  const report = () => console.warn("realtime.bus_unavailable");
-  let bus;
-  try {
-    bus = config.redisUrl
-      ? await createRedisBus(config.redisUrl, config.namespace, report)
-      : createLocalBus(config.namespace, report);
-  } catch (e) {
-    redis?.destroy();
-    throw e;
   }
   const store =
     injectedStore ??
@@ -167,7 +156,6 @@ export async function createGateway(
   const broadcast = async () => {
     const snapshot = await store.read();
     io.to("public:author").emit("author:snapshot", snapshot);
-    await bus.publish("author:changed", JSON.stringify(snapshot));
   };
   io.on("connection", (socket) => {
     if (!socket.data.publisher) void socket.join("public:author");
@@ -228,7 +216,7 @@ export async function createGateway(
         .then(async () => {
           if (await store.release(socket.id)) await broadcast();
         })
-        .catch(report);
+        .catch(() => console.warn("realtime.broadcast_failed"));
     });
   });
   const closeCoast = attachCoastGateway(
@@ -241,7 +229,6 @@ export async function createGateway(
     io,
     http,
     store,
-    bus,
     async listen() {
       await new Promise<void>((resolve, reject) => {
         http.once("error", reject);
@@ -253,7 +240,6 @@ export async function createGateway(
       closeCoast();
       clearInterval(cleanup);
       await new Promise<void>((resolve) => io.close(() => resolve()));
-      await bus.close();
       if (redis?.isOpen) redis.destroy();
     },
   };

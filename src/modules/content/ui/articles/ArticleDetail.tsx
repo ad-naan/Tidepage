@@ -16,7 +16,7 @@ import { ReadingImage } from "@/modules/content/ui/rich-text/ReadingImage";
 import { documentChapters } from "@/modules/content/domain/document-presentation";
 import {
   Discussion,
-  ReadingAnnotations,
+  ReadingQuoteSelection,
 } from "@/modules/engagement/ui/Discussion";
 import type { Article, ArticleSummary } from "@/modules/content/domain/models";
 import styles from "./ArticleDetail.module.css";
@@ -34,7 +34,7 @@ export async function ArticleDetail({
   const categories = await getTranslations("categories");
   return (
     <div className={`reading-page ${styles.reading}`}>
-      <ReadingAnnotations />
+      <ReadingQuoteSelection />
       <Link href="/articles" className="back-link">
         <ArrowLeft size={16} />
         {t("back")}

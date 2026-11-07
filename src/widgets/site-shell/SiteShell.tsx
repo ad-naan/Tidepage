@@ -24,10 +24,12 @@ export function SiteShell({
   children,
   articles,
   navigation,
+  year,
 }: {
   children: ReactNode;
   articles: ArticleSummary[];
   navigation: NavigationOverview;
+  year: string;
 }) {
   const t = useTranslations("nav"),
     footer = useTranslations("footer"),
@@ -84,6 +86,7 @@ export function SiteShell({
             </motion.div>
           </main>
           <SiteFooter
+            year={year}
             showCoast={visitedCoast && pathname !== "/"}
             theme={theme}
             onThemeChange={() => setTheme(theme === "light" ? "dark" : "light")}

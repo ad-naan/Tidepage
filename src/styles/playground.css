@@ -28,13 +28,6 @@
 .living-header.is-expanded .header-music .music-open {
   gap: 0;
 }
-.living-header.is-expanded .header-visitor-faces {
-  display: none;
-}
-.living-header.is-expanded .header-visitors-icon {
-  display: block;
-  width: 14px;
-}
 .living-header.is-expanded .living-search-trigger .search-text,
 .living-header.is-expanded .living-search-trigger kbd {
   display: none;
@@ -217,11 +210,6 @@
   }
   .living-header.is-expanded .living-actions {
     gap: 12px;
-  }
-  .living-header.is-expanded
-    .header-visitors-trigger
-    > span:not(.header-visitor-faces) {
-    display: none;
   }
   .living-header.is-expanded .header-widget-divider {
     display: none;

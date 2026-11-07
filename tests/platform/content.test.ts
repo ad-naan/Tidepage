@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { articlesTable } from "../../src/modules/content/infrastructure/schema";
 import { articleFixtures, createContentTestStore } from "../fixtures/content";
 import { usersTable } from "../../src/modules/identity/infrastructure/schema";
@@ -99,11 +99,6 @@ test("PostgreSQL content honors publication and summary boundaries", async () =>
       "z-last",
     );
     assert.equal(await repository.nextArticle("z-last", "zh-CN"), undefined);
-    await db.execute(sql`alter table articles drop column publication`);
-    assert.equal(
-      (await service.articleBySlug(source.slug))?.title,
-      source.title,
-    );
   } finally {
     await store.close();
   }

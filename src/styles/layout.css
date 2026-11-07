@@ -74,8 +74,7 @@ body {
   :root {
     --site-header-height: 76px;
   }
-  .living-header .sky-mobile-activity,
-  .living-header .header-visitors-trigger {
+  .living-header .sky-mobile-activity {
     display: none;
   }
   .living-header .living-actions {
@@ -90,7 +89,6 @@ body {
   .living-header .language-switch [data-select-part="value"] {
     display: none;
   }
-  .living-header.is-reading .header-visitors-trigger,
   .living-header.is-reading .living-focus-button {
     display: none;
   }

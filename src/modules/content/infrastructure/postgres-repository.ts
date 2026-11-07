@@ -14,7 +14,7 @@ import {
   sql,
 } from "drizzle-orm";
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
-import { getDb, isUndefinedColumn, type Database } from "@/server/db/client";
+import { getDb, type Database } from "@/server/db/client";
 import { dateKey, formatDate } from "@/shared/lib/date-time";
 import { noteImagesSchema } from "@/modules/content/domain/note-images";
 import {
@@ -45,20 +45,8 @@ const articleColumns = {
   ...summaryColumns,
   sections: a.sections,
   body: a.body,
+  publication: a.publication,
 };
-type ArticleRow = Pick<
-  typeof a.$inferSelect,
-  keyof typeof articleColumns | "publication"
->;
-const publicationRetryAt = new WeakMap<Database, number>();
-function parseArticle(row: ArticleRow) {
-  return articleSchema.parse({
-    ...summary(row),
-    sections: row.sections,
-    body: row.body ?? undefined,
-    publication: row.publication ?? undefined,
-  });
-}
 function summary(
   row:
     | typeof a.$inferSelect
@@ -137,28 +125,19 @@ export function postgresContentRepository(
           .orderBy(desc(a.publishedAt), asc(a.slug))
       ).map(summary),
     articleBySlug: async (slug, locale) => {
-      const where = and(published(a), eq(a.slug, slug), eq(a.locale, locale));
-      if (Date.now() >= (publicationRetryAt.get(db) ?? 0)) {
-        try {
-          const [row] = await db
-            .select({ ...articleColumns, publication: a.publication })
-            .from(a)
-            .where(where)
-            .limit(1);
-          publicationRetryAt.delete(db);
-          return row ? parseArticle(row) : null;
-        } catch (error) {
-          if (!isUndefinedColumn(error)) throw error;
-          publicationRetryAt.set(db, Date.now() + 30_000);
-        }
-      }
-      // During rollout, old schemas can still serve all existing articles.
-      const [legacy] = await db
+      const [row] = await db
         .select(articleColumns)
         .from(a)
-        .where(where)
+        .where(and(published(a), eq(a.slug, slug), eq(a.locale, locale)))
         .limit(1);
-      return legacy ? parseArticle({ ...legacy, publication: null }) : null;
+      return row
+        ? articleSchema.parse({
+            ...summary(row),
+            sections: row.sections,
+            body: row.body ?? undefined,
+            publication: row.publication ?? undefined,
+          })
+        : null;
     },
     articleLocales: async (slug) =>
       (

@@ -14,10 +14,11 @@ export function resolveSiteIdentity(
     name,
     title:
       fields?.seoTitle?.trim() ||
-      (name === defaults.name ? defaults.title : `${name} · adnaan`),
+      (name === defaults.name ? defaults.title : `${name} · ${profile.name}`),
     description:
       fields?.seoDescription?.trim() ||
       fields?.siteDescription?.trim() ||
       defaults.description,
   };
 }
+import { profile } from "@/shared/config/profile";

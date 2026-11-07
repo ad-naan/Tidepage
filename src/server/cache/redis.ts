@@ -54,9 +54,3 @@ export function getCacheStore(): CacheStore {
     },
   };
 }
-export async function closeRedis() {
-  globalRedis.adnaanRedis?.disconnect();
-  delete globalRedis.adnaanRedis;
-  delete globalRedis.adnaanRedisConnection;
-  delete globalRedis.adnaanRedisRetryAt;
-}

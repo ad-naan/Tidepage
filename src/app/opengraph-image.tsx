@@ -1,7 +1,10 @@
 import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-export const alt = "光阴副本集 · adnaan";
+import { profile } from "@/shared/config/profile";
+import zhCN from "@/shared/i18n/messages/zh-CN.json";
+import en from "@/shared/i18n/messages/en.json";
+export const alt = zhCN.site.title;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export default async function OpenGraphImage() {
@@ -25,7 +28,7 @@ export default async function OpenGraphImage() {
         src={`data:image/png;base64,${signature.toString("base64")}`}
         width={400}
         height={110}
-        alt="adnaan"
+        alt={profile.name}
         style={{ objectFit: "contain", objectPosition: "left" }}
       />
       <div
@@ -36,7 +39,7 @@ export default async function OpenGraphImage() {
           color: "#7c8178",
         }}
       >
-        Notes on code, product &amp; everyday life.
+        {en.site.shareTagline}
       </div>
       <div
         style={{

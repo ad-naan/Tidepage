@@ -4,7 +4,7 @@ const optionalUrl = z.preprocess(
   (value) => (value === "" ? undefined : value),
   z.url().optional(),
 );
-const optionalOAuthValue = (min: number, max: number) =>
+const optionalText = (min: number, max: number) =>
   z.preprocess(
     (value) => (value === "" ? undefined : value),
     z.string().min(min).max(max).optional(),
@@ -19,14 +19,14 @@ export const envSchema = z
     DATABASE_POOL_MAX: z.coerce.number().int().min(1).max(50).default(10),
     UPLOAD_DIR: z.string().min(1).default("./storage/uploads"),
     REALTIME_AUTHOR_TOKEN: z.string().min(32).max(512).optional(),
-    OAUTH_GITHUB_CLIENT_ID: optionalOAuthValue(1, 128),
-    OAUTH_GITHUB_CLIENT_SECRET: optionalOAuthValue(8, 256),
-    OAUTH_GITEE_CLIENT_ID: optionalOAuthValue(1, 128),
-    OAUTH_GITEE_CLIENT_SECRET: optionalOAuthValue(8, 256),
+    OAUTH_GITHUB_CLIENT_ID: optionalText(1, 128),
+    OAUTH_GITHUB_CLIENT_SECRET: optionalText(8, 256),
+    OAUTH_GITEE_CLIENT_ID: optionalText(1, 128),
+    OAUTH_GITEE_CLIENT_SECRET: optionalText(8, 256),
     REDIS_URL: optionalUrl,
     AI_CHAT_COMPLETIONS_URL: optionalUrl,
-    AI_API_KEY: optionalOAuthValue(1, 1024),
-    AI_MODEL: optionalOAuthValue(1, 160),
+    AI_API_KEY: optionalText(1, 1024),
+    AI_MODEL: optionalText(1, 160),
     AI_GUIDE_ENABLED: z
       .enum(["true", "false"])
       .default("false")

@@ -59,19 +59,6 @@
 [data-theme="dark"] .living-header.is-expanded {
   box-shadow: 0 18px 55px #080d1840;
 }
-[data-theme="dark"] .header-visitor-faces i {
-  background: #334249;
-  color: #b8c9c7;
-  border-color: var(--card);
-}
-[data-theme="dark"] .header-visitor-faces i:nth-child(2) {
-  background: #453f43;
-  color: #d1c0b4;
-}
-[data-theme="dark"] .header-visitor-faces i:nth-child(3) {
-  background: #354254;
-  color: #b4c4dc;
-}
 [data-theme="dark"] .live-dot,
 [data-theme="dark"] .living-avatar > i {
   background: #94aaac;

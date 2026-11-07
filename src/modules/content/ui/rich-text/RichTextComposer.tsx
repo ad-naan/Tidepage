@@ -60,7 +60,6 @@ export function RichTextComposer({
         heading: false,
         link: {
           openOnClick: false,
-          protocols: ["http", "https"],
           isAllowedUri: (url) => safeWebUrl.safeParse(url).success,
         },
       }),

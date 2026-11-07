@@ -2,8 +2,8 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getEnv } from "@/server/config/env";
-import { site } from "@/shared/config/site";
 import { profile } from "@/shared/config/profile";
+import { feedPath, shareImagePath } from "@/shared/config/site";
 import {
   getPublicSiteIdentity,
   getPersonalPage,
@@ -37,11 +37,11 @@ export function languageAlternates(
 }
 export function pageMetadata(
   path: string,
-  title: string = site.name,
-  description: string = site.description,
-  locale: Locale = defaultLocale,
-  available: readonly Locale[] = locales,
-  identity: SiteIdentity = site,
+  title: string,
+  description: string,
+  locale: Locale,
+  available: readonly Locale[],
+  identity: SiteIdentity,
 ): Metadata {
   const fullTitle =
     path === "/" ? identity.title : `${title} · ${identity.name}`;
@@ -51,7 +51,7 @@ export function pageMetadata(
     alternates: {
       canonical: localizedUrl(locale, path),
       languages: languageAlternates(path, available),
-      types: { "application/rss+xml": `/feed.xml?locale=${locale}` },
+      types: { "application/rss+xml": feedPath(locale) },
     },
     robots: {
       index: getEnv().INDEXING_ENABLED,
@@ -66,9 +66,7 @@ export function pageMetadata(
       description,
       images: [
         {
-          url: absoluteUrl("/opengraph-image"),
-          width: 1200,
-          height: 630,
+          url: absoluteUrl(shareImagePath),
           alt: identity.name,
         },
       ],
@@ -77,7 +75,7 @@ export function pageMetadata(
       card: "summary_large_image",
       title: fullTitle,
       description,
-      images: [absoluteUrl("/opengraph-image")],
+      images: [absoluteUrl(shareImagePath)],
     },
   };
 }

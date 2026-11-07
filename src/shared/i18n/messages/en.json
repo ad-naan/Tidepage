@@ -3,7 +3,8 @@
     "name": "Fragments of Time",
     "description": "Experiences become stories; ideas become things. A collection of adnaan's notes on code, design, and everyday life.",
     "skip": "Skip to main content",
-    "title": "Fragments of Time · adnaan"
+    "title": "Fragments of Time · adnaan",
+    "shareTagline": "Notes on code, product & everyday life."
   },
   "common": {
     "loading": "Turning to a new page…",
@@ -60,7 +61,10 @@
     "departing": "Setting sail for the coast…"
   },
   "ui": {
-    "dateTime": { "justNow": "Just now", "unavailable": "Date unavailable" },
+    "dateTime": {
+      "justNow": "Just now",
+      "unavailable": "Date unavailable"
+    },
     "scroll": {
       "page": "Page",
       "content": "Content",
@@ -296,12 +300,6 @@
     "sourceError": "Audio is unavailable. You can import a local file.",
     "empty": "No music selected"
   },
-  "stats": {
-    "open": "View visitor statistics",
-    "label": "Visitor statistics",
-    "presenceTitle": "Visitor statistics",
-    "unavailable": "Visitor statistics are not connected yet."
-  },
   "activity": {
     "unavailable": "Activity information is not connected yet.",
     "unavailableShort": "Activity unavailable",
@@ -364,7 +362,6 @@
     "VALIDATION_ERROR": "Invalid request parameters",
     "INTERNAL_ERROR": "The service is temporarily unavailable",
     "NOT_FOUND": "This content doesn't exist or hasn't been published",
-    "IDENTITY_UNAVAILABLE": "The account service isn't configured yet",
     "UNAUTHORIZED": "Please sign in first",
     "FORBIDDEN": "You don't have permission to perform this action",
     "INVALID_ORIGIN": "Invalid request origin",
@@ -538,37 +535,7 @@
     "workbench": "Open workbench"
   },
   "discussion": {
-    "reactionsTitle": "What did this piece bring to mind?",
-    "reactionsSub": "Leave a small response.",
-    "inspired": "Inspiring",
-    "resonate": "Resonates",
-    "love": "Love it",
-    "echo": "Leave an echo",
-    "echoSub": "From my writing, to our meeting.",
-    "editorTitle": "Leave a thought under your name",
-    "editorHint": "Sign in to join the discussion and let good ideas be seen.",
-    "editorHintLoggedIn": "Signed-in state preview",
-    "githubLogin": "Sign in with GitHub",
-    "cancelContext": "Cancel quote or reply",
-    "replyTo": "Reply to {name}, share a thought…",
-    "placeholder": "Read this far? Anything you'd like to say?",
-    "contentLabel": "Comment",
-    "emoji": "Add an emoji",
-    "counter": "quotes supported",
-    "submit": "Post thought",
-    "all": "All echoes",
-    "hot": "Top",
-    "new": "Newest",
-    "author": "Author",
-    "like": "Like {name}'s comment",
-    "reply": "Reply",
-    "justNow": "Just now · local preview",
-    "mark": "Highlight",
-    "quote": "Quote to comment",
-    "marked": "A line you just marked",
-    "markPreview": "Highlight preview for this page",
-    "closeMark": "Close the highlight",
-    "unavailable": "Comments are not connected yet."
+    "quote": "Quote to comment"
   },
   "about": {
     "title": "About me",
@@ -984,8 +951,6 @@
     "description": "Writing on our own little islands, sharing a link to hear each other’s tide.",
     "eyebrow": "A LINK, AN ENCOUNTER",
     "directoryTitle": "Places to stop by",
-    "count": "{count} friends",
-    "filterLabel": "Filter friend sites",
     "categories": {
       "all": "All",
       "technology": "Technology",
@@ -1038,7 +1003,6 @@
       "gallery": "Gallery",
       "media": "Media",
       "friends": "Friends",
-      "comments": "Discussions",
       "site": "Site settings"
     },
     "dashboard": {
@@ -1114,7 +1078,6 @@
       "publish": "Publish translation",
       "published": "Translation published or scheduled",
       "publishFailed": "Publishing failed. Check the saved content and media assets, then try again.",
-      "publishSchemaRequired": "Run the pending database migration before publishing.",
       "publishConflict": "The draft has changed or the slug conflicts. Refresh and check the draft. Published articles keep their original slug.",
       "leaveTitle": "Unsaved changes",
       "leaveHelp": "Leaving discards unsaved changes. Images remain in the local media library.",
@@ -1395,10 +1358,6 @@
         "up": "Move section up",
         "down": "Move section down"
       }
-    },
-    "future": {
-      "friends": "Friend management and application review will be added with the friends module. Unreviewed applications will never be published directly.",
-      "comments": "Discussion management depends on identity and engagement services. No fabricated moderation counts are shown."
     },
     "image": {
       "settings": "Image settings",

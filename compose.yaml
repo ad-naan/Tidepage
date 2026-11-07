@@ -48,7 +48,7 @@ services:
       REALTIME_PORT: "3101"
       REALTIME_ORIGINS: ${REALTIME_ORIGINS:?Set REALTIME_ORIGINS in .env}
       REALTIME_AUTHOR_TOKEN: ${REALTIME_AUTHOR_TOKEN:?Set REALTIME_AUTHOR_TOKEN in .env}
-      # 网关读取容器内的 REDIS_URL；生产要求 noeviction 的实例，见 docs/deployment.md。
+      # 网关 Redis 实例要求 noeviction，见 docs/deployment.md。
       REALTIME_REDIS_URL: ${REALTIME_REDIS_URL:?Set REALTIME_REDIS_URL in .env}
       CACHE_NAMESPACE: ${CACHE_NAMESPACE:-tidepage:prod:v1}
     expose:

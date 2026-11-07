@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
-import { coastPlaces } from "@/modules/world/domain/coast-world";
+import { coastPlaces, type PlaceId } from "@/modules/world/domain/coast-world";
 import {
   journeyStops,
   type Journey,
@@ -319,10 +319,11 @@ export function createCoastScene(options: SceneOptions) {
     ring.rotation.x = Math.PI / 2;
     return ring;
   }
-  function island(place: (typeof coastPlaces)[number], size: number) {
+  function island(place: PlaceId, size: number) {
     const group = new THREE.Group();
-    group.position.set(place.position[0], place.position[1], place.position[2]);
-    group.userData.place = place.id;
+    const [x, y, z] = coastPlaces[place];
+    group.position.set(x, y, z);
+    group.userData.place = place;
     scene.add(group);
     pickable.push(group);
     // A continuous eroded shoreline with distinct grass, sand and rock strata.
@@ -502,7 +503,7 @@ export function createCoastScene(options: SceneOptions) {
     mesh(new THREE.ShapeGeometry(ridge), haze, scene, 0, 0, -112 + layer * 12);
   }
 
-  const tower = island(coastPlaces[0], 3.25);
+  const tower = island("articles", 3.25);
   cylinder(tower, 0, 0.8, 0, 1.12, 1.23, 0.3, rock, 64);
   cylinder(tower, 0, 2.8, 0, 0.62, 1, 4.5, chalk, 64);
   cylinder(tower, 0, 2.3, 0, 0.82, 0.86, 0.25, orange, 64);
@@ -786,12 +787,12 @@ export function createCoastScene(options: SceneOptions) {
     loftGlass.castShadow = false;
     return h;
   }
-  const home = island(coastPlaces[1], 3.1);
+  const home = island("notes", 3.1);
   house(home, 0.3, 0.2, 1.1);
   tree(home, -1.8, -0.7, 1.25);
   tree(home, 1.7, -1.3, 1.1);
   tree(home, -1.5, 1.4, 0.6);
-  const workshop = island(coastPlaces[2], 3.45);
+  const workshop = island("projects", 3.45);
   house(workshop, 0.5, 0.2, 1.15);
   house(workshop, -1.5, -0.8, 0.65);
   const windmill = new THREE.Group();
@@ -841,7 +842,7 @@ export function createCoastScene(options: SceneOptions) {
     windmill.rotation.z = -t * 0.32;
   });
   tree(workshop, 1.9, -1.5, 1.2);
-  const bay = island(coastPlaces[3], 1.8);
+  const bay = island("quotes", 1.8);
   const glass = mat(0x84b5a2, {
     transparent: true,
     opacity: 0.8,
@@ -858,7 +859,7 @@ export function createCoastScene(options: SceneOptions) {
   box(bottle, 0, 0, 0.3, 0.31, 0.45, 0.015, chalk);
   for (let i = 0; i < 4; i++)
     ellipsoid(bay, 0.6 + i * 0.12, 0.7, 0.6, 0.12, 0.045, 0.09, chalk);
-  const lookout = island(coastPlaces[4], 3.4);
+  const lookout = island("gallery", 3.4);
   tree(lookout, -1.5, -0.9, 1.6);
   tree(lookout, 1.4, -1.4, 1.3);
   tree(lookout, 1.9, 0.5, 0.9);
@@ -894,7 +895,7 @@ export function createCoastScene(options: SceneOptions) {
     const leg = box(lookout, side * 0.5, 1.25, 0.2, 0.065, 1.6, 0.065, wood);
     leg.rotation.z = -side * 0.15;
   }
-  const pier = island(coastPlaces[5], 2.6);
+  const pier = island("about", 2.6);
   for (let i = 0; i < 12; i++)
     box(pier, 0, 0.65, 1 + i * 0.3, 1.15, 0.1, 0.25, wood);
   for (let i = 0; i < 4; i++) {

@@ -3,6 +3,7 @@ import { SiteShell } from "@/widgets/site-shell/SiteShell";
 import { CustomScrollbars } from "@/shared/ui/scroll-area/CustomScrollbars";
 import { IdentityProvider } from "@/modules/identity/ui/IdentityProvider";
 import { ReadingArticleProvider } from "@/modules/content/ui/articles/ReadingArticleContext";
+import { dateKey } from "@/shared/lib/date-time";
 import {
   getCurrentPrincipal,
   listConfiguredOAuthProviders,
@@ -31,7 +32,11 @@ export default async function SiteLayout({
   return (
     <IdentityProvider principal={principal} providers={providers}>
       <ReadingArticleProvider>
-        <SiteShell articles={articles.items} navigation={{ note, projects }}>
+        <SiteShell
+          articles={articles.items}
+          navigation={{ note, projects }}
+          year={dateKey(new Date()).slice(0, 4)}
+        >
           {children}
         </SiteShell>
       </ReadingArticleProvider>

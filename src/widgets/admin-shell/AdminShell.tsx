@@ -19,7 +19,6 @@ import {
   Blocks,
   Quote,
   Shell,
-  MessagesSquare,
 } from "lucide-react";
 import { Link, usePathname } from "@/shared/i18n/navigation";
 import { NoticeDock } from "@/shared/ui/feedback/NoticeProvider";
@@ -39,7 +38,6 @@ const entries = [
   ["gallery", "/admin/gallery", Image],
   ["media", "/admin/media", Image],
   ["friends", "/admin/friends", Shell],
-  ["comments", "/admin/comments", MessagesSquare],
   ["site", "/admin/site", Settings],
 ] as const;
 export function AdminShell({ children }: { children: ReactNode }) {

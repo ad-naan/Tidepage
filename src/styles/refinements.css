@@ -1025,40 +1025,6 @@ mark {
 .selection-toolbar > button + button {
   border-left: 1px solid #ffffff30;
 }
-.annotation-note {
-  position: fixed;
-  right: 25px;
-  bottom: 100px;
-  width: 260px;
-  background: var(--sand);
-  padding: 20px 22px;
-  border-radius: 3px;
-  box-shadow: var(--shadow);
-  z-index: 41;
-}
-.annotation-note > span {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 9px;
-  color: var(--muted);
-}
-.annotation-note > p {
-  font-family: var(--hand);
-  font-size: 15px;
-  margin-top: 11px;
-}
-.annotation-note > small {
-  display: block;
-  font-size: 8px;
-  color: var(--muted);
-  margin-top: 12px;
-}
-.annotation-note > button {
-  position: absolute;
-  top: 13px;
-  right: 10px;
-}
 .discussion {
   margin-top: 60px;
   max-width: 800px;
@@ -1974,11 +1940,6 @@ mark {
   }
   .lightbox-caption p {
     font-size: 15px;
-  }
-  .annotation-note {
-    right: 16px;
-    bottom: 85px;
-    width: 250px;
   }
   .login-privileges {
     gap: 12px;

@@ -1,32 +1,29 @@
-import { getEnv } from "@/server/config/env";
 import { getPool } from "@/server/db/client";
 import { getRedis } from "@/server/cache/redis";
 import { defineRoute, jsonData } from "@/server/http/route";
 export const GET = defineRoute(async (_request, { requestId }) => {
-  const env = getEnv();
-  const checks = await Promise.allSettled([
-    env.DATABASE_URL
-      ? getPool()
-          .query("select 1")
-          .then(() => "ready")
-      : Promise.resolve("disabled"),
-    env.REDIS_URL
-      ? getRedis()
-          .then((client) => client!.ping())
-          .then(() => "ready")
-      : Promise.resolve("disabled"),
+  const [postgres, redis] = await Promise.allSettled([
+    getPool()
+      .query("select 1")
+      .then(() => "ready"),
+    getRedis().then(async (client) => {
+      if (!client) return "disabled";
+      await client.ping();
+      return "ready";
+    }),
   ]);
-  const ready = checks[0].status === "fulfilled";
-  const status = (i: number) =>
-    checks[i].status === "fulfilled" ? checks[i].value : "unavailable";
+  const ready = postgres.status === "fulfilled";
   return jsonData(
     {
       status: ready
-        ? checks[1].status === "fulfilled"
+        ? redis.status === "fulfilled"
           ? "ready"
           : "degraded"
         : "not_ready",
-      dependencies: { postgres: status(0), redis: status(1) },
+      dependencies: {
+        postgres: ready ? postgres.value : "unavailable",
+        redis: redis.status === "fulfilled" ? redis.value : "unavailable",
+      },
     },
     requestId,
     { status: ready ? 200 : 503 },

@@ -8,8 +8,6 @@ const globalDb = globalThis as unknown as { adnaanPool?: Pool };
 let database: Database | undefined;
 export function getPool(): Pool {
   const env = getEnv();
-  if (!env.DATABASE_URL)
-    throw new Error("DATABASE_URL is required for database operations");
   if (!globalDb.adnaanPool) {
     globalDb.adnaanPool = new Pool({
       connectionString: env.DATABASE_URL,
@@ -32,15 +30,6 @@ function createDatabase() {
 export type Database = ReturnType<typeof createDatabase>;
 export function getDb(): Database {
   return (database ??= createDatabase());
-}
-export function isUndefinedColumn(error: unknown): boolean {
-  const cause = error instanceof Error ? (error.cause ?? error) : error;
-  return (
-    !!cause &&
-    typeof cause === "object" &&
-    "code" in cause &&
-    cause.code === "42703"
-  );
 }
 export async function closeDatabase() {
   const pool = globalDb.adnaanPool;

@@ -173,7 +173,6 @@ export function RichTextEditor({
       StarterKit.configure({
         link: {
           openOnClick: false,
-          protocols: ["http", "https"],
           isAllowedUri: (url) => safeWebUrl.safeParse(url).success,
         },
       }),

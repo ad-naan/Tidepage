@@ -13,14 +13,19 @@ export const emptyJourney: Journey = {
   beacon: false,
   discovered: false,
 };
-export const journeyStops = [
-  ...coastPlaces.map((p) => ({
-    id: p.id as JourneyId,
-    x: p.position[0],
-    z: p.position[2],
-    radius: p.id === "quotes" ? 2 : 3.5,
+export const journeyStops: {
+  id: JourneyId;
+  x: number;
+  z: number;
+  radius: number;
+}[] = [
+  ...(Object.keys(coastPlaces) as PlaceId[]).map((id) => ({
+    id,
+    x: coastPlaces[id][0],
+    z: coastPlaces[id][2],
+    radius: id === "quotes" ? 2 : 3.5,
   })),
-  { id: "secret" as JourneyId, x: -24, z: -30, radius: 4.5 },
+  { id: "secret", x: -24, z: -30, radius: 4.5 },
 ];
 export function restoreJourney(value: unknown): Journey {
   if (!value || typeof value !== "object") return emptyJourney;

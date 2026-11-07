@@ -23,13 +23,11 @@ export function readGatewayConfig(
     origins: (env.REALTIME_ORIGINS ?? env.SITE_URL ?? "http://localhost:3000")
       .split(",")
       .map((s) => s.trim()),
-    redisUrl: memory
-      ? undefined
-      : env.REALTIME_REDIS_URL || env.REDIS_URL || undefined,
+    redisUrl: memory ? undefined : env.REALTIME_REDIS_URL || undefined,
     namespace: env.CACHE_NAMESPACE,
   });
   if (env.NODE_ENV === "production" && !c.redisUrl)
-    throw new Error("Production realtime requires Redis");
+    throw new Error("Production realtime requires REALTIME_REDIS_URL");
   for (const origin of c.origins) {
     const u = new URL(origin);
     if (!/^https?:$/.test(u.protocol) || u.origin !== origin)

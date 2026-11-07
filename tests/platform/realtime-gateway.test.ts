@@ -10,7 +10,6 @@ import {
   redisPresenceStore,
 } from "../../services/realtime/presence-store";
 import { readGatewayConfig } from "../../services/realtime/config";
-import { createLocalBus, createRedisBus } from "../../src/server/realtime/bus";
 import {
   presenceUpdateSchema,
   type PresenceUpdate,
@@ -109,10 +108,24 @@ test("presence contract rejects private fields, non-PNG icons, duplicate IDs and
     assert.equal(presenceUpdateSchema.safeParse(invalid).success, false);
 });
 test("production gateway requires Redis and a strong private token", () => {
-  assert.throws(() =>
-    readGatewayConfig({ NODE_ENV: "production", REALTIME_AUTHOR_TOKEN: token }),
+  assert.throws(
+    () =>
+      readGatewayConfig({
+        NODE_ENV: "production",
+        REALTIME_AUTHOR_TOKEN: token,
+        REDIS_URL: "redis://web-cache:6379",
+      }),
+    /REALTIME_REDIS_URL/,
   );
   assert.throws(() => readGatewayConfig({ REALTIME_AUTHOR_TOKEN: "short" }));
+  assert.equal(
+    readGatewayConfig({
+      NODE_ENV: "production",
+      REALTIME_AUTHOR_TOKEN: token,
+      REALTIME_REDIS_URL: "redis://gateway:6379",
+    }).redisUrl,
+    "redis://gateway:6379",
+  );
   assert.throws(() =>
     readGatewayConfig({
       REALTIME_AUTHOR_TOKEN: token,
@@ -146,25 +159,6 @@ test("memory lease handles expiry, deduplication and old disconnects", async () 
     await store.update("second", { ...online, sequence: 2 }),
     "LEASE_EXPIRED",
   );
-});
-test("local bus isolates listeners and same-channel unsubscribe is idempotent", async () => {
-  let errors = 0;
-  const bus = createLocalBus("test", () => errors++);
-  const received: string[] = [];
-  const callback = (raw: string) => received.push(raw);
-  const stop1 = await bus.subscribe("author:changed", callback);
-  const stop2 = await bus.subscribe("author:changed", callback);
-  await bus.subscribe("author:changed", () => {
-    throw new Error("consumer failure");
-  });
-  await stop1();
-  await stop1();
-  await bus.publish("author:changed", "one");
-  assert.deepEqual(received, ["one"]);
-  assert.equal(errors, 1);
-  await stop2();
-  await bus.close();
-  await assert.rejects(bus.publish("author:changed", "closed"));
 });
 test(
   "official Socket.IO clients authenticate, read snapshots, pause and reject superseded writers",
@@ -264,42 +258,6 @@ test(
     } finally {
       author.disconnect();
       await gateway.close();
-    }
-  },
-);
-test(
-  "Redis bus retains other subscribers after one unsubscribes",
-  { skip: !process.env.REALTIME_TEST_REDIS_URL },
-  async () => {
-    const bus = await createRedisBus(
-      process.env.REALTIME_TEST_REDIS_URL!,
-      `test:${crypto.randomUUID()}`,
-      () => {},
-    );
-    try {
-      const values: string[] = [];
-      const off = await bus.subscribe("topic", (v) =>
-        values.push(`first:${v}`),
-      );
-      let received!: () => void;
-      const delivered = new Promise<void>((resolve) => {
-        received = resolve;
-      });
-      await bus.subscribe("topic", (v) => {
-        values.push(v);
-        received();
-      });
-      await off();
-      await bus.publish("topic", "kept");
-      await Promise.race([
-        delivered,
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("delivery timeout")), 2000).unref(),
-        ),
-      ]);
-      assert.deepEqual(values, ["kept"]);
-    } finally {
-      await bus.close();
     }
   },
 );

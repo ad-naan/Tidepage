@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
-import { Highlighter, Quote, X } from "lucide-react";
+import { Quote } from "lucide-react";
 import { Button } from "@/shared/ui/button/Button";
 import type { DiscussionTarget } from "@/modules/engagement/domain/discussion";
 import { useNearViewport } from "@/shared/hooks/useNearViewport";
@@ -75,11 +75,10 @@ function DeferredDiscussion({
     </div>
   );
 }
-export function ReadingAnnotations() {
+export function ReadingQuoteSelection() {
   const t = useTranslations("discussion");
   const [selection, setSelection] = useState("");
   const [position, setPosition] = useState({ top: 0, left: 0 });
-  const [marked, setMarked] = useState("");
   useEffect(() => {
     function capture() {
       const s = window.getSelection();
@@ -123,15 +122,6 @@ export function ReadingAnnotations() {
           >
             <Button
               onClick={() => {
-                setMarked(selection);
-                setSelection("");
-              }}
-            >
-              <Highlighter size={13} />
-              {t("mark")}
-            </Button>
-            <Button
-              onClick={() => {
                 window.dispatchEvent(
                   new CustomEvent("article-quote", { detail: selection }),
                 );
@@ -144,19 +134,6 @@ export function ReadingAnnotations() {
           </motion.div>
         )}
       </AnimatePresence>
-      {marked && (
-        <div className="annotation-note">
-          <span>
-            <Highlighter size={14} />
-            {t("marked")}
-          </span>
-          <p>{marked}</p>
-          <small>{t("markPreview")}</small>
-          <Button aria-label={t("closeMark")} onClick={() => setMarked("")}>
-            <X size={13} />
-          </Button>
-        </div>
-      )}
     </>
   );
 }

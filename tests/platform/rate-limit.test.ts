@@ -1,7 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 process.env.DATABASE_URL = "postgresql://test:test@localhost/test";
-import { closePubSub, getPubSub } from "../../src/server/realtime/pubsub";
 import {
   checkRateLimit,
   clientKey,
@@ -12,36 +11,6 @@ import {
   tooManyRequestsError,
   unauthorizedError,
 } from "../../src/server/http/errors";
-
-test("local pubsub delivers messages per channel and supports unsubscribe", async () => {
-  await closePubSub();
-  const bus = await getPubSub();
-  const received: string[] = [];
-  const other: string[] = [];
-  const unsubscribe = await bus.subscribe("world:chat", (message) =>
-    received.push(message),
-  );
-  await bus.subscribe("world:other", (message) => other.push(message));
-  await bus.publish("world:chat", "hello");
-  await unsubscribe();
-  await bus.publish("world:chat", "after-unsubscribe");
-  assert.deepEqual(received, ["hello"]);
-  assert.deepEqual(other, []);
-  await closePubSub();
-});
-
-test("concurrent pubsub initialization shares one bus and rejects use after close", async () => {
-  await closePubSub();
-  const buses = await Promise.all(
-    Array.from({ length: 20 }, () => getPubSub()),
-  );
-  for (const bus of buses) assert.equal(bus, buses[0]);
-  await closePubSub();
-  await assert.rejects(buses[0].publish("author:changed", "stale"));
-  const replacement = await getPubSub();
-  assert.notEqual(replacement, buses[0]);
-  await closePubSub();
-});
 
 test("fixed-window rate limiter blocks over-limit calls and resets", async () => {
   const key = `test:${Date.now()}`;

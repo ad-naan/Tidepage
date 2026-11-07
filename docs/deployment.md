@@ -88,6 +88,6 @@ docker compose logs realtime nginx
 
 Web 的 `/api/v1/health/live` 检查进程，`/api/v1/health/ready` 检查 PostgreSQL 和可选的 Web Redis。只有 Redis 故障时返回 HTTP 200 和 `degraded`，网站可继续读数据库。PostgreSQL 不可用时返回 503。Compose 启用可信客户端 IP，nginx 会覆盖 `X-Real-IP`。其他部署只有在 Web 监听口受保护且入口覆盖此请求头时才启用 `TRUST_PROXY_CLIENT_IP`。
 
-发布文章需要迁移 `0009`。旧库仍可打开已有文章，升级数据库后工作台才能发布。
+启动新版 Web 前先执行 `pnpm db:migrate`，并用 `pnpm db:check` 确认迁移完成。文章读取和发布都依赖 `0009` 新增的表结构。
 
 代码修改后重新部署：`NEXT_PUBLIC_REALTIME_URL` 是构建期内联变量，修改后必须 `docker compose up -d --build` 重建 web 镜像，仅重启容器不生效。

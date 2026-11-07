@@ -3,7 +3,8 @@
     "name": "光阴副本集",
     "description": "把经历写成文字，把想法做成作品。这里收藏 adnaan 关于技术、设计与日常的光阴副本。",
     "skip": "跳到主要内容",
-    "title": "光阴副本集 · adnaan"
+    "title": "光阴副本集 · adnaan",
+    "shareTagline": "关于代码、产品和日常生活的手记。"
   },
   "common": {
     "loading": "正在翻开新的一页…",
@@ -60,7 +61,10 @@
     "departing": "纸船正在出发，带你驶向海岸……"
   },
   "ui": {
-    "dateTime": { "justNow": "刚刚", "unavailable": "时间未知" },
+    "dateTime": {
+      "justNow": "刚刚",
+      "unavailable": "时间未知"
+    },
     "scroll": {
       "page": "页面",
       "content": "内容",
@@ -296,12 +300,6 @@
     "sourceError": "暂时无法加载音频，可导入本地音乐。",
     "empty": "暂无音乐"
   },
-  "stats": {
-    "open": "查看访问统计",
-    "label": "访问统计",
-    "presenceTitle": "访问统计",
-    "unavailable": "访问统计尚未接入，暂无可展示的数据。"
-  },
   "activity": {
     "unavailable": "活动信息尚未接入。",
     "unavailableShort": "活动暂未接入",
@@ -364,7 +362,6 @@
     "VALIDATION_ERROR": "请求参数不合法",
     "INTERNAL_ERROR": "服务暂时不可用",
     "NOT_FOUND": "内容不存在或尚未发布",
-    "IDENTITY_UNAVAILABLE": "账号服务尚未配置",
     "UNAUTHORIZED": "请先登录",
     "FORBIDDEN": "没有执行此操作的权限",
     "INVALID_ORIGIN": "请求来源不合法",
@@ -538,37 +535,7 @@
     "workbench": "进入工作台"
   },
   "discussion": {
-    "reactionsTitle": "这篇文章，让你想到了什么？",
-    "reactionsSub": "留下一个小小的回应。",
-    "inspired": "有启发",
-    "resonate": "有共鸣",
-    "love": "喜欢",
-    "echo": "留下回声",
-    "echoSub": "从我写下，到我们相遇。",
-    "editorTitle": "以你的名字，留下想法",
-    "editorHint": "登录后参与讨论，也让好想法被看见。",
-    "editorHintLoggedIn": "已登录状态预览",
-    "githubLogin": "GitHub 登录",
-    "cancelContext": "取消引用或回复",
-    "replyTo": "回复 {name}，交换一点想法…",
-    "placeholder": "读到这里，有没有什么想说的？",
-    "contentLabel": "评论内容",
-    "emoji": "添加表情",
-    "counter": "支持引用段落",
-    "submit": "发表想法",
-    "all": "所有回声",
-    "hot": "热度",
-    "new": "最新",
-    "author": "作者",
-    "like": "点赞 {name} 的评论",
-    "reply": "回复",
-    "justNow": "刚刚 · 本地预览",
-    "mark": "标注",
-    "quote": "引用评论",
-    "marked": "刚刚划下的一句",
-    "markPreview": "本页标注预览",
-    "closeMark": "关闭标注",
-    "unavailable": "评论服务尚未接入，暂时无法留言。"
+    "quote": "引用评论"
   },
   "about": {
     "title": "自述",
@@ -984,8 +951,6 @@
     "description": "在各自的小岛写作，借一条链接，听见彼此的潮声。",
     "eyebrow": "一条链接，一次相遇",
     "directoryTitle": "常去坐坐的地方",
-    "count": "{count} 位朋友",
-    "filterLabel": "友站分类",
     "categories": {
       "all": "全部",
       "technology": "技术",
@@ -1038,7 +1003,6 @@
       "gallery": "照片廊",
       "media": "媒体库",
       "friends": "友联",
-      "comments": "评论与回应",
       "site": "站点设置"
     },
     "dashboard": {
@@ -1114,7 +1078,6 @@
       "publish": "发布当前语言",
       "published": "已发布或安排当前语言版本",
       "publishFailed": "发布失败，请检查已保存内容和媒体资源后重试。",
-      "publishSchemaRequired": "请先执行待应用的数据库迁移，再发布文章。",
       "publishConflict": "草稿版本已变更，或链接别名冲突。请刷新后检查；已发布文章须使用原链接别名。",
       "leaveTitle": "还有未保存的修改",
       "leaveHelp": "离开会丢失尚未保存的修改。图片仍保留在本地媒体库。",
@@ -1395,10 +1358,6 @@
         "up": "上移小节",
         "down": "下移小节"
       }
-    },
-    "future": {
-      "friends": "友站管理与申请审核将在后续友联模块实现，目前可查看公开页面设计。不会把未审核申请直接发布。",
-      "comments": "真实评论管理依赖身份和互动服务，目前尚未接入，不展示虚构的待审数量。"
     },
     "image": {
       "settings": "图片设置",

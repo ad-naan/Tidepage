@@ -29,7 +29,7 @@ pnpm dev
 
 分别在两个终端运行。修改 `NEXT_PUBLIC_REALTIME_URL` 后重新启动 Next；生产环境需重新构建。桌面服务地址填写网关 origin，不要追加 `/socket.io`。作者状态仍只允许通过作者鉴权写入；浏览器可以发送下文列出的世界空间访客意图，不具有站长或账号权限。
 
-本地只有一个网关时可以在 `.env` 配置 `REALTIME_USE_MEMORY=true` 后运行 `pnpm realtime`。生产网关使用 `REALTIME_REDIS_URL`，旧配置仍可用 `REDIS_URL`。
+本地只有一个网关时可以在 `.env` 配置 `REALTIME_USE_MEMORY=true` 后运行 `pnpm realtime`。生产网关读取 `REALTIME_REDIS_URL`，Web 的缓存和限流读取 `REDIS_URL`。
 
 ## 落日海湾多人空间
 
@@ -73,8 +73,6 @@ Redis 不可用时停止接受需要 Redis 的更新，不静默回落到本机�
 
 - 浏览器通过 `src/shared/realtime/client.ts` 引用计数，共享每个标签页的一条 Socket.IO 连接。
 - `src/shared/realtime/protocol.ts` 定义跨端公开协议。
-- 原有 `getPubSub()` 仍可使用，底层实现抽到 `src/server/realtime/bus.ts`。修复了并发初始化、同频道订阅相互退订、监听器异常和关闭生命周期问题。
-- 网关通过同一 PubSub 实现发布 `author:changed`，供服务端扩展消费。Redis PubSub 本身不补发离线消息；重要工作使用持久队列或数据库 outbox。
 - 世界空间应按区域划分房间、服务端校验意图、限制频率。访客聚合必须处理多实例唯一身份与隐私。Agent 使用独立鉴权、明确权限和持久命令 ID，不能复用公开 reader 或作者状态令牌执行命令。
 
 ## 验证
@@ -89,7 +87,7 @@ go test -tags ci ./...
 
 可选集成测试环境变量：
 
-- `REALTIME_TEST_REDIS_URL`：运行真实 Redis PubSub 和 Lua 租约测试。
+- `REALTIME_TEST_REDIS_URL` 用于真实 Redis 的 Lua 租约测试。
 - `REALTIME_TEST_REDIS_STREAMS_URL`：Redis 7，运行双网关跨实例广播测试。
 - `REALTIME_GO_PROBE`：指向下列命令生成的测试客户端，验证 Go 与官方 Socket.IO 互通。
 

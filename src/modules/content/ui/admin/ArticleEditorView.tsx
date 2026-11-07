@@ -301,13 +301,6 @@ export function ArticleEditorView({
       setChecking(false);
       notify({ title: t("editor.published"), tone: "success" });
     } catch (error) {
-      if (
-        error instanceof ApiClientError &&
-        error.code === "PUBLICATION_SCHEMA_REQUIRED"
-      ) {
-        setPublishError(t("editor.publishSchemaRequired"));
-        return;
-      }
       setPublishError(
         t(
           error instanceof ApiClientError && error.status === 409

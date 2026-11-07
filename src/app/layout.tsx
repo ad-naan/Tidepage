@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { getEnv } from "@/server/config/env";
+import { feedPath } from "@/shared/config/site";
 import { getPublicSiteIdentity } from "@/modules/site-settings/server";
 import { localeRegistry } from "@/shared/i18n/config";
 import { locales, type Locale } from "@/shared/i18n/config";
@@ -39,7 +40,7 @@ export async function generateMetadata(): Promise<Metadata> {
       follow: getEnv().INDEXING_ENABLED,
     },
     alternates: {
-      types: { "application/rss+xml": `/feed.xml?locale=${locale}` },
+      types: { "application/rss+xml": feedPath(locale) },
     },
   };
 }

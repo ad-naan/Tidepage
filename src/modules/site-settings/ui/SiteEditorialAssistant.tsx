@@ -5,6 +5,7 @@ import { Button } from "@/shared/ui/button/Button";
 import { Anchor } from "@/shared/ui/link/Anchor";
 import { apiSend } from "@/shared/http/client";
 import type { Locale } from "@/shared/i18n/config";
+import { feedPath } from "@/shared/config/site";
 import type { SiteSuggestion } from "@/modules/ai/domain/writing";
 
 export function SiteEditorialAssistant({
@@ -74,7 +75,7 @@ export function SiteEditorialAssistant({
         <Button onClick={() => request.current?.abort()}>{t("stop")}</Button>
       )}
       <p>
-        <Anchor href={`/feed.xml?locale=${locale}`}>RSS</Anchor> ·{" "}
+        <Anchor href={feedPath(locale)}>RSS</Anchor> ·{" "}
         <Anchor href={`/llms.txt?locale=${locale}`}>llms.txt</Anchor>
       </p>
       {error && <p role="alert">{error}</p>}

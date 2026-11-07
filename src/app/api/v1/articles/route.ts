@@ -11,8 +11,6 @@ import { boundedJson } from "@/server/http/body";
 import { enforceAccountRateLimit } from "@/server/http/rate-limit";
 import { defineRoute, jsonData } from "@/server/http/route";
 import { log } from "@/server/observability/logger";
-import { isUndefinedColumn } from "@/server/db/client";
-import { AppError } from "@/server/http/errors";
 export const GET = createArticleReadRoutes({ getArticle, listArticles }).list;
 
 export const POST = defineRoute(async (request, { requestId }) => {
@@ -22,15 +20,7 @@ export const POST = defineRoute(async (request, { requestId }) => {
   const article = await publishArticle(
     user.id,
     await boundedJson(request, 2048),
-  ).catch((error: unknown) => {
-    if (isUndefinedColumn(error))
-      throw new AppError(
-        "PUBLICATION_SCHEMA_REQUIRED",
-        "Article publication needs a database migration",
-        503,
-      );
-    throw error;
-  });
+  );
   try {
     await invalidateContentCache(article.slug, article.locale);
   } catch {

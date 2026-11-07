@@ -10,7 +10,7 @@ src/
       SiteShell.tsx              组合站点页头、页脚与阅读模式
       header/                    SiteHeader、HeaderBrand、HeaderSky、ActivityDetails
       navigation/                站点导航及内容预览
-      footer/                    页脚、偏好组合、访客统计
+      footer/                    页脚、偏好组合
       reading/                   页头阅读进度
   modules/
     home/ui/                     HomeView、HomeHero、Journey、ProfileLinks
@@ -22,9 +22,9 @@ src/
         gallery/ about/           GalleryView、AboutView
         layout/                  ContentHeading：内容栏目专用标题
     media/ui/player/             音乐播放器、唱片与唱臂
-    engagement/ui/               评论、手记回应、阅读批注
+    engagement/ui/               评论、手记回应、阅读引用
     identity/ui/                 身份预览与登录展示
-    friends/domain/ server/ ui/   友联协议、数据入口、友站名片与交换说明
+    friends/domain/ ui/           友联工作副本与交换说明
     world/                       海岸插画、交互世界、运行时与玩法规则
   shared/
     ui/                          无业务含义的基础组件
@@ -110,7 +110,7 @@ import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 
 若系统 DNS 对某个域名只返回 `198.18.0.0/15` 的代理 Fake-IP，服务端通过固定的阿里公共 DNS HTTPS 接口获取真实 A 记录，失败后尝试 Cloudflare；只发送域名，不发送网页路径或查询参数。真实地址仍通过公共 IP 校验并固定到 HTTPS 连接，内网、混合地址和直接填写的 Fake-IP 仍被拒绝。正常公网解析不调用额外 DNS 服务。HTML 按头部流式读取，支持压缩与声明的字符集，读取到 `</head>` 即停止；封面校验失败保留已经抓到的标题和摘要。失败短暂缓存并记录不含 URL 的原因码，避免把网络故障长期伪装成成功预览。
 
-评论区用 `useNearViewport` 接近视口时才挂载，复用原有游标分页；编辑器在开始输入、回复或引用时加载。正文代码高亮在接近视口时加载，原文保持可读、可复制。手记阅读窗口按需导入；手记、项目、相册、友联和一言收藏通过 `ProgressiveList` 限制初始挂载数，筛选变化重置批次。该组件只控制挂载数量，不替代服务端分页；文章保留原有服务端分页。媒体沿用原生懒加载。
+评论区用 `useNearViewport` 接近视口时才挂载，复用原有游标分页；编辑器在开始输入、回复或引用时加载。正文代码高亮在接近视口时加载，原文保持可读、可复制。手记阅读窗口按需导入；手记、项目、相册和一言收藏通过 `ProgressiveList` 限制初始挂载数，筛选变化重置批次。该组件只控制挂载数量，不替代服务端分页；文章保留原有服务端分页。媒体沿用原生懒加载。
 
 ## 自动执行
 

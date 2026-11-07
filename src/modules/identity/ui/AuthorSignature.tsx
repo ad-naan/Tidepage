@@ -43,12 +43,14 @@ export function AuthorSignature({
   );
 }
 
+const escapedName = profile.name.replace(/[.*+?^$\{\}()|[\]\\]/g, "\\$&");
+const authorNamePattern = new RegExp(`(${escapedName})`, "gi");
 export function AuthorNameText({ text }: { text: string }) {
   return (
     <>
-      {text.split(/(adnaan)/gi).map((part, index) => (
+      {text.split(authorNamePattern).map((part, index) => (
         <Fragment key={index}>
-          {part.toLowerCase() === profile.name ? (
+          {part.toLowerCase() === profile.name.toLowerCase() ? (
             <AuthorSignature size="inline" />
           ) : (
             part
