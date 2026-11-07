@@ -11,6 +11,95 @@ import {
 import { legacyArticlesToDraft } from "../../src/modules/content/domain/legacy-draft";
 import type { Article } from "../../src/modules/content/domain/models";
 import { readEventStream } from "../../src/shared/http/event-stream";
+import { Schema } from "@tiptap/pm/model";
+import { EditorState, TextSelection } from "@tiptap/pm/state";
+import { history, undo } from "@tiptap/pm/history";
+import { editCurrentBlock } from "../../src/modules/content/ui/admin/editor/document-blocks";
+import {
+  translationSegments,
+  applyTranslationSegments,
+} from "../../src/modules/content/domain/translation";
+
+test("moving a block preserves the selection and undoes as one operation", () => {
+  const schema = new Schema({
+    nodes: {
+      doc: { content: "paragraph+" },
+      paragraph: { content: "text*" },
+      text: {},
+    },
+  });
+  const paragraph = (value: string) =>
+    schema.node("paragraph", null, schema.text(value));
+  const doc = schema.node("doc", null, [
+    paragraph("First"),
+    paragraph("Second"),
+  ]);
+  const before = EditorState.create({
+    doc,
+    selection: TextSelection.create(doc, 2, 4),
+    plugins: [history()],
+  });
+  const moved = before.apply(editCurrentBlock(before, "down")!);
+  assert.equal(moved.doc.textContent, "SecondFirst");
+  assert.equal(
+    moved.doc.textBetween(moved.selection.from, moved.selection.to),
+    "ir",
+  );
+  assert.equal(
+    undo(moved, (tr) => assert.equal(tr.doc.eq(doc), true)),
+    true,
+  );
+  const across = before.apply(
+    before.tr.setSelection(TextSelection.create(doc, 2, 9)),
+  );
+  assert.equal(editCurrentBlock(across, "remove"), null);
+  assert.equal(
+    before.apply(editCurrentBlock(before, "duplicate")!).doc.textContent,
+    "FirstFirstSecond",
+  );
+});
+
+test("translation changes text while retaining links, code and media references", () => {
+  const value = newArticle("fixture").translations.en;
+  value.title = "Title";
+  value.slug = "fixture";
+  value.body = {
+    type: "doc",
+    content: [
+      {
+        type: "paragraph",
+        content: [
+          {
+            type: "text",
+            text: "Read",
+            marks: [{ type: "link", attrs: { href: "https://example.test" } }],
+          },
+        ],
+      },
+      { type: "codeBlock", content: [{ type: "text", text: "const x = 42;" }] },
+      {
+        type: "assetImage",
+        attrs: { assetId: "/uploads/fixture.png", alt: "Image" },
+      },
+    ],
+  };
+  assert.deepEqual(translationSegments(value), ["Title", "Read", "Image"]);
+  const translated = applyTranslationSegments(value, ["标题", "阅读", "图像"]);
+  assert.equal(translated.title, "标题");
+  assert.equal(
+    translated.body.content?.[0].content?.[0].marks?.[0].attrs?.href,
+    "https://example.test",
+  );
+  assert.deepEqual(translated.body.content?.[1], value.body.content?.[1]);
+  assert.deepEqual(translated.body.content?.[2].attrs, {
+    assetId: "/uploads/fixture.png",
+    alt: "图像",
+  });
+  assert.throws(
+    () => applyTranslationSegments(value, ["标题"]),
+    /SEGMENT_MISMATCH/,
+  );
+});
 
 test("content translations keep separate titles, documents, tags and SEO without falling back", () => {
   const draft = newArticle("example");

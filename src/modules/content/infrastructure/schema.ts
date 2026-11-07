@@ -9,6 +9,7 @@ import {
   index,
   check,
   primaryKey,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 import type { Locale } from "@/shared/i18n/config";
 import type { Article, Category } from "@/modules/content/domain/models";
@@ -45,10 +46,19 @@ export const articlesTable = pgTable(
       .notNull()
       .default([]),
     body: jsonb("body").$type<Article["body"]>(),
+    publication: jsonb("publication").$type<Article["publication"]>(),
+    sourceOwner: text("source_owner"),
+    sourceDraft: text("source_draft"),
+    sourceRevision: integer("source_revision"),
     ...publication(),
   },
   (t) => [
     primaryKey({ columns: [t.slug, t.locale] }),
+    uniqueIndex("articles_source_idx").on(
+      t.sourceOwner,
+      t.sourceDraft,
+      t.locale,
+    ),
     index("articles_publication_idx").on(t.locale, t.visibility, t.publishedAt),
     index("articles_category_idx").on(t.category),
     check("articles_minutes_positive", sql`${t.minutes} > 0`),

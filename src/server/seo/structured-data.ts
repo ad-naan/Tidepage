@@ -1,6 +1,6 @@
 import "server-only";
 import type { Article } from "@/modules/content/domain/models";
-import { site } from "@/shared/config/site";
+import { profile } from "@/shared/config/profile";
 import { localizedUrl } from "./metadata";
 import type { Locale } from "@/shared/i18n/config";
 export function siteGraph(
@@ -14,7 +14,7 @@ export function siteGraph(
       {
         "@type": "Person",
         "@id": absoluteUrl("/#author"),
-        name: site.author,
+        name: profile.name,
         url: absoluteUrl("/about"),
       },
       {
@@ -45,11 +45,12 @@ export function articleGraph(
         headline: article.title,
         description: article.excerpt,
         inLanguage: article.locale,
-        datePublished: `${article.date}T00:00:00.000Z`,
+        datePublished:
+          article.publication?.publishedAt ?? `${article.date}T00:00:00.000Z`,
         dateModified: article.updatedAt,
         author: {
           "@type": "Person",
-          name: site.author,
+          name: article.publication?.author || profile.name,
           url: absoluteUrl("/about"),
         },
         mainEntityOfPage: { "@type": "WebPage", "@id": url },

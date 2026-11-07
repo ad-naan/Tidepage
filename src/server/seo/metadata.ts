@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getEnv } from "@/server/config/env";
 import { site } from "@/shared/config/site";
+import { profile } from "@/shared/config/profile";
 import {
   getPublicSiteIdentity,
   getPersonalPage,
@@ -117,23 +118,35 @@ export async function articleMetadata(
   article: Article,
   available: readonly Locale[],
 ): Promise<Metadata> {
+  const { publication } = article;
   const base = pageMetadata(
     `/articles/${article.slug}`,
-    article.title,
-    article.excerpt,
+    publication?.seoTitle || article.title,
+    publication?.seoDescription || article.excerpt,
     article.locale,
     available,
     await getPublicSiteIdentity(article.locale),
   );
+  const cover = publication?.cover;
   return {
     ...base,
+    ...(cover && {
+      twitter: {
+        ...base.twitter,
+        images: [{ url: absoluteUrl(cover.assetId), alt: cover.alt }],
+      },
+    }),
     openGraph: {
       ...base.openGraph,
       type: "article",
-      publishedTime: `${article.date}T00:00:00.000Z`,
+      publishedTime:
+        publication?.publishedAt ?? `${article.date}T00:00:00.000Z`,
       modifiedTime: article.updatedAt,
-      authors: [site.author],
+      authors: [publication?.author || profile.name],
       tags: article.tags,
+      ...(cover && {
+        images: [{ url: absoluteUrl(cover.assetId), alt: cover.alt }],
+      }),
     },
   };
 }

@@ -2,6 +2,8 @@ import type {
   Article,
   ArticleSummary,
   Note,
+  NotePreview,
+  NavigationOverview,
   Project,
   Quote,
 } from "@/modules/content/domain/models";
@@ -14,6 +16,18 @@ export interface ContentRepository {
   allArticles(locale: Locale): Promise<ArticleSummary[]>;
   articleBySlug(slug: string, locale: Locale): Promise<Article | null>;
   articleLocales(slug: string): Promise<Locale[]>;
+  nextArticle(
+    slug: string,
+    locale: Locale,
+  ): Promise<Pick<ArticleSummary, "slug" | "title"> | undefined>;
+  latestNote(locale: Locale): Promise<NotePreview | null>;
+  projectPreviews(locale: Locale): Promise<NavigationOverview["projects"]>;
+  firstQuote(locale: Locale): Promise<Pick<Quote, "text"> | null>;
+  visibleIds(
+    type: "article" | "note" | "project",
+    ids: string[],
+    locale: Locale,
+  ): Promise<string[]>;
   notes(locale: Locale): Promise<Note[]>;
   projects(locale: Locale): Promise<Project[]>;
   quotes(locale: Locale): Promise<Quote[]>;

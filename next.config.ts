@@ -7,6 +7,11 @@ const nextConfig: NextConfig = {
   outputFileTracingExcludes: {
     "/*": ["./storage/**/*", "./backups/**/*", "./.cache/**/*", "./.env*"],
   },
+  outputFileTracingIncludes: {
+    "/api/v1/media": [
+      "./node_modules/.pnpm/@img+sharp-*/node_modules/@img/sharp-*/lib/**/*",
+    ],
+  },
   // Explicit request-config alias supports both bundlers without the optional
   // native message-extraction compiler; messages are checked in CI instead.
   turbopack: { resolveAlias: { "next-intl/config": "./src/i18n/request.ts" } },

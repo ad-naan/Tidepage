@@ -49,6 +49,7 @@ export async function createContentTestStore() {
     const repository = postgresContentRepository(db as unknown as Database);
     return {
       db,
+      repository,
       service: createContentService(repository),
       close: () => pg.close(),
     };

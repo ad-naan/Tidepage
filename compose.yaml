@@ -18,6 +18,11 @@ services:
       REDIS_URL: ${REDIS_URL:-}
       CACHE_NAMESPACE: ${CACHE_NAMESPACE:-tidepage:prod:v1}
       CACHE_TTL_SECONDS: ${CACHE_TTL_SECONDS:-60}
+      TRUST_PROXY_CLIENT_IP: "true"
+      AI_CHAT_COMPLETIONS_URL: ${AI_CHAT_COMPLETIONS_URL:-}
+      AI_MODEL: ${AI_MODEL:-}
+      AI_API_KEY: ${AI_API_KEY:-}
+      AI_GUIDE_ENABLED: ${AI_GUIDE_ENABLED:-false}
       INDEXING_ENABLED: ${INDEXING_ENABLED:-false}
       UPLOAD_DIR: /app/storage/uploads
       OAUTH_GITHUB_CLIENT_ID: ${OAUTH_GITHUB_CLIENT_ID:-}
@@ -44,7 +49,7 @@ services:
       REALTIME_ORIGINS: ${REALTIME_ORIGINS:?Set REALTIME_ORIGINS in .env}
       REALTIME_AUTHOR_TOKEN: ${REALTIME_AUTHOR_TOKEN:?Set REALTIME_AUTHOR_TOKEN in .env}
       # 网关读取容器内的 REDIS_URL；生产要求 noeviction 的实例，见 docs/deployment.md。
-      REDIS_URL: ${REALTIME_REDIS_URL:?Set REALTIME_REDIS_URL in .env}
+      REALTIME_REDIS_URL: ${REALTIME_REDIS_URL:?Set REALTIME_REDIS_URL in .env}
       CACHE_NAMESPACE: ${CACHE_NAMESPACE:-tidepage:prod:v1}
     expose:
       - "3101"

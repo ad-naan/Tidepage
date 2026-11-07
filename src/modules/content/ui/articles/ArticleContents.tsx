@@ -6,6 +6,7 @@ import { CoastGlyph } from "@/shared/ui/drawing/CoastalMarks";
 import { HanddrawnTree } from "@/shared/ui/drawing/HanddrawnTree";
 import { useArticleReading } from "./useArticleReading";
 import { ArticleReadingTools } from "./ArticleReadingTools";
+import { useRegisterReadingArticle } from "./ReadingArticleContext";
 import styles from "./ArticleContents.module.css";
 const rowHeight = 44;
 export function ArticleContents({
@@ -19,6 +20,7 @@ export function ArticleContents({
   slug: string;
   title: string;
 }) {
+  useRegisterReadingArticle(slug, title);
   const { active, percent } = useArticleReading();
   const navigation = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();

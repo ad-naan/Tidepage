@@ -64,6 +64,13 @@
       "when": 1793977502250,
       "tag": "0008_comment_documents",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1794052945790,
+      "tag": "0009_article_publication",
+      "breakpoints": true
     }
   ]
 }

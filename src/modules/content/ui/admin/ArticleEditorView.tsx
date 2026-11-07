@@ -18,7 +18,6 @@ import {
   Circle,
 } from "lucide-react";
 import { Link } from "@/shared/i18n/navigation";
-import { WritingPanel } from "@/modules/ai/ui/WritingPanel";
 import type { Editor } from "@tiptap/core";
 import { useLocale, useMessages, useTranslations } from "next-intl";
 import {
@@ -51,13 +50,17 @@ import { RichTextEditor } from "./editor/RichTextEditor";
 import { RichText } from "@/modules/content/ui/rich-text/RichText";
 import { loadArticleDrafts, saveArticleDraft } from "./draft-store";
 import { imageUploader } from "@/modules/media/ui/admin/media-client";
+import { apiSend, ApiClientError } from "@/shared/http/client";
+import { ArticleAssistant } from "./ArticleAssistant";
 import styles from "./ArticleEditorView.module.css";
 export function ArticleEditorView({
   id,
   initialDraft,
+  aiEnabled = false,
 }: {
   id?: string;
   initialDraft?: ArticleDraft;
+  aiEnabled?: boolean;
 }) {
   const t = useTranslations("admin");
   const labels = useMessages().admin.editor.fields;
@@ -116,6 +119,8 @@ export function ArticleEditorView({
   const [error, setError] = useState("");
   const [cover, setCover] = useState(false);
   const [checking, setChecking] = useState(false);
+  const [publishing, setPublishing] = useState(false);
+  const [publishError, setPublishError] = useState("");
   const [pendingLink, setPendingLink] = useState<string | null>(null);
   const changes = useRef(0);
   const markDirty = useCallback(() => {
@@ -235,7 +240,7 @@ export function ArticleEditorView({
   }
   async function save() {
     const value = snapshot();
-    if (!value || uploading || saving) return;
+    if (!value || uploading || saving || publishing) return;
     const validated = articleDraftSchema.safeParse(value);
     if (!validated.success) {
       setError(t("editor.invalidFields"));
@@ -275,6 +280,45 @@ export function ArticleEditorView({
       setSaving(false);
     }
   }
+  async function publish() {
+    const saved = draftRef.current;
+    if (
+      !saved?.revision ||
+      dirtyRef.current ||
+      saving ||
+      uploading ||
+      publishing
+    )
+      return;
+    setPublishing(true);
+    setPublishError("");
+    try {
+      await apiSend("/api/v1/articles", "POST", {
+        id: saved.id,
+        locale,
+        revision: saved.revision,
+      });
+      setChecking(false);
+      notify({ title: t("editor.published"), tone: "success" });
+    } catch (error) {
+      if (
+        error instanceof ApiClientError &&
+        error.code === "PUBLICATION_SCHEMA_REQUIRED"
+      ) {
+        setPublishError(t("editor.publishSchemaRequired"));
+        return;
+      }
+      setPublishError(
+        t(
+          error instanceof ApiClientError && error.status === 409
+            ? "editor.publishConflict"
+            : "editor.publishFailed",
+        ),
+      );
+    } finally {
+      setPublishing(false);
+    }
+  }
   useEffect(() => {
     const keyboard = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
@@ -294,7 +338,7 @@ export function ArticleEditorView({
       <LoadingSkeleton />
     );
   const translation = translationOf(draft, locale);
-  const issues = publicationIssues(snapshot() ?? draft, locale);
+  const issues = checking ? publicationIssues(draft, locale) : [];
   return (
     <div className={styles.workspace} ref={workspace}>
       <header className={styles.header} ref={header}>
@@ -341,7 +385,7 @@ export function ArticleEditorView({
           <Button
             size="sm"
             aria-pressed={preview}
-            disabled={uploading}
+            disabled={uploading || publishing}
             onClick={() => {
               const value = snapshot();
               if (value) commit(value);
@@ -385,7 +429,7 @@ export function ArticleEditorView({
             size="sm"
             variant="primary"
             busy={saving}
-            disabled={uploading}
+            disabled={uploading || publishing}
             title="Ctrl / Cmd S"
             onClick={save}
           >
@@ -462,11 +506,53 @@ export function ArticleEditorView({
           </div>
           <div hidden={panel !== "ai"}>
             {readyEditors[locale] && (
-              <WritingPanel
+              <ArticleAssistant
                 key={locale}
                 editor={readyEditors[locale]}
                 active={panel === "ai" && !preview}
-                contentLocale={locale}
+                locale={locale}
+                enabled={aiEnabled}
+                version={() => changes.current}
+                snapshot={() => translationOf(snapshot() ?? draft, locale)}
+                apply={(suggestion) => {
+                  if (saving || uploading || publishing || !draftRef.current)
+                    return false;
+                  if (suggestion.task === "metadata") {
+                    const { title, excerpt, seoTitle, seoDescription, tags } =
+                      suggestion.value;
+                    updateTranslation({
+                      title,
+                      excerpt,
+                      seoTitle,
+                      seoDescription,
+                      tags,
+                    });
+                    return true;
+                  }
+                  const target = editors.current[suggestion.locale];
+                  if (
+                    !target ||
+                    !target.commands.setContent(suggestion.value.body, {
+                      emitUpdate: true,
+                    })
+                  )
+                    return false;
+                  const current = draftRef.current;
+                  const previous = translationOf(current, suggestion.locale);
+                  commit({
+                    ...current,
+                    translations: {
+                      ...current.translations,
+                      [suggestion.locale]: {
+                        ...suggestion.value,
+                        slug: previous.slug || suggestion.value.slug,
+                      },
+                    },
+                  });
+                  markDirty();
+                  setLocale(suggestion.locale);
+                  return true;
+                }}
               />
             )}
           </div>
@@ -603,6 +689,7 @@ export function ArticleEditorView({
               onClick={() => {
                 const value = snapshot();
                 if (value) commit(value);
+                setPublishError("");
                 setChecking(true);
               }}
             >
@@ -636,9 +723,10 @@ export function ArticleEditorView({
       {checking && (
         <Dialog
           title={t("editor.checkPublish")}
-          onClose={() => setChecking(false)}
+          onClose={() => {
+            if (!publishing) setChecking(false);
+          }}
         >
-          <p>{t("editor.publishUnavailable")}</p>
           {issues.length ? (
             <ul>
               {issues.map((key) => (
@@ -652,8 +740,30 @@ export function ArticleEditorView({
           ) : (
             <p>{t("editor.checkPassed")}</p>
           )}
-          <Button variant="quiet" onClick={() => setChecking(false)}>
+          {(dirty || draft.revision === 0) && (
+            <p>{t("editor.saveBeforePublish")}</p>
+          )}
+          {publishError && <p role="alert">{publishError}</p>}
+          <Button
+            variant="quiet"
+            disabled={publishing}
+            onClick={() => setChecking(false)}
+          >
             {t("editor.back")}
+          </Button>
+          <Button
+            variant="primary"
+            disabled={
+              !!issues.length ||
+              dirty ||
+              draft.revision === 0 ||
+              saving ||
+              uploading
+            }
+            busy={publishing}
+            onClick={() => void publish()}
+          >
+            {t("editor.publish")}
           </Button>
         </Dialog>
       )}

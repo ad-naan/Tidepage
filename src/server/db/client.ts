@@ -5,6 +5,7 @@ import { getEnv } from "@/server/config/env";
 import { log } from "@/server/observability/logger";
 import * as schema from "./schema";
 const globalDb = globalThis as unknown as { adnaanPool?: Pool };
+let database: Database | undefined;
 export function getPool(): Pool {
   const env = getEnv();
   if (!env.DATABASE_URL)
@@ -25,12 +26,25 @@ export function getPool(): Pool {
   }
   return globalDb.adnaanPool;
 }
-export function getDb() {
+function createDatabase() {
   return drizzle(getPool(), { schema });
 }
-export type Database = ReturnType<typeof getDb>;
+export type Database = ReturnType<typeof createDatabase>;
+export function getDb(): Database {
+  return (database ??= createDatabase());
+}
+export function isUndefinedColumn(error: unknown): boolean {
+  const cause = error instanceof Error ? (error.cause ?? error) : error;
+  return (
+    !!cause &&
+    typeof cause === "object" &&
+    "code" in cause &&
+    cause.code === "42703"
+  );
+}
 export async function closeDatabase() {
   const pool = globalDb.adnaanPool;
   delete globalDb.adnaanPool;
+  database = undefined;
   if (pool) await pool.end();
 }

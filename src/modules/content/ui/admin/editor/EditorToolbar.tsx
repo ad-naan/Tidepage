@@ -27,6 +27,7 @@ import { useDisclosure } from "@/shared/hooks/useDisclosure";
 import { blockCommands, type BlockCommand } from "./block-commands";
 import styles from "./editor.module.css";
 import { StickerPicker } from "../../rich-text/StickerPicker";
+import { DocumentTools } from "./DocumentTools";
 
 export function EditorToolbar({
   editor,
@@ -301,6 +302,7 @@ export function EditorToolbar({
         >
           <Keyboard size={16} />
         </IconButton>
+        <DocumentTools editor={editor} />
       </div>
       {state.table && (
         <div className={styles.tableTools} aria-label={t("blocks.table")}>

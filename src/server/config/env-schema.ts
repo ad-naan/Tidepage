@@ -24,11 +24,21 @@ export const envSchema = z
     OAUTH_GITEE_CLIENT_ID: optionalOAuthValue(1, 128),
     OAUTH_GITEE_CLIENT_SECRET: optionalOAuthValue(8, 256),
     REDIS_URL: optionalUrl,
+    AI_CHAT_COMPLETIONS_URL: optionalUrl,
+    AI_API_KEY: optionalOAuthValue(1, 1024),
+    AI_MODEL: optionalOAuthValue(1, 160),
+    AI_GUIDE_ENABLED: z
+      .enum(["true", "false"])
+      .default("false")
+      .transform((value) => value === "true"),
     CACHE_NAMESPACE: z
       .string()
       .regex(/^[a-zA-Z0-9:_-]+$/)
       .default("adnaan:v1"),
     CACHE_TTL_SECONDS: z.coerce.number().int().min(1).max(3600).default(60),
+    TRUST_PROXY_CLIENT_IP: z
+      .stringbool({ truthy: ["true"], falsy: ["false"] })
+      .default(false),
     INDEXING_ENABLED: z
       .enum(["true", "false"])
       .default("false")
@@ -67,6 +77,26 @@ export const envSchema = z
         path: ["REDIS_URL"],
         message: "Use redis:// or rediss://",
       });
+    if (env.AI_CHAT_COMPLETIONS_URL) {
+      const endpoint = URL.parse(env.AI_CHAT_COMPLETIONS_URL);
+      if (!endpoint) return;
+      const local = ["localhost", "127.0.0.1", "[::1]"].includes(
+        endpoint.hostname,
+      );
+      if (
+        (endpoint.protocol !== "https:" &&
+          !(local && endpoint.protocol === "http:")) ||
+        endpoint.username ||
+        endpoint.password ||
+        endpoint.search ||
+        endpoint.hash
+      )
+        context.addIssue({
+          code: "custom",
+          path: ["AI_CHAT_COMPLETIONS_URL"],
+          message: "Use an HTTPS endpoint or a loopback HTTP endpoint",
+        });
+    }
     if (env.INDEXING_ENABLED && origin?.protocol !== "https:")
       context.addIssue({
         code: "custom",

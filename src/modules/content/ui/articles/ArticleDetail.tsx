@@ -12,6 +12,7 @@ import { ArticleContents } from "./ArticleContents";
 import { ArticleActions } from "./ArticleActions";
 import { articleDocument } from "@/modules/content/domain/legacy-draft";
 import { RichText } from "@/modules/content/ui/rich-text/RichText";
+import { ReadingImage } from "@/modules/content/ui/rich-text/ReadingImage";
 import { documentChapters } from "@/modules/content/domain/document-presentation";
 import {
   Discussion,
@@ -26,7 +27,7 @@ export async function ArticleDetail({
   next,
 }: {
   article: Article;
-  next?: ArticleSummary;
+  next?: Pick<ArticleSummary, "slug" | "title">;
 }) {
   const body = articleDocument(article);
   const t = await getTranslations("articles");
@@ -44,7 +45,10 @@ export async function ArticleDetail({
         </SketchLabel>
         <h1>{article.title}</h1>
         <div className="reading-meta">
-          <AuthorSignature size="inline" />
+          <AuthorSignature
+            size="inline"
+            name={article.publication?.author || undefined}
+          />
           <span>·</span>
           <DateTime value={article.date} />
           <span>·</span>
@@ -55,6 +59,12 @@ export async function ArticleDetail({
         <CoastalVignette kind={article.sketch} />
         <PencilLine className="reading-header-shore" />
       </header>
+      {article.publication?.cover && (
+        <ReadingImage
+          src={article.publication.cover.assetId}
+          alt={article.publication.cover.alt}
+        />
+      )}
       <EngagementProvider targets={[{ type: "article", id: article.slug }]}>
         <div className="reading-layout">
           <div className="prose">

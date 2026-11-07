@@ -1,6 +1,6 @@
 import type { WritingAgent } from "@/modules/ai/domain/writing";
 import { readEventStream } from "@/shared/http/event-stream";
-/** Credentials remain behind a future authenticated same-origin server endpoint. */
+/** Credentials remain behind the authenticated same-origin server endpoint. */
 export function createHttpWritingAgent(endpoint: string): WritingAgent {
   if (!/^\/(?!\/)/.test(endpoint))
     throw new Error("SAME_ORIGIN_ENDPOINT_REQUIRED");
@@ -12,7 +12,7 @@ export function createHttpWritingAgent(endpoint: string): WritingAgent {
           "Content-Type": "application/json",
           Accept: "text/event-stream",
         },
-        body: JSON.stringify(input),
+        body: JSON.stringify({ task: "write", ...input }),
         signal,
         credentials: "same-origin",
       });

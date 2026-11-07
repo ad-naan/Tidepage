@@ -5,6 +5,7 @@ import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button, IconButton } from "@/shared/ui/button/Button";
 import { Select } from "@/shared/ui/select/Select";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
+import { dateKey } from "@/shared/lib/date-time";
 import { dateParts, dayKey, shiftDay, monthDays } from "./calendar";
 import styles from "./DatePicker.module.css";
 export function DatePicker({
@@ -31,20 +32,15 @@ export function DatePicker({
   const locale = useLocale();
   const t = useTranslations("ui.datePicker");
   const [open, setOpen] = useState(false);
-  const initial = dateParts(value);
-  const today = new Intl.DateTimeFormat("sv-SE", {
-    timeZone: "Asia/Shanghai",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date());
+  const today = dateKey(new Date());
+  const initial = dateParts(value) ?? dateParts(today)!;
   const [selected, setSelected] = useState(value.slice(0, 10) || today);
   const [view, setView] = useState({
-    year: initial?.year ?? 2026,
-    month: initial?.month ?? 0,
+    year: initial.year,
+    month: initial.month,
   });
-  const [hour, setHour] = useState(initial?.hour ?? "12");
-  const [minute, setMinute] = useState(initial?.minute ?? "00");
+  const [hour, setHour] = useState(initial.hour);
+  const [minute, setMinute] = useState(initial.minute);
   const [focusDate, setFocusDate] = useState(selected);
   const grid = useRef<HTMLDivElement>(null);
   const focusPending = useRef(false);

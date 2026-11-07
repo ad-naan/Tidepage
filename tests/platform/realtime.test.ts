@@ -57,9 +57,19 @@ test("fixed-window rate limiter blocks over-limit calls and resets", async () =>
 
 test("enforceRateLimit throws a localized RATE_LIMITED AppError", async () => {
   const request = new Request("https://example.test/api/v1/notes", {
-    headers: { "x-forwarded-for": "203.0.113.7" },
+    headers: { "x-forwarded-for": "203.0.113.99", "x-real-ip": "203.0.113.7" },
   });
-  assert.equal(clientKey(request), "203.0.113.7");
+  assert.equal(clientKey(request, true), "203.0.113.7");
+  assert.equal(clientKey(request, false), "anonymous");
+  assert.equal(
+    clientKey(
+      new Request(request.url, {
+        headers: { "x-real-ip": "203.0.113.7, 203.0.113.99" },
+      }),
+      true,
+    ),
+    "anonymous",
+  );
   const scope = `test-route:${Date.now()}`;
   await enforceRateLimit(request, scope, 1, 60);
   await assert.rejects(enforceRateLimit(request, scope, 1, 60), {

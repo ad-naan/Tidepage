@@ -28,6 +28,7 @@ import {
 } from "@/modules/content/domain/editor-document";
 import { ReferenceCard, AssetImageNode, CalloutNode } from "./ReferenceNode";
 import { ReferenceDialog } from "./ReferenceDialog";
+import { editCurrentBlock } from "./document-blocks";
 import styles from "./editor.module.css";
 import {
   HighlightMark,
@@ -214,6 +215,21 @@ export function RichTextEditor({
       },
       handleKeyDown: (view, event) => {
         if (event.isComposing || view.composing) return false;
+        if (
+          view.editable &&
+          event.altKey &&
+          event.shiftKey &&
+          (event.key === "ArrowUp" || event.key === "ArrowDown")
+        ) {
+          const transaction = editCurrentBlock(
+            view.state,
+            event.key === "ArrowUp" ? "up" : "down",
+          );
+          if (transaction) {
+            view.dispatch(transaction);
+            return true;
+          }
+        }
         if (
           (event.ctrlKey || event.metaKey) &&
           event.key.toLowerCase() === "k"
@@ -475,6 +491,7 @@ export function RichTextEditor({
                 ["heading", "## + Space"],
                 ["list", "- + Space"],
                 ["quote", "> + Space"],
+                ["moveBlock", "Alt / Option + Shift + ↑ / ↓"],
               ] as const
             ).map(([key, shortcut]) => (
               <div key={key}>

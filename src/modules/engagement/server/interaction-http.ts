@@ -11,7 +11,7 @@ import {
 } from "@/modules/engagement/domain/interactions";
 import { boundedJson } from "@/server/http/body";
 import { requireSameOrigin } from "@/server/http/origin";
-import { enforceRateLimit } from "@/server/http/rate-limit";
+import { enforceAccountRateLimit } from "@/server/http/rate-limit";
 import { defineRoute, jsonData } from "@/server/http/route";
 
 export function createInteractionRoutes(dependencies: {
@@ -39,7 +39,7 @@ export function createInteractionRoutes(dependencies: {
     set: defineRoute(async (request, { requestId }) => {
       requireSameOrigin(request);
       const user = await dependencies.authorize();
-      await enforceRateLimit(request, `interaction:${user.id}`, 120, 60);
+      await enforceAccountRateLimit(user.id, "interaction", 120, 60);
       const input = interactionChangeSchema.parse(
         await boundedJson(request, 2048),
       );

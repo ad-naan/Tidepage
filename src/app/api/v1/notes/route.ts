@@ -1,11 +1,12 @@
 import { localeQuerySchema } from "@/shared/i18n/schema";
-import { getNotes } from "@/modules/content/server";
+import { getNotes, invalidateNotePreview } from "@/modules/content/server";
 import { defineRoute, jsonData } from "@/server/http/route";
 import { publishNote } from "@/modules/content/server/publish-note";
 import { requirePrincipal } from "@/modules/identity/server";
 import { requireSameOrigin } from "@/server/http/origin";
 import { boundedJson } from "@/server/http/body";
-import { enforceRateLimit } from "@/server/http/rate-limit";
+import { enforceAccountRateLimit } from "@/server/http/rate-limit";
+import { log } from "@/server/observability/logger";
 export const GET = defineRoute(async (request, { requestId }) =>
   jsonData(
     await getNotes(
@@ -19,9 +20,15 @@ export const GET = defineRoute(async (request, { requestId }) =>
 export const POST = defineRoute(async (request, { requestId }) => {
   requireSameOrigin(request);
   const user = await requirePrincipal(["author", "admin"]);
-  await enforceRateLimit(request, `publish-note:${user.id}`, 20, 60);
-  return jsonData(
-    await publishNote(user.id, await boundedJson(request, 2048)),
-    requestId,
-  );
+  await enforceAccountRateLimit(user.id, "publish-note", 20, 60);
+  const note = await publishNote(user.id, await boundedJson(request, 2048));
+  try {
+    await invalidateNotePreview(note.locale);
+  } catch {
+    log("warn", "note.cache_invalidation_failed", {
+      requestId,
+      component: "cache",
+    });
+  }
+  return jsonData(note, requestId);
 });

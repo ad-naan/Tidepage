@@ -2,7 +2,6 @@ import "server-only";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { createHash } from "node:crypto";
-import sharp from "sharp";
 import { getEnv } from "@/server/config/env";
 import { validationError, notFoundError } from "@/server/http/errors";
 import { maxImageBytes, type ImageAsset } from "@/modules/media/domain/assets";
@@ -20,6 +19,7 @@ export async function saveImage(
   root = uploadRoot(),
 ): Promise<ImageAsset> {
   if (!bytes.length || bytes.length > maxImageBytes) throw validationError();
+  const { default: sharp } = await import("sharp");
   let width: number | undefined,
     height: number | undefined,
     format: string | undefined;

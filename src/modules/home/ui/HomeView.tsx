@@ -9,18 +9,20 @@ import { ArticleList } from "@/modules/content/ui/articles/ArticleList";
 import styles from "./HomeView.module.css";
 import type {
   ArticleSummary,
-  Note,
+  NotePreview,
   Quote,
 } from "@/modules/content/domain/models";
 
 export async function HomeView({
   articles,
-  notes,
-  quotes,
+  total,
+  note,
+  quote,
 }: {
   articles: ArticleSummary[];
-  notes: Note[];
-  quotes: Quote[];
+  total: number;
+  note: NotePreview | null;
+  quote: Pick<Quote, "text"> | null;
 }) {
   const t = await getTranslations("home");
   return (
@@ -37,36 +39,36 @@ export async function HomeView({
               {t("all")} <ArrowRight size={16} />
             </Link>
           </div>
-          <ArticleList items={articles.slice(0, 5)} lead />
+          <ArticleList items={articles} lead />
           {!articles.length && (
             <p className="empty-state">{t("emptyArticles")}</p>
           )}
           <div className="writing-footnote">
             {t("footnote")}
-            <span>↳ {t("count", { count: articles.length })}</span>
+            <span>↳ {t("count", { count: total })}</span>
           </div>
         </div>
       </section>
       <section className="home-bottom">
         <PencilLine className="home-bottom-shore" />
-        {notes[0] && (
+        {note && (
           <Link href="/notes" className="note-preview">
             <div className="note-preview-heading">
               <SketchLabel kind="leaf">{t("note")}</SketchLabel>
               <ArrowUpRight size={16} />
             </div>
-            <p>{notes[0].text}</p>
+            <p>{note.text}</p>
             <span className="muted">
-              {notes[0].date} · {notes[0].tag}
+              {note.date} · {note.tag}
             </span>
           </Link>
         )}
-        {quotes[0] && (
+        {quote && (
           <Link href="/quotes" className="quote-preview">
             <PencilLine kind="trail" className="quote-preview-fold" />
             <span className="quote-mark">“</span>
             <div>
-              <p>{quotes[0].text}</p>
+              <p>{quote.text}</p>
               <span>
                 {t("next")} <ArrowRight size={14} />
               </span>

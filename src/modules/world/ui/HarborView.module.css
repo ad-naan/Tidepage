@@ -379,3 +379,14 @@
     transition: none;
   }
 }
+.guideCompanion {
+  margin-block: var(--space-3);
+  padding-block: var(--space-3);
+  border-block-start: 1px solid currentColor;
+}
+
+.guideTurns {
+  max-height: 12rem;
+  overflow: auto;
+  overflow-wrap: anywhere;
+}

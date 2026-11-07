@@ -76,6 +76,8 @@ export function legacyArticlesToDraft(articles: Article[]): ArticleDraft {
   draft.category = first.category;
   draft.sketch = first.sketch;
   draft.minutes = first.minutes;
+  draft.author = first.publication?.author || draft.author;
+  draft.coverAssetId = first.publication?.cover?.assetId ?? "";
   draft.publishedAt = `${first.date}T12:00`;
   for (const article of articles) {
     const body = articleDocument(article);
@@ -85,9 +87,9 @@ export function legacyArticlesToDraft(articles: Article[]): ArticleDraft {
       excerpt: article.excerpt,
       body,
       tags: article.tags,
-      seoTitle: "",
-      seoDescription: "",
-      coverAlt: "",
+      seoTitle: article.publication?.seoTitle ?? "",
+      seoDescription: article.publication?.seoDescription ?? "",
+      coverAlt: article.publication?.cover?.alt ?? "",
     };
   }
   return draft;

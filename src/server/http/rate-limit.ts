@@ -1,13 +1,10 @@
 import "server-only";
+import { isIP } from "node:net";
+import { getRedis } from "@/server/cache/redis";
+import { getEnv } from "@/server/config/env";
+import { log } from "@/server/observability/logger";
 import { tooManyRequestsError } from "./errors";
 
-/**
- * 固定窗口限流（单实例内存实现）。
- *
- * 直接在 defineRoute 处理器中调用 enforceRateLimit，超限抛出
- * RATE_LIMITED（429），由统一错误管道转换为本地化响应。
- * 多实例部署时应替换为 Redis INCR + TTL 实现，接口保持不变。
- */
 export interface RateLimitResult {
   allowed: boolean;
   remaining: number;
@@ -15,20 +12,25 @@ export interface RateLimitResult {
 }
 
 type Bucket = { count: number; resetAt: number };
-type GlobalLimiter = { adnaanRateBuckets?: Map<string, Bucket> };
-const globalLimiter = globalThis as unknown as GlobalLimiter;
+const buckets = new Map<string, Bucket>();
+const maxBuckets = 10_000;
+let nextSweep = 0;
+let redisRetryAt = 0;
 
-function buckets(): Map<string, Bucket> {
-  return (globalLimiter.adnaanRateBuckets ??= new Map());
+function result(count: number, limit: number, ttl: number): RateLimitResult {
+  return {
+    allowed: count <= limit,
+    remaining: Math.max(0, limit - count),
+    retryAfterSeconds: Math.max(1, Math.ceil(ttl / 1000)),
+  };
 }
 
-/**
- * 尽力提取客户端标识。仅在受信任的反向代理之后有意义；
- * 直连部署时所有匿名请求会共享同一个桶。
- */
-export function clientKey(request: Request): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  return forwarded?.split(",")[0]?.trim() || "anonymous";
+export function clientKey(
+  request: Request,
+  trustProxy = getEnv().TRUST_PROXY_CLIENT_IP,
+): string {
+  const address = trustProxy && request.headers.get("x-real-ip")?.trim();
+  return address && isIP(address) ? address : "anonymous";
 }
 
 export function checkRateLimit(
@@ -37,43 +39,68 @@ export function checkRateLimit(
   windowSeconds: number,
 ): RateLimitResult {
   const now = Date.now();
-  const store = buckets();
-  const bucket = store.get(key);
-  if (!bucket || bucket.resetAt <= now) {
-    // 惰性清理过期桶，避免为每个请求全量扫描。
-    if (store.size > 10_000) {
-      for (const [k, v] of store) if (v.resetAt <= now) store.delete(k);
+  if (now >= nextSweep) {
+    for (const [id, bucket] of buckets) {
+      if (bucket.resetAt <= now) buckets.delete(id);
     }
-    store.set(key, { count: 1, resetAt: now + windowSeconds * 1000 });
-    return {
-      allowed: true,
-      remaining: limit - 1,
-      retryAfterSeconds: windowSeconds,
-    };
+    nextSweep = now + 1000;
   }
-  bucket.count += 1;
-  const retryAfterSeconds = Math.max(
-    1,
-    Math.ceil((bucket.resetAt - now) / 1000),
-  );
-  return {
-    allowed: bucket.count <= limit,
-    remaining: Math.max(0, limit - bucket.count),
-    retryAfterSeconds,
-  };
+  let bucket = buckets.get(key);
+  if (!bucket || bucket.resetAt <= now) {
+    if (!bucket && buckets.size >= maxBuckets)
+      return result(limit + 1, limit, 1000);
+    bucket = { count: 0, resetAt: now + windowSeconds * 1000 };
+    buckets.set(key, bucket);
+  }
+  bucket.count = Math.min(bucket.count + 1, limit + 1);
+  return result(bucket.count, limit, bucket.resetAt - now);
 }
 
-export async function enforceRateLimit(
+// The increment and expiration happen together across all Web replicas.
+const take = `
+local count = redis.call('INCR', KEYS[1])
+if count == 1 then redis.call('PEXPIRE', KEYS[1], ARGV[1]) end
+return {count, redis.call('PTTL', KEYS[1])}
+`;
+
+async function enforce(key: string, limit: number, windowSeconds: number) {
+  const env = getEnv();
+  let decision: RateLimitResult | undefined;
+  if (env.REDIS_URL && Date.now() >= redisRetryAt) {
+    try {
+      const redis = (await getRedis())!;
+      const [count, ttl] = (await redis.eval(
+        take,
+        1,
+        `${env.CACHE_NAMESPACE}:rate:${key}`,
+        windowSeconds * 1000,
+      )) as [number, number];
+      decision = result(count, limit, ttl);
+    } catch {
+      if (Date.now() >= redisRetryAt)
+        log("warn", "rate_limit.local_fallback", { component: "redis" });
+      redisRetryAt = Date.now() + 5000;
+    }
+  }
+  decision ??= checkRateLimit(key, limit, windowSeconds);
+  if (!decision.allowed) throw tooManyRequestsError(decision.retryAfterSeconds);
+  return decision;
+}
+
+export function enforceRateLimit(
   request: Request,
   scope: string,
   limit: number,
   windowSeconds: number,
-): Promise<RateLimitResult> {
-  const result = checkRateLimit(
-    `${scope}:${clientKey(request)}`,
-    limit,
-    windowSeconds,
-  );
-  if (!result.allowed) throw tooManyRequestsError(result.retryAfterSeconds);
-  return result;
+) {
+  return enforce(`client:${scope}:${clientKey(request)}`, limit, windowSeconds);
+}
+
+export function enforceAccountRateLimit(
+  accountId: string,
+  scope: string,
+  limit: number,
+  windowSeconds: number,
+) {
+  return enforce(`account:${scope}:${accountId}`, limit, windowSeconds);
 }

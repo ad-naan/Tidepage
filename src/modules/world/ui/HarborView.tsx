@@ -52,8 +52,15 @@ import { HarborWardrobe } from "./HarborWardrobe";
 import { CoastRpcError, useCoastConnection } from "./useCoastConnection";
 import { HarborSocial } from "./HarborSocial";
 import styles from "./HarborView.module.css";
+import { HarborGuide } from "./HarborGuide";
 
-export function HarborView({ onVoyage }: { onVoyage: () => void }) {
+export function HarborView({
+  onVoyage,
+  guideEnabled = false,
+}: {
+  onVoyage: () => void;
+  guideEnabled?: boolean;
+}) {
   const t = useTranslations("world.harbor");
   const world = useTranslations("world.ui");
   const { notify } = useNotice();
@@ -494,6 +501,15 @@ export function HarborView({ onVoyage }: { onVoyage: () => void }) {
                 )}
               </nav>
               <p className={styles.localNote}>{t("guide.host")}</p>
+              {guideEnabled && (
+                <HarborGuide
+                  place={place}
+                  walk={(destination) => {
+                    setHelp(false);
+                    controls.current?.goTo(destination);
+                  }}
+                />
+              )}
               <Button variant="quiet" onClick={onVoyage}>
                 {t("voyage")}
               </Button>

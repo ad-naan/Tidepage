@@ -6,6 +6,7 @@ import { noCache, type CacheStore } from "./store";
 const globalRedis = globalThis as unknown as {
   adnaanRedis?: Redis;
   adnaanRedisConnection?: Promise<void>;
+  adnaanRedisRetryAt?: number;
 };
 export async function getRedis(): Promise<Redis | null> {
   const url = getEnv().REDIS_URL;
@@ -25,9 +26,17 @@ export async function getRedis(): Promise<Redis | null> {
   }
   const client = globalRedis.adnaanRedis;
   if (client.status !== "ready") {
-    globalRedis.adnaanRedisConnection ??= client.connect().finally(() => {
-      delete globalRedis.adnaanRedisConnection;
-    });
+    if ((globalRedis.adnaanRedisRetryAt ?? 0) > Date.now())
+      throw new Error("Redis connection is cooling down");
+    globalRedis.adnaanRedisConnection ??= client
+      .connect()
+      .catch((error) => {
+        globalRedis.adnaanRedisRetryAt = Date.now() + 5000;
+        throw error;
+      })
+      .finally(() => {
+        delete globalRedis.adnaanRedisConnection;
+      });
     await globalRedis.adnaanRedisConnection;
   }
   return client;
@@ -49,4 +58,5 @@ export async function closeRedis() {
   globalRedis.adnaanRedis?.disconnect();
   delete globalRedis.adnaanRedis;
   delete globalRedis.adnaanRedisConnection;
+  delete globalRedis.adnaanRedisRetryAt;
 }

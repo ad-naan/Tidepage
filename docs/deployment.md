@@ -14,7 +14,7 @@
 6. **容量**：数据量很小（单作者状态快照 + Socket.IO streams，streams 有 `maxLen 10000` 上限），默认配置足够；无需大内存配额。
 7. 若使用 Redis Cluster：键已带 hash tag（`{namespace:author}`），作者状态 Lua 原子操作天然兼容。
 
-`.env` 中用 `REALTIME_REDIS_URL` 指向这个实例（compose 会把它映射为网关容器内的 `REDIS_URL`）。Web 应用自身的可选缓存用另一个变量 `REDIS_URL`，两者可以指向不同实例。
+`.env` 中用 `REALTIME_REDIS_URL` 指向网关实例，Compose 会以同名变量传给容器。Web 使用独立的 `REDIS_URL` 作为可选缓存和限流存储。
 
 ## 二、`.env` 变量
 
@@ -85,5 +85,9 @@ docker compose logs realtime nginx
 ```
 
 健康检查：网关容器内 `GET /healthz`（Redis 不可用时返回 503 并停止接受需要 Redis 的更新）。
+
+Web 的 `/api/v1/health/live` 检查进程，`/api/v1/health/ready` 检查 PostgreSQL 和可选的 Web Redis。只有 Redis 故障时返回 HTTP 200 和 `degraded`，网站可继续读数据库。PostgreSQL 不可用时返回 503。Compose 启用可信客户端 IP，nginx 会覆盖 `X-Real-IP`。其他部署只有在 Web 监听口受保护且入口覆盖此请求头时才启用 `TRUST_PROXY_CLIENT_IP`。
+
+发布文章需要迁移 `0009`。旧库仍可打开已有文章，升级数据库后工作台才能发布。
 
 代码修改后重新部署：`NEXT_PUBLIC_REALTIME_URL` 是构建期内联变量，修改后必须 `docker compose up -d --build` 重建 web 镜像，仅重启容器不生效。

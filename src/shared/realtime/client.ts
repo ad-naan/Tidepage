@@ -46,10 +46,12 @@ export function retainRealtime(): {
     release: () => {
       if (!active) return;
       active = false;
-      if (--consumers === 0) {
-        current.disconnect();
-        socket = undefined;
-      }
+      if (--consumers === 0)
+        queueMicrotask(() => {
+          if (consumers !== 0 || socket !== current) return;
+          current.disconnect();
+          socket = undefined;
+        });
     },
   };
 }

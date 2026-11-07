@@ -78,6 +78,25 @@ export function dateKey(value: DateInput) {
   return `${part("year")}-${part("month")}-${part("day")}`;
 }
 
+/** Interpret the date picker's wall time in the site time zone. */
+export function parseSiteDateTime(value: string): Date | null {
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) return null;
+  const wall = new Date(`${value}:00Z`);
+  if (
+    !Number.isFinite(wall.getTime()) ||
+    wall.toISOString().slice(0, 16) !== value
+  )
+    return null;
+  const offset = formatter("en-US", {
+    timeZone: site.timeZone,
+    timeZoneName: "longOffset",
+  })
+    .formatToParts(wall)
+    .find((part) => part.type === "timeZoneName")!.value;
+  const instant = new Date(`${value}:00${offset.slice(3) || "Z"}`);
+  return Number.isFinite(instant.getTime()) ? instant : null;
+}
+
 /** Decorative archive columns may split day/month, retaining the full date in title/ARIA. */
 export function calendarParts(value: DateInput, locale: string) {
   const input = parsed(value);

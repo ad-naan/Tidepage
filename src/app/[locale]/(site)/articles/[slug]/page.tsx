@@ -1,7 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import {
-  getArticles,
+  getNextArticle,
   getArticle,
   getArticleLocales,
 } from "@/modules/content/server";
@@ -30,18 +30,13 @@ export default async function ArticlePage({
   const { slug } = await params;
   const locale = await getLocale();
   if (!slugSchema.safeParse(slug).success) notFound();
-  const [article, articles] = await Promise.all([
-    getArticle(slug, locale),
-    getArticles(locale),
-  ]);
+  const article = await getArticle(slug, locale);
   if (!article) notFound();
-  const categories = await getTranslations("categories");
-  const nav = await getTranslations("nav");
-  const next =
-    articles[
-      (articles.findIndex((item) => item.slug === article.slug) + 1) %
-        articles.length
-    ];
+  const [categories, nav, next] = await Promise.all([
+    getTranslations("categories"),
+    getTranslations("nav"),
+    getNextArticle(slug, locale),
+  ]);
   return (
     <>
       <JsonLd

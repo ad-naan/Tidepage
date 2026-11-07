@@ -9,6 +9,7 @@ export function useArticleSearch(
   enabled: boolean,
   initial: ArticleSummary[],
 ) {
+  const term = query.trim();
   const locale = useLocale();
   const t = useTranslations("header");
   const [state, setState] = useState<{
@@ -23,12 +24,12 @@ export function useArticleSearch(
     error: "",
   });
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled || !term) return;
     const controller = new AbortController();
     setState((s) => ({ ...s, loading: true, error: "" }));
     const timer = setTimeout(() => {
       apiGet<Page<ArticleSummary>>(
-        `/api/v1/articles?q=${encodeURIComponent(query)}&pageSize=4&locale=${encodeURIComponent(locale)}`,
+        `/api/v1/articles?q=${encodeURIComponent(term)}&pageSize=4&locale=${encodeURIComponent(locale)}`,
         { signal: controller.signal },
       )
         .then((data) => {
@@ -54,6 +55,8 @@ export function useArticleSearch(
       clearTimeout(timer);
       controller.abort();
     };
-  }, [query, enabled, locale, t]);
-  return state;
+  }, [term, enabled, locale, t]);
+  return term
+    ? state
+    : { items: initial.slice(0, 4), total: 0, loading: false, error: "" };
 }

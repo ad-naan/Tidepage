@@ -249,3 +249,11 @@
     border-radius: 6px;
   }
 }
+.translationPreview {
+  max-height: 15rem;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: var(--space-3);
+  background: var(--soft);
+}

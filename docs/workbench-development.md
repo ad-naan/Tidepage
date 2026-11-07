@@ -1,11 +1,11 @@
 # 工作台实现与后续边界
 
-入口：`/zh-CN/admin`、`/en/admin`。站主通过 GitHub/Gitee OAuth 建立与前台共用的服务器会话。工作副本保存到 PostgreSQL，图片保存到配置的本地资源目录；不再读写 IndexedDB。公开内容发布和真实模型调用尚未接通，保存操作只更新工作副本。
+入口为 `/zh-CN/admin` 和 `/en/admin`。GitHub 或 Gitee OAuth 会话与前台共用。保存会更新 PostgreSQL 工作副本，文章和手记的发布操作另行写入公开内容。
 
 ## 已实现
 
 - 桌面固定外壳，导航与内容分别滚动；手机自然页面滚动。后台跳过前台整页过场，动态内容路由按栏目挂载，避免旧列表闪到新栏目。读屏提示区固定定位，避免在文档末尾多撑一像素。
-- 文章：新建、跨语言标题搜索、编辑、服务器保存、刷新恢复、版本冲突检查、回收站和恢复。公开文章可以建立独立工作副本，不能直接删除公开来源。
+- 文章支持服务器草稿、版本冲突检查、回收站和逐语言发布。打开属性中的「发布前检查」，保存后发布当前语言。发布日期采用站点时区，留空时首次发布立即生效。发布需要迁移 `0009`。
 - 手记、项目、一言、照片廊：页面内分组编辑、语言版本、公共字段、服务器保存、删除和恢复。友联有独立管理界面；评论管理等待互动服务。
 - 站点设置：站主保存的站名、默认 SEO 标题、站点简介和 SEO 简介按语言即时用于网页标题、分享元信息、JSON-LD、RSS 和 llms.txt；留空使用语言目录默认值。其余资料、头像 / 分享图等仍保存为工作副本；不修改运行配置或 UI 词典。
 - 共享文件选择、日期时间日历；Dialog 标题固定，内容内部滚动，滚动条在纸面内侧；Select Portal 在 dialog 内保持正确层级。
@@ -46,7 +46,7 @@ Tiptap 实例独立于外层表单，不在每个输入事务把整篇 JSON 写�
 
 `media/domain/assets.ts` 定义 ImageUploader，编辑器、媒体库和裁剪共用 `media-client.ts`。文件通过同源 `/api/v1/media` 上传，服务器检查实际图像格式、尺寸和大小，然后按 SHA-256 命名存入 `UPLOAD_DIR`。允许 JPEG / PNG / WebP / GIF，单张最多 12 MB，每边最多 20000 像素，总解码像素上限 4000 万。SVG 和伪装的 HTML 不接受上传。
 
-默认目录为 `storage/uploads`，当前机器的绝对路径记录在 `.env.local`。访问地址统一为 `/uploads/<hash>.<ext>`；正文中的 assetId 就是稳定的资源路径。媒体元信息保存在 PostgreSQL 的 `media_assets`，列表和归档按站主隔离；归档不删除文件，引用仍可显示。图片通过校验过的文件名读取，响应带实际 MIME、nosniff 和不可变缓存头。上传、列表及工作副本接口要求 author/admin 会话；变更接口同时校验来源，限制请求体大小。
+默认目录为 `storage/uploads`，可在根目录 `.env` 中通过 `UPLOAD_DIR` 修改。访问地址统一为 `/uploads/<hash>.<ext>`；正文中的 assetId 就是稳定的资源路径。媒体元信息保存在 PostgreSQL 的 `media_assets`，列表和归档按站主隔离；归档不删除文件，引用仍可显示。图片通过校验过的文件名读取，响应带实际 MIME、nosniff 和不可变缓存头。上传、列表及工作副本接口要求 author/admin 会话；变更接口同时校验来源，限制请求体大小。
 
 裁剪使用 [React Easy Crop](https://github.com/ValentinH/react-easy-crop)，生成新 PNG，不覆盖原 Blob。正文保存 originalAssetId，可恢复原图，撤销也保留旧引用。最长输出边 4096 像素，GIF 裁剪为静态图，界面有说明。媒体回收站只取消可选状态，不删除被引用的 Blob。
 
@@ -54,18 +54,25 @@ Tiptap 实例独立于外层表单，不在每个输入事务把整篇 JSON 写�
 
 ## 站主配置
 
-在 `.env.local` 配置 GitHub/Gitee OAuth 应用的 client ID 与 secret（见 `.env.example`），回调为 `<SITE_URL>/api/v1/auth/github/callback` 或 `/gitee/callback`。运行 `pnpm admin:setup --github <用户名> --gitee <用户名>`，将平台固定数字 ID 绑定到同一个站主账号；已有站主记录、内容归属和展示名保留。只使用一种平台时只传对应参数。多名管理员时用 `--user-id <uuid>` 明确选择；身份已属于其他账号时命令会拒绝，不自动合并数据。已核实数字 ID 时可使用 `--github-id <id>` / `--gitee-id <id>` 离线绑定。后续前台与后台统一第三方登录；普通访客首次登录只创建 reader，无后台权限。旧访问密钥登录接口与管理员环境变量已移除。会话 cookie 为 HttpOnly，生产 HTTPS 使用 Secure；数据库只存会话令牌的哈希，默认有效期 12 小时。后台可退出登录。
+在根目录 `.env` 配置 GitHub/Gitee OAuth 应用的 client ID 与 secret（见 `.env.example`），回调为 `<SITE_URL>/api/v1/auth/github/callback` 或 `/gitee/callback`。运行 `pnpm admin:setup --github <用户名> --gitee <用户名>`，将平台固定数字 ID 绑定到同一个站主账号；已有站主记录、内容归属和展示名保留。只使用一种平台时只传对应参数。多名管理员时用 `--user-id <uuid>` 明确选择；身份已属于其他账号时命令会拒绝，不自动合并数据。已核实数字 ID 时可使用 `--github-id <id>` / `--gitee-id <id>` 离线绑定。后续前台与后台统一第三方登录；普通访客首次登录只创建 reader，无后台权限。旧访问密钥登录接口与管理员环境变量已移除。会话 cookie 为 HttpOnly，生产 HTTPS 使用 Secure；数据库只存会话令牌的哈希，默认有效期 12 小时。后台可退出登录。
 
 `shared/lib/workbench-store.ts` 封装工作副本的读取和条件更新，确保内容与预期版本来自同一次读取；业务组件不自行实现数据库或存储适配器。旧浏览器工作区不会被读取或清除。
 
-## 流式创作
+## 写作与站点助手
 
 `ai/domain/writing.ts` 定义输入、delta / done 事件。HTTP 适配器只接受同源端点；SSE 解析器支持 UTF-8 跨块、CRLF、多行 data 和 AbortSignal，缺少 done 视为中断。provider 密钥不进浏览器。
 
-当前 UI 使用明确标注的示例流，验证生成、停止、重试、插入与替换。建议不会直接写入正文；采纳前对比生成开始时的文档，变化后拒绝覆盖。真实 LLM 和工具 Agent 后续单独建设：服务端 provider → 权限 → 上下文预算 → 工具校验 → 事件流 → 前端审阅采纳。
+在根目录 `.env` 中配置 `AI_CHAT_COMPLETIONS_URL` 和 `AI_MODEL`。需要认证的模型服务同时配置 `AI_API_KEY`。地址填写完整的 Chat Completions URL。配置后重启 Web。
+
+- 文章助手支持流式润色、生成标题、摘要、标签和 SEO 字段，以及按语言翻译。全文翻译保留块结构、链接、媒体引用和代码。较长文章可以选中一段处理。
+- 站点设置的基础信息区可以生成 SEO 标题、描述与 GEO、RSS 检查建议。RSS 和 `llms.txt` 根据公开内容生成，站主可以直接预览产物。
+- 主动生成时才将相关文字发送给模型。采纳后的内容进入草稿，随后可以保存和发布。生成期间草稿发生变化时，需要重新生成。
+- 编辑器工具栏可查看大纲或操作当前块。`Alt/Option + Shift + ↑/↓` 可移动当前块，撤销使用编辑器历史。
+
+同一模型可用于海湾水獭。设置 `AI_GUIDE_ENABLED=true` 后，登录读者可在海湾指南中提问。它参考公开站点栏目、近期文章和当前地标，推荐链接或步行目标。对话保存在当前指南面板，点击推荐目标才会移动角色。
 
 ## 验证与推进
 
 运行 `pnpm run check`、`pnpm run build`；浏览器验证双语独立正文、跨语言撤销、刷新恢复、冲突、图片插入 / 裁剪 / 对齐、流式停止、未保存离开、回收站恢复、Dialog 长短内容、日历键盘及桌面 / 手机。
 
-先稳定前端，再按模块推进身份授权、内容修订发布、资源服务和创作 Agent。后台变更接口在服务端检查会话角色和请求来源。
+后台变更接口在服务端检查会话角色和请求来源。

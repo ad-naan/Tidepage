@@ -6,6 +6,7 @@ import {
   listConfiguredOAuthProviders,
 } from "@/modules/identity/server";
 import { IdentityProvider } from "@/modules/identity/ui/IdentityProvider";
+import { isSiteGuideEnabled } from "@/modules/ai/server";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -21,7 +22,7 @@ export default async function ExplorePage() {
       principal={principal}
       providers={listConfiguredOAuthProviders()}
     >
-      <CoastalSpaceView />
+      <CoastalSpaceView guideEnabled={isSiteGuideEnabled()} />
     </IdentityProvider>
   );
 }

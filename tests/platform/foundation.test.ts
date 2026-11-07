@@ -73,12 +73,16 @@ test("cache failures never disguise source errors; corrupt values are reloaded",
 });
 test("concurrent cache misses share one database read", async () => {
   let calls = 0;
+  let cacheReads = 0;
   let release!: (n: number) => void;
   const pending = new Promise<number>((resolve) => {
     release = resolve;
   });
   const store: CacheStore = {
-    get: async () => null,
+    get: async () => {
+      cacheReads++;
+      return null;
+    },
     set: async () => {},
     delete: async () => {},
   };
@@ -92,6 +96,7 @@ test("concurrent cache misses share one database read", async () => {
   release(4);
   assert.deepEqual(await Promise.all([first, second]), [4, 4]);
   assert.equal(calls, 1);
+  assert.equal(cacheReads, 1);
 });
 test("unexpected HTTP failures hide internal details and carry a request id", async () => {
   const handler = defineRoute(async () => {

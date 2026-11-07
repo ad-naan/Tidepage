@@ -3,7 +3,7 @@ import type { Principal } from "@/modules/identity/domain/principal";
 import { boundedJson } from "@/server/http/body";
 import { requireSameOrigin } from "@/server/http/origin";
 import { defineRoute, jsonData } from "@/server/http/route";
-import { enforceRateLimit } from "@/server/http/rate-limit";
+import { enforceAccountRateLimit } from "@/server/http/rate-limit";
 import { AppError } from "@/server/http/errors";
 import {
   issueCoastIdentity,
@@ -32,7 +32,7 @@ export function createCoastRoutes(dependencies: {
     ticket: defineRoute(async (request, { requestId }) => {
       requireSameOrigin(request);
       const user = await dependencies.authorize();
-      await enforceRateLimit(request, `coast-ticket:${user.id}`, 30, 60);
+      await enforceAccountRateLimit(user.id, "coast-ticket", 30, 60);
       return jsonData(
         {
           ticket: issueCoastIdentity(
@@ -50,7 +50,7 @@ export function createCoastRoutes(dependencies: {
     }),
     list: defineRoute(async (request, { requestId }) => {
       const user = await dependencies.authorize();
-      await enforceRateLimit(request, `coast-memories:${user.id}`, 60, 60);
+      await enforceAccountRateLimit(user.id, "coast-memories", 60, 60);
       const after = new URL(request.url).searchParams.get("after") ?? undefined;
       const input = coastMemoryQuerySchema.parse({ after });
       return jsonData(
@@ -61,7 +61,7 @@ export function createCoastRoutes(dependencies: {
     save: defineRoute(async (request, { requestId }) => {
       requireSameOrigin(request);
       const user = await dependencies.authorize();
-      await enforceRateLimit(request, `coast-save:${user.id}`, 60, 60);
+      await enforceAccountRateLimit(user.id, "coast-save", 60, 60);
       const input = saveCoastMemorySchema.parse(
         await boundedJson(request, 5000),
       );

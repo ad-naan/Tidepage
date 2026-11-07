@@ -10,17 +10,19 @@ export function AuthorSignature({
   size = "md",
   mark = false,
   className = "",
+  name = profile.name,
 }: {
   size?: SignatureSize;
   mark?: boolean;
   className?: string;
+  name?: string;
 }) {
   return (
     <Signature
       size={size}
       className={`${styles.name} ${mark ? styles.marked : ""} ${className}`}
     >
-      {profile.name}
+      {name}
       {mark && (
         <svg
           className={styles.arrow}

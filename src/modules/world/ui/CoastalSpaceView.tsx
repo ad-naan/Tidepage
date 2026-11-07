@@ -11,10 +11,20 @@ const Voyage = dynamic(() =>
   import("./CoastalExperience").then((module) => module.CoastalExperience),
 );
 
-export function CoastalSpaceView() {
+export function CoastalSpaceView({
+  guideEnabled = false,
+}: {
+  guideEnabled?: boolean;
+}) {
   const [voyage, setVoyage] = useState(false);
   const t = useTranslations("world.harbor");
-  if (!voyage) return <HarborView onVoyage={() => setVoyage(true)} />;
+  if (!voyage)
+    return (
+      <HarborView
+        onVoyage={() => setVoyage(true)}
+        guideEnabled={guideEnabled}
+      />
+    );
   return (
     <>
       <Voyage />

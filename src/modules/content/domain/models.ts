@@ -5,6 +5,7 @@ import { articleBlockSchema } from "./blocks";
 import { editorDocumentSchema } from "./editor-document";
 import { categorySchema, sketchSchema } from "./taxonomy";
 import type { NoteImage } from "./note-images";
+import { isUploadedAssetId } from "@/shared/contracts/asset-path";
 
 export { categorySchema, sketchSchema } from "./taxonomy";
 export const slugSchema = z
@@ -30,10 +31,29 @@ export const articleSchema = z.object({
   excerpt: z.string(),
   sections: z.array(sectionSchema),
   body: editorDocumentSchema.optional(),
+  publication: z
+    .object({
+      author: z.string(),
+      seoTitle: z.string(),
+      seoDescription: z.string(),
+      cover: z
+        .object({
+          assetId: z.string().refine(isUploadedAssetId),
+          alt: z.string(),
+        })
+        .optional(),
+      publishedAt: z.iso.datetime(),
+    })
+    .optional(),
 });
 export type Category = z.infer<typeof categorySchema>;
 export type Article = z.infer<typeof articleSchema>;
-export type ArticleSummary = Omit<Article, "sections" | "body">;
+export const articleSummarySchema = articleSchema.omit({
+  sections: true,
+  body: true,
+  publication: true,
+});
+export type ArticleSummary = z.infer<typeof articleSummarySchema>;
 export type Note = {
   images: NoteImage[];
   body?: Article["body"];
@@ -65,13 +85,15 @@ export type Quote = {
   text: string;
   author: string;
 };
+export type NotePreview = Pick<Note, "mood" | "date" | "text" | "tag">;
 export type NavigationOverview = {
-  note: Pick<Note, "mood" | "date" | "text"> | null;
+  note: NotePreview | null;
   projects: Pick<Project, "id" | "name" | "subtitle">[];
 };
 export function summarize({
   sections: _sections,
   body: _body,
+  publication: _publication,
   ...summary
 }: Article): ArticleSummary {
   return summary;

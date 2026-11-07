@@ -152,15 +152,10 @@ test("comment routes require login, same origin and a published target; reject s
       publishedAt: null,
       updatedAt: new Date(articleFixtures[0].updatedAt),
     });
-    const reads = {
-      getArticle: fixture.service.articleBySlug,
-      getNotes: fixture.service.notes,
-      getProjects: fixture.service.projects,
-    };
     const requireTarget = (
       target: Parameters<typeof requireDiscussionTarget>[0],
       locale: Parameters<typeof requireDiscussionTarget>[1],
-    ) => requireDiscussionTarget(target, locale, reads);
+    ) => requireDiscussionTarget(target, locale, fixture.repository.visibleIds);
     let signedIn = true;
     const routes = createDiscussionRoutes({
       store: () => discussionStore(fixture.db as unknown as Database),

@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { locales, type Locale } from "@/shared/i18n/config";
 import { categorySchema, sketchSchema } from "./taxonomy";
+import { profile } from "@/shared/config/profile";
+import { parseSiteDateTime } from "@/shared/lib/date-time";
 
 import {
   editorDocumentSchema,
@@ -68,7 +70,7 @@ export function newArticle(
     schemaVersion: 1,
     id,
     revision: 0,
-    author: "adnaan",
+    author: profile.name,
     category: "technology",
     sketch: "boat",
     coverAssetId: "",
@@ -108,7 +110,7 @@ export function publicationIssues(article: ArticleDraft, locale: Locale) {
   };
   inspect(value.body);
   if (missingAlt) issues.push("imageAlt");
-  if (article.publishedAt && Number.isNaN(Date.parse(article.publishedAt)))
+  if (article.publishedAt && !parseSiteDateTime(article.publishedAt))
     issues.push("publishedAt");
   return issues;
 }

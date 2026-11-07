@@ -5,7 +5,7 @@ import { isUploadedAssetId } from "@/modules/media/domain/asset-path";
 import { requirePrincipal } from "@/modules/identity/server";
 import { boundedBody, boundedJson } from "@/server/http/body";
 import { requireSameOrigin } from "@/server/http/origin";
-import { enforceRateLimit } from "@/server/http/rate-limit";
+import { enforceAccountRateLimit } from "@/server/http/rate-limit";
 import { validationError } from "@/server/http/errors";
 import { defineRoute, jsonData } from "@/server/http/route";
 export const runtime = "nodejs";
@@ -22,7 +22,7 @@ export const GET = defineRoute(async (request, { requestId }) => {
 export const POST = defineRoute(async (request, { requestId }) => {
   requireSameOrigin(request);
   const user = await requirePrincipal(["author", "admin"]);
-  await enforceRateLimit(request, `upload:${user.id}`, 40, 60);
+  await enforceAccountRateLimit(user.id, "upload", 40, 60);
   const type = request.headers.get("content-type") ?? "";
   if (!type.startsWith("multipart/form-data;")) throw validationError();
   const data = await new Response(

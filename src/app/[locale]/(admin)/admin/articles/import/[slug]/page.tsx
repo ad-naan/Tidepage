@@ -3,6 +3,7 @@ import { getArticle, getArticleLocales } from "@/modules/content/server";
 import { legacyArticlesToDraft } from "@/modules/content/domain/legacy-draft";
 import { slugSchema, type Article } from "@/modules/content/domain/models";
 import { ArticleEditorView } from "@/modules/content/ui/admin/ArticleEditorView";
+import { isEditorialAgentConfigured } from "@/modules/ai/server";
 export default async function Page({
   params,
 }: {
@@ -16,5 +17,11 @@ export default async function Page({
   ).filter((item): item is Article => item !== null);
   if (!articles.length) notFound();
   const draft = legacyArticlesToDraft(articles);
-  return <ArticleEditorView id={draft.id} initialDraft={draft} />;
+  return (
+    <ArticleEditorView
+      id={draft.id}
+      initialDraft={draft}
+      aiEnabled={isEditorialAgentConfigured()}
+    />
+  );
 }

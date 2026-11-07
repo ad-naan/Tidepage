@@ -22,6 +22,7 @@ import type {
   NavigationOverview,
 } from "@/modules/content/domain/models";
 import { useArticleSearch } from "@/modules/content/ui/articles/useArticleSearch";
+import { useReadingArticle } from "@/modules/content/ui/articles/ReadingArticleContext";
 import { spring } from "@/shared/lib/motion";
 import { useDisclosure } from "@/shared/hooks/useDisclosure";
 import { LoginTrigger } from "@/modules/identity/ui/IdentityProvider";
@@ -70,9 +71,9 @@ export function SiteHeader({
   const header = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
   const { scrollY } = useScroll();
-  const article = pathname.startsWith("/articles/")
-    ? articles.find((a) => pathname.endsWith(a.slug))
-    : undefined;
+  const activeArticle = useReadingArticle();
+  const article =
+    pathname === `/articles/${activeArticle?.slug}` ? activeArticle : null;
   const reading = !!article && condensed;
   const search = useArticleSearch(query, open && panel === "search", articles);
   const results = search.items;

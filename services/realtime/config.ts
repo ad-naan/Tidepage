@@ -14,6 +14,8 @@ export type GatewayConfig = z.infer<typeof gatewayConfigSchema>;
 export function readGatewayConfig(
   env: Record<string, string | undefined> = process.env,
 ): GatewayConfig {
+  const memory =
+    env.NODE_ENV !== "production" && env.REALTIME_USE_MEMORY === "true";
   const c = gatewayConfigSchema.parse({
     host: env.REALTIME_HOST,
     port: env.REALTIME_PORT,
@@ -21,7 +23,9 @@ export function readGatewayConfig(
     origins: (env.REALTIME_ORIGINS ?? env.SITE_URL ?? "http://localhost:3000")
       .split(",")
       .map((s) => s.trim()),
-    redisUrl: env.REDIS_URL || undefined,
+    redisUrl: memory
+      ? undefined
+      : env.REALTIME_REDIS_URL || env.REDIS_URL || undefined,
     namespace: env.CACHE_NAMESPACE,
   });
   if (env.NODE_ENV === "production" && !c.redisUrl)

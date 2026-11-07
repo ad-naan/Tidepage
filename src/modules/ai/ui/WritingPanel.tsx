@@ -6,6 +6,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/shared/ui/button/Button";
 import { Textarea } from "@/shared/ui/field/Textarea";
 import type { WritingAgent } from "@/modules/ai/domain/writing";
+import { articleContextLimit } from "@/modules/ai/domain/writing";
+import type { Locale } from "@/shared/i18n/config";
 import styles from "./WritingPanel.module.css";
 export function WritingPanel({
   editor,
@@ -15,7 +17,7 @@ export function WritingPanel({
 }: {
   editor: Editor;
   active?: boolean;
-  contentLocale?: string;
+  contentLocale?: Locale;
   agent?: WritingAgent;
 }) {
   const t = useTranslations("admin.ai");
@@ -63,8 +65,10 @@ export function WritingPanel({
         {
           prompt,
           locale,
-          selection: editor.state.doc.textBetween(from, to, "\n"),
-          context: editor.getText().slice(-12000),
+          selection: editor.state.doc
+            .textBetween(from, to, "\n")
+            .slice(0, articleContextLimit),
+          context: editor.getText().slice(-articleContextLimit),
         },
         task.signal,
       )) {
@@ -102,13 +106,14 @@ export function WritingPanel({
   return (
     <section className={styles.agent} aria-labelledby={headingId}>
       <h2 id={headingId}>{t("title")}</h2>
-      <small>{t("preview")}</small>
+      <small>{t(agent ? "providerHelp" : "preview")}</small>
       <Textarea
         aria-label={t("prompt")}
         placeholder={t("prompt")}
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
         rows={3}
+        maxLength={2000}
         disabled={!agent}
       />
       <div>

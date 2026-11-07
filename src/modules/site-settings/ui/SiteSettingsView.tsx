@@ -22,10 +22,13 @@ import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import styles from "./SiteSettingsView.module.css";
 import { settingsDraftSchema as schema } from "@/modules/site-settings/domain/models";
 import { PageDocumentEditor } from "./PageDocumentEditor";
+import { SiteEditorialAssistant } from "./SiteEditorialAssistant";
 export function SiteSettingsView({
   pageDefaults,
+  aiEnabled = false,
 }: {
   pageDefaults: Record<string, Record<string, string>>;
+  aiEnabled?: boolean;
 }) {
   const t = useTranslations("admin");
   const copy = useMessages().admin.settings;
@@ -183,6 +186,27 @@ export function SiteSettingsView({
             }))}
             onValueChange={setLocale}
           />
+          {aiEnabled && tab === "basic" && (
+            <SiteEditorialAssistant
+              key={locale}
+              locale={locale}
+              fields={value.translations[locale] ?? pageDefaults[locale]}
+              apply={({ seoTitle, seoDescription }) => {
+                setValue({
+                  ...value,
+                  translations: {
+                    ...value.translations,
+                    [locale]: {
+                      ...value.translations[locale],
+                      seoTitle,
+                      seoDescription,
+                    },
+                  },
+                });
+                setDirty(true);
+              }}
+            />
+          )}
           {(fields as Record<string, string[]>)[tab].map((key) =>
             key === "aboutBody" || key === "siteAboutBody" ? (
               <PageDocumentEditor

@@ -1,74 +1,40 @@
 # Tidepage · 潮页
 
-adnaan 的手绘博客与可探索海岸，使用 Next.js、React、TypeScript 和 Three.js。页面和后端在同一个项目中。
+adnaan 的双语博客、内容工作台与可探索海岸。Next.js 同时负责网站页面和 HTTP API，PostgreSQL 保存内容和账号，Socket.IO 网关负责实时功能。
 
-**第一次开发，先看 [开发上手](docs/onboarding.md)。找不到文件，查 [按任务找文件](docs/project-map.md)。** 不需要先读完数据库和所有架构说明。
+## 本地启动
 
-## 先跑起来
+使用 Node.js 24 和 pnpm 12.16.1。第一次安装 pnpm 可运行 `npm install --global pnpm@12.16.1`。缺少环境文件时从 `.env.example` 复制配置，并把 `DATABASE_URL` 指向开发库。已有环境文件可直接沿用。
 
-需要 Node.js 24 和 pnpm 12.16.1。首次安装 pnpm 后，在项目根目录打开终端：
+本地用根目录一个 `.env` 即可。`.env.local` 可作为个人覆盖。站点用 `SITE_`、数据库用 `DATABASE_`、OAuth 用 `OAUTH_`、模型用 `AI_`、网关用 `REALTIME_`。只有浏览器要读的公开值才加 `NEXT_PUBLIC_`。
 
 ```powershell
-npm install --global pnpm@12.16.1
 pnpm install --frozen-lockfile
+pnpm run db:check
+# 确认目标是开发库后，应用待执行的迁移
+pnpm run db:migrate
 pnpm run dev
 ```
 
-打开终端显示的地址，通常是 [中文首页](http://localhost:3000/zh-CN) 或 [英文首页](http://localhost:3000/en)。内容统一读取 PostgreSQL；配置 `DATABASE_URL` 后执行 `pnpm run db:migrate` 和 `pnpm run db:check`。
+打开终端显示的地址，通常是 [中文首页](http://localhost:3000/zh-CN)、[英文首页](http://localhost:3000/en) 或 [工作台](http://localhost:3000/zh-CN/admin)。日常启动只需 `pnpm run dev`。要联调在线状态和多人海岸，另开终端启动网关。 [实时服务](docs/realtime.md)
 
-以后日常开发只运行 `pnpm run dev`，保存文件后自动更新；按 `Ctrl+C` 停止。不要同时开多个开发服务。
+## 改哪里
 
-项目通过 `packageManager` 固定 pnpm 版本，依赖以 `pnpm-lock.yaml` 为准。新增依赖用 `pnpm add 包名`，开发依赖用 `pnpm add -D 包名`，移除依赖用 `pnpm remove 包名`；依赖变更时一起提交 `package.json` 和 `pnpm-lock.yaml`。安装命令中的 npm 仅用于首次安装 pnpm。
+| 要做的事                          | 入口                                                                                                   |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| 看懂 Next.js 路由、目录和请求流程 | [项目架构](docs/architecture.md)                                                                       |
+| 改中文、英文文案                  | `src/shared/i18n/messages/`                                                                            |
+| 改首页、文章、工作台或海岸        | 对应的 `src/modules/<功能>/ui/`，样式在组件旁的 `.module.css`                                          |
+| 改页头、菜单和页脚                | `src/widgets/site-shell/`                                                                              |
+| 改头像和个人外链                  | `src/shared/config/profile.ts`                                                                         |
+| 新增组件、改公共样式              | [前端架构](docs/frontend-architecture.md)、[设计基础](docs/design-system.md)                           |
+| 绑定站主、管理草稿和媒体          | [工作台](docs/workbench-development.md)                                                                |
+| 上线或排查服务                    | [部署](docs/deployment.md)、[实时服务](docs/realtime.md)、[旧数据迁移](docs/legacy-mysql-migration.md) |
 
-## 我要改哪里
+提交前运行 `pnpm run check` 和 `pnpm run build`。前者包含格式、依赖边界、类型和自动测试，后者验证生产构建。
 
-| 要改的东西                         | 文件位置                                                    |
-| ---------------------------------- | ----------------------------------------------------------- |
-| 介绍、标题、按钮等界面文字         | `src/shared/i18n/messages/zh-CN.json`、`en.json`            |
-| 首页布局、介绍区                   | `src/modules/home/ui/HomeView.tsx`、`HomeHero.tsx`          |
-| 页头、菜单、页脚                   | `src/widgets/site-shell/`                                   |
-| 文章、手记、项目、一言、照片、自述 | `src/modules/content/ui/` 下对应目录                        |
-| 姓名、头像路径、GitHub 等外链      | `src/shared/config/profile.ts`                              |
-| 基础按钮、输入、弹窗、筛选、提示   | `src/shared/ui/`                                            |
-| 字体、字号、间距                   | `src/styles/tokens.css`                                     |
-| 文章等内容查询                     | `src/modules/content/infrastructure/postgres-repository.ts` |
-| 海岸插画、三维漫游                 | `src/modules/world/ui/`、`runtime/`                         |
+## 当前功能
 
-旧 `src/components` 已按职责拆分，不再使用。页面样式通常就在对应组件旁边的 `.module.css` 中。完整路径见 [目录说明](docs/project-map.md)。
+文章、手记、项目和一言从 PostgreSQL 读取。工作台通过 GitHub 或 Gitee 登录，保存双语草稿，支持按语言发布文章和手记。读者评论、点赞和收藏持久化到数据库。上传图片保存在 `UPLOAD_DIR`。
 
-## 开发最常用的命令
-
-```powershell
-pnpm run dev       # 开发和热更新
-pnpm run format    # 统一格式化代码、样式、配置和文档
-pnpm run format:check # 只检查格式，不修改文件
-pnpm run check     # 格式、架构、类型、自动测试
-pnpm run build     # 确认可构建生产版本
-```
-
-格式使用 Prettier，规则统一在 `.prettierrc.json`：2 空格缩进、双引号、分号、80 列换行参考宽度和 LF 换行。`.editorconfig` 同步基础编辑规则；使用 VS Code 时安装工作区推荐的 Prettier 扩展，保存即可自动格式化。生成文件、缓存、静态资源和锁文件通过 `.prettierignore` 排除。CI 的 `pnpm run check` 包含格式检查，提示格式问题时先执行 `pnpm run format`。
-
-基础控件用现成的 `Button`、`Input`、`FilterTabs`、`Dialog` 等；文案使用语言包。可复制的例子见 [开发上手](docs/onboarding.md)。
-
-作者实时状态配套 [Go 原生桌面助手](desktop/README.md)，网关启动、多实例部署与扩展边界见 [实时连接说明](docs/realtime.md)。
-
-## 文档怎么读
-
-1. [开发上手](docs/onboarding.md)：启动、改文字、改样式、新增页面、接数据库。
-2. [按任务找文件](docs/project-map.md)：目录用途、真实文件位置、旧名称对应新名称。
-3. [前端架构与组件清单](docs/frontend-architecture.md)：组件放哪、怎样命名、公共控件怎么用。
-4. [设计基础](docs/design-system.md)：字体、间距、笔触和动效标准。
-5. [后端开发](docs/backend-development.md)：需要 API、PG、Redis、多人网关时再看。
-6. [系统架构](docs/architecture.md)：数据来源、发布、缓存、SEO / GEO。
-
-全部文档入口是 [docs/README.md](docs/README.md)。
-
-## 当前功能范围
-
-文章、手记、项目、一言已有 demo 与 PostgreSQL 两种来源；数据库接入按上手指南操作。HTTP 接口在 `/api/v1`，存活检查为 `/api/v1/health/live`。
-
-站主后台使用访问密钥登录，工作副本保存到 PostgreSQL，上传图片保存到 `UPLOAD_DIR`（默认 `storage/uploads`），访问地址为 `/uploads/...`。首次执行 `pnpm run admin:setup`，再从 `.env.local` 读取站主密钥登录。配置与边界见 [工作台说明](docs/workbench-development.md)，旧博客导入见 [MySQL 迁移说明](docs/legacy-mysql-migration.md)。
-
-标明“演示”的读者登录、评论、点赞和人数仍是界面预览。真实 OAuth、正式内容发布、对象存储、Agent 服务尚未实现。前台照片和音乐临时导入、海岸进度仍是浏览器体验。
-
-开发默认关闭索引；正式发布前配置真实 `SITE_URL`、数据库内容和 `INDEXING_ENABLED`。素材来源见 [ASSETS.md](ASSETS.md)。
+项目、一言、照片和友联仍有公开发布环节待接通。写作助手在配置模型后支持编辑、生成文章元数据、翻译和站点 SEO/GEO/RSS 审阅。实时作者状态和多人海岸依赖独立网关。 [工作台](docs/workbench-development.md)

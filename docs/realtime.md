@@ -1,10 +1,10 @@
 # 实时连接与桌面助手
 
-实时服务位于 `services/realtime`，独立于 Next.js 运行。Next Route Handler 不挂 WebSocket。当前已接入作者状态链路，以及落日海湾的匿名访客、装扮、行走、挥手、分配座位和重连。站长身份认证、合影邀请、持久打卡与 agent 命令尚未实现。
+实时服务位于 `services/realtime`，独立于 Next.js 运行。它处理作者状态、落日海湾的同行和重连、合照邀请，以及账号手账使用的签名证明。水獭指南的问答走 Web HTTP 接口，读者点击建议后才使用现有步行控制。
 
 ## 本地联调
 
-在 `.env` 中加入：
+在 `.env.local` 或 `.env` 中加入：
 
 ```dotenv
 REALTIME_HOST=127.0.0.1
@@ -28,6 +28,8 @@ pnpm dev
 ```
 
 分别在两个终端运行。修改 `NEXT_PUBLIC_REALTIME_URL` 后重新启动 Next；生产环境需重新构建。桌面服务地址填写网关 origin，不要追加 `/socket.io`。作者状态仍只允许通过作者鉴权写入；浏览器可以发送下文列出的世界空间访客意图，不具有站长或账号权限。
+
+本地只有一个网关时可以在 `.env` 配置 `REALTIME_USE_MEMORY=true` 后运行 `pnpm realtime`。生产网关使用 `REALTIME_REDIS_URL`，旧配置仍可用 `REDIS_URL`。
 
 ## 落日海湾多人空间
 

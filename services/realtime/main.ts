@@ -1,6 +1,7 @@
-import "dotenv/config";
+import { config } from "dotenv";
 import { readGatewayConfig } from "./config";
 import { createGateway } from "./gateway";
+config({ path: [".env.local", ".env"], quiet: true });
 const gateway = await createGateway(readGatewayConfig());
 await gateway.listen();
 console.info("realtime.listening");

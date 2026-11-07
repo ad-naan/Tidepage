@@ -8,6 +8,7 @@ import { JsonLd } from "@/server/seo/JsonLd";
 import { siteGraph } from "@/server/seo/structured-data";
 import { isLocale } from "@/shared/i18n/config";
 import { getPublicSiteIdentity } from "@/modules/site-settings/server";
+import { site } from "@/shared/config/site";
 export default async function LocaleLayout({
   children,
   params,
@@ -25,7 +26,7 @@ export default async function LocaleLayout({
       key={locale}
       locale={locale}
       messages={messages}
-      timeZone="Asia/Shanghai"
+      timeZone={site.timeZone}
     >
       <DocumentLanguage locale={locale} />
       <JsonLd data={siteGraph(locale, identity)} />

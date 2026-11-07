@@ -16,12 +16,16 @@ export const GET = defineRoute(async (_request, { requestId }) => {
           .then(() => "ready")
       : Promise.resolve("disabled"),
   ]);
-  const ready = checks.every((c) => c.status === "fulfilled");
+  const ready = checks[0].status === "fulfilled";
   const status = (i: number) =>
     checks[i].status === "fulfilled" ? checks[i].value : "unavailable";
   return jsonData(
     {
-      status: ready ? "ready" : "not_ready",
+      status: ready
+        ? checks[1].status === "fulfilled"
+          ? "ready"
+          : "degraded"
+        : "not_ready",
       dependencies: { postgres: status(0), redis: status(1) },
     },
     requestId,

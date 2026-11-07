@@ -7,7 +7,7 @@ import {
 } from "@/modules/engagement/domain/discussion";
 import { boundedJson } from "@/server/http/body";
 import { requireSameOrigin } from "@/server/http/origin";
-import { enforceRateLimit } from "@/server/http/rate-limit";
+import { enforceAccountRateLimit } from "@/server/http/rate-limit";
 import { defineRoute, jsonData } from "@/server/http/route";
 
 export function createDiscussionRoutes(dependencies: {
@@ -29,7 +29,7 @@ export function createDiscussionRoutes(dependencies: {
     create: defineRoute(async (request, { requestId }) => {
       requireSameOrigin(request);
       const user = await dependencies.authorize();
-      await enforceRateLimit(request, `comment:${user.id}`, 10, 60);
+      await enforceAccountRateLimit(user.id, "comment", 10, 60);
       const input = newCommentSchema.parse(
         await boundedJson(request, 32 * 1024),
       );
