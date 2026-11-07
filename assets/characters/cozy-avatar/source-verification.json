@@ -1,0 +1,20 @@
+{
+  "packed_images": [
+    {
+      "name": "Image_0",
+      "packed": true
+    },
+    {
+      "name": "Image_1",
+      "packed": true
+    }
+  ],
+  "actions": [
+    "Idle",
+    "Jump",
+    "Run",
+    "Sit",
+    "Walk",
+    "Wave"
+  ]
+}

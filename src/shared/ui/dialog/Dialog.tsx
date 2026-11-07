@@ -1,5 +1,6 @@
 "use client";
-import { useLayoutEffect, useRef, type ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useReducedMotion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
 import { IconButton } from "@/shared/ui/button/Button";
@@ -21,6 +22,24 @@ export function Dialog({
   size?: "default" | "compact";
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const [closing, setClosing] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const close = useRef(onClose);
+  close.current = onClose;
+  const reduced = useReducedMotion();
+  function requestClose() {
+    if (timer.current) return;
+    if (reduced) {
+      close.current();
+      return;
+    }
+    setClosing(true);
+    timer.current = setTimeout(() => {
+      timer.current = null;
+      setClosing(false);
+      close.current();
+    }, 160);
+  }
   const t = useTranslations("ui.dialog");
   useLayoutEffect(() => {
     const dialog = ref.current;
@@ -30,6 +49,7 @@ export function Dialog({
     const before = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
+      if (timer.current) clearTimeout(timer.current);
       dialog.close();
       document.body.style.overflow = before;
       if (previous instanceof HTMLElement && previous.isConnected)
@@ -39,13 +59,14 @@ export function Dialog({
   return (
     <dialog
       ref={ref}
+      data-closing={closing}
       className={`${styles.dialog} ${wide ? styles.wide : ""} ${layout === "split" ? styles.split : ""} ${size === "compact" ? styles.compact : ""}`}
       onCancel={(event) => {
         event.preventDefault();
-        onClose();
+        requestClose();
       }}
       onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+        if (e.target === e.currentTarget) requestClose();
       }}
       aria-label={title}
     >
@@ -56,12 +77,17 @@ export function Dialog({
           <IconButton
             className="icon-button"
             aria-label={t("close")}
-            onClick={onClose}
+            onClick={requestClose}
+            disabled={closing}
           >
             <X size={19} />
           </IconButton>
         </div>
-        <div className={styles.content} data-custom-scroll={t("region")}>
+        <div
+          className={styles.content}
+          data-custom-scroll={t("region")}
+          inert={closing}
+        >
           {children}
         </div>
       </div>

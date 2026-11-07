@@ -943,6 +943,7 @@ body {
   font-size: 12px;
 }
 .contact-card > p {
+  white-space: pre-line;
   font-size: 14px;
 }
 .contact-card > h2 {

@@ -5,7 +5,7 @@ import {
 } from "@/shared/contracts/coast-space";
 
 export const avatarColors = {
-  coat: { sea: "#668e91", moss: "#7c8b69", coral: "#c98879", cream: "#e5d5b4" },
+  coat: { sea: "#78a793", moss: "#7c8b69", coral: "#c98879", cream: "#e5d5b4" },
   skin: { light: "#f1c9aa", warm: "#dba27c", deep: "#956449" },
   hair: { chestnut: "#63483b", ink: "#303b40", honey: "#bb8b51" },
 } as const;

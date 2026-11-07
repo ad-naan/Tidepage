@@ -17,6 +17,12 @@ async function apiRequest<T>(
     ...init,
     credentials: "same-origin",
     headers: { Accept: "application/json", ...init.headers },
+    signal: init.signal
+      ? AbortSignal.any([
+          init.signal,
+          AbortSignal.timeout(init.body instanceof FormData ? 120_000 : 30_000),
+        ])
+      : AbortSignal.timeout(init.body instanceof FormData ? 120_000 : 30_000),
   });
   const body = (await response.json()) as ApiResponse<T> | ApiFailure;
   if (!response.ok || "error" in body) {

@@ -16,6 +16,7 @@ import {
   X,
   Check,
   Circle,
+  Focus,
 } from "lucide-react";
 import { Link } from "@/shared/i18n/navigation";
 import type { Editor } from "@tiptap/core";
@@ -43,7 +44,7 @@ import { Field } from "@/shared/ui/field/Field";
 import { Select } from "@/shared/ui/select/Select";
 import { Disclosure } from "@/shared/ui/disclosure/Disclosure";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
-import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
+import { useNotice, NoticeDock } from "@/shared/ui/feedback/NoticeProvider";
 import { AssetImage } from "@/modules/media/ui/admin/AssetImage";
 import { MediaPicker } from "@/modules/media/ui/admin/MediaPicker";
 import { RichTextEditor } from "./editor/RichTextEditor";
@@ -91,6 +92,26 @@ export function ArticleEditorView({
   const [saving, setSaving] = useState(false);
   const [preview, setPreview] = useState(false);
   const [panel, setPanel] = useState<"metadata" | "ai" | null>(null);
+  const [focused, setFocused] = useState(false);
+  const focusTrigger = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!focused) return;
+    const escape = (event: KeyboardEvent) => {
+      if (
+        event.key !== "Escape" ||
+        event.defaultPrevented ||
+        document.fullscreenElement ||
+        document.querySelector("dialog[open]") ||
+        panel
+      )
+        return;
+      event.preventDefault();
+      setFocused(false);
+      focusTrigger.current?.focus({ preventScroll: true });
+    };
+    document.addEventListener("keydown", escape);
+    return () => document.removeEventListener("keydown", escape);
+  }, [focused, panel]);
   const panelTriggers = useRef<
     Partial<Record<"metadata" | "ai", HTMLButtonElement>>
   >({});
@@ -334,8 +355,13 @@ export function ArticleEditorView({
   const translation = translationOf(draft, locale);
   const issues = checking ? publicationIssues(draft, locale) : [];
   return (
-    <div className={styles.workspace} ref={workspace}>
+    <div
+      className={styles.workspace}
+      ref={workspace}
+      data-editor-focus={focused}
+    >
       <header className={styles.header} ref={header}>
+        {focused && <NoticeDock />}
         <div className={styles.identity}>
           <Link
             href="/admin/articles"
@@ -359,6 +385,16 @@ export function ArticleEditorView({
           </span>
         </div>
         <div className={styles.actions}>
+          <Button
+            variant="quiet"
+            size="sm"
+            ref={focusTrigger}
+            aria-pressed={focused}
+            onClick={() => setFocused(!focused)}
+          >
+            <Focus size={15} />
+            {t(focused ? "editor.exitFocus" : "editor.focus")}
+          </Button>
           <div className={styles.language} title={t("editor.localeHelp")}>
             <Select
               value={locale}
@@ -377,6 +413,7 @@ export function ArticleEditorView({
             />
           </div>
           <Button
+            variant="quiet"
             size="sm"
             aria-pressed={preview}
             disabled={uploading || publishing}
@@ -392,6 +429,7 @@ export function ArticleEditorView({
           {!preview && (
             <>
               <Button
+                variant="quiet"
                 size="sm"
                 aria-pressed={panel === "metadata"}
                 ref={(element) => {
@@ -406,6 +444,7 @@ export function ArticleEditorView({
                 {t("editor.metadata")}
               </Button>
               <Button
+                variant="quiet"
                 size="sm"
                 aria-pressed={panel === "ai"}
                 ref={(element) => {
@@ -664,7 +703,10 @@ export function ArticleEditorView({
                 {t("editor.cover")}
               </Button>
               {draft.coverAssetId && (
-                <Button onClick={() => updateShared({ coverAssetId: "" })}>
+                <Button
+                  variant="quiet"
+                  onClick={() => updateShared({ coverAssetId: "" })}
+                >
                   {t("editor.removeCover")}
                 </Button>
               )}
@@ -779,6 +821,7 @@ export function ArticleEditorView({
             {t("editor.keepEditing")}
           </Button>
           <Button
+            variant="quiet"
             onClick={() => {
               dirtyRef.current = false;
               window.location.assign(pendingLink);

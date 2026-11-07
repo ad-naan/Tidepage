@@ -23,6 +23,16 @@ import {
   type PersonalPage,
 } from "../../src/modules/site-settings/domain/pages";
 import { pageMetadata } from "../../src/server/seo/metadata";
+import {
+  settingsWriteSchema,
+  settingsDraftSchema,
+} from "../../src/modules/site-settings/domain/models";
+import {
+  arrangeFeatured,
+  resolveSitePresentation,
+} from "../../src/modules/site-settings/domain/presentation";
+import { getCatalog } from "../../src/server/i18n/messages";
+import { profile } from "../../src/shared/config/profile";
 
 process.env.DATABASE_URL = "postgresql://test:test@localhost/test";
 const defaults = {
@@ -30,6 +40,132 @@ const defaults = {
   title: "光阴副本集 · adnaan",
   description: "Default description",
 };
+
+test("settings editor shows localized effective defaults and preserves explicit homepage overrides", async () => {
+  const fixture = await createContentTestStore();
+  const db = fixture.db as unknown as Database;
+  try {
+    const [owner] = await db
+      .insert(usersTable)
+      .values({ displayName: "Owner", role: "admin" })
+      .returning();
+    const editor = await readSiteSettingsEditorState(owner.id, db);
+    for (const locale of ["zh-CN", "en"] as const) {
+      const catalog = await getCatalog(locale);
+      const fields = editor.translations[locale];
+      assert.equal(fields.name, profile.name);
+      assert.equal(fields.identity, catalog.home.hero.intro.line2);
+      assert.equal(fields.intro, catalog.home.hero.intro.description);
+      assert.equal(fields.github, profile.github);
+      assert.equal(fields.siteName, catalog.site.name);
+      assert.ok(fields.navigationOrder.includes("articles"));
+      assert.equal(
+        fields.avatarAssetId,
+        undefined,
+        "default preview must not become an unowned uploaded asset",
+      );
+    }
+    await workbenchRecords(db).write(owner.id, "site-settings", 0, {
+      ...editor,
+      revision: 1,
+    });
+    assert.equal(
+      resolveHomeCopy(await readPublicSiteFields("en", db)).heading,
+      editor.translations.en.identity,
+    );
+    await workbenchRecords(db).write(owner.id, "site-settings", 1, {
+      revision: 2,
+      translations: {
+        en: {
+          name: "",
+          identity: "Custom identity",
+          heroTitle: "Independent title",
+        },
+      },
+    });
+    const reopened = await readSiteSettingsEditorState(owner.id, db);
+    assert.equal(reopened.translations.en.name, profile.name);
+    assert.equal(reopened.translations.en.identity, "Custom identity");
+    assert.equal(
+      resolveHomeCopy(reopened.translations.en).heading,
+      "Independent title",
+    );
+  } finally {
+    await fixture.close();
+  }
+});
+
+test("public presentation settings preserve selection order, locale privacy and validate new writes", async () => {
+  const fixture = await createContentTestStore();
+  const db = fixture.db as unknown as Database;
+  try {
+    const [owner] = await db
+      .insert(usersTable)
+      .values({ displayName: "Owner", role: "admin" })
+      .returning();
+    const settings = {
+      revision: 1,
+      translations: {
+        "zh-CN": {
+          navigationOrder: "projects,articles",
+          featuredSlugs: "older-article,recent-article",
+          footer: "A quiet shore",
+          publicContact: "Public contact note",
+          contact: "Private contact",
+        },
+      },
+    };
+    await workbenchRecords(db).write(owner.id, "site-settings", 0, settings);
+    const fields = await readPublicSiteFields("zh-CN", db);
+    assert.equal(fields.contact, undefined);
+    const presentation = resolveSitePresentation(fields);
+    assert.deepEqual(
+      presentation.navigation.slice(0, 2).map((item) => item.key),
+      ["projects", "articles"],
+    );
+    assert.equal(
+      new Set(presentation.navigation.map((item) => item.key)).size,
+      9,
+    );
+    assert.equal(presentation.footer, "A quiet shore");
+    assert.equal(presentation.publicContact, "Public contact note");
+    assert.deepEqual(
+      resolveSitePresentation(await readPublicSiteFields("en", db))
+        .featuredSlugs,
+      [],
+    );
+    assert.deepEqual(
+      arrangeFeatured(
+        [{ slug: "older" }, null],
+        [{ slug: "newer" }, { slug: "older" }],
+      ),
+      [{ slug: "older" }, { slug: "newer" }],
+    );
+    for (const fields of [
+      { navigationOrder: "unknown" },
+      { featuredSlugs: "bad slug" },
+      { featuredSlugs: "a,b,c,d,e,f" },
+      { publicContact: "x".repeat(1001) },
+    ]) {
+      const input = { revision: 2, translations: { "zh-CN": fields } };
+      assert.equal(settingsWriteSchema.safeParse(input).success, false);
+      assert.equal(
+        settingsDraftSchema.safeParse(input).success,
+        true,
+        "legacy drafts remain readable for correction",
+      );
+      await assert.rejects(
+        workbenchRecords(db).write(owner.id, "site-settings", 1, input),
+      );
+    }
+    assert.equal(
+      (await workbenchRecords(db).read(owner.id, "site-settings")).revision,
+      1,
+    );
+  } finally {
+    await fixture.close();
+  }
+});
 
 test("editable personal and site pages preserve sections, interests and locale isolation after saving", async () => {
   const fixture = await createContentTestStore();

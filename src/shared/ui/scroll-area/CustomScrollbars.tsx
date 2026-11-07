@@ -143,7 +143,6 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
     mutation.observe(host || document.body, {
       childList: true,
       subtree: true,
-      characterData: true,
     });
     document.addEventListener("scroll", schedule, true);
     window.addEventListener("resize", schedule);
@@ -234,7 +233,10 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
     }
   };
   if (!geometry.visible) return null;
-  const container = host?.closest("dialog") || document.body;
+  const container =
+    host?.closest("dialog[open]") ||
+    document.fullscreenElement ||
+    document.body;
   const railStyle = vertical
     ? {
         top: geometry.top,

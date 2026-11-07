@@ -20,6 +20,8 @@ import {
   identitiesTable,
   usersTable,
 } from "../../src/modules/identity/infrastructure/schema";
+import { profileAvatarColumn } from "../../src/modules/identity/server/profile";
+import { discussionStore } from "../../src/modules/engagement/server";
 
 const client = {
   clientId: "app-id",
@@ -175,6 +177,7 @@ test("GitHub and Gitee bind to the existing owner; readers cannot claim ownershi
         id: owner.id,
         displayName: "Original author",
         role: "admin",
+        avatarUrl: null,
       });
     }
     const readerProfile = profile("github", "123");
@@ -205,6 +208,54 @@ test("GitHub and Gitee bind to the existing owner; readers cannot claim ownershi
       0,
     );
     assert.equal((await resolveOAuthAccount(readerProfile, db)).role, "reader");
+  } finally {
+    await fixture.close();
+  }
+});
+
+test("OAuth avatars reach account and existing comments without duplicating linked users", async () => {
+  const fixture = await createContentTestStore();
+  const db = fixture.db as unknown as Database;
+  try {
+    const firstUrl = "https://avatars.githubusercontent.com/u/123?v=4";
+    const account = { ...profile("github", "123"), avatarUrl: firstUrl };
+    const user = await resolveOAuthAccount(account, db);
+    assert.equal(user.avatarUrl, firstUrl);
+    // A second provider must not multiply comment results.
+    await db.insert(identitiesTable).values({
+      userId: user.id,
+      provider: "gitee",
+      providerAccountId: "456",
+      profileAvatarUrl: "https://gitee.com/avatar/456.png",
+      updatedAt: new Date("2020-01-01"),
+    });
+    const target = { type: "article" as const, id: "avatar-fixture" };
+    const store = discussionStore(db);
+    const created = await store.create(user.id, {
+      target,
+      locale: "en",
+      body: "Avatar verification",
+    });
+    assert.equal(created.avatarUrl, firstUrl);
+    const secondUrl = "https://avatars.githubusercontent.com/u/123?v=5";
+    await resolveOAuthAccount({ ...account, avatarUrl: secondUrl }, db);
+    const [sessionProfile] = await db
+      .select({ avatarUrl: profileAvatarColumn(usersTable.id) })
+      .from(usersTable)
+      .where(eq(usersTable.id, user.id));
+    assert.equal(sessionProfile.avatarUrl, secondUrl);
+    const comments = await store.list({ ...target, locale: "en" });
+    assert.equal(comments.items.length, 1);
+    assert.equal(comments.items[0].avatarUrl, secondUrl);
+    assert.equal(
+      (
+        await resolveOAuthAccount(
+          { ...profile("github", "789"), avatarUrl: "javascript:alert(1)" },
+          db,
+        )
+      ).avatarUrl,
+      null,
+    );
   } finally {
     await fixture.close();
   }

@@ -67,7 +67,12 @@ test(
       sockets.push(a, b, outsider);
       const subject = randomUUID();
       const hostTicket = issueCoastIdentity(
-        { subject, name: "Verified host", host: true },
+        {
+          subject,
+          name: "Verified host",
+          host: true,
+          avatarUrl: "https://avatars.githubusercontent.com/u/123?v=4",
+        },
         token,
         now,
       );
@@ -83,6 +88,10 @@ test(
       assert.ok(first.ok && second.ok && third.ok);
       if (!first.ok || !second.ok || !third.ok) return;
       assert.equal(first.movementVersion, 2);
+      assert.equal(
+        first.snapshot.players.find((p) => p.id === first.playerId)?.avatarUrl,
+        "https://avatars.githubusercontent.com/u/123?v=4",
+      );
       assert.equal(
         first.snapshot.players.find((p) => p.id === first.playerId)?.host,
         true,

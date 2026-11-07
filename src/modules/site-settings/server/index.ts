@@ -7,7 +7,8 @@ import { workbenchRecordsTable } from "@/server/workbench/schema";
 import { workbenchRecords } from "@/server/workbench/records";
 import { usersTable } from "@/modules/identity/server/schema";
 import { locales, type Locale } from "@/shared/i18n/config";
-import { profile } from "@/shared/config/profile";
+import { profile, profileLinks } from "@/shared/config/profile";
+import { navigationItems } from "@/shared/config/site";
 import { isUploadedAssetId } from "@/shared/contracts/asset-path";
 import { settingsDraftSchema, type SettingsDraft } from "../domain/models";
 import {
@@ -16,6 +17,12 @@ import {
   type SiteIdentity,
 } from "../domain/identity";
 import { resolvePersonalPage, resolveSitePage } from "../domain/pages";
+import {
+  resolveSitePresentation,
+  arrangeFeatured,
+} from "../domain/presentation";
+import { getArticle, getFeaturedArticles } from "@/modules/content/server";
+import { summarize } from "@/modules/content/domain/models";
 
 export async function readPublicSiteFields(
   locale: Locale,
@@ -44,6 +51,10 @@ export async function readPublicSiteFields(
       ([key]) =>
         [
           "siteName",
+          "footer",
+          "publicContact",
+          "navigationOrder",
+          "featuredSlugs",
           "seoTitle",
           "siteDescription",
           "seoDescription",
@@ -84,6 +95,27 @@ export async function readPublicSiteIdentity(
 const getPublicSiteFields = cache((locale: Locale) =>
   readPublicSiteFields(locale),
 );
+
+export const getPublicSitePresentation = cache(async (locale: Locale) =>
+  resolveSitePresentation(await getPublicSiteFields(locale)),
+);
+
+export const getConfiguredFeaturedArticles = cache(async (locale: Locale) => {
+  const [settings, recent] = await Promise.all([
+    getPublicSitePresentation(locale),
+    getFeaturedArticles(locale),
+  ]);
+  const selected = await Promise.all(
+    settings.featuredSlugs.map(async (slug) => {
+      const article = await getArticle(slug, locale);
+      return article ? summarize(article) : null;
+    }),
+  );
+  return {
+    items: arrangeFeatured(selected, recent.items),
+    total: recent.total,
+  };
+});
 
 export const getPublicHomeCopy = cache(async (locale: Locale) =>
   resolveHomeCopy(await getPublicSiteFields(locale)),
@@ -132,6 +164,18 @@ async function getPageEditorDefaults() {
         return [
           locale,
           {
+            name: profile.name,
+            identity: catalog.home.hero.intro.line2,
+            intro: catalog.home.hero.intro.description,
+            ...Object.fromEntries(
+              profileLinks
+                .filter(({ key }) => key !== "spark")
+                .map(({ key, href }) => [key, href]),
+            ),
+            siteName: catalog.site.name,
+            siteDescription: catalog.site.description,
+            navigationOrder: navigationItems.map(({ key }) => key).join(", "),
+            publicContact: `${catalog.contact.body1}\n${catalog.contact.body2}`,
             aboutTitle: personal.title,
             aboutIntro: personal.intro,
             aboutIdentity: personal.identity,
@@ -166,10 +210,24 @@ export async function readSiteSettingsEditorState(
   return {
     revision: stored.revision,
     translations: Object.fromEntries(
-      locales.map((locale) => [
-        locale,
-        { ...defaults[locale], ...stored.translations[locale] },
-      ]),
+      locales.map((locale) => {
+        const fields = { ...defaults[locale], ...stored.translations[locale] };
+        // These public fields use defaults when empty, so show their effective value.
+        for (const key of [
+          "name",
+          "identity",
+          "intro",
+          "github",
+          "gitee",
+          "siteName",
+          "siteDescription",
+          "navigationOrder",
+          "publicContact",
+        ]) {
+          if (!fields[key]?.trim()) fields[key] = defaults[locale][key];
+        }
+        return [locale, fields];
+      }),
     ),
   };
 }

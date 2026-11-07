@@ -13,6 +13,8 @@ import styles from "./ProjectsView.module.css";
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { listItemMotion } from "@/shared/lib/motion";
 import { ArrowUpRight } from "lucide-react";
 import type { Project } from "@/modules/content/domain/models";
 import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
@@ -22,6 +24,7 @@ import { Discussion } from "@/modules/engagement/ui/Discussion";
 import { ContentEngagementActions } from "@/modules/engagement/ui/EngagementActions";
 
 export function ProjectsView({ projects }: { projects: Project[] }) {
+  const reduced = useReducedMotion();
   const t = useTranslations("projects");
   const [category, setCategory] = useState("all");
   const [selected, setSelected] = useState<Project | null>(null);
@@ -58,8 +61,9 @@ export function ProjectsView({ projects }: { projects: Project[] }) {
         as="ul"
       >
         {(p, index) => (
-          <li
+          <motion.li
             key={p.id}
+            {...listItemMotion(index, reduced)}
             className={styles.entry}
             data-lead={index === 0 && category === "all"}
           >
@@ -90,6 +94,13 @@ export function ProjectsView({ projects }: { projects: Project[] }) {
                 <p className={styles.subtitle}>{p.subtitle}</p>
               )}
               <p className={styles.description}>{p.description}</p>
+              {!!p.stack.length && (
+                <ul className={styles.stack}>
+                  {[...new Set(p.stack)].map((s) => (
+                    <li key={s}>{s}</li>
+                  ))}
+                </ul>
+              )}
             </div>
             <div className={styles.folio}>
               <div
@@ -97,21 +108,13 @@ export function ProjectsView({ projects }: { projects: Project[] }) {
                 data-tint={p.color}
                 aria-hidden="true"
               >
-                {index === 0 && category === "all" && (
-                  <PencilFrame kind="ticket" />
-                )}
+                <PencilFrame kind="ticket" />
                 <CoastalVignette kind={p.sketch} />
                 <PencilLine kind="trail" />
               </div>
-              {!!p.stack.length && (
-                <ul className={styles.stack}>
-                  {p.stack.map((s) => (
-                    <li key={s}>{s}</li>
-                  ))}
-                </ul>
-              )}
             </div>
-          </li>
+            <PencilLine kind="fold" className={styles.projectShore} />
+          </motion.li>
         )}
       </ProgressiveList>
       {!visible.length && <p className={styles.empty}>{t("empty")}</p>}
@@ -133,7 +136,7 @@ export function ProjectsView({ projects }: { projects: Project[] }) {
             <p>{selected.description}</p>
             {selected.body && <RichText document={selected.body} />}
             <ul className={styles.stack}>
-              {selected.stack.map((s) => (
+              {[...new Set(selected.stack)].map((s) => (
                 <li key={s}>{s}</li>
               ))}
             </ul>

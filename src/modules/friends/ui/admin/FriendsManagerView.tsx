@@ -212,7 +212,7 @@ export function FriendsManagerView({
             <Button variant="primary" type="submit" busy={busy}>
               {t("editor.save")}
             </Button>
-            <Button onClick={() => setValue(null)}>
+            <Button variant="quiet" onClick={() => setValue(null)}>
               {t("collection.discard")}
             </Button>
           </div>
@@ -220,6 +220,7 @@ export function FriendsManagerView({
             <>
               <div className={styles.actions}>
                 <Button
+                  variant="quiet"
                   busy={busy}
                   disabled={
                     editingDirty || !value.translations[locale]?.name.trim()
@@ -230,6 +231,7 @@ export function FriendsManagerView({
                 </Button>
                 {visible && (
                   <Button
+                    variant="quiet"
                     disabled={editingDirty || busy}
                     onClick={() => void publish(false)}
                   >
@@ -277,6 +279,7 @@ export function FriendsManagerView({
                 <div className={styles.actions}>
                   {item.deletedAt ? (
                     <Button
+                      variant="quiet"
                       busy={busy}
                       onClick={() => persist({ ...item, deletedAt: undefined })}
                     >
@@ -285,6 +288,7 @@ export function FriendsManagerView({
                   ) : (
                     <>
                       <Button
+                        variant="quiet"
                         onClick={() => {
                           setLocale(
                             item.translations[uiLocale]?.name
@@ -298,7 +302,7 @@ export function FriendsManagerView({
                       >
                         {t("edit")}
                       </Button>
-                      <Button onClick={() => setDeleting(item)}>
+                      <Button variant="quiet" onClick={() => setDeleting(item)}>
                         {t("crud.delete")}
                       </Button>
                     </>

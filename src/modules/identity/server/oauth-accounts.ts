@@ -4,6 +4,7 @@ import { getDb, type Database } from "@/server/db/client";
 import { identitiesTable, usersTable } from "../infrastructure/schema";
 import type { OAuthProfile } from "../domain/oauth";
 import type { Principal } from "../domain/principal";
+import { publicAvatarUrl } from "@/shared/contracts/avatar";
 
 const principalColumns = {
   id: usersTable.id,
@@ -23,6 +24,7 @@ export async function resolveOAuthAccount(
   profile: OAuthProfile,
   db: Database = getDb(),
 ): Promise<Principal> {
+  const avatarUrl = publicAvatarUrl(profile.avatarUrl);
   const resolve = () =>
     db.transaction(async (tx) => {
       const [existing] = await tx
@@ -36,7 +38,7 @@ export async function resolveOAuthAccount(
           .update(identitiesTable)
           .set({
             profileName: profile.displayName,
-            profileAvatarUrl: profile.avatarUrl,
+            profileAvatarUrl: avatarUrl,
             updatedAt: new Date(),
           })
           .where(identityOf(profile));
@@ -48,7 +50,7 @@ export async function resolveOAuthAccount(
             .where(eq(usersTable.id, existing.id));
           existing.displayName = profile.displayName;
         }
-        return existing;
+        return { ...existing, avatarUrl };
       }
       const [user] = await tx
         .insert(usersTable)
@@ -59,9 +61,9 @@ export async function resolveOAuthAccount(
         provider: profile.provider,
         providerAccountId: profile.providerAccountId,
         profileName: profile.displayName,
-        profileAvatarUrl: profile.avatarUrl,
+        profileAvatarUrl: avatarUrl,
       });
-      return user;
+      return { ...user, avatarUrl };
     });
   try {
     return await resolve();
@@ -130,7 +132,7 @@ export async function bindOwnerIdentities(
           provider: profile.provider,
           providerAccountId: profile.providerAccountId,
           profileName: profile.displayName,
-          profileAvatarUrl: profile.avatarUrl,
+          profileAvatarUrl: publicAvatarUrl(profile.avatarUrl),
         })
         .onConflictDoNothing();
     }

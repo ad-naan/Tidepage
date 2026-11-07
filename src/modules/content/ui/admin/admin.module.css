@@ -26,6 +26,16 @@
   gap: 8px;
   padding: 8px 12px;
   font-size: var(--text-sm);
+  border: 1px solid var(--line);
+  border-radius: 3px 8px 2px 5px;
+  background: color-mix(in srgb, var(--sand) 35%, transparent);
+  transition:
+    background-color var(--motion-quick),
+    color var(--motion-quick);
+}
+.actions a:hover {
+  background: var(--wash);
+  color: var(--accent);
 }
 .deleteButton:hover {
   color: var(--accent);
@@ -53,6 +63,19 @@
   gap: 16px;
   border-bottom: 1px solid var(--line);
   padding: 16px 0;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.list li > div:first-child {
+  flex: 1 1 220px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.list li > .actions {
+  flex: 0 1 auto;
+}
+.list h2 {
+  overflow-wrap: anywhere;
 }
 .list h2 {
   font: 500 var(--text-body)/1.7 var(--font-editorial);

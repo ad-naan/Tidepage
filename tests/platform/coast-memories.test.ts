@@ -73,6 +73,43 @@ test("coastal proofs reject tampering, key substitution, purpose confusion and e
   assert.equal(readCoastReceipt(receipt, secret, now + 300_000), null);
 });
 
+test("world avatars come from signed identities and disappear when identity expires", () => {
+  const room = emptyCoastRoom(now),
+    id = randomUUID();
+  const avatarUrl = "https://avatars.githubusercontent.com/u/123?v=4";
+  const identity = readCoastIdentity(
+    issueCoastIdentity(
+      { subject: randomUUID(), name: "Reader", host: false, avatarUrl },
+      secret,
+      now,
+    ),
+    secret,
+    now,
+  )!;
+  joinCoastRoom(room, id, id, id, defaultAvatar, now, identity);
+  assert.equal(
+    coastRoomSnapshot(room, now, id).players[0].avatarUrl,
+    avatarUrl,
+  );
+  // Keep presence fresh to isolate identity expiry from disconnect handling.
+  room.sessions[id].seenAt = now + 180_000;
+  advanceCoastRoom(room, now + 180_000);
+  assert.equal(room.sessions[id].player.avatarUrl, null);
+  assert.equal(room.sessions[id].player.name, null);
+  assert.throws(() =>
+    issueCoastIdentity(
+      {
+        subject: randomUUID(),
+        name: "Reader",
+        host: false,
+        avatarUrl: "javascript:alert(1)",
+      },
+      secret,
+      now,
+    ),
+  );
+});
+
 function photoFixture() {
   const room = emptyCoastRoom(now);
   const ids = [randomUUID(), randomUUID(), randomUUID()];

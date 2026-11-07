@@ -214,7 +214,12 @@ export function useCoastConnection(options: {
       latest.current.onNight(value.night);
       setCount(value.players.length);
       const nextMetadata = JSON.stringify(
-        value.players.map(({ id, name, host }) => ({ id, name, host })),
+        value.players.map(({ id, name, host, avatarUrl }) => ({
+          id,
+          name,
+          host,
+          avatarUrl,
+        })),
       );
       if (metadata !== nextMetadata) {
         metadata = nextMetadata;

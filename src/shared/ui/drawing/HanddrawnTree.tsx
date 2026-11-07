@@ -28,7 +28,7 @@ export function HanddrawnTree({
       viewBox={`0 0 56 ${height}`}
       fill="none"
       aria-hidden="true"
-      style={{ height, filter: "url(#tidepage-pencil)" }}
+      style={{ height }}
     >
       <motion.path
         initial={false}

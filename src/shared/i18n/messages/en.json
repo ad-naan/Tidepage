@@ -649,7 +649,7 @@
       "wardrobe": {
         "title": "A look of your own",
         "intro": "Pick your favorite colors, then take them to the shore.",
-        "coat": "Coat color",
+        "coat": "Shirt color",
         "skin": "Skin tone",
         "hairColor": "Hair color",
         "hairStyle": "Hairstyle",
@@ -658,7 +658,7 @@
         "done": "Ready for the shore"
       },
       "colors": {
-        "sea": "Sea blue",
+        "sea": "Seafoam green",
         "moss": "Moss green",
         "coral": "Coral pink",
         "cream": "Oat cream",
@@ -822,7 +822,8 @@
       "objectiveDiscovered": "Starfall Bay · discovered",
       "objectiveGlow": "At night, follow the blue glow",
       "objectiveBeacon": "Return to the lighthouse and light it",
-      "objectiveFragments": "Find the scattered wicks"
+      "objectiveFragments": "Find the scattered wicks",
+      "retry": "Try again"
     },
     "notices": {
       "kept": "The wick here has already been collected.",
@@ -1200,7 +1201,14 @@
         "tip": "Tip",
         "warning": "Warning",
         "important": "Important"
-      }
+      },
+      "normalHeight": "Standard height",
+      "expandHeight": "Taller canvas",
+      "fullscreen": "Full screen",
+      "exitFullscreen": "Exit full screen",
+      "fullscreenUnavailable": "Full screen was unavailable. Try the taller canvas.",
+      "focus": "Focus mode",
+      "exitFocus": "Exit focus"
     },
     "media": {
       "upload": "Add images",
@@ -1366,6 +1374,29 @@
       "tabsLabel": "Settings groups",
       "save": "Save settings",
       "draftOnly": "Saved as a working copy. This field is not displayed on the public site.",
+      "defaultsHelp": "Unset basic fields show the site's default content. Saving updates the selected language. Optional overrides follow the fallback described below when left empty.",
+      "viewHome": "View homepage ↗",
+      "viewAbout": "View about page ↗",
+      "viewSite": "View site page ↗",
+      "accountIdentity": "Signed-in account · {name}",
+      "accountAvatarHelp": "Your account avatar syncs from GitHub / Gitee at login and appears in the account menu, comments and the world's companion list. The site author image below is configured separately.",
+      "nameHelp": "Shown as the large homepage signature. Does not change your account name.",
+      "identityHelp": "Shown below the homepage signature unless Home and navigation has a heading override.",
+      "introHelp": "Shown below the homepage identity unless a home description override is set.",
+      "avatarHelp": "Shown in the top-left site header and friend-link details. Without an upload, the preview shows the default author image. This does not change comment avatars.",
+      "socialHelp": "The social link below the homepage signature. Enter a full https:// URL.",
+      "privateContactHelp": "A private note saved only in the workbench; never displayed publicly.",
+      "siteNameHelp": "Used in browser titles, social sharing site names and site details.",
+      "siteDescriptionHelp": "Used for site details and search summaries unless an SEO description is set.",
+      "seoTitleHelp": "Optional homepage browser and social title override. Otherwise generated from the site name.",
+      "seoDescriptionHelp": "Optional search, sharing and feed description. Otherwise uses the site description.",
+      "shareImageHelp": "Used for social sharing previews. Without an upload, the preview shows the automatically generated image.",
+      "heroTitleHelp": "Optional homepage heading override. Leave empty to use the profile identity shown as the input hint.",
+      "heroDescriptionHelp": "Optional homepage description override. Leave empty to use the profile introduction shown as the input hint.",
+      "aboutFieldHelp": "Shown in the corresponding part of the About page after saving.",
+      "siteFieldHelp": "Shown in the corresponding part of the This site page after saving.",
+      "chooseAvatar": "Choose author image",
+      "chooseShareImage": "Choose sharing image",
       "removeImage": "Remove image",
       "tabs": {
         "profile": "Profile",
@@ -1378,17 +1409,17 @@
         "name": "Name",
         "identity": "Identity",
         "intro": "Introduction",
-        "avatarAssetId": "Avatar",
+        "avatarAssetId": "Site author image",
         "github": "GitHub URL",
         "gitee": "Gitee URL",
-        "contact": "Public contact",
+        "contact": "Private contact note (not published)",
         "siteName": "Site name",
         "siteDescription": "Site description",
         "seoTitle": "Default SEO title",
         "seoDescription": "Default SEO description",
         "shareAssetId": "Sharing image",
-        "heroTitle": "Home heading",
-        "heroDescription": "Home description",
+        "heroTitle": "Home heading override (optional)",
+        "heroDescription": "Home description override (optional)",
         "featuredSlugs": "Featured article slugs (comma separated)",
         "navigationOrder": "Existing navigation order (comma separated)",
         "footer": "Footer text",
@@ -1410,7 +1441,8 @@
         "aboutInterest4": "Everyday thing four",
         "aboutInterestNote4": "Description four",
         "aboutBody": "About me — body",
-        "siteAboutBody": "About this site — body"
+        "siteAboutBody": "About this site — body",
+        "publicContact": "Public contact note"
       },
       "pageEditor": {
         "sectionTitle": "Section title",
@@ -1420,7 +1452,12 @@
         "remove": "Remove section",
         "up": "Move section up",
         "down": "Move section down"
-      }
+      },
+      "publicContactHelp": "Shown publicly in the footer contact dialog after saving. Do not include private information.",
+      "navigationHelp": "Comma-separated keys: home, articles, notes, projects, quotes, gallery, about, site, friends. Orders items within each navigation group; omitted items follow.",
+      "featuredHelp": "Up to 5 article slugs, in order. Missing or unpublished articles are skipped; recent articles fill the remaining slots.",
+      "footerHelp": "Shown in the site footer after saving. Leave empty to hide.",
+      "invalidFields": "Check these settings: {fields}"
     },
     "image": {
       "settings": "Image settings",

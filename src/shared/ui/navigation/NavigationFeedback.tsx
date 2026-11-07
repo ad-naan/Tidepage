@@ -67,11 +67,14 @@ export function NavigationFeedback({
   }, [quiet]);
 
   const begin = useCallback(() => {
-    if (isQuietNavigationPath(location.pathname)) return;
     clearTimeout(exit.current);
     if (active.current) return;
     active.current = true;
     started.current = performance.now();
+    if (isQuietNavigationPath(location.pathname)) {
+      setVisible(true);
+      return;
+    }
     const length = count.current;
     let next = Math.floor(Math.random() * length);
     if (length > 1 && next === previous.current) next = (next + 1) % length;
@@ -93,7 +96,8 @@ export function NavigationFeedback({
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    const minimum = reduced ? 0 : 650;
+    const minimum =
+      reduced || isQuietNavigationPath(location.pathname) ? 0 : 180;
     exit.current = setTimeout(
       () => {
         if (holds.current > 0) return;
@@ -143,6 +147,15 @@ export function NavigationFeedback({
       <Suspense fallback={null}>
         <RouteCommit commit={commit} />
       </Suspense>
+      {quiet && visible && (
+        <div
+          className={styles.workspaceProgress}
+          role="status"
+          aria-label={words.label}
+        >
+          <span aria-hidden="true" />
+        </div>
+      )}
       <div
         className={styles.veil}
         data-visible={visible && !quiet}

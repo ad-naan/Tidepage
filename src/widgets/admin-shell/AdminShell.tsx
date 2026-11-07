@@ -9,6 +9,9 @@ import {
 } from "react";
 import { useTranslations } from "next-intl";
 import { MotionConfig } from "motion/react";
+import { spring } from "@/shared/lib/motion";
+import { useLocalState } from "@/shared/hooks/useLocalState";
+import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import {
   ArrowUpRight,
   Compass,
@@ -53,16 +56,17 @@ export function AdminShell({
   useLayoutEffect(() => {
     if (main.current) main.current.scrollTop = 0;
   }, [pathname]);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme, setTheme] = useLocalState<"light" | "dark">(
+    "adnaan-theme",
+    "light",
+  );
+  const [signingOut, setSigningOut] = useState(false);
+  const { notify } = useNotice();
   useEffect(() => {
-    const saved = localStorage.getItem("garden-theme");
-    if (saved === "dark") {
-      setTheme("dark");
-      document.documentElement.dataset.theme = "dark";
-    }
-  }, []);
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
   return (
-    <MotionConfig reducedMotion="user">
+    <MotionConfig transition={spring} reducedMotion="user">
       <div className={styles.shell}>
         <header className={styles.top}>
           <Link href="/admin" className={styles.brand}>
@@ -72,10 +76,18 @@ export function AdminShell({
           <small>{t("localMode")}</small>
           <NoticeDock />
           <Button
+            variant="quiet"
             size="sm"
+            busy={signingOut}
             onClick={async () => {
-              await apiSend("/api/v1/auth/session", "DELETE");
-              window.location.reload();
+              setSigningOut(true);
+              try {
+                await apiSend("/api/v1/auth/session", "DELETE");
+                window.location.reload();
+              } catch {
+                setSigningOut(false);
+                notify({ title: t("storageError"), tone: "error" });
+              }
             }}
           >
             {t("access.signOut")}
@@ -123,8 +135,6 @@ export function AdminShell({
                 onChange={() => {
                   const next = theme === "light" ? "dark" : "light";
                   setTheme(next);
-                  document.documentElement.dataset.theme = next;
-                  localStorage.setItem("garden-theme", next);
                 }}
               />
             </div>
@@ -141,7 +151,9 @@ export function AdminShell({
             {pathname !== "/admin/site" && (
               <div className={styles.mode}>{t("localDetail")}</div>
             )}
-            {children}
+            <div className={styles.page} key={pathname}>
+              {children}
+            </div>
           </main>
         </div>
       </div>

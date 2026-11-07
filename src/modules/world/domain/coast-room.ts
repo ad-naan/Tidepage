@@ -62,9 +62,15 @@ export function advanceCoastRoom(room: CoastRoom, now: number) {
     }
     if (!session.owner) continue;
     if (!session.identity || session.identity.expiresAt <= now) {
-      if (session.player.host || session.player.name) room.revision++;
+      if (
+        session.player.host ||
+        session.player.name ||
+        session.player.avatarUrl
+      )
+        room.revision++;
       session.player.host = false;
       session.player.name = null;
+      session.player.avatarUrl = null;
     }
     if (now - session.seenAt >= COAST_PRESENCE_MS) {
       session.owner = null;
@@ -166,6 +172,7 @@ export function joinCoastRoom(
   session.owner = owner;
   session.identity = identity;
   session.player.name = identity?.name ?? null;
+  session.player.avatarUrl = identity?.avatarUrl ?? null;
   session.player.host = identity?.host ?? false;
   cancelCoastPhotos(room, session.player.id);
   session.player.appearance = appearance;

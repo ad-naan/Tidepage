@@ -126,6 +126,7 @@ export function ArticleAssistant({
       {enabled && (
         <section className={styles.fields} aria-label={t("editorialTools")}>
           <Button
+            variant="quiet"
             busy={task === "metadata"}
             disabled={!!task}
             onClick={() => void generate("metadata")}
@@ -145,6 +146,7 @@ export function ArticleAssistant({
                 onValueChange={setTarget}
               />
               <Button
+                variant="quiet"
                 busy={task === "translate"}
                 disabled={!!task}
                 onClick={() => void generate("translate")}
@@ -154,7 +156,7 @@ export function ArticleAssistant({
             </>
           )}
           {task && (
-            <Button onClick={() => controller.current?.abort()}>
+            <Button variant="quiet" onClick={() => controller.current?.abort()}>
               {t("stop")}
             </Button>
           )}
@@ -206,7 +208,7 @@ export function ArticleAssistant({
               >
                 {t("applyDraft")}
               </Button>
-              <Button onClick={() => setSuggestion(null)}>
+              <Button variant="quiet" onClick={() => setSuggestion(null)}>
                 {t("discard")}
               </Button>
             </div>

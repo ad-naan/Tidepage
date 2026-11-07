@@ -176,3 +176,11 @@
 .coastLink:hover {
   color: var(--accent);
 }
+.customCaption {
+  max-width: 48ch;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  font: 400 var(--text-xs)/1.7 var(--font-ui);
+  margin-top: 4px;
+}

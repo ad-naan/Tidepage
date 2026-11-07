@@ -12,6 +12,7 @@ import { feedPath } from "@/shared/config/site";
 
 export function SiteFooter({
   year,
+  caption,
   theme,
   showCoast = false,
   onThemeChange,
@@ -19,6 +20,7 @@ export function SiteFooter({
   onHeart,
 }: {
   year: string;
+  caption?: string;
   theme: "light" | "dark";
   showCoast?: boolean;
   onThemeChange: () => void;
@@ -63,6 +65,7 @@ export function SiteFooter({
                 </Link>
               )}
             </span>
+            {caption && <p className={styles.customCaption}>{caption}</p>}
           </div>
           <div className={styles.contact}>
             <Button aria-label={t("heart")} onClick={onHeart}>

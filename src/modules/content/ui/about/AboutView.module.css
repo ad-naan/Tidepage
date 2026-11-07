@@ -1,6 +1,10 @@
 .about {
   margin: 32px auto 48px;
 }
+.story {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 760px) 180px;

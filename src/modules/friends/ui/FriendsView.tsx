@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { listItemMotion } from "@/shared/lib/motion";
 import { useTranslations } from "next-intl";
 import { ArrowUpRight, Copy, Mail } from "lucide-react";
 import type {
@@ -25,6 +27,7 @@ export function FriendsView({
   friends: PublicFriend[];
 }) {
   const t = useTranslations("friends");
+  const reduced = useReducedMotion();
   const [open, setOpen] = useState(false);
   const { notify } = useNotice();
   async function copyInfo() {
@@ -61,7 +64,7 @@ export function FriendsView({
           {friends.length ? (
             <ol className={styles.directory}>
               {friends.map((friend, index) => (
-                <li key={friend.id}>
+                <motion.li key={friend.id} {...listItemMotion(index, reduced)}>
                   <span className={styles.index} aria-hidden="true">
                     {String(index + 1).padStart(2, "0")}
                   </span>
@@ -80,7 +83,7 @@ export function FriendsView({
                     </span>
                     {friend.description && <p>{friend.description}</p>}
                   </div>
-                </li>
+                </motion.li>
               ))}
             </ol>
           ) : (

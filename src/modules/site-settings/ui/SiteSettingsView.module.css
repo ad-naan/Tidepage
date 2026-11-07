@@ -39,6 +39,37 @@
 .locale {
   min-width: 144px;
 }
+.guide {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+.guide a {
+  flex: 0 0 auto;
+  color: var(--accent);
+}
+.account {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+  background: var(--soft);
+  border-radius: var(--radius-control);
+}
+.account strong {
+  font-size: var(--text-body);
+  font-weight: 500;
+}
+.account p {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin-top: var(--space-1);
+}
 .error {
   margin-bottom: var(--space-4);
   color: var(--accent);

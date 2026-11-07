@@ -17,6 +17,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node --conditions=react-server --import tsx scripts/db-migrate.ts",
     "db:check": "node --conditions=react-server --import tsx scripts/db-check.ts",
+    "db:verify": "node --conditions=react-server --import tsx scripts/db-verify.ts",
     "db:studio": "drizzle-kit studio",
     "admin:setup": "node --conditions=react-server --import tsx scripts/admin-setup.ts",
     "infra:up": "docker compose up -d",

@@ -44,6 +44,18 @@
   .dialog[open]::backdrop {
     animation: reveal var(--motion-quick) ease-out both;
   }
+  .dialog[data-closing="true"] .inner,
+  .dialog[data-closing="true"]::backdrop {
+    animation: conceal 160ms ease-in both;
+  }
+}
+@keyframes conceal {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 @keyframes reveal {
   from {

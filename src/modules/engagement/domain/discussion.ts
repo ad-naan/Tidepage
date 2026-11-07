@@ -32,6 +32,7 @@ export type Comment = {
   body: string;
   document?: EditorNode | null;
   author: string;
+  avatarUrl?: string | null;
   createdAt: string;
   parentId: string | null;
   replyTo: string | null;

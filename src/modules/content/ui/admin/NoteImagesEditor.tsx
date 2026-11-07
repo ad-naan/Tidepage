@@ -104,6 +104,7 @@ export function NoteImagesEditor({
           <>
             <progress aria-label={t("progress")} max={100} value={progress} />
             <Button
+              variant="quiet"
               onClick={() => {
                 task.current?.abort();
                 setUploading(false);

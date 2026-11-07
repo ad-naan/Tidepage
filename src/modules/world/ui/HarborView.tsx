@@ -208,11 +208,13 @@ export function HarborView({
   useEffect(() => {
     mounted.current = true;
     let cancelled = false;
+    const abort = new AbortController();
     import("../runtime/createHarborScene")
-      .then(({ createHarborScene }) => {
+      .then(async ({ createHarborScene }) => {
         if (cancelled || !host.current) return;
         try {
-          controls.current = createHarborScene({
+          const scene = await createHarborScene({
+            signal: abort.signal,
             host: host.current,
             state: () => current.current,
             onPlace: setPlace,
@@ -221,9 +223,14 @@ export function HarborView({
             onVoyage,
             onError: () => setFailed(true),
           });
+          if (cancelled) {
+            scene.dispose();
+            return;
+          }
+          controls.current = scene;
           setReady(true);
         } catch {
-          setFailed(true);
+          if (!cancelled) setFailed(true);
         }
       })
       .catch(() => {
@@ -232,6 +239,7 @@ export function HarborView({
     return () => {
       mounted.current = false;
       cancelled = true;
+      abort.abort();
       controls.current?.dispose();
       controls.current = null;
     };
@@ -363,6 +371,7 @@ export function HarborView({
       {failed && (
         <div className={styles.center} role="alert">
           <p>{world("fallback")}</p>
+          <Button onClick={() => window.location.reload()}>{world("retry")}</Button>
           <Link href="/">{world("home")}</Link>
         </div>
       )}

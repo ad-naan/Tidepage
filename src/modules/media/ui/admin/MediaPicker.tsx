@@ -90,6 +90,7 @@ export function MediaPicker({
           <div className={styles.actions}>
             <progress value={progress} max={100} aria-label={t("progress")} />
             <Button
+              variant="quiet"
               onClick={() => {
                 controller.current?.abort();
                 setProgress(null);
@@ -156,6 +157,7 @@ export function MediaPicker({
                   <div className={styles.actions}>
                     {asset.archived ? (
                       <Button
+                        variant="quiet"
                         size="sm"
                         onClick={async () => {
                           await archiveAsset(asset.id, false);
@@ -166,10 +168,18 @@ export function MediaPicker({
                       </Button>
                     ) : (
                       <>
-                        <Button size="sm" onClick={() => setCropping(asset.id)}>
+                        <Button
+                          variant="quiet"
+                          size="sm"
+                          onClick={() => setCropping(asset.id)}
+                        >
                           {admin("image.crop")}
                         </Button>
-                        <Button size="sm" onClick={() => setDeleting(asset)}>
+                        <Button
+                          variant="quiet"
+                          size="sm"
+                          onClick={() => setDeleting(asset)}
+                        >
                           {admin("crud.delete")}
                         </Button>
                       </>

@@ -1,6 +1,8 @@
 ﻿"use client";
 import { DateTime } from "@/shared/ui/typography/DateTime";
 import { useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { listItemMotion } from "@/shared/lib/motion";
 import { useFormatter, useTranslations } from "next-intl";
 import { ArrowUpRight, Bookmark, Images } from "lucide-react";
 import {
@@ -51,6 +53,7 @@ export function NotesView({ notes }: { notes: NoteListEntry[] }) {
   );
 }
 function NotesContent({ notes }: { notes: NoteListEntry[] }) {
+  const reduced = useReducedMotion();
   const t = useTranslations("notes");
   const format = useFormatter();
   const { states, loading, error } = useEngagement();
@@ -77,7 +80,7 @@ function NotesContent({ notes }: { notes: NoteListEntry[] }) {
   const visible = notes.filter((note) => !onlySaved || isSaved(note.id));
   const months = new Map(
     [...new Set(visible.map((note) => note.publishedOn.slice(0, 7)))].map(
-      (month, i) => [month, i],
+      (month, index) => [month, index],
     ),
   );
   return (
@@ -129,10 +132,17 @@ function NotesContent({ notes }: { notes: NoteListEntry[] }) {
           const month = note.publishedOn.slice(0, 7);
           const startsMonth =
             month !== visible[index - 1]?.publishedOn.slice(0, 7);
+          const paragraphs = note.text
+            .split(/\r?\n/)
+            .map((line) => line.trim())
+            .filter(Boolean);
+          const excerpt = paragraphs.slice(0, 2);
+          const hasLead = paragraphs.length > 1 && paragraphs[0].length <= 64;
           return (
-            <li
-              className={styles.entry}
+            <motion.li
               key={note.id}
+              {...listItemMotion(index, reduced)}
+              className={styles.entry}
               data-side={(months.get(month) ?? 0) % 2 === 0 ? "left" : "right"}
             >
               {startsMonth && (
@@ -152,7 +162,7 @@ function NotesContent({ notes }: { notes: NoteListEntry[] }) {
                   <Button
                     className={styles.open}
                     onClick={() => void open(note)}
-                    aria-busy={opening === note.id}
+                    busy={opening === note.id}
                     aria-haspopup="dialog"
                     aria-label={t("reader.open", {
                       date: note.date,
@@ -160,19 +170,31 @@ function NotesContent({ notes }: { notes: NoteListEntry[] }) {
                     })}
                     pressEffect={false}
                   >
-                    <span className={styles.preview}>
-                      {note.text}
-                      {note.truncated ? "…" : ""}
-                    </span>
-                    <span className={styles.readMore}>
-                      {t("readMore")}
-                      <ArrowUpRight size={13} />
+                    <span className={styles.preview} data-has-lead={hasLead}>
+                      {excerpt.map((paragraph, paragraphIndex) => (
+                        <span key={paragraphIndex} className={styles.paragraph}>
+                          {paragraph}
+                          {paragraphIndex === excerpt.length - 1 &&
+                          (note.truncated || paragraphs.length > excerpt.length)
+                            ? "…"
+                            : ""}
+                        </span>
+                      ))}
                     </span>
                   </Button>
                   <div className={styles.entryFooter}>
-                    <span>
-                      {note.tag ? `#${note.tag}` : t("reader.aMoment")}
-                    </span>
+                    {note.tag && (
+                      <span className={styles.tag}>#{note.tag}</span>
+                    )}
+                    <Button
+                      className={styles.readMore}
+                      onClick={() => void open(note)}
+                      disabled={opening !== null}
+                      aria-haspopup="dialog"
+                    >
+                      {t("readMore")}
+                      <ArrowUpRight size={13} aria-hidden="true" />
+                    </Button>
                     <InteractionButton
                       target={{ type: "note", id: note.id }}
                       kind="save"
@@ -200,7 +222,8 @@ function NotesContent({ notes }: { notes: NoteListEntry[] }) {
                   )}
                 </figure>
               </div>
-            </li>
+              <PencilLine kind="trail" className={styles.entryShore} />
+            </motion.li>
           );
         }}
       </ProgressiveList>

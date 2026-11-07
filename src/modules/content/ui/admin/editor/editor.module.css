@@ -1,16 +1,67 @@
 .root {
   position: relative;
   margin-top: 0;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 5px 10px 4px 8px;
+  background: var(--paper);
+  isolation: isolate;
+}
+.viewportTools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  font: 500 var(--text-sm)/1.6 var(--font-ui);
+  color: var(--muted);
+  background: color-mix(in srgb, var(--sand) 18%, transparent);
+}
+.viewportTools > div {
+  display: flex;
+  gap: 6px;
+}
+.scrollHost {
+  height: clamp(280px, 48dvh, 520px);
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+  scroll-padding-block: 24px;
+}
+.root[data-expanded="true"] .scrollHost {
+  height: min(72dvh, 820px);
+}
+.root:fullscreen {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100dvh;
+  border: 0;
+  border-radius: 0;
+  padding: 16px max(16px, calc((100vw - 1040px) / 2));
+  background: var(--paper);
+}
+.root:fullscreen .scrollHost {
+  flex: 1;
+  height: auto;
+}
+.root:fullscreen .document {
+  max-width: 800px;
+  margin-inline: auto;
 }
 .toolbar {
-  position: sticky;
-  top: var(--editor-header-height, 64px);
+  position: relative;
+  top: 0;
   z-index: 5;
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
   align-items: center;
-  padding: 6px 0;
+  padding: 6px 10px;
   border-block: 1px solid var(--line);
   background: var(--paper);
 }
@@ -34,21 +85,21 @@
 }
 .document {
   font: 400 16.5px/1.95 var(--font-reading);
-  min-height: 340px;
+  min-height: 100%;
   overflow-wrap: anywhere;
 }
 .document:focus {
   outline: none;
 }
 .document :global(.tiptap) {
-  min-height: 340px;
-  padding: 20px 2px;
+  min-height: max(260px, calc(48dvh - 2px));
+  padding: 24px clamp(16px, 3vw, 36px) 64px;
   outline: none;
   white-space: pre-wrap;
 }
 .document :global(.tiptap:focus-visible) {
   outline: 1px dashed var(--line);
-  outline-offset: 6px;
+  outline-offset: -4px;
 }
 .document :global(.tiptap:not(:focus-within)) :global([data-image-tools]) {
   display: none;

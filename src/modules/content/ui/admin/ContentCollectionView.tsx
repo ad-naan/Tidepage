@@ -360,15 +360,24 @@ export function ContentCollectionView({
               </div>
               <div className={styles.actions}>
                 {item.deletedAt ? (
-                  <Button busy={busy} onClick={() => changeStatus(item, false)}>
+                  <Button
+                    variant="quiet"
+                    busy={busy}
+                    onClick={() => changeStatus(item, false)}
+                  >
                     {t("crud.restore")}
                   </Button>
                 ) : (
                   <>
-                    <Button disabled={!!opening} onClick={() => edit(item)}>
+                    <Button
+                      variant="quiet"
+                      disabled={!!opening}
+                      onClick={() => edit(item)}
+                    >
                       {t("edit")}
                     </Button>
                     <Button
+                      variant="quiet"
                       className={styles.deleteButton}
                       disabled={busy || !!opening}
                       onClick={() =>
@@ -403,6 +412,7 @@ export function ContentCollectionView({
                 </div>
                 <div className={styles.actions}>
                   <Button
+                    variant="quiet"
                     busy={opening === id}
                     disabled={opening !== null && opening !== id}
                     onClick={() => void openPublished(id)}
@@ -410,6 +420,7 @@ export function ContentCollectionView({
                     {t("edit")}
                   </Button>
                   <Button
+                    variant="quiet"
                     className={styles.deleteButton}
                     disabled={busy || !!opening}
                     onClick={() =>
@@ -649,6 +660,7 @@ export function ContentCollectionView({
                 {t("editor.save")}
               </Button>
               <Button
+                variant="quiet"
                 disabled={uploading || busy}
                 onClick={() => {
                   setValue(null);
@@ -682,6 +694,7 @@ export function ContentCollectionView({
                     {gallery("publish")}
                   </Button>
                   <Button
+                    variant="quiet"
                     disabled={dirty || busy || !value.revision}
                     onClick={() => void publishPhoto(false)}
                   >

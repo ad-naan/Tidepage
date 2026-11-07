@@ -225,6 +225,7 @@ export function attachCoastGateway(
           session.identity =
             identity && identity.expiresAt > now ? identity : null;
           session.player.name = session.identity?.name ?? null;
+          session.player.avatarUrl = session.identity?.avatarUrl ?? null;
           session.player.host = session.identity?.host ?? false;
           room.revision++;
           return true;

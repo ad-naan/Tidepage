@@ -11,7 +11,8 @@ import { ContentHeading } from "@/modules/content/ui/layout/ContentHeading";
 import styles from "./GalleryView.module.css";
 
 import { useState } from "react";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
+import { listItemMotion } from "@/shared/lib/motion";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, ArrowRight, Camera, MapPin } from "lucide-react";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
@@ -23,6 +24,7 @@ const galleryTabs = ["all", ...galleryCategories] as const;
 type GalleryTab = (typeof galleryTabs)[number];
 export function GalleryView({ photos }: { photos: GalleryPhoto[] }) {
   const t = useTranslations("gallery");
+  const reduced = useReducedMotion();
   const [filter, setFilter] = useState<GalleryTab>("all");
   const [selected, setSelected] = useState<GalleryPhoto | null>(null);
   const filtered = photos.filter(
@@ -65,12 +67,7 @@ export function GalleryView({ photos }: { photos: GalleryPhoto[] }) {
         className="masonry-gallery"
       >
         {(photo, i) => (
-          <motion.figure
-            key={photo.id}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: Math.min(i, 5) * 0.05 }}
-          >
+          <motion.figure key={photo.id} {...listItemMotion(i, reduced)}>
             <PencilFrame />
             <Button
               className="photo-button"

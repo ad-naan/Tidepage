@@ -158,6 +158,7 @@ export function ArticleManagerView({
             <div className={styles.actions}>
               {row.draft?.deletedAt ? (
                 <Button
+                  variant="quiet"
                   busy={busy}
                   onClick={() => void changeStatus(row, false)}
                 >
@@ -175,6 +176,7 @@ export function ArticleManagerView({
                     {t("edit")} ↗
                   </Link>
                   <Button
+                    variant="quiet"
                     className={styles.deleteButton}
                     disabled={busy}
                     onClick={() => setDeleting(row)}

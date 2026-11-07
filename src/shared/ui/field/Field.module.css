@@ -10,6 +10,19 @@
   border: 1px solid var(--line);
   border-radius: 3px 7px 2px 4px;
   font: 400 var(--text-body)/1.7 var(--font-ui);
+  transition:
+    border-color var(--motion-quick),
+    background-color var(--motion-quick),
+    box-shadow var(--motion-quick);
+}
+.surface:focus-visible {
+  border-color: var(--accent);
+  background: var(--paper);
+}
+@media (prefers-reduced-motion: reduce) {
+  .surface {
+    transition: none;
+  }
 }
 .input:focus-visible,
 .range:focus-visible,

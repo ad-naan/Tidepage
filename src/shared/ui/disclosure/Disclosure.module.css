@@ -1,5 +1,26 @@
 .root > summary {
   cursor: pointer;
+  padding-block: 8px;
+  color: var(--muted);
+  font: 500 var(--text-sm)/1.7 var(--font-ui);
+  transition: color var(--motion-quick);
+}
+.root[open] > summary {
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .root[open] > :not(summary) {
+    animation: reveal var(--motion-quick) ease-out both;
+  }
+}
+@keyframes reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 .root > summary:focus-visible {
   outline: 1px dashed var(--accent);

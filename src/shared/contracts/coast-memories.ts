@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { avatarUrlSchema } from "./avatar";
 
 export const coastPlaceSchema = z.enum(["dock", "beach", "bench", "cottage"]);
 export const coastIdentitySchema = z
@@ -7,6 +8,7 @@ export const coastIdentitySchema = z
     subject: z.uuid(),
     name: z.string().min(1).max(60),
     host: z.boolean(),
+    avatarUrl: avatarUrlSchema.nullable().optional(),
     issuedAt: z.number().int().nonnegative(),
     expiresAt: z.number().int().nonnegative(),
   })

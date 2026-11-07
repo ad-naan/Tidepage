@@ -19,6 +19,7 @@ import { apiSend } from "@/shared/http/client";
 import { OAuthLoginOptions } from "./OAuthLoginOptions";
 import { AuthorNameText } from "./AuthorSignature";
 import styles from "./IdentityProvider.module.css";
+import { Avatar } from "@/shared/ui/avatar/Avatar";
 
 const IdentityContext = createContext<{
   principal: Principal | null;
@@ -76,9 +77,12 @@ export function IdentityProvider({
             {principal ? (
               <div className={styles.account}>
                 <div className={styles.identityRow}>
-                  <span className={styles.avatar} aria-hidden>
-                    <UserRound size={21} strokeWidth={1.4} />
-                  </span>
+                  <Avatar
+                    className={styles.avatar}
+                    src={principal.avatarUrl}
+                    name={principal.displayName}
+                    size="lg"
+                  />
                   <div>
                     <span className={styles.accountLabel}>
                       {t("signedInAs")}
@@ -137,7 +141,15 @@ export function LoginTrigger() {
       aria-haspopup="dialog"
       onClick={openLogin}
     >
-      <UserRound size={15} />
+      {principal ? (
+        <Avatar
+          src={principal.avatarUrl}
+          name={principal.displayName}
+          size="sm"
+        />
+      ) : (
+        <UserRound size={15} />
+      )}
       <span>
         <AuthorNameText text={principal?.displayName ?? t("login")} />
       </span>

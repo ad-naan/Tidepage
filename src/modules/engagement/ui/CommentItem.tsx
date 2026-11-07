@@ -7,6 +7,7 @@ import { AuthorNameText } from "@/modules/identity/ui/AuthorSignature";
 import { Button } from "@/shared/ui/button/Button";
 import { CommentBody } from "./CommentBody";
 import styles from "./CommentThread.module.css";
+import { Avatar } from "@/shared/ui/avatar/Avatar";
 
 export function CommentItem({
   item,
@@ -20,9 +21,11 @@ export function CommentItem({
   const t = useTranslations("comments");
   return (
     <article className={`${styles.comment} ${isReply ? styles.nested : ""}`}>
-      <span className={styles.avatar} aria-hidden>
-        {item.author.slice(0, 1).toUpperCase()}
-      </span>
+      <Avatar
+        className={styles.avatar}
+        src={item.avatarUrl}
+        name={item.author}
+      />
       <div className={styles.commentContent}>
         <div className={styles.meta}>
           <strong>

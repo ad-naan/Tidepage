@@ -10,6 +10,8 @@ import {
   usersTable,
 } from "@/modules/identity/infrastructure/schema";
 import type { Principal } from "@/modules/identity/domain/principal";
+import { profileAvatarColumn } from "./profile";
+import { publicAvatarUrl } from "@/shared/contracts/avatar";
 
 const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
 const sessionCookieName = "adnaan_session";
@@ -26,6 +28,7 @@ export const getCurrentPrincipal = cache(
         id: usersTable.id,
         displayName: usersTable.displayName,
         role: usersTable.role,
+        avatarUrl: profileAvatarColumn(usersTable.id),
       })
       .from(sessionsTable)
       .innerJoin(usersTable, eq(sessionsTable.userId, usersTable.id))
@@ -36,7 +39,9 @@ export const getCurrentPrincipal = cache(
         ),
       )
       .limit(1);
-    return user ?? null;
+    return user
+      ? { ...user, avatarUrl: publicAvatarUrl(user.avatarUrl) }
+      : null;
   },
 );
 

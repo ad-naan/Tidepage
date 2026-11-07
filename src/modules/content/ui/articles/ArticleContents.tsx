@@ -4,7 +4,7 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import { useReducedMotion } from "motion/react";
 import { CoastGlyph } from "@/shared/ui/drawing/CoastalMarks";
 import { HanddrawnTree } from "@/shared/ui/drawing/HanddrawnTree";
-import { useArticleReading } from "./useArticleReading";
+import { useArticleReadingValue } from "./useArticleReading";
 import { ArticleReadingTools } from "./ArticleReadingTools";
 import { useRegisterReadingArticle } from "./ReadingArticleContext";
 import styles from "./ArticleContents.module.css";
@@ -21,7 +21,7 @@ export function ArticleContents({
   title: string;
 }) {
   useRegisterReadingArticle(slug, title);
-  const { active, percent } = useArticleReading();
+  const active = useArticleReadingValue("active");
   const navigation = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
   useEffect(() => {
@@ -51,12 +51,11 @@ export function ArticleContents({
             aria-label={label}
             style={{ "--toc-row-height": `${rowHeight}px` } as CSSProperties}
           >
-            <HanddrawnTree
+            <ContentsTree
               className={styles.tree}
               count={titles.length}
               active={active}
               expanded
-              percent={percent}
               rowHeight={rowHeight}
             />
             <ol className={styles.items}>
@@ -79,7 +78,14 @@ export function ArticleContents({
           </nav>
         </>
       )}
-      <ArticleReadingTools slug={slug} title={title} percent={percent} />
+      <ArticleReadingTools slug={slug} title={title} />
     </aside>
   );
+}
+
+function ContentsTree(
+  props: Omit<Parameters<typeof HanddrawnTree>[0], "percent">,
+) {
+  const percent = useArticleReadingValue("percent");
+  return <HanddrawnTree {...props} percent={percent} />;
 }

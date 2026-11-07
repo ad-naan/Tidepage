@@ -150,6 +150,8 @@ export function AnchoredPanel({
         </motion.section>
       )}
     </AnimatePresence>,
-    anchor?.closest("dialog[open]") ?? document.body,
+    anchor?.closest("dialog[open]") ??
+      document.fullscreenElement ??
+      document.body,
   );
 }

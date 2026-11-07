@@ -6,7 +6,10 @@ import { conflictError } from "@/server/http/errors";
 import { articleDraftSchema } from "@/modules/content/domain/editor-document";
 import { managedItemSchema } from "@/modules/content/domain/managed-collections";
 import { friendDraftSchema } from "@/modules/friends/domain/models";
-import { settingsDraftSchema } from "@/modules/site-settings/domain/models";
+import {
+  settingsDraftSchema,
+  settingsWriteSchema,
+} from "@/modules/site-settings/domain/models";
 import { requireOwnedAssets } from "@/modules/media/server";
 import { workbenchRecordsTable as records } from "./schema";
 
@@ -50,6 +53,8 @@ export function workbenchRecords(db: Database = getDb()) {
     async write(ownerId: string, key: Key, revision: number, input: unknown) {
       const value = valueSchemas[key].parse(input);
       if (key === "site-settings" && "translations" in value) {
+        settingsWriteSchema.parse(value);
+        if (value.revision !== revision + 1) throw conflictError();
         const assets = new Set(
           Object.values(value.translations).flatMap(
             ({ avatarAssetId, shareAssetId }) =>

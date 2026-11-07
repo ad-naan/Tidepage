@@ -4,16 +4,16 @@ import { CustomScrollbars } from "@/shared/ui/scroll-area/CustomScrollbars";
 import { IdentityProvider } from "@/modules/identity/ui/IdentityProvider";
 import { ReadingArticleProvider } from "@/modules/content/ui/articles/ReadingArticleContext";
 import { dateKey } from "@/shared/lib/date-time";
-import { getPublicSiteAvatar } from "@/modules/site-settings/server";
+import {
+  getPublicSiteAvatar,
+  getPublicSitePresentation,
+  getConfiguredFeaturedArticles,
+} from "@/modules/site-settings/server";
 import {
   getCurrentPrincipal,
   listConfiguredOAuthProviders,
 } from "@/modules/identity/server";
-import {
-  getFeaturedArticles,
-  getLatestNote,
-  getProjectPreviews,
-} from "@/modules/content/server";
+import { getLatestNote, getProjectPreviews } from "@/modules/content/server";
 // Rendering remains live after database updates; content caching belongs to the service.
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -23,14 +23,15 @@ export default async function SiteLayout({
   children: React.ReactNode;
 }) {
   const locale = await getLocale();
-  const [articles, note, projects, principal, providers, avatar] =
+  const [articles, note, projects, principal, providers, avatar, presentation] =
     await Promise.all([
-      getFeaturedArticles(locale),
+      getConfiguredFeaturedArticles(locale),
       getLatestNote(locale),
       getProjectPreviews(locale),
       getCurrentPrincipal(),
       listConfiguredOAuthProviders(),
       getPublicSiteAvatar(locale),
+      getPublicSitePresentation(locale),
     ]);
   return (
     <IdentityProvider principal={principal} providers={providers}>
@@ -39,6 +40,7 @@ export default async function SiteLayout({
           articles={articles.items}
           navigation={{ note, projects }}
           avatar={avatar}
+          presentation={presentation}
           year={dateKey(new Date()).slice(0, 4)}
         >
           {children}

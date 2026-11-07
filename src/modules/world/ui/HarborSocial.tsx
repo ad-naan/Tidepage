@@ -10,6 +10,7 @@ import { useIdentity } from "@/modules/identity/ui/IdentityProvider";
 import type { CoastMemoryPage } from "@/shared/contracts/coast-memories";
 import type { useCoastConnection } from "./useCoastConnection";
 import styles from "./HarborSocial.module.css";
+import { Avatar } from "@/shared/ui/avatar/Avatar";
 
 type Network = ReturnType<typeof useCoastConnection>;
 export function HarborSocial({
@@ -182,7 +183,8 @@ export function HarborSocial({
                   .sort((a, b) => Number(b.host) - Number(a.host))
                   .map((player) => (
                     <li key={player.id}>
-                      <div>
+                      <div className={styles.player}>
+                        <Avatar src={player.avatarUrl} name={name(player.id)} />
                         <strong>{name(player.id)}</strong>
                         {player.host && (
                           <span className={styles.badge}>{t("host")}</span>

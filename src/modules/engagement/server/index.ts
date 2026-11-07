@@ -13,6 +13,8 @@ import {
   type CommentPage,
 } from "@/modules/engagement/domain/discussion";
 import type { Locale } from "@/shared/i18n/config";
+import { profileAvatarColumn } from "@/modules/identity/server/profile";
+import { publicAvatarUrl } from "@/shared/contracts/avatar";
 
 export { requireEngagementTarget as requireDiscussionTarget } from "./targets";
 
@@ -31,13 +33,18 @@ export function discussionStore(db: Database = getDb()) {
     body: comments.body,
     document: comments.document,
     author: usersTable.displayName,
+    avatarUrl: profileAvatarColumn(usersTable.id),
     createdAt: comments.createdAt,
     parentId: comments.parentId,
     replyTo: parentAuthor.displayName,
   };
   const serialize = (
     row: Omit<Comment, "createdAt"> & { createdAt: Date },
-  ): Comment => ({ ...row, createdAt: row.createdAt.toISOString() });
+  ): Comment => ({
+    ...row,
+    avatarUrl: publicAvatarUrl(row.avatarUrl),
+    createdAt: row.createdAt.toISOString(),
+  });
   return {
     async list(raw: unknown): Promise<CommentPage> {
       const { type, id, locale, after } = discussionQuerySchema.parse(raw);

@@ -66,7 +66,12 @@ export function Select<Value extends string>({
     <SelectPrimitive.Root
       open={open}
       onOpenChange={(next) => {
-        setPortalContainer(trigger.current?.closest("dialog") ?? undefined);
+        setPortalContainer(
+          trigger.current?.closest<HTMLElement>("dialog[open]") ??
+            (document.fullscreenElement instanceof HTMLElement
+              ? document.fullscreenElement
+              : undefined),
+        );
         setOpen(next);
       }}
       value={value}

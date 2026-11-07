@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { createCoastEnvironment } from "./coastEnvironment";
 import { createCoastAvatar } from "./createCoastAvatar";
+import { acquireCoastAvatarAsset } from "./coastAvatarAsset";
 import { createHarborLandscape } from "./createHarborLandscape";
 import { createCoastCompanions } from "./createCoastCompanions";
 import type {
@@ -50,7 +51,8 @@ export type HarborControls = {
   dispose: () => void;
 };
 
-export function createHarborScene(options: {
+type HarborSceneOptions = {
+  signal?: AbortSignal;
   host: HTMLDivElement;
   state: () => HarborState;
   onPlace: (place: HarborPlace | null) => void;
@@ -58,7 +60,26 @@ export function createHarborScene(options: {
   onInteraction: (interaction: HarborInteraction | null) => void;
   onVoyage: () => void;
   onError: () => void;
-}): HarborControls {
+};
+
+export async function createHarborScene(
+  options: HarborSceneOptions,
+): Promise<HarborControls> {
+  const lease = await acquireCoastAvatarAsset();
+  try {
+    if (options.signal?.aborted)
+      throw new DOMException("Scene cancelled", "AbortError");
+    return createLoadedHarborScene(options, lease);
+  } catch (error) {
+    lease.release();
+    throw error;
+  }
+}
+
+function createLoadedHarborScene(
+  options: HarborSceneOptions,
+  lease: Awaited<ReturnType<typeof acquireCoastAvatarAsset>>,
+): HarborControls {
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
     powerPreference: "high-performance",
@@ -99,8 +120,8 @@ export function createHarborScene(options: {
   scene.add(fill);
   const environment = createCoastEnvironment(scene, true);
   const landscape = createHarborLandscape(scene);
-  const avatar = createCoastAvatar(options.state().appearance);
-  const companions = createCoastCompanions(scene);
+  const avatar = createCoastAvatar(options.state().appearance, lease.asset);
+  const companions = createCoastCompanions(scene, lease.asset);
   let authority: CoastPlayer | null = null;
   let inputDirection = { x: 0, z: 0 };
   scene.add(avatar.root);
@@ -663,7 +684,7 @@ export function createHarborScene(options: {
       const size = renderer.getSize(new THREE.Vector2()),
         pixelRatio = renderer.getPixelRatio();
       const models = composition.players.map((player) => {
-        const model = createCoastAvatar(player.appearance);
+        const model = createCoastAvatar(player.appearance, lease.asset);
         model.root.position.set(player.x, 0.49, player.z);
         model.root.rotation.y = player.yaw;
         model.update(0.4, "wave", options.state().reduced);
@@ -725,6 +746,7 @@ export function createHarborScene(options: {
       }
     },
     dispose: () => {
+      if (disposed) return;
       disposed = true;
       cancelAnimationFrame(frame);
       observer.disconnect();
@@ -740,6 +762,7 @@ export function createHarborScene(options: {
       canvas.removeEventListener("webglcontextlost", onLost);
       avatar.dispose();
       companions.clear();
+      lease.release();
       landscape.dispose();
       environment.dispose();
       renderer.dispose();

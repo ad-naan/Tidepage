@@ -13,6 +13,7 @@ import { SiteHeader } from "@/widgets/site-shell/header/SiteHeader";
 import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import { SiteFooter } from "@/widgets/site-shell/footer/SiteFooter";
 import { ExternalLinkPreview } from "@/shared/ui/link/ExternalLinkPreview";
+import type { SitePresentation } from "@/modules/site-settings/domain/presentation";
 
 import type {
   ArticleSummary,
@@ -26,12 +27,14 @@ export function SiteShell({
   navigation,
   avatar,
   year,
+  presentation,
 }: {
   children: ReactNode;
   articles: ArticleSummary[];
   navigation: NavigationOverview;
   avatar: string;
   year: string;
+  presentation: SitePresentation;
 }) {
   const t = useTranslations("nav"),
     footer = useTranslations("footer"),
@@ -68,6 +71,7 @@ export function SiteShell({
           articles={articles}
           navigation={navigation}
           avatar={avatar}
+          navigationItems={presentation.navigation}
           label={t(
             nav.find(
               (item) =>
@@ -90,6 +94,7 @@ export function SiteShell({
           </main>
           <SiteFooter
             year={year}
+            caption={presentation.footer}
             showCoast={visitedCoast && pathname !== "/"}
             theme={theme}
             onThemeChange={() => setTheme(theme === "light" ? "dark" : "light")}
@@ -110,9 +115,13 @@ export function SiteShell({
               <Mail size={32} />
               <h2>{contactT("heading")}</h2>
               <p>
-                {contactT("body1")}
-                <br />
-                {contactT("body2")}
+                {presentation.publicContact || (
+                  <>
+                    {contactT("body1")}
+                    <br />
+                    {contactT("body2")}
+                  </>
+                )}
               </p>
               <Link
                 href="/about"

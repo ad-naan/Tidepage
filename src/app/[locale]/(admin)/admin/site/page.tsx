@@ -12,6 +12,7 @@ export default async function Page() {
         () => null,
       )}
       aiEnabled={isEditorialAgentConfigured()}
+      account={principal}
     />
   );
 }

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { coastPlaceSchema } from "./coast-memories";
+import { avatarUrlSchema } from "./avatar";
 
 export const coastAvatarSchema = z
   .object({
@@ -54,6 +55,7 @@ export const coastPlayerSchema = z
     yaw: z.number().min(-Math.PI).max(Math.PI),
     pose: coastPoseSchema,
     name: z.string().min(1).max(60).nullable().default(null),
+    avatarUrl: avatarUrlSchema.nullable().optional(),
     host: z.boolean().default(false),
   })
   .strict();

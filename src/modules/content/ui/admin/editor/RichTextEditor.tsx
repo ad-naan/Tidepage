@@ -12,11 +12,11 @@ import { TableKit } from "@tiptap/extension-table";
 import Typography from "@tiptap/extension-typography";
 import { useMessages, useTranslations } from "next-intl";
 import { StickerNode } from "../../rich-text/StickerNode";
-import { Bold, Italic, Link2 } from "lucide-react";
+import { Bold, Italic, Link2, Maximize, Minimize } from "lucide-react";
 import { Button, IconButton } from "@/shared/ui/button/Button";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { Input } from "@/shared/ui/field/Input";
-import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
+import { useNotice, NoticeDock } from "@/shared/ui/feedback/NoticeProvider";
 import { MediaPicker } from "@/modules/media/ui/admin/MediaPicker";
 import type { ImageUploader } from "@/modules/media/domain/assets";
 import { EditorToolbar } from "./EditorToolbar";
@@ -74,6 +74,26 @@ export function RichTextEditor({
   const linkAction = useRef<() => void>(() => {});
   const [slashIndex, setSlashIndex] = useState(0);
   const root = useRef<HTMLDivElement>(null);
+  const scrollHost = useRef<HTMLDivElement>(null);
+  const [expanded, setExpanded] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
+  const [fullscreenAvailable, setFullscreenAvailable] = useState(false);
+  useEffect(() => {
+    setFullscreenAvailable(!!document.fullscreenEnabled);
+    const changed = () =>
+      setFullscreen(document.fullscreenElement === root.current);
+    document.addEventListener("fullscreenchange", changed);
+    return () => document.removeEventListener("fullscreenchange", changed);
+  }, []);
+  async function toggleFullscreen() {
+    try {
+      if (document.fullscreenElement === root.current)
+        await document.exitFullscreen();
+      else await root.current?.requestFullscreen();
+    } catch {
+      notify({ title: t("fullscreenUnavailable"), tone: "error" });
+    }
+  }
   const [slashPosition, setSlashPosition] = useState({ left: 0, top: 0 });
   const editorRef = useRef<Editor | null>(null);
   const uploads = useRef(new Set<AbortController>());
@@ -312,7 +332,7 @@ export function RichTextEditor({
     if (!bounds) return;
     const caret = e.view.coordsAtPos(from);
     const bottom =
-      e.view.dom.closest("main")?.getBoundingClientRect().bottom ?? innerHeight;
+      scrollHost.current?.getBoundingClientRect().bottom ?? innerHeight;
     setSlashPosition({
       left: Math.max(0, Math.min(caret.left - bounds.left, bounds.width - 280)),
       top:
@@ -383,7 +403,35 @@ export function RichTextEditor({
   }, []);
   if (!editor) return <LoadingSkeleton variant="document" />;
   return (
-    <div className={styles.root} ref={root}>
+    <div className={styles.root} ref={root} data-expanded={expanded}>
+      {fullscreen && <NoticeDock />}
+      {!readOnly && (
+        <div className={styles.viewportTools}>
+          <span>{t("bodyLabel")}</span>
+          <div>
+            <Button
+              variant="quiet"
+              size="sm"
+              aria-pressed={expanded}
+              disabled={fullscreen}
+              onClick={() => setExpanded(!expanded)}
+            >
+              {t(expanded ? "normalHeight" : "expandHeight")}
+            </Button>
+            {fullscreenAvailable && (
+              <Button
+                variant="quiet"
+                size="sm"
+                aria-pressed={fullscreen}
+                onClick={() => void toggleFullscreen()}
+              >
+                {fullscreen ? <Minimize size={14} /> : <Maximize size={14} />}
+                {t(fullscreen ? "exitFullscreen" : "fullscreen")}
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
       {!readOnly && (
         <EditorToolbar
           editor={editor}
@@ -432,17 +480,30 @@ export function RichTextEditor({
           <div className={styles.commandFooter}>{t("slashKeys")}</div>
         </div>
       )}
-      <EditorContent editor={editor} className={styles.document} />
+      <div
+        ref={scrollHost}
+        className={styles.scrollHost}
+        data-custom-scroll={t("bodyLabel")}
+        onScroll={() => setSlash(null)}
+      >
+        <EditorContent editor={editor} className={styles.document} />
+      </div>
       {!readOnly && active && (
         <BubbleMenu
           editor={editor}
           updateDelay={100}
-          appendTo={() => document.body}
+          appendTo={() =>
+            root.current?.closest<HTMLElement>("dialog[open]") ??
+            (document.fullscreenElement instanceof HTMLElement
+              ? document.fullscreenElement
+              : null) ??
+            document.body
+          }
           className={styles.bubble}
           options={{
             placement: "top",
             offset: 8,
-            scrollTarget: editor.view.dom.closest("main") ?? window,
+            scrollTarget: scrollHost.current ?? window,
           }}
           shouldShow={({ state }) =>
             editor.isEditable &&

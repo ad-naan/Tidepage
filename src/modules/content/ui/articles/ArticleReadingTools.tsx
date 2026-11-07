@@ -11,15 +11,14 @@ import { AnimatedNumber } from "@/shared/ui/typography/AnimatedNumber";
 import { PencilLine } from "@/shared/ui/drawing/CoastalMarks";
 import { ArticleShareButton } from "./ArticleActions";
 import styles from "./ArticleReadingTools.module.css";
+import { useArticleReadingValue } from "./useArticleReading";
 
 export function ArticleReadingTools({
   slug,
   title,
-  percent,
 }: {
   slug: string;
   title: string;
-  percent: number;
 }) {
   const t = useTranslations("articles");
   const reduced = useReducedMotion();
@@ -27,39 +26,7 @@ export function ArticleReadingTools({
   return (
     <div className={styles.tools}>
       <PencilLine className={styles.rule} />
-      <div
-        className={styles.progress}
-        role="progressbar"
-        aria-label={t("readingProgress")}
-        aria-valuenow={percent}
-        aria-valuemin={0}
-        aria-valuemax={100}
-      >
-        <svg viewBox="0 0 20 20" aria-hidden="true">
-          <circle
-            cx="10"
-            cy="10"
-            r="7"
-            fill="none"
-            stroke="var(--line)"
-            strokeWidth="1.6"
-          />
-          <circle
-            cx="10"
-            cy="10"
-            r="7"
-            fill="none"
-            stroke="var(--accent)"
-            strokeWidth="1.6"
-            strokeDasharray={`${percent * 0.44} 44`}
-            transform="rotate(-90 10 10)"
-            strokeLinecap="round"
-          />
-        </svg>
-        <span>
-          <AnimatedNumber value={percent} />%
-        </span>
-      </div>
+      <ReadingPercent />
       <Button
         className={styles.top}
         onClick={() =>
@@ -97,6 +64,46 @@ export function ArticleReadingTools({
         </Button>
       </div>
       <EngagementStatus />
+    </div>
+  );
+}
+
+function ReadingPercent() {
+  const t = useTranslations("articles");
+  const percent = useArticleReadingValue("percent");
+  return (
+    <div
+      className={styles.progress}
+      role="progressbar"
+      aria-label={t("readingProgress")}
+      aria-valuenow={percent}
+      aria-valuemin={0}
+      aria-valuemax={100}
+    >
+      <svg viewBox="0 0 20 20" aria-hidden="true">
+        <circle
+          cx="10"
+          cy="10"
+          r="7"
+          fill="none"
+          stroke="var(--line)"
+          strokeWidth="1.6"
+        />
+        <circle
+          cx="10"
+          cy="10"
+          r="7"
+          fill="none"
+          stroke="var(--accent)"
+          strokeWidth="1.6"
+          strokeDasharray={`${percent * 0.44} 44`}
+          transform="rotate(-90 10 10)"
+          strokeLinecap="round"
+        />
+      </svg>
+      <span>
+        <AnimatedNumber value={percent} />%
+      </span>
     </div>
   );
 }

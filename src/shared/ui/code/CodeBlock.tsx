@@ -1,11 +1,12 @@
 "use client";
-import { useId, useMemo, useState } from "react";
+import { lazy, Suspense, useId, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronDown, ChevronUp, Code2 } from "lucide-react";
 import { Button } from "@/shared/ui/button/Button";
-import dynamic from "next/dynamic";
-const HighlightedCode = dynamic(() =>
-  import("./HighlightedCode").then((module) => module.HighlightedCode),
+const HighlightedCode = lazy(() =>
+  import("./HighlightedCode").then((module) => ({
+    default: module.HighlightedCode,
+  })),
 );
 import { useNearViewport } from "@/shared/hooks/useNearViewport";
 import { CodeCopy } from "./CodeCopy";
@@ -31,7 +32,9 @@ export function CodeBlock({
   const highlighted = useMemo(
     () =>
       ready ? (
-        <HighlightedCode code={text} language={language.toLowerCase()} />
+        <Suspense fallback={text}>
+          <HighlightedCode code={text} language={language.toLowerCase()} />
+        </Suspense>
       ) : (
         text
       ),

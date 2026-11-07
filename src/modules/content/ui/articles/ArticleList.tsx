@@ -2,10 +2,10 @@
 import { DateTime } from "@/shared/ui/typography/DateTime";
 import { PencilLine } from "@/shared/ui/drawing/CoastalMarks";
 import { Link } from "@/shared/i18n/navigation";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import type { ArticleSummary } from "@/modules/content/domain/models";
 import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
-import { spring } from "@/shared/lib/motion";
+import { listItemMotion } from "@/shared/lib/motion";
 export function ArticleList({
   items,
   lead = false,
@@ -13,15 +13,11 @@ export function ArticleList({
   items: ArticleSummary[];
   lead?: boolean;
 }) {
+  const reduced = useReducedMotion();
   return (
     <div className="article-list">
       {items.map((article, i) => (
-        <motion.article
-          key={article.slug}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ ...spring, delay: i * 0.045 }}
-        >
+        <motion.article key={article.slug} {...listItemMotion(i, reduced)}>
           <Link
             href={`/articles/${article.slug}`}
             className={`article-row${lead && i === 0 ? " article-lead" : ""}`}

@@ -52,7 +52,7 @@ export function LoadingSkeleton({
           </div>
         )}
       </div>
-      {announce && <span className={styles.srOnly}>{t("loading.label")}</span>}
+      {announce && <span className={styles.label}>{t("loading.label")}</span>}
     </div>
   );
 }

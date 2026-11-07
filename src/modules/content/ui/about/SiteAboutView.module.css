@@ -1,6 +1,10 @@
 .page {
   margin: 32px auto 48px;
 }
+.story {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 .header {
   max-width: 760px;
   padding-bottom: 30px;

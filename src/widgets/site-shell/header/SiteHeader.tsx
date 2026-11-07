@@ -36,6 +36,7 @@ import { HeaderBrand } from "./HeaderBrand";
 import { HeaderSky } from "./HeaderSky";
 import { ReadingProgress } from "@/widgets/site-shell/reading/ReadingProgress";
 import styles from "./SiteHeader.module.css";
+import type { SitePresentation } from "@/modules/site-settings/domain/presentation";
 
 const surfaces = {
   search: { selector: ".living-search-trigger", width: 480, align: "end" },
@@ -45,6 +46,7 @@ type HeaderPanel = keyof typeof surfaces;
 type Props = {
   articles: ArticleSummary[];
   navigation: NavigationOverview;
+  navigationItems: SitePresentation["navigation"];
   avatar: string;
   label: string;
   immersive: boolean;
@@ -54,6 +56,7 @@ type Props = {
 export function SiteHeader({
   articles,
   navigation,
+  navigationItems,
   avatar,
   label,
   immersive,
@@ -159,6 +162,7 @@ export function SiteHeader({
             />
             <div className="header-navigation">
               <SiteNavigation
+                items={navigationItems}
                 articles={articles}
                 content={navigation}
                 boundary={header}

@@ -72,7 +72,9 @@ export function SiteEditorialAssistant({
         {t("siteGenerate")}
       </Button>
       {busy && (
-        <Button onClick={() => request.current?.abort()}>{t("stop")}</Button>
+        <Button variant="quiet" onClick={() => request.current?.abort()}>
+          {t("stop")}
+        </Button>
       )}
       <p>
         <Anchor href={feedPath(locale)}>RSS</Anchor> ·{" "}
@@ -104,7 +106,9 @@ export function SiteEditorialAssistant({
           >
             {t("applyDraft")}
           </Button>
-          <Button onClick={() => setResult(null)}>{t("discard")}</Button>
+          <Button variant="quiet" onClick={() => setResult(null)}>
+            {t("discard")}
+          </Button>
         </>
       )}
     </section>

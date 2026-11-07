@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useLocale, useMessages, useTranslations } from "next-intl";
 import { locales, localeRegistry, type Locale } from "@/shared/i18n/config";
 import { updateWorkbenchRecord } from "@/shared/lib/workbench-store";
+import { ApiClientError } from "@/shared/http/client";
 import { Field } from "@/shared/ui/field/Field";
 import { Input } from "@/shared/ui/field/Input";
 import { Textarea } from "@/shared/ui/field/Textarea";
@@ -17,10 +18,16 @@ import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import styles from "./SiteSettingsView.module.css";
 import {
   settingsDraftSchema,
+  settingsWriteSchema,
   type SettingsDraft,
 } from "@/modules/site-settings/domain/models";
 import { PageDocumentEditor } from "./PageDocumentEditor";
 import { SiteEditorialAssistant } from "./SiteEditorialAssistant";
+import { Avatar } from "@/shared/ui/avatar/Avatar";
+import type { Principal } from "@/modules/identity/domain/principal";
+import { profile } from "@/shared/config/profile";
+import { shareImagePath } from "@/shared/config/site";
+import { Link } from "@/shared/i18n/navigation";
 
 const multilineFields = new Set([
   "intro",
@@ -29,21 +36,38 @@ const multilineFields = new Set([
   "aboutIntro",
   "siteAboutIntro",
   "footer",
+  "publicContact",
 ]);
 const fullWidthFields = new Set(["siteName", "avatarAssetId", "shareAssetId"]);
-const draftOnlyFields = new Set([
-  "contact",
-  "featuredSlugs",
-  "navigationOrder",
-  "footer",
-]);
+const fieldHelp = {
+  name: "nameHelp",
+  identity: "identityHelp",
+  intro: "introHelp",
+  avatarAssetId: "avatarHelp",
+  github: "socialHelp",
+  gitee: "socialHelp",
+  contact: "privateContactHelp",
+  siteName: "siteNameHelp",
+  siteDescription: "siteDescriptionHelp",
+  seoTitle: "seoTitleHelp",
+  seoDescription: "seoDescriptionHelp",
+  shareAssetId: "shareImageHelp",
+  heroTitle: "heroTitleHelp",
+  heroDescription: "heroDescriptionHelp",
+  publicContact: "publicContactHelp",
+  navigationOrder: "navigationHelp",
+  featuredSlugs: "featuredHelp",
+  footer: "footerHelp",
+} as const;
 
 export function SiteSettingsView({
   initialSettings,
   aiEnabled = false,
+  account,
 }: {
   initialSettings: SettingsDraft | null;
   aiEnabled?: boolean;
+  account?: Principal;
 }) {
   const t = useTranslations("admin");
   const copy = useMessages().admin.settings;
@@ -66,6 +90,7 @@ export function SiteSettingsView({
       "github",
       "gitee",
       "contact",
+      "publicContact",
     ],
     basic: [
       "siteName",
@@ -112,6 +137,20 @@ export function SiteSettingsView({
     );
     setDirty(true);
   }
+  const current = value?.translations[locale] ?? {};
+  const previewPath =
+    tab === "about" ? "/about" : tab === "siteAbout" ? "/site" : "/";
+  const placeholder = (key: string) =>
+    (
+      ({
+        heroTitle: current.identity,
+        heroDescription: current.intro,
+        seoTitle: current.siteName
+          ? `${current.siteName} · ${profile.name}`
+          : "",
+        seoDescription: current.siteDescription,
+      }) as Record<string, string>
+    )[key];
   return (
     <div className={styles.workspace}>
       <UnsavedChangesGuard dirty={dirty} />
@@ -126,6 +165,22 @@ export function SiteSettingsView({
           disabled={!value || !dirty || uploading}
           onClick={async () => {
             if (!value) return;
+            const checked = settingsWriteSchema.safeParse(value);
+            if (!checked.success) {
+              setError(
+                t("settings.invalidFields", {
+                  fields: [
+                    ...new Set(
+                      checked.error.issues.map(
+                        (issue) =>
+                          `${String(issue.path[1])}: ${(copy.fields as Record<string, string>)[String(issue.path[2])] ?? String(issue.path[2])}`,
+                      ),
+                    ),
+                  ].join(" / "),
+                }),
+              );
+              return;
+            }
             setBusy(true);
             setError("");
             try {
@@ -144,8 +199,15 @@ export function SiteSettingsView({
               setValue(saved);
               setDirty(false);
               notify({ title: t("settings.saved"), tone: "success" });
-            } catch {
-              setError(t("editor.conflict"));
+            } catch (error) {
+              setError(
+                t(
+                  (error instanceof ApiClientError && error.status === 409) ||
+                    (error instanceof Error && error.message === "CONFLICT")
+                    ? "editor.conflict"
+                    : "storageError",
+                ),
+              );
             } finally {
               setBusy(false);
             }
@@ -178,6 +240,38 @@ export function SiteSettingsView({
             />
           </Field>
         </div>
+        <div className={styles.guide}>
+          <p>{t("settings.defaultsHelp")}</p>
+          <Link
+            href={previewPath}
+            locale={locale}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t(
+              tab === "about"
+                ? "settings.viewAbout"
+                : tab === "siteAbout"
+                  ? "settings.viewSite"
+                  : "settings.viewHome",
+            )}
+          </Link>
+        </div>
+        {tab === "profile" && account && (
+          <div className={styles.account}>
+            <Avatar
+              src={account.avatarUrl}
+              name={account.displayName}
+              size="lg"
+            />
+            <div>
+              <strong>
+                {t("settings.accountIdentity", { name: account.displayName })}
+              </strong>
+              <p>{t("settings.accountAvatarHelp")}</p>
+            </div>
+          </div>
+        )}
         {(error || !value) && (
           <p className={styles.error} role="alert">
             {error || t("storageError")}
@@ -226,9 +320,15 @@ export function SiteSettingsView({
                     id={`site-${key}`}
                     label={(copy.fields as Record<string, string>)[key]}
                     description={
-                      draftOnlyFields.has(key)
-                        ? t("settings.draftOnly")
-                        : undefined
+                      key in fieldHelp
+                        ? t(
+                            `settings.${fieldHelp[key as keyof typeof fieldHelp]}`,
+                          )
+                        : t(
+                            tab === "about"
+                              ? "settings.aboutFieldHelp"
+                              : "settings.siteFieldHelp",
+                          )
                     }
                   >
                     {key.endsWith("AssetId") ? (
@@ -237,18 +337,34 @@ export function SiteSettingsView({
                         className={styles.assetButton}
                         variant="quiet"
                       >
-                        {value.translations[locale]?.[key] && (
+                        {value.translations[locale]?.[key] ? (
                           <AssetImage
                             id={value.translations[locale][key]}
                             alt={
                               value.translations[locale]?.[`${key}Alt`] ?? ""
                             }
                           />
+                        ) : (
+                          <img
+                            src={
+                              key === "avatarAssetId"
+                                ? profile.avatar
+                                : shareImagePath
+                            }
+                            alt=""
+                          />
                         )}
-                        <span>{t("editor.cover")}</span>
+                        <span>
+                          {t(
+                            key === "avatarAssetId"
+                              ? "settings.chooseAvatar"
+                              : "settings.chooseShareImage",
+                          )}
+                        </span>
                       </Button>
                     ) : multilineFields.has(key) ? (
                       <Textarea
+                        placeholder={placeholder(key)}
                         value={value.translations[locale]?.[key] ?? ""}
                         rows={4}
                         onChange={(e) =>
@@ -257,6 +373,7 @@ export function SiteSettingsView({
                       />
                     ) : (
                       <Input
+                        placeholder={placeholder(key)}
                         value={value.translations[locale]?.[key] ?? ""}
                         onChange={(e) =>
                           updateFields({ [key]: e.target.value })
@@ -267,6 +384,7 @@ export function SiteSettingsView({
                   {key.endsWith("AssetId") &&
                     value.translations[locale]?.[key] && (
                       <Button
+                        variant="quiet"
                         className={styles.removeAsset}
                         size="sm"
                         onClick={() =>

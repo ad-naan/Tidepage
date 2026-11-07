@@ -11,7 +11,7 @@ import {
 import { ArrowLeft } from "lucide-react";
 import { Link } from "@/shared/i18n/navigation";
 import styles from "./ReadingProgress.module.css";
-import { useArticleReading } from "@/modules/content/ui/articles/useArticleReading";
+import { useArticleReadingValue } from "@/modules/content/ui/articles/useArticleReading";
 
 /** Measures the article itself; comments and the footer don't dilute reading progress. */
 export function ReadingProgress({ title }: { title: string }) {
@@ -21,7 +21,7 @@ export function ReadingProgress({ title }: { title: string }) {
   const value = useMotionValue(0);
   const smooth = useSpring(value, { stiffness: 110, damping: 28 });
   const offset = useTransform(reduced ? value : smooth, (v) => 100 - v * 100);
-  const { percent } = useArticleReading();
+  const percent = useArticleReadingValue("percent");
   useEffect(() => {
     value.set(percent / 100);
   }, [value, percent]);

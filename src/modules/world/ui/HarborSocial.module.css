@@ -19,6 +19,11 @@
   display: grid;
   gap: 18px;
 }
+.player {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
 .note {
   font-size: var(--text-sm);
   line-height: 1.8;

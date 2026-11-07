@@ -822,7 +822,8 @@
       "objectiveDiscovered": "星落湾 · 已发现",
       "objectiveGlow": "夜里，跟随蓝色微光",
       "objectiveBeacon": "回到灯塔，点亮它",
-      "objectiveFragments": "寻找散落的灯芯"
+      "objectiveFragments": "寻找散落的灯芯",
+      "retry": "????"
     },
     "notices": {
       "kept": "这里的灯芯已经收好了。",
@@ -1200,7 +1201,14 @@
         "tip": "小提示",
         "warning": "留意",
         "important": "重点"
-      }
+      },
+      "normalHeight": "标准高度",
+      "expandHeight": "加高画布",
+      "fullscreen": "全屏编辑",
+      "exitFullscreen": "退出全屏",
+      "fullscreenUnavailable": "浏览器未允许全屏，请使用加高画布",
+      "focus": "专注写作",
+      "exitFocus": "退出专注"
     },
     "media": {
       "upload": "添加图片",
@@ -1366,6 +1374,29 @@
       "tabsLabel": "设置分组",
       "save": "保存设置",
       "draftOnly": "此项保存为工作副本，暂未接入前台展示。",
+      "defaultsHelp": "未单独设置的基础资料已回填站点默认内容。保存后更新当前语言的前台展示；可选覆盖项留空时沿用下方说明中的内容。",
+      "viewHome": "查看首页 ↗",
+      "viewAbout": "查看自述 ↗",
+      "viewSite": "查看此站点 ↗",
+      "accountIdentity": "登录账号 · {name}",
+      "accountAvatarHelp": "账号头像来自 GitHub / Gitee，登录时同步，用于登录入口、评论和世界的同行者列表。下方站点作者头像独立设置。",
+      "nameHelp": "显示在首页的大字签名位置，不修改登录账号的姓名。",
+      "identityHelp": "显示在首页签名下方。若“首页与导航”填写了独立标题，则优先显示独立标题。",
+      "introHelp": "显示在首页身份介绍下方。若填写了首页独立说明，则优先显示独立说明。",
+      "avatarHelp": "用于网站左上角头像与友联交换资料。未选择图片时使用当前预览的默认作者头像；不影响评论账号头像。",
+      "socialHelp": "首页签名区下方的社交入口，填写完整的 https:// 地址。",
+      "privateContactHelp": "仅在后台保存的私人备注，不显示在任何前台页面。",
+      "siteNameHelp": "用于浏览器标题、分享卡片站名和站点资料。",
+      "siteDescriptionHelp": "用于站点资料及默认搜索摘要；独立 SEO 描述为空时使用这里的内容。",
+      "seoTitleHelp": "可选。覆盖首页浏览器标题及分享标题；留空时根据站点名称生成。",
+      "seoDescriptionHelp": "可选。覆盖搜索、分享和订阅摘要；留空使用站点介绍。",
+      "shareImageHelp": "用于社交平台分享预览。未选择图片时使用当前预览的自动生成分享图。",
+      "heroTitleHelp": "可选。仅覆盖首页签名下方的标题；留空使用“个人资料”的身份介绍，输入框提示为当前内容。",
+      "heroDescriptionHelp": "可选。仅覆盖首页介绍段落；留空使用“个人资料”的首页介绍，输入框提示为当前内容。",
+      "aboutFieldHelp": "保存后显示在“自述”页面的对应位置。",
+      "siteFieldHelp": "保存后显示在“此站点”页面的对应位置。",
+      "chooseAvatar": "选择作者头像",
+      "chooseShareImage": "选择分享图片",
       "removeImage": "移除图片",
       "tabs": {
         "profile": "个人资料",
@@ -1378,17 +1409,17 @@
         "name": "姓名",
         "identity": "身份介绍",
         "intro": "首页介绍",
-        "avatarAssetId": "头像",
+        "avatarAssetId": "站点作者头像",
         "github": "GitHub 链接",
         "gitee": "Gitee 链接",
-        "contact": "公开联系方式",
+        "contact": "私人联系备注（不公开）",
         "siteName": "站点名称",
         "siteDescription": "站点介绍",
         "seoTitle": "默认 SEO 标题",
         "seoDescription": "默认 SEO 描述",
         "shareAssetId": "分享图片",
-        "heroTitle": "首页标题",
-        "heroDescription": "首页说明",
+        "heroTitle": "首页独立标题（可选）",
+        "heroDescription": "首页独立说明（可选）",
         "featuredSlugs": "精选文章标识（逗号分隔）",
         "navigationOrder": "现有导航顺序（逗号分隔）",
         "footer": "页脚文字",
@@ -1410,7 +1441,8 @@
         "aboutInterest4": "生活小事四",
         "aboutInterestNote4": "小事四的介绍",
         "aboutBody": "自述正文",
-        "siteAboutBody": "此站点正文"
+        "siteAboutBody": "此站点正文",
+        "publicContact": "公开联系说明"
       },
       "pageEditor": {
         "sectionTitle": "小节标题",
@@ -1420,7 +1452,12 @@
         "remove": "删除小节",
         "up": "上移小节",
         "down": "下移小节"
-      }
+      },
+      "publicContactHelp": "保存后公开显示在页脚的联系窗口。不要填写私人信息。",
+      "navigationHelp": "填写导航标识，以逗号分隔：home, articles, notes, projects, quotes, gallery, about, site, friends。各导航组内按此顺序展示，未填写的栏目随后补齐。",
+      "featuredHelp": "最多 5 个文章 slug，按填写顺序置顶；缺失或未发布的文章会跳过，其余位置补入近期文章。",
+      "footerHelp": "保存后显示在网站页脚，留空隐藏。",
+      "invalidFields": "请检查以下设置：{fields}"
     },
     "image": {
       "settings": "图片设置",

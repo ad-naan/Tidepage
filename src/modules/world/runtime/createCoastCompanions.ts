@@ -1,9 +1,13 @@
 import * as THREE from "three";
 import type { CoastPlayer } from "@/shared/contracts/coast-space";
 import { createCoastAvatar } from "./createCoastAvatar";
+import type { CoastAvatarAsset } from "./coastAvatarAsset";
 
 /** Remote models interpolate authoritative positions; they never drive local input. */
-export function createCoastCompanions(scene: THREE.Scene) {
+export function createCoastCompanions(
+  scene: THREE.Scene,
+  asset: CoastAvatarAsset,
+) {
   const peers = new Map<
     string,
     {
@@ -31,7 +35,7 @@ export function createCoastCompanions(scene: THREE.Scene) {
         let peer = peers.get(player.id);
         const outfit = JSON.stringify(player.appearance);
         if (!peer) {
-          const model = createCoastAvatar(player.appearance);
+          const model = createCoastAvatar(player.appearance, asset);
           model.root.position.set(player.x, 0.49, player.z);
           model.root.rotation.y = player.yaw;
           scene.add(model.root);

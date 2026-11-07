@@ -83,10 +83,10 @@
 }
 .sheet {
   width: 100%;
-  max-width: none;
+  max-width: 1040px;
   min-width: 0;
   margin: 0 auto;
-  padding: 36px clamp(24px, 3vw, 56px) 100px;
+  padding: 28px clamp(20px, 3vw, 40px) 48px;
 }
 .documentHeading {
   margin-bottom: 28px;
@@ -112,8 +112,8 @@
   box-shadow: none;
 }
 .titleField:focus-visible {
-  outline: 0;
-  box-shadow: none;
+  outline: 1px dashed var(--accent);
+  outline-offset: 4px;
 }
 .titleField::placeholder {
   color: var(--muted);
@@ -141,6 +141,35 @@
   font: 400 var(--text-sm)/1.8 var(--font-ui);
   scrollbar-width: thin;
   scrollbar-color: var(--line) transparent;
+}
+.workspace[data-editor-focus="true"] {
+  --admin-top-height: 0px;
+}
+.workspace[data-editor-focus="true"] .layout {
+  min-height: calc(100dvh - var(--editor-header-height));
+}
+.workspace[data-editor-focus="true"] .aside {
+  height: calc(100dvh - var(--editor-header-height));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .aside:not([hidden]) {
+    animation: panelReveal var(--motion-soft) ease-out;
+  }
+}
+@keyframes panelReveal {
+  from {
+    opacity: 0;
+    translate: 8px 0;
+  }
+  to {
+    opacity: 1;
+    translate: 0;
+  }
+}
+@media (max-width: 950px) {
+  .workspace[data-editor-focus="true"] .aside {
+    top: var(--editor-header-height);
+  }
 }
 .panelHeader {
   position: sticky;

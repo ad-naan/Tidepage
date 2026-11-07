@@ -11,7 +11,7 @@ export async function updateWorkbenchRecord<T>(
   key: string,
   change: (current: unknown) => T,
 ): Promise<T> {
-  return navigator.locks.request(`tidepage:${key}`, async () => {
+  const write = async () => {
     const record = await load(key);
     const value = change(record.revision === 0 ? undefined : record.value);
     await apiSend(`/api/v1/workbench/${encodeURIComponent(key)}`, "PUT", {
@@ -19,5 +19,10 @@ export async function updateWorkbenchRecord<T>(
       revision: record.revision,
     });
     return value;
-  });
+  };
+  // Web Locks is unavailable on HTTP LAN previews. The server's revision check
+  // remains authoritative even when browser-local serialization is unavailable.
+  return navigator.locks
+    ? navigator.locks.request(`tidepage:${key}`, write)
+    : write();
 }

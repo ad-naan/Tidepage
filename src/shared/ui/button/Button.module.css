@@ -1,6 +1,11 @@
 .root {
   -webkit-tap-highlight-color: transparent;
   cursor: pointer;
+  transition:
+    background-color var(--motion-quick),
+    color var(--motion-quick),
+    border-color var(--motion-quick),
+    opacity var(--motion-quick);
 }
 .root:focus-visible {
   outline: 1px dashed var(--accent);
@@ -12,6 +17,7 @@
 }
 .root[aria-busy="true"] {
   cursor: progress;
+  opacity: 0.8;
 }
 .bare {
   text-underline-offset: 3px;
@@ -37,6 +43,37 @@
   color: var(--ink);
   background: color-mix(in srgb, var(--sand) 35%, transparent);
   border-radius: 3px 8px 2px 5px;
+  border: 1px solid var(--line);
+}
+.quiet:hover:not(:disabled) {
+  background: var(--wash);
+  border-color: var(--accent);
+}
+.primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ink) 85%, var(--accent));
+}
+.spinner {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 13px;
+  height: 13px;
+  border: 1.5px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 800ms linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    transition: none;
+  }
+  .spinner {
+    animation: none;
+  }
 }
 .primary {
   color: var(--paper);

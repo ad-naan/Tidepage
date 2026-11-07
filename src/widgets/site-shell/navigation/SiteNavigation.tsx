@@ -18,16 +18,6 @@ import styles from "./SiteNavigation.module.css";
 import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
 
 const primaryKeys = new Set(["articles", "notes", "projects"]);
-const homePages = [
-  { href: "/", key: "home" },
-  { href: "/about", key: "about" },
-  { href: "/site", key: "site" },
-] as const;
-const primary = navigationItems.filter((item) => primaryKeys.has(item.key));
-const secondary = navigationItems.filter(
-  (item) =>
-    !["home", "about", "site"].includes(item.key) && !primaryKeys.has(item.key),
-);
 type Preview = "articles" | "notes" | "projects";
 type Mode = Preview | "home" | "more";
 const widths: Record<Mode, number> = {
@@ -43,12 +33,23 @@ export function SiteNavigation({
   content,
   boundary,
   onNavigate,
+  items = navigationItems,
 }: {
   articles: ArticleSummary[];
   content: NavigationOverview;
   boundary: RefObject<HTMLElement | null>;
   onNavigate?: () => void;
+  items?: readonly (typeof navigationItems)[number][];
 }) {
+  const primary = items.filter((item) => primaryKeys.has(item.key));
+  const secondary = items.filter(
+    (item) =>
+      !["home", "about", "site"].includes(item.key) &&
+      !primaryKeys.has(item.key),
+  );
+  const homePages = items.filter((item) =>
+    ["home", "about", "site"].includes(item.key),
+  );
   const t = useTranslations("nav");
   const sky = useTranslations("celestial");
   const pathname = usePathname();

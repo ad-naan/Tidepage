@@ -39,7 +39,7 @@ function verify(raw: string, secret: string): unknown {
   }
 }
 export function issueCoastIdentity(
-  identity: Pick<CoastIdentity, "subject" | "name" | "host">,
+  identity: Pick<CoastIdentity, "subject" | "name" | "host" | "avatarUrl">,
   secret: string,
   now = Date.now(),
 ) {

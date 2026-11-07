@@ -28,6 +28,7 @@ export function PageDocumentEditor({
     <section aria-label={label}>
       <h2>{label}</h2>
       <Button
+        variant="quiet"
         aria-pressed={preview}
         onClick={() => setPreview((value) => !value)}
       >

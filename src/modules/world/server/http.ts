@@ -40,6 +40,7 @@ export function createCoastRoutes(dependencies: {
               subject: user.id,
               name: user.displayName.trim().slice(0, 60) || "·",
               host: user.role === "admin",
+              avatarUrl: user.avatarUrl ?? null,
             },
             secret(),
             clock(),
