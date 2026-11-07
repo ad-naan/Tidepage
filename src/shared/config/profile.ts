@@ -1,7 +1,8 @@
+import { siteAssets } from "./assets";
 /** Public author identity. Visible editorial copy lives in the locale catalogs. */
 export const profile = {
   name: "adnaan",
-  avatar: "/images/author-avatar.png",
+  avatar: siteAssets.authorAvatar,
   github: "https://github.com/ad-naan",
 } as const;
 

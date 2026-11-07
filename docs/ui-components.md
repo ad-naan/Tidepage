@@ -50,7 +50,7 @@
 
 `styles/layout.css` 管理全站共用版心与字体。`--site-content-max`、`--site-gutter` 和 `--site-content-width` 同时用于首页、所有内页、页头与页脚；栏目组件不再自设更窄的外层宽度。正文长文在共享外框内保留约 800px 阅读列，目录沿外框右侧对齐。宽屏卡片增加列数，避免随版心放大而失去紧凑比例。
 
-`SiteNavigation` 在桌面显示文章、手记、项目和更多；Logo 承担首页入口，次要栏目进入局部浮层。窄屏使用明确的浏览入口，不增加第二行页头。`HanddrawnMark` 用 SVG 曲线和回锋表达选中态与悬停态，禁止改回普通矩形直线。`HeaderBrand` 在默认态和收拢态都只显示 30px、8px 圆角的 GitHub 头像，作为返回首页的入口，不叠加描边或状态光点。实时状态始终独立排列在头像旁：在线时显示应用图标与名称，离线时显示小圆点与状态；悬停不加底色。手写 adnaan 签名和橙色小箭头移到首页首屏的姓名位置，避免导航和首屏重复展示姓名；活动入口不使用水獭头像。头像位于 `public/images/author-avatar.png`，从用户提供的 `https://avatars.githubusercontent.com/u/163977012?s=60&v=4` 保存，不依赖运行时远程加载。
+`SiteNavigation` 在桌面显示文章、手记、项目和更多；Logo 承担首页入口，次要栏目进入局部浮层。窄屏使用明确的浏览入口，不增加第二行页头。`HanddrawnMark` 用 SVG 曲线和回锋表达选中态与悬停态，禁止改回普通矩形直线。`HeaderBrand` 在默认态和收拢态都只显示 30px、8px 圆角的 GitHub 头像，作为返回首页的入口，不叠加描边或状态光点。实时状态始终独立排列在头像旁：在线时显示应用图标与名称，离线时显示小圆点与状态；悬停不加底色。手写 adnaan 签名和橙色小箭头移到首页首屏的姓名位置，避免导航和首屏重复展示姓名；活动入口不使用水獭头像。头像位于 `public/assets/brand/author-avatar.png`，从用户提供的 `https://avatars.githubusercontent.com/u/163977012?s=60&v=4` 保存，不依赖运行时远程加载。
 
 `ContentHeading` 是紧凑的栏目栏，序号、栏目名、标题、说明和小幅线稿在同一行内组成层级。禁止重新加入整块居中图标与大标题。各视图旁的 `*View.module.css` 只管理内页的密度与内容布局，不影响首页。
 
@@ -138,4 +138,4 @@ Loading 开始前保留正文高度，加载时隐藏页脚，避免正文被 fa
 
 编辑器与阅读器共用 inline atom `sticker` 节点，仅保存注册表情 ID。服务端验证 ID，图片地址从本地 `shared/config/stickers.json` 解析，不能由评论请求指定外部图片。纯表情评论可发表，混排表情为 30px，纯表情段落为 56px；Markdown 导出保留图片引用。
 
-内置 39 个 Microsoft Fluent Emoji，按小情绪和日常分组，支持中英文搜索与键盘选择。资源位于 `public/stickers/fluent`，经过 96px WebP 压缩，原始文件地址和 SHA256 留在清单中，MIT 声明与图片一起保存；来源为 https://github.com/microsoft/fluentui-emoji 。增加表情时同时登记稳定 ID、清单与语言目录，不使用随机图片接口，以保证历史评论仍可读取。
+内置 39 个 Microsoft Fluent Emoji，按小情绪和日常分组，支持中英文搜索与键盘选择。资源位于 `public/assets/stickers/fluent`，经过 96px WebP 压缩，原始文件地址和 SHA256 留在清单中，MIT 声明与图片一起保存；来源为 https://github.com/microsoft/fluentui-emoji 。增加表情时同时登记稳定 ID、清单与语言目录，不使用随机图片接口，以保证历史评论仍可读取。

@@ -1,0 +1,30 @@
+{
+  "bytes": 2321528,
+  "triangles": 34920,
+  "meshes": 10,
+  "skins": 1,
+  "joints_per_skin": [
+    22
+  ],
+  "animations": [
+    "Idle",
+    "Jump",
+    "Run",
+    "Sit",
+    "Walk",
+    "Wave"
+  ],
+  "materials": 6,
+  "game_ready": false,
+  "status": "test-export-not-installed-in-game",
+  "roundtrip_armatures": 1,
+  "roundtrip_actions": [
+    "Idle",
+    "Jump",
+    "Run",
+    "Sit",
+    "Walk",
+    "Wave"
+  ],
+  "roundtrip_skinned_meshes": 10
+}

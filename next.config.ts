@@ -1,11 +1,12 @@
 import type { NextConfig } from "next";
 import { resolve } from "node:path";
+import legacyAssets from "./src/shared/config/legacy-assets.json";
 const nextConfig: NextConfig = {
   // Docker 部署使用 .next/standalone 独立产物；本地 dev / next start 不受影响。
   output: "standalone",
   poweredByHeader: false,
   outputFileTracingExcludes: {
-    "/*": ["./storage/**/*", "./backups/**/*", "./.cache/**/*", "./.env*"],
+    "/*": ["./storage/**/*", "./backups/**/*", "./.cache/**/*", "./assets/source/**/*", "./artifacts/**/*", "./.env*"],
   },
   outputFileTracingIncludes: {
     "/api/v1/media": [
@@ -18,6 +19,9 @@ const nextConfig: NextConfig = {
   webpack(config) {
     config.resolve.alias["next-intl/config"] = resolve("src/i18n/request.ts");
     return config;
+  },
+  async rewrites() {
+    return Object.entries(legacyAssets).map(([source, destination]) => ({source, destination}));
   },
   async headers() {
     return [

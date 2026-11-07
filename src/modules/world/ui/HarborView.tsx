@@ -371,7 +371,9 @@ export function HarborView({
       {failed && (
         <div className={styles.center} role="alert">
           <p>{world("fallback")}</p>
-          <Button onClick={() => window.location.reload()}>{world("retry")}</Button>
+          <Button onClick={() => window.location.reload()}>
+            {world("retry")}
+          </Button>
           <Link href="/">{world("home")}</Link>
         </div>
       )}

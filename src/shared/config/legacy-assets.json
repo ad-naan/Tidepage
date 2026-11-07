@@ -1,0 +1,12 @@
+{
+  "/images/author-avatar.png": "/assets/brand/author-avatar.png",
+  "/images/otter-v2.png": "/assets/illustrations/otter-v2.png",
+  "/images/coast.png": "/assets/photos/coast.png",
+  "/images/window.png": "/assets/photos/window.png",
+  "/images/meadow.png": "/assets/photos/meadow.png",
+  "/brand/:path*": "/assets/brand/:path*",
+  "/fonts/:path*": "/assets/fonts/:path*",
+  "/audio/:path*": "/assets/audio/:path*",
+  "/models/:path*": "/assets/models/:path*",
+  "/stickers/:path*": "/assets/stickers/:path*"
+}

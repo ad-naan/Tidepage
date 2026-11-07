@@ -2,7 +2,7 @@
   {
     "id": "fluent:grinning-face",
     "pack": "fluent",
-    "src": "/stickers/fluent/grinning-face.webp",
+    "src": "/assets/stickers/fluent/grinning-face.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Grinning%20face/3D/grinning_face_3d.png",
     "sha256": "175d214df45fe18f6f106a9a094b695689d98abe6f343295fcbd690a7ee4f0ab",
     "key": "fluent-grinning-face",
@@ -12,7 +12,7 @@
   {
     "id": "fluent:beaming-face-with-smiling-eyes",
     "pack": "fluent",
-    "src": "/stickers/fluent/beaming-face-with-smiling-eyes.webp",
+    "src": "/assets/stickers/fluent/beaming-face-with-smiling-eyes.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Beaming%20face%20with%20smiling%20eyes/3D/beaming_face_with_smiling_eyes_3d.png",
     "sha256": "043c9fced9114368d73af7d1689cfcfc1ed42883456642770912f3d5e978dda3",
     "key": "fluent-beaming-face-with-smiling-eyes",
@@ -22,7 +22,7 @@
   {
     "id": "fluent:face-with-tears-of-joy",
     "pack": "fluent",
-    "src": "/stickers/fluent/face-with-tears-of-joy.webp",
+    "src": "/assets/stickers/fluent/face-with-tears-of-joy.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Face%20with%20tears%20of%20joy/3D/face_with_tears_of_joy_3d.png",
     "sha256": "8af20fb0c64c44a8d8c8d047c1410c5e529a37c3158d496832b380198ed2e9c3",
     "key": "fluent-face-with-tears-of-joy",
@@ -32,7 +32,7 @@
   {
     "id": "fluent:rolling-on-the-floor-laughing",
     "pack": "fluent",
-    "src": "/stickers/fluent/rolling-on-the-floor-laughing.webp",
+    "src": "/assets/stickers/fluent/rolling-on-the-floor-laughing.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Rolling%20on%20the%20floor%20laughing/3D/rolling_on_the_floor_laughing_3d.png",
     "sha256": "22ebfd950c4df297e784babe1e31bc1713144615f78cb0262c8dc2ce0da90ca0",
     "key": "fluent-rolling-on-the-floor-laughing",
@@ -42,7 +42,7 @@
   {
     "id": "fluent:smiling-face-with-hearts",
     "pack": "fluent",
-    "src": "/stickers/fluent/smiling-face-with-hearts.webp",
+    "src": "/assets/stickers/fluent/smiling-face-with-hearts.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Smiling%20face%20with%20hearts/3D/smiling_face_with_hearts_3d.png",
     "sha256": "2b8c4abe57a81fe3805ec0c271f855984e9f4a7a1d10053050a4db7b6def778e",
     "key": "fluent-smiling-face-with-hearts",
@@ -52,7 +52,7 @@
   {
     "id": "fluent:smiling-face-with-heart-eyes",
     "pack": "fluent",
-    "src": "/stickers/fluent/smiling-face-with-heart-eyes.webp",
+    "src": "/assets/stickers/fluent/smiling-face-with-heart-eyes.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Smiling%20face%20with%20heart-eyes/3D/smiling_face_with_heart-eyes_3d.png",
     "sha256": "2b5ab00dd73673faa86463eac8787b7fc366935c4d82a54451df33443190b9cc",
     "key": "fluent-smiling-face-with-heart-eyes",
@@ -62,7 +62,7 @@
   {
     "id": "fluent:star-struck",
     "pack": "fluent",
-    "src": "/stickers/fluent/star-struck.webp",
+    "src": "/assets/stickers/fluent/star-struck.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Star-struck/3D/star-struck_3d.png",
     "sha256": "89a14e242892cbe067095b75eb51cd55692841bceb384a45a90f8f3f8b9b2e9b",
     "key": "fluent-star-struck",
@@ -72,7 +72,7 @@
   {
     "id": "fluent:thinking-face",
     "pack": "fluent",
-    "src": "/stickers/fluent/thinking-face.webp",
+    "src": "/assets/stickers/fluent/thinking-face.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Thinking%20face/3D/thinking_face_3d.png",
     "sha256": "cd29da5c3886e1e25726d3cf6ff79faa2f0d631b1c0873b115be287d358fc4be",
     "key": "fluent-thinking-face",
@@ -82,7 +82,7 @@
   {
     "id": "fluent:face-with-raised-eyebrow",
     "pack": "fluent",
-    "src": "/stickers/fluent/face-with-raised-eyebrow.webp",
+    "src": "/assets/stickers/fluent/face-with-raised-eyebrow.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Face%20with%20raised%20eyebrow/3D/face_with_raised_eyebrow_3d.png",
     "sha256": "13e2bca9b7a3cc83c2a14214fb540e7f6ea0826750ecfdc0d1e9f8ee66567b53",
     "key": "fluent-face-with-raised-eyebrow",
@@ -92,7 +92,7 @@
   {
     "id": "fluent:face-with-monocle",
     "pack": "fluent",
-    "src": "/stickers/fluent/face-with-monocle.webp",
+    "src": "/assets/stickers/fluent/face-with-monocle.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Face%20with%20monocle/3D/face_with_monocle_3d.png",
     "sha256": "de447e866d16da68cf6c87e88a35b3312b76b20492056604259bd16e2148570e",
     "key": "fluent-face-with-monocle",
@@ -102,7 +102,7 @@
   {
     "id": "fluent:face-with-rolling-eyes",
     "pack": "fluent",
-    "src": "/stickers/fluent/face-with-rolling-eyes.webp",
+    "src": "/assets/stickers/fluent/face-with-rolling-eyes.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Face%20with%20rolling%20eyes/3D/face_with_rolling_eyes_3d.png",
     "sha256": "2c1d7babfd5b788a90d960bf3690c39fcdc9cad37b0c7cad6c4b5d6d1b79d8c4",
     "key": "fluent-face-with-rolling-eyes",
@@ -112,7 +112,7 @@
   {
     "id": "fluent:smirking-face",
     "pack": "fluent",
-    "src": "/stickers/fluent/smirking-face.webp",
+    "src": "/assets/stickers/fluent/smirking-face.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Smirking%20face/3D/smirking_face_3d.png",
     "sha256": "bf047787b8a7984d1def106ff6fc92b9178fe32b8c2c2b775daec9bae56165b6",
     "key": "fluent-smirking-face",
@@ -122,7 +122,7 @@
   {
     "id": "fluent:winking-face",
     "pack": "fluent",
-    "src": "/stickers/fluent/winking-face.webp",
+    "src": "/assets/stickers/fluent/winking-face.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Winking%20face/3D/winking_face_3d.png",
     "sha256": "f14edbaa23f127ee6ee7c4a17b35969405a3c441b3f79c3356cc6406c1bf9ae4",
     "key": "fluent-winking-face",
@@ -132,7 +132,7 @@
   {
     "id": "fluent:face-with-tongue",
     "pack": "fluent",
-    "src": "/stickers/fluent/face-with-tongue.webp",
+    "src": "/assets/stickers/fluent/face-with-tongue.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Face%20with%20tongue/3D/face_with_tongue_3d.png",
     "sha256": "606fe49cf6dd67f01e602f4553eda41055e2705b491f9cc4ef3544b6714b595d",
     "key": "fluent-face-with-tongue",
@@ -142,7 +142,7 @@
   {
     "id": "fluent:squinting-face-with-tongue",
     "pack": "fluent",
-    "src": "/stickers/fluent/squinting-face-with-tongue.webp",
+    "src": "/assets/stickers/fluent/squinting-face-with-tongue.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Squinting%20face%20with%20tongue/3D/squinting_face_with_tongue_3d.png",
     "sha256": "e3185f2b4cbcc8f553618c037417c42bdc4c397a7c2372d3379623ca4ad113ff",
     "key": "fluent-squinting-face-with-tongue",
@@ -152,7 +152,7 @@
   {
     "id": "fluent:zany-face",
     "pack": "fluent",
-    "src": "/stickers/fluent/zany-face.webp",
+    "src": "/assets/stickers/fluent/zany-face.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Zany%20face/3D/zany_face_3d.png",
     "sha256": "3d7805655cb653c12dc4662a58dc447fadae80b29ffc2f5a28e3dbabba2f81da",
     "key": "fluent-zany-face",
@@ -162,7 +162,7 @@
   {
     "id": "fluent:upside-down-face",
     "pack": "fluent",
-    "src": "/stickers/fluent/upside-down-face.webp",
+    "src": "/assets/stickers/fluent/upside-down-face.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Upside-down%20face/3D/upside-down_face_3d.png",
     "sha256": "de4e2d827973cc3c0288daa26559389847a3cf3a1b2597be85f40e7056aeea42",
     "key": "fluent-upside-down-face",
@@ -172,7 +172,7 @@
   {
     "id": "fluent:melting-face",
     "pack": "fluent",
-    "src": "/stickers/fluent/melting-face.webp",
+    "src": "/assets/stickers/fluent/melting-face.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Melting%20face/3D/melting_face_3d.png",
     "sha256": "39967c77e124e7f1e44043b3b98c634b2c09aca01b1cc5b52b7a6b563f7c99d8",
     "key": "fluent-melting-face",
@@ -182,7 +182,7 @@
   {
     "id": "fluent:saluting-face",
     "pack": "fluent",
-    "src": "/stickers/fluent/saluting-face.webp",
+    "src": "/assets/stickers/fluent/saluting-face.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Saluting%20face/3D/saluting_face_3d.png",
     "sha256": "3a18f67e9cb6edaa18e9331451f9b93527aca574c52f9e6d896cce691e737b5a",
     "key": "fluent-saluting-face",
@@ -192,7 +192,7 @@
   {
     "id": "fluent:shushing-face",
     "pack": "fluent",
-    "src": "/stickers/fluent/shushing-face.webp",
+    "src": "/assets/stickers/fluent/shushing-face.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Shushing%20face/3D/shushing_face_3d.png",
     "sha256": "0045661e6269e01b454cf9c54aea5c81e00891b76f36932046dc2a77502fe95b",
     "key": "fluent-shushing-face",
@@ -202,7 +202,7 @@
   {
     "id": "fluent:face-with-hand-over-mouth",
     "pack": "fluent",
-    "src": "/stickers/fluent/face-with-hand-over-mouth.webp",
+    "src": "/assets/stickers/fluent/face-with-hand-over-mouth.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Face%20with%20hand%20over%20mouth/3D/face_with_hand_over_mouth_3d.png",
     "sha256": "c87c0277c7b0ade675b69a5c90482041d8b5af42bbccd19bf0b88e8ee0865086",
     "key": "fluent-face-with-hand-over-mouth",
@@ -212,7 +212,7 @@
   {
     "id": "fluent:face-holding-back-tears",
     "pack": "fluent",
-    "src": "/stickers/fluent/face-holding-back-tears.webp",
+    "src": "/assets/stickers/fluent/face-holding-back-tears.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Face%20holding%20back%20tears/3D/face_holding_back_tears_3d.png",
     "sha256": "5e31e32cd02ce014aa2eae0df46f38b0532dd74ff01224309181d6b75519ec76",
     "key": "fluent-face-holding-back-tears",
@@ -222,7 +222,7 @@
   {
     "id": "fluent:loudly-crying-face",
     "pack": "fluent",
-    "src": "/stickers/fluent/loudly-crying-face.webp",
+    "src": "/assets/stickers/fluent/loudly-crying-face.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Loudly%20crying%20face/3D/loudly_crying_face_3d.png",
     "sha256": "9e7b740110d12731e7416c8958b88bfadd75e0e7121ab0245e581e8f70491e02",
     "key": "fluent-loudly-crying-face",
@@ -232,7 +232,7 @@
   {
     "id": "fluent:pleading-face",
     "pack": "fluent",
-    "src": "/stickers/fluent/pleading-face.webp",
+    "src": "/assets/stickers/fluent/pleading-face.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Pleading%20face/3D/pleading_face_3d.png",
     "sha256": "7dfc89c51118f0adecf886063b5eafce140a613075394ebe22ed9dd2bd9e9c4f",
     "key": "fluent-pleading-face",
@@ -242,7 +242,7 @@
   {
     "id": "fluent:exploding-head",
     "pack": "fluent",
-    "src": "/stickers/fluent/exploding-head.webp",
+    "src": "/assets/stickers/fluent/exploding-head.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Exploding%20head/3D/exploding_head_3d.png",
     "sha256": "a915d5b325dbe3130fed54ebaf793777ab88b54c130560f8f3c17ad1af2bcdaf",
     "key": "fluent-exploding-head",
@@ -252,7 +252,7 @@
   {
     "id": "fluent:flushed-face",
     "pack": "fluent",
-    "src": "/stickers/fluent/flushed-face.webp",
+    "src": "/assets/stickers/fluent/flushed-face.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Flushed%20face/3D/flushed_face_3d.png",
     "sha256": "6058b2f5d07f7e3bfb569cbfc0d156b059bd672b53d467ca66ba3d64f81c5a9e",
     "key": "fluent-flushed-face",
@@ -262,7 +262,7 @@
   {
     "id": "fluent:sleeping-face",
     "pack": "fluent",
-    "src": "/stickers/fluent/sleeping-face.webp",
+    "src": "/assets/stickers/fluent/sleeping-face.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Sleeping%20face/3D/sleeping_face_3d.png",
     "sha256": "c7d1cd5d04ae7214b6ae92b9802b6c860729c755da0020ccec22c7c8171f18fa",
     "key": "fluent-sleeping-face",
@@ -272,7 +272,7 @@
   {
     "id": "fluent:yawning-face",
     "pack": "fluent",
-    "src": "/stickers/fluent/yawning-face.webp",
+    "src": "/assets/stickers/fluent/yawning-face.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Yawning%20face/3D/yawning_face_3d.png",
     "sha256": "3a6f9f61b703d0a21c67eeabde6771fd8916ed18e3c49f96942675b76e566a7a",
     "key": "fluent-yawning-face",
@@ -282,7 +282,7 @@
   {
     "id": "fluent:face-exhaling",
     "pack": "fluent",
-    "src": "/stickers/fluent/face-exhaling.webp",
+    "src": "/assets/stickers/fluent/face-exhaling.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Face%20exhaling/3D/face_exhaling_3d.png",
     "sha256": "7838181488c279e7a5381541765cdfd0b821fdcadabac7ac946267a097d561df",
     "key": "fluent-face-exhaling",
@@ -292,7 +292,7 @@
   {
     "id": "fluent:face-in-clouds",
     "pack": "fluent",
-    "src": "/stickers/fluent/face-in-clouds.webp",
+    "src": "/assets/stickers/fluent/face-in-clouds.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Face%20in%20clouds/3D/face_in_clouds_3d.png",
     "sha256": "baa3de9b5ad85cd3fac3bdad0e238ac684a939c3899bc1d79346726c8e79607e",
     "key": "fluent-face-in-clouds",
@@ -302,7 +302,7 @@
   {
     "id": "fluent:smiling-face-with-sunglasses",
     "pack": "fluent",
-    "src": "/stickers/fluent/smiling-face-with-sunglasses.webp",
+    "src": "/assets/stickers/fluent/smiling-face-with-sunglasses.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Smiling%20face%20with%20sunglasses/3D/smiling_face_with_sunglasses_3d.png",
     "sha256": "e98cb43a7a531289c82eb57441eb20cd88cb53b895c212d8e3abf05dd2647da1",
     "key": "fluent-smiling-face-with-sunglasses",
@@ -312,7 +312,7 @@
   {
     "id": "fluent:nerd-face",
     "pack": "fluent",
-    "src": "/stickers/fluent/nerd-face.webp",
+    "src": "/assets/stickers/fluent/nerd-face.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Nerd%20face/3D/nerd_face_3d.png",
     "sha256": "315caf53dc0f11091494c8cceacda4ef316ae2eb28e02d2cf95a7bb34bad806e",
     "key": "fluent-nerd-face",
@@ -322,7 +322,7 @@
   {
     "id": "fluent:otter",
     "pack": "fluent",
-    "src": "/stickers/fluent/otter.webp",
+    "src": "/assets/stickers/fluent/otter.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Otter/3D/otter_3d.png",
     "sha256": "5fad606187601e377e6ae70a981e5c4d0e58652ab32d321ae4764b38901dd579",
     "key": "fluent-otter",
@@ -332,7 +332,7 @@
   {
     "id": "fluent:teacup-without-handle",
     "pack": "fluent",
-    "src": "/stickers/fluent/teacup-without-handle.webp",
+    "src": "/assets/stickers/fluent/teacup-without-handle.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Teacup%20without%20handle/3D/teacup_without_handle_3d.png",
     "sha256": "dfe2e8975bab243637c9d05a2453850c99fe4a4b9c762f55fd8b631dfadff954",
     "key": "fluent-teacup-without-handle",
@@ -342,7 +342,7 @@
   {
     "id": "fluent:hot-beverage",
     "pack": "fluent",
-    "src": "/stickers/fluent/hot-beverage.webp",
+    "src": "/assets/stickers/fluent/hot-beverage.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Hot%20beverage/3D/hot_beverage_3d.png",
     "sha256": "edeaa3fca5eace5f2546efcd3b3e42ef1fd389a0c51d374dbf7863731db8f314",
     "key": "fluent-hot-beverage",
@@ -352,7 +352,7 @@
   {
     "id": "fluent:sparkles",
     "pack": "fluent",
-    "src": "/stickers/fluent/sparkles.webp",
+    "src": "/assets/stickers/fluent/sparkles.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Sparkles/3D/sparkles_3d.png",
     "sha256": "e4490c9ff74a3fd73a8f99c760d65b6ed51b8a3e4ad28da137fec050b77e1058",
     "key": "fluent-sparkles",
@@ -362,7 +362,7 @@
   {
     "id": "fluent:party-popper",
     "pack": "fluent",
-    "src": "/stickers/fluent/party-popper.webp",
+    "src": "/assets/stickers/fluent/party-popper.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Party%20popper/3D/party_popper_3d.png",
     "sha256": "70a8e2f9daf1646be9e773751b7f3b6b281a2415cf29c3c3aeebd9c923cdc3e0",
     "key": "fluent-party-popper",
@@ -372,7 +372,7 @@
   {
     "id": "fluent:red-heart",
     "pack": "fluent",
-    "src": "/stickers/fluent/red-heart.webp",
+    "src": "/assets/stickers/fluent/red-heart.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Red%20heart/3D/red_heart_3d.png",
     "sha256": "7218cb9f08ed1ef38fcd83fe699a1125d07f50725f4c87a68cb7c9f4efb3c32b",
     "key": "fluent-red-heart",
@@ -382,7 +382,7 @@
   {
     "id": "fluent:hundred-points",
     "pack": "fluent",
-    "src": "/stickers/fluent/hundred-points.webp",
+    "src": "/assets/stickers/fluent/hundred-points.webp",
     "source": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Hundred%20points/3D/hundred_points_3d.png",
     "sha256": "2c9411a425e60a538a7ee5125d21c9fa2610e827f8d38d0c953e5d8cda8562cf",
     "key": "fluent-hundred-points",

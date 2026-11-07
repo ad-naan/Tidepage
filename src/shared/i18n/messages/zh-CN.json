@@ -649,7 +649,7 @@
       "wardrobe": {
         "title": "属于你的模样",
         "intro": "挑一身喜欢的颜色，带着它去看海。",
-        "coat": "外套颜色",
+        "coat": "上衣颜色",
         "skin": "肤色",
         "hairColor": "头发颜色",
         "hairStyle": "发型",
@@ -658,7 +658,7 @@
         "done": "就这样，去海边"
       },
       "colors": {
-        "sea": "海盐蓝",
+        "sea": "海盐绿",
         "moss": "苔草绿",
         "coral": "珊瑚粉",
         "cream": "燕麦白",
@@ -823,7 +823,7 @@
       "objectiveGlow": "夜里，跟随蓝色微光",
       "objectiveBeacon": "回到灯塔，点亮它",
       "objectiveFragments": "寻找散落的灯芯",
-      "retry": "????"
+      "retry": "重新进入"
     },
     "notices": {
       "kept": "这里的灯芯已经收好了。",

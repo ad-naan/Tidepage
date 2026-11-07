@@ -12,6 +12,11 @@ tsconfig.tsbuildinfo
 storage
 backups
 artifacts
+assets/characters
+assets/source
+.npm-cache
+.pnpm-store
+optix*cache.db*
 .env
 .env.*
 
@@ -22,5 +27,4 @@ tests
 nginx/certs
 
 # 杂项
-home-coast-preview.jpg
 *.log

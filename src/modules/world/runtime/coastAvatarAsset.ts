@@ -1,7 +1,8 @@
 ﻿import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { siteAssets } from "@/shared/config/assets";
 
-export const COAST_AVATAR_URL = "/models/avatars/cozy-avatar-v1.glb";
+export const COAST_AVATAR_URL = siteAssets.coastAvatar;
 export const avatarClipNames = [
   "Idle",
   "Walk",

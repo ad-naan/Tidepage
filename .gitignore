@@ -19,3 +19,4 @@ __pycache__/
 *.py[cod]
 *.blend1
 *.blend2
+optix*cache.db*

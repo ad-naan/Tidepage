@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { loadHarborSanctuary } from "./loadHarborSanctuary";
 import { createHarborMagic } from "./harborMagic";
 import { createHarborModeler } from "./harborModeling";
 import {
@@ -27,8 +26,6 @@ export function createHarborLandscape(scene: THREE.Scene) {
   buildHarborBeacon(land, kit);
   buildHarborNature(land, kit);
   kit.batch(land);
-  const sanctuary =
-    typeof window !== "undefined" ? loadHarborSanctuary(root, land) : null;
   const skiff = buildHarborSkiff(root, kit);
   const magic = typeof window !== "undefined" ? createHarborMagic(root) : null;
   kit.tube(
@@ -72,16 +69,14 @@ export function createHarborLandscape(scene: THREE.Scene) {
   let disposed = false;
   return {
     interact: (kind: "hearth" | "crystal") => {
-      sanctuary?.interact(kind);
       if (kind === "crystal") magic?.resonate();
     },
     update: (
       time: number,
       night: number,
-      player?: THREE.Vector3,
+      _player?: THREE.Vector3,
       reduced = false,
     ) => {
-      if (player) sanctuary?.update(time, night, player, reduced);
       magic?.update(time, night, reduced);
       skiff.position.y = -0.03 + Math.sin(time * 1.1) * 0.035;
       skiff.rotation.z = Math.sin(time * 0.8) * 0.022;
@@ -95,7 +90,6 @@ export function createHarborLandscape(scene: THREE.Scene) {
     dispose: () => {
       if (disposed) return;
       disposed = true;
-      sanctuary?.dispose();
       magic?.dispose();
       kit.dispose();
       foamGeometry.dispose();

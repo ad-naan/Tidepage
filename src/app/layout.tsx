@@ -45,7 +45,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 const gardenHand = localFont({
-  src: "../../public/fonts/garden-hand.woff2",
+  src: "../../public/assets/fonts/garden-hand.woff2",
   variable: "--font-hand",
   weight: "300",
   display: "swap",

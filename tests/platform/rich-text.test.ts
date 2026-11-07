@@ -197,7 +197,7 @@ test("registered stickers support image-only comments, round trip and reject arb
     newCommentSchema.safeParse({ target, locale: "en", document }).success,
     true,
   );
-  assert.ok(documentMarkdown(document).includes("/stickers/fluent/otter.webp"));
+  assert.ok(documentMarkdown(document).includes("/assets/stickers/fluent/otter.webp"));
   assert.equal(
     isEditorDocument({
       type: "doc",

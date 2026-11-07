@@ -10,6 +10,7 @@ import { Link } from "@/shared/i18n/navigation";
 import { ExternalLink } from "@/shared/ui/link/Anchor";
 import { profile, profileLinks } from "@/shared/config/profile";
 import styles from "./AboutView.module.css";
+import { siteAssets } from "@/shared/config/assets";
 
 import { RichText } from "../rich-text/RichText";
 
@@ -91,7 +92,7 @@ export async function AboutView() {
         </article>
         <aside className={styles.margin}>
           <img
-            src="/brand/tidepage-icon.png"
+            src={siteAssets.siteIcon}
             width={112}
             height={112}
             alt={t("otterAlt")}

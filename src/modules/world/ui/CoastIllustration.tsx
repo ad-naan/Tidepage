@@ -8,6 +8,7 @@ import { softSpring } from "@/shared/lib/motion";
 import { CoastLetter } from "./CoastLetter";
 import { OtterDrawing } from "./OtterDrawing";
 import styles from "./illustration.module.css";
+import { siteAssets } from "@/shared/config/assets";
 
 export function HeroSketch({
   quiet = false,
@@ -277,7 +278,7 @@ export function HeroSketch({
             </g>
           ) : (
             <image
-              href="/images/otter-v2.png"
+              href={siteAssets.otter}
               x="150"
               y="123"
               width="155"

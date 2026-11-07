@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { siteAssets } from "@/shared/config/assets";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { coastPlaces, type PlaceId } from "@/modules/world/domain/coast-world";
@@ -875,7 +876,7 @@ export function createCoastScene(options: SceneOptions) {
   box(frameArt, 0, 0, 0.07, 1.4, 1, 0.03, mat(0x91b1ac));
   ellipsoid(frameArt, 0.35, 0.22, 0.1, 0.18, 0.18, 0.02, windowMat);
   mesh(new THREE.ConeGeometry(0.65, 0.65, 3), pine, frameArt, -0.15, -0.2, 0.1);
-  const photoTexture = new THREE.TextureLoader().load("/images/coast.png");
+  const photoTexture = new THREE.TextureLoader().load(siteAssets.coastPhoto);
   photoTexture.colorSpace = THREE.SRGBColorSpace;
   trackedTextures.push(photoTexture);
   const photoMaterial = new THREE.MeshStandardMaterial({

@@ -1,6 +1,6 @@
 // Two original, deterministic ambient sketches. No samples or external recordings.
 import fs from "node:fs";
-fs.mkdirSync("public/audio", { recursive: true });
+fs.mkdirSync("public/assets/audio", { recursive: true });
 function render(name, root, seed) {
   const rate = 24000,
     duration = 48,
@@ -52,7 +52,7 @@ function render(name, root, seed) {
       44 + i * 2,
     );
   }
-  fs.writeFileSync(`public/audio/${name}.wav`, buffer);
+  fs.writeFileSync(`public/assets/audio/${name}.wav`, buffer);
 }
 render("coast", 130.8128, 42);
 render("afternoon", 146.8324, 71);

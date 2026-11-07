@@ -1,0 +1,15 @@
+{
+  "authorAvatar": "/assets/brand/author-avatar.png",
+  "signature": "/assets/brand/adnaan-signature.png",
+  "siteIcon": "/assets/brand/tidepage-icon.png",
+  "otter": "/assets/illustrations/otter-v2.png",
+  "coastPhoto": "/assets/photos/coast.png",
+  "windowPhoto": "/assets/photos/window.png",
+  "meadowPhoto": "/assets/photos/meadow.png",
+  "coastAudio": "/assets/audio/coast.wav",
+  "afternoonAudio": "/assets/audio/afternoon.wav",
+  "handwritingFont": "/assets/fonts/garden-hand.woff2",
+  "fontLicense": "/assets/fonts/OFL.txt",
+  "stickerLicense": "/assets/stickers/fluent/LICENSE.txt",
+  "coastAvatar": "/assets/models/avatars/cozy-avatar-v1.glb"
+}

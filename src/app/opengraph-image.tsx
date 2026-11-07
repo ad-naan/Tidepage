@@ -9,7 +9,7 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export default async function OpenGraphImage() {
   const signature = await readFile(
-    join(process.cwd(), "public/brand/adnaan-signature.png"),
+    join(process.cwd(), "public/assets/brand/adnaan-signature.png"),
   );
   return new ImageResponse(
     <div

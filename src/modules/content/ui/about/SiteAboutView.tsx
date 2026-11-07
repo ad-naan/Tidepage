@@ -7,6 +7,7 @@ import {
 } from "@/modules/identity/ui/AuthorSignature";
 import { Link } from "@/shared/i18n/navigation";
 import styles from "./SiteAboutView.module.css";
+import { siteAssets } from "@/shared/config/assets";
 import { RichText } from "../rich-text/RichText";
 
 export async function SiteAboutView() {
@@ -38,7 +39,7 @@ export async function SiteAboutView() {
         </article>
         <aside className={styles.guide}>
           <img
-            src="/brand/tidepage-icon.png"
+            src={siteAssets.siteIcon}
             width={88}
             height={88}
             alt={t("mascotAlt")}
