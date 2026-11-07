@@ -3,7 +3,7 @@
 用户已接受当前可爱卡通方向，并授权先接入游戏，外观继续迭代。
 
 - 可编辑源：`cozy-avatar.blend`，Blender 4.5.15 LTS，贴图已内嵌。
-- 网页资产：`public/models/avatars/cozy-avatar-v1.glb`，2,321,528 字节，34,920 三角面、22 根骨骼、6 种材质。
+- 网页资产：`public/assets/models/avatars/cozy-avatar-v1.glb`，2,321,528 字节，34,920 三角面、22 根骨骼、6 种材质。
 - 动作：Idle、Walk、Run、Jump、Sit、Wave。Y 向上、朝向 +Z、脚底为原点，高约 2.1 个场景单位。
 - `export.py` 可从当前源重新导出；改模后仍须重新执行 Blender 几何、动画和浏览器视觉检查。
 - `qa/` 保存最终制作阶段的检查快照与运行验证；其中旧报告的 `game_ready: false` 表示完整美术生产验收尚未完成，不代表当前没有接入开发。

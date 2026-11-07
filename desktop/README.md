@@ -11,7 +11,7 @@ Go + Fyne 原生桌面助手，支持 Windows、macOS、Linux。没有 Electron�
 3. 在“软件监听”添加进程名或完整可执行文件路径，填写你希望公开的名称，保存。
 4. 网站页头展示正在使用的软件图标，悬停查看详情。前台应用在监听列表中时优先展示它；切到未监听的软件时保留最近使用且仍在运行的监听软件，否则按列表顺序回退。只有一个监听软件在运行时始终展示它。软件图标和歌曲信息可以分别关闭。暂停分享会清空公开软件与歌曲。
 
-三个平台的主窗默认都是 640 × 460（逻辑像素）。Windows 使用无边框窗口，可拖动左上角品牌区移动窗口，或拖动右下角调整大小。macOS 使用同色标题栏和系统红黄绿按钮；Linux 的标题栏、拖动和缩放由当前桌面环境管理。关闭窗口后，可从托盘重新打开。
+三个平台的主窗默认都是 720 × 560（逻辑像素）。Windows 使用无边框窗口，可拖动左上角品牌区移动窗口，或拖动右下角调整大小。macOS 使用同色标题栏和系统红黄绿按钮；Linux 的标题栏、拖动和缩放由当前桌面环境管理。关闭窗口后，可从托盘重新打开。
 
 令牌使用 Windows Credential Manager、macOS Keychain 或 Linux Secret Service 保存，并与服务地址绑定。配置文件不含令牌。Linux 需要可用且已解锁的密钥环；失败时不降级为明文文件。
 
@@ -108,7 +108,17 @@ mkdir -p "$HOME/.local"
 tar -xzf dist/TidepageCompanion-Linux.tar.gz -C "$HOME/.local"
 ```
 
-三平台 CI 会测试并构建应用；macOS 检查解压后的预览窗口，Linux 分别用 X11 虚拟显示和 Wayland 合成器检查预览窗口。系统凭据库、真实播放器权限和登录自启动仍需要对应桌面会话验收。
+三平台 CI 会测试并构建应用。macOS 始终检查包结构、签名、Universal 架构及可执行文件的 `--version`；随后探测加速 NSGL 上下文。无法提供图形加速的虚拟机只跳过窗口检查，并在任务摘要标明 **NOT VERIFIED**；探测程序编译失败、包损坏或实际启动崩溃仍使 CI 失败。不能把无图形 CI 的通过当作 macOS 窗口已经验收。
+
+在有图形会话的 Mac 上执行严格验证，缺少图形支持时也会失败：
+
+```sh
+REQUIRE_MACOS_GUI=1 sh packaging/check-macos-package.sh dist/TidepageCompanion-macOS.zip
+```
+
+`FormatUnavailable: NSGL: Failed to find a suitable pixel format` 表示 GLFW 要求的像素格式不可用，常见于没有加速 OpenGL 的 macOS 虚拟机。依据为 [Fyne 上游问题](https://github.com/fyne-io/fyne/issues/2697) 及当前依赖的 `glfw/src/nsgl_context.m`。CI 探测不会修改发布程序的图形驱动，也不会用无窗口测试包替换原生包。
+
+Linux 分别用 X11 虚拟显示和 Wayland 合成器检查预览窗口。系统凭据库、真实播放器权限和登录自启动仍需要对应桌面会话验收。
 
 ## 从哪里改
 

@@ -53,16 +53,9 @@ jobs:
       - name: Build Unix application package
         if: runner.os != 'Windows'
         run: sh build-unix.sh
-      - name: Launch packaged macOS preview
+      - name: Verify macOS package and probe native preview support
         if: runner.os == 'macOS'
-        run: |
-          ditto -x -k dist/TidepageCompanion-macOS.zip "$RUNNER_TEMP/companion"
-          app="$RUNNER_TEMP/companion/Tidepage Companion.app"
-          codesign --verify --strict "$app"
-          "$app/Contents/MacOS/tidepage-companion" --preview &
-          pid=$!
-          trap 'kill "$pid" 2>/dev/null || true' EXIT
-          swift packaging/check-macos-preview.swift "$pid"
+        run: sh packaging/check-macos-package.sh dist/TidepageCompanion-macOS.zip
       - name: Launch packaged Linux preview on X11 and Wayland
         if: runner.os == 'Linux'
         run: |

@@ -6,7 +6,14 @@ const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
   outputFileTracingExcludes: {
-    "/*": ["./storage/**/*", "./backups/**/*", "./.cache/**/*", "./assets/source/**/*", "./artifacts/**/*", "./.env*"],
+    "/*": [
+      "./storage/**/*",
+      "./backups/**/*",
+      "./.cache/**/*",
+      "./assets/source/**/*",
+      "./artifacts/**/*",
+      "./.env*",
+    ],
   },
   outputFileTracingIncludes: {
     "/api/v1/media": [
@@ -21,7 +28,10 @@ const nextConfig: NextConfig = {
     return config;
   },
   async rewrites() {
-    return Object.entries(legacyAssets).map(([source, destination]) => ({source, destination}));
+    return Object.entries(legacyAssets).map(([source, destination]) => ({
+      source,
+      destination,
+    }));
   },
   async headers() {
     return [

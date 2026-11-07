@@ -56,7 +56,10 @@ See desktop/README.md for development commands and CGO setup.
 '@
     }
     $exe = Join-Path $OutputDirectory 'TidepageCompanion.exe'
-    go build -trimpath -ldflags '-s -w -H=windowsgui' -o $exe ./cmd/companion
+    $versionMatch = [regex]::Match((Get-Content -LiteralPath 'FyneApp.toml' -Raw), '(?m)^\s*Version = "(\d+\.\d+\.\d+)"')
+    if (-not $versionMatch.Success) { throw 'Missing release version in FyneApp.toml.' }
+    $releaseVersion = $versionMatch.Groups[1].Value
+    go build -trimpath -ldflags "-s -w -H=windowsgui -X main.version=$releaseVersion" -o $exe ./cmd/companion
     if ($LASTEXITCODE -ne 0) { throw 'Windows build failed.' }
 
     # PE optional header Subsystem is at offset 68 in both PE32 and PE32+.

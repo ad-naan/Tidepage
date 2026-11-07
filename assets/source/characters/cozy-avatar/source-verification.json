@@ -9,12 +9,5 @@
       "packed": true
     }
   ],
-  "actions": [
-    "Idle",
-    "Jump",
-    "Run",
-    "Sit",
-    "Walk",
-    "Wave"
-  ]
+  "actions": ["Idle", "Jump", "Run", "Sit", "Walk", "Wave"]
 }

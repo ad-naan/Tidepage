@@ -1,0 +1,46 @@
+{
+  "moved": 2.637600000000002,
+  "players": 2,
+  "appearanceSynced": "coral",
+  "errors": [],
+  "assets": [
+    [
+      {
+        "url": "http://localhost:3000/assets/models/avatars/cozy-avatar-v1.glb",
+        "status": 200
+      },
+      {
+        "url": "http://localhost:3000/assets/models/avatars/cozy-avatar-v1.glb",
+        "status": 200
+      }
+    ],
+    [
+      {
+        "url": "http://localhost:3000/assets/models/avatars/cozy-avatar-v1.glb",
+        "status": 200
+      }
+    ]
+  ],
+  "groupPhoto": true,
+  "mobileViewport": [390, 844],
+  "blockedAssetShowsFallback": true,
+  "retryRestoresSingleCanvas": true,
+  "scope": "Two local browser clients on the existing Socket.IO gateway; not a public deployment or 12-player benchmark.",
+  "checks": {
+    "build": "passed",
+    "typecheck": "passed",
+    "architecture": "passed",
+    "assets": "passed",
+    "tests": {
+      "passed": 107,
+      "skipped": 4,
+      "failed": 0
+    },
+    "full_check": "Stopped by formatting in files edited by another ongoing task",
+    "formatting_files": [
+      "next.config.ts",
+      "scripts/check-assets.mjs",
+      "tests/platform/rich-text.test.ts"
+    ]
+  }
+}

@@ -49,7 +49,7 @@ pnpm dev
 
 `world:receipt` 仅为登录身份签发真实位置打卡或已完成合照的凭证，5 分钟有效并绑定当前账号。地点要求距离地标 1.8 米以内；合照凭证需在拍摄后约 2 分钟内申请，仅参与者可申请。`POST /api/v1/world/memories` 验证签名、用途、有效期和当前登录账号，同源写入 PostgreSQL；同账号同一北京时间日期同一地点只存一条，合照按拍摄 ID 幂等。`GET /api/v1/world/memories` 只返回本人记录，20 条游标分页。手账保存纪念元信息，照片文件只下载到设备，没有云端照片托管、公开相册、私聊或访客自定义文本。
 
-Next.js 与网关必须配置同一个私密 `REALTIME_AUTHOR_TOKEN`（至少 32 字符），禁止放入 `NEXT_PUBLIC_*`；沿用现有会话与 OAuth 配置。运行 `pnpm db:migrate` 应用 `0007_coast_memories.sql` 后才能存取手账。没有配置签名密钥时账号接口返回 `WORLD_UNAVAILABLE`，匿名同行与合照仍可运行。构建与测试不会替使用者迁移实际数据库。建设顺序及模型文件见 [海岸空间规划](coastal-space-plan.md)。
+Next.js 与网关必须配置同一个私密 `REALTIME_AUTHOR_TOKEN`（至少 32 字符），禁止放入 `NEXT_PUBLIC_*`；沿用现有会话与 OAuth 配置。运行 `pnpm db:migrate` 应用 `0007_coast_memories.sql` 后才能存取手账。没有配置签名密钥时账号接口返回 `WORLD_UNAVAILABLE`，匿名同行与合照仍可运行。构建与测试不会替使用者迁移实际数据库。建设顺序及模型文件见 [海岸空间规划](world.md)。
 
 ## 稳定性边界
 

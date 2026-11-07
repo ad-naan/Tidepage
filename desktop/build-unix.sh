@@ -1,6 +1,8 @@
 #!/bin/sh
 set -eu
 cd "$(dirname "$0")"
+version=$(sed -n 's/^[[:space:]]*Version = "\([0-9][0-9.]*\)"/\1/p' FyneApp.toml)
+test -n "$version"
 stage=$(mktemp -d)
 trap 'rm -rf "$stage"' EXIT
 mkdir -p dist
@@ -9,11 +11,12 @@ case "$(uname -s)" in
         app="$stage/Tidepage Companion.app"
         mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources" "$stage/tide.iconset"
         for arch in arm64 amd64; do
-            CGO_ENABLED=1 GOARCH="$arch" go build -trimpath -ldflags '-s -w' -o "$stage/companion-$arch" ./cmd/companion
+            CGO_ENABLED=1 GOARCH="$arch" go build -trimpath -ldflags "-s -w -X main.version=$version" -o "$stage/companion-$arch" ./cmd/companion
         done
         lipo -create "$stage/companion-arm64" "$stage/companion-amd64" -output "$app/Contents/MacOS/tidepage-companion"
         lipo "$app/Contents/MacOS/tidepage-companion" -verify_arch arm64 x86_64
         cp packaging/Info.plist "$app/Contents/Info.plist"
+        /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $version" "$app/Contents/Info.plist"
         cp internal/ui/assets/OFL.txt "$app/Contents/Resources/OFL.txt"
         for locale in en zh-CN; do
             language=$locale
@@ -40,7 +43,7 @@ case "$(uname -s)" in
         ;;
     Linux)
         mkdir -p "$stage/bin" "$stage/share/applications" "$stage/share/pixmaps" "$stage/share/doc/tidepage-companion"
-        go build -trimpath -ldflags '-s -w' -o "$stage/bin/tidepage-companion" ./cmd/companion
+        go build -trimpath -ldflags "-s -w -X main.version=$version" -o "$stage/bin/tidepage-companion" ./cmd/companion
         cp packaging/TidepageCompanion.desktop "$stage/share/applications/blog.tidepage.companion.desktop"
         cp internal/tray/assets/tide.png "$stage/share/pixmaps/blog.tidepage.companion.png"
         cp internal/ui/assets/OFL.txt "$stage/share/doc/tidepage-companion/OFL.txt"

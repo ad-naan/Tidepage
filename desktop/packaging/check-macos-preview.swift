@@ -1,9 +1,14 @@
 import CoreGraphics
 import Foundation
+import Darwin
 
 // Window ownership and bounds are available without recording screen pixels.
 let pid = Int(CommandLine.arguments[1])!
 for _ in 0..<100 {
+    if kill(pid_t(pid), 0) != 0 {
+        fputs("Companion exited before its preview window appeared\n", stderr)
+        exit(1)
+    }
     let windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as? [[String: Any]] ?? []
     for window in windows {
         if window[kCGWindowOwnerPID as String] as? Int == pid,

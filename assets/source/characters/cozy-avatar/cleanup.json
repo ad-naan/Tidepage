@@ -1,0 +1,32 @@
+[
+  {
+    "path": ".cache/image-to-3d",
+    "bytes": 248130205,
+    "files": 2180
+  },
+  {
+    "path": ".cache/characters",
+    "bytes": 113741463,
+    "files": 39
+  },
+  {
+    "path": "docs/art-direction/cartoon-avatar-model-review.png",
+    "bytes": 609639,
+    "files": 1
+  },
+  {
+    "path": "docs/art-direction/cartoon-avatar-cheeks-review.png",
+    "bytes": 762482,
+    "files": 1
+  },
+  {
+    "path": "docs/art-direction/cartoon-avatar-joints-review.png",
+    "bytes": 603267,
+    "files": 1
+  },
+  {
+    "path": ".cache/harbor-avatar-qa",
+    "bytes": 125838631,
+    "files": 743
+  }
+]

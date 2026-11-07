@@ -299,7 +299,8 @@ export function buildHarborNature(
   }
   const picnic = new THREE.Group();
   picnic.name = "shore-picnic";
-  picnic.position.set(-4.6, 0.455, 3.5);
+  // Keep the server's two-person photo marks (-5.1/-3.9, 3.2) clear.
+  picnic.position.set(-8.3, 0.455, 1.2);
   picnic.rotation.y = -0.13;
   parent.add(picnic);
   const clothPoint = (u: number, v: number) =>

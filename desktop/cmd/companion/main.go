@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/gofrs/flock"
 	"log"
 	"os"
@@ -12,12 +13,20 @@ import (
 	"tidepage.local/companion/internal/ui"
 )
 
+// Native build scripts inject the release version from FyneApp.toml.
+var version = "dev"
+
 func main() {
+	printVersion := flag.Bool("version", false, "Print version without starting the application")
 	background := flag.Bool("background", false, "Start in the system tray")
 	preview := flag.Bool("preview", false, "Preview the interface without collection, network or persistence")
 	gui := flag.Bool("ui", false, "Open the on-demand configuration window")
 	page := flag.String("page", "overview", "Initial preview page: overview, watch, settings")
 	flag.Parse()
+	if *printVersion {
+		fmt.Printf("Tidepage Companion %s\n", version)
+		return
+	}
 	dir, e := config.Dir()
 	if e != nil {
 		log.Print("configuration directory unavailable")

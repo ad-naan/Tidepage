@@ -93,7 +93,7 @@
   "alreadyRunning": "Tidepage is already running. Open it from the system tray.",
   "configuration": "Connection and preferences",
   "choose": "Choose",
-  "version": "v0.1.0",
+  "version": "v0.0.1",
   "previewMode": "UI preview · no collection, network or saving",
   "readyHint": "Connect your site in Preferences to begin.",
   "unsaved": "Rule changes take effect after saving.",

@@ -43,11 +43,7 @@
       "duplicate_verts": 3412,
       "islands": 500,
       "inside_out_islands": 0,
-      "scale": [
-        1.0,
-        1.0,
-        1.0
-      ],
+      "scale": [1.0, 1.0, 1.0],
       "materials": 1,
       "unweighted_verts": 0,
       "verts_over_4_influences": 0,
@@ -72,11 +68,7 @@
       "duplicate_verts": 0,
       "islands": 1,
       "inside_out_islands": 0,
-      "scale": [
-        1.0,
-        1.0,
-        1.0
-      ],
+      "scale": [1.0, 1.0, 1.0],
       "materials": 2,
       "unweighted_verts": 0,
       "verts_over_4_influences": 0,
@@ -101,11 +93,7 @@
       "duplicate_verts": 0,
       "islands": 1,
       "inside_out_islands": 0,
-      "scale": [
-        1.0,
-        1.0,
-        1.0
-      ],
+      "scale": [1.0, 1.0, 1.0],
       "materials": 2,
       "unweighted_verts": 0,
       "verts_over_4_influences": 0,
@@ -130,11 +118,7 @@
       "duplicate_verts": 186,
       "islands": 58,
       "inside_out_islands": 0,
-      "scale": [
-        1.0,
-        1.0,
-        1.0
-      ],
+      "scale": [1.0, 1.0, 1.0],
       "materials": 1,
       "unweighted_verts": 0,
       "verts_over_4_influences": 0,
@@ -159,11 +143,7 @@
       "duplicate_verts": 0,
       "islands": 1,
       "inside_out_islands": 0,
-      "scale": [
-        1.0,
-        1.0,
-        1.0
-      ],
+      "scale": [1.0, 1.0, 1.0],
       "materials": 1,
       "unweighted_verts": 0,
       "verts_over_4_influences": 0,
@@ -188,11 +168,7 @@
       "duplicate_verts": 0,
       "islands": 1,
       "inside_out_islands": 0,
-      "scale": [
-        1.0,
-        1.0,
-        1.0
-      ],
+      "scale": [1.0, 1.0, 1.0],
       "materials": 1,
       "unweighted_verts": 0,
       "verts_over_4_influences": 0,
@@ -217,11 +193,7 @@
       "duplicate_verts": 0,
       "islands": 1,
       "inside_out_islands": 0,
-      "scale": [
-        1.0,
-        1.0,
-        1.0
-      ],
+      "scale": [1.0, 1.0, 1.0],
       "materials": 1,
       "unweighted_verts": 0,
       "verts_over_4_influences": 0,
@@ -246,11 +218,7 @@
       "duplicate_verts": 0,
       "islands": 1,
       "inside_out_islands": 0,
-      "scale": [
-        1.0,
-        1.0,
-        1.0
-      ],
+      "scale": [1.0, 1.0, 1.0],
       "materials": 1,
       "unweighted_verts": 0,
       "verts_over_4_influences": 0,
@@ -275,11 +243,7 @@
       "duplicate_verts": 0,
       "islands": 1,
       "inside_out_islands": 0,
-      "scale": [
-        1.0,
-        1.0,
-        1.0
-      ],
+      "scale": [1.0, 1.0, 1.0],
       "materials": 1,
       "unweighted_verts": 0,
       "verts_over_4_influences": 0,
@@ -304,11 +268,7 @@
       "duplicate_verts": 0,
       "islands": 1,
       "inside_out_islands": 0,
-      "scale": [
-        1.0,
-        1.0,
-        1.0
-      ],
+      "scale": [1.0, 1.0, 1.0],
       "materials": 1,
       "unweighted_verts": 0,
       "verts_over_4_influences": 0,

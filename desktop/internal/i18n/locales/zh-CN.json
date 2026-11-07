@@ -93,7 +93,7 @@
   "alreadyRunning": "潮汐已在运行，请从系统托盘打开。",
   "configuration": "连接与偏好",
   "choose": "选择",
-  "version": "v0.1.0",
+  "version": "v0.0.1",
   "previewMode": "界面预览 · 不采集、不联网、不保存",
   "readyHint": "先在偏好设置中连接你的站点。",
   "unsaved": "规则更改将在保存后生效。",

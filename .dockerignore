@@ -12,7 +12,6 @@ tsconfig.tsbuildinfo
 storage
 backups
 artifacts
-assets/characters
 assets/source
 .npm-cache
 .pnpm-store
