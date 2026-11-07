@@ -1,188 +1,171 @@
-/* Scoped to this view; decorative surfaces come from shared/ui. */
 .projects.projects {
   max-width: none;
   margin: 10px auto 40px;
   min-height: 0;
 }
-.projects.projects :global(.room-toolbar) {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin: 0 0 16px;
-  padding: 2px 0 14px;
-  border: 0;
+.toolbar {
+  margin-bottom: var(--space-4);
 }
-.projects.projects :global(.toolbar-shore) {
-  position: absolute;
-  bottom: 0;
-  left: 0;
+.index {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-top: 1px solid var(--line);
 }
-.projects.projects :global(.project-grid) {
+.entry {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
-  align-items: start;
+  grid-template-columns: 42px minmax(0, 1fr) minmax(136px, 24%);
+  align-items: center;
+  gap: clamp(14px, 3vw, 44px);
+  padding-block: clamp(16px, 2.4vw, 28px);
+  border-bottom: 1px solid var(--line);
 }
-.projects.projects :global(.project-card),
-.projects.projects :global(.project-card:nth-child(odd)) {
-  position: relative;
-  isolation: isolate;
-  grid-column: auto;
-  padding: 6px;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  overflow: visible;
-  text-align: start;
+.entry[data-lead="true"] {
+  grid-template-columns: 42px minmax(0, 1fr) minmax(160px, 28%);
+  align-items: center;
 }
-.projects.projects :global(.project-card:nth-child(even)) {
-  margin-top: 10px;
+.number {
+  align-self: start;
+  margin-top: 4px;
+  color: var(--muted);
+  font: 400 var(--text-xs)/1.5 var(--font-code);
 }
-.projects.projects :global(.project-cover) {
-  height: 140px;
-  min-height: 0;
-  border: 0;
-  border-radius: 1px;
-  overflow: hidden;
-  background-image: none;
-  background-size: auto;
+.copy {
+  min-width: 0;
 }
-.projects.projects :global(.project-cover::after) {
-  content: none;
-}
-.projects.projects :global(.project-cover > .mini-sketch) {
-  width: 82px;
-  height: 41px;
-  margin-bottom: 5px;
-  transition: transform 0.5s;
-}
-.projects.projects :global(.project-card:hover .project-cover > .mini-sketch),
-.projects.projects
-  :global(.project-card:focus-visible .project-cover > .mini-sketch) {
-  transform: translateY(-4px) rotate(-2deg);
-}
-.projects.projects :global(.project-cover-label) {
-  font: 400 21px/1.4 var(--font-editorial);
-}
-.projects.projects :global(.project-cover-caption) {
-  font: 400 10px/1.6 var(--font-ui);
-  text-align: center;
-}
-.projects.projects :global(.project-status) {
-  position: absolute;
-  top: 9px;
-  left: 10px;
-  font-size: 9px;
-}
-.projects.projects :global(.project-status > svg) {
-  width: 12px;
-  height: 14px;
-}
-.projects.projects :global(.project-status > span) {
-  display: inline;
-  width: auto;
-  height: auto;
-  background: none;
-  border-radius: 0;
-}
-.projects.projects :global(.project-info) {
-  position: relative;
-  padding: 14px 10px 12px;
-}
-.projects.projects :global(.project-fold) {
-  position: absolute;
-  top: -6px;
-  left: 0;
-}
-.projects.projects :global(.project-info h2) {
-  font: 500 15px/1.7 var(--font-editorial);
-}
-.projects.projects :global(.project-info h2 small) {
-  font: 400 10px/1.7 var(--font-ui);
-}
-.projects.projects :global(.project-info > p) {
-  font: 400 12px/1.85 var(--font-ui);
-  margin-top: 7px;
-}
-.projects.projects :global(.project-info .tags) {
+.meta,
+.stack {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 10px;
-  gap: 5px 9px;
-}
-.projects.projects :global(.project-info .tags > span) {
-  border: 0;
-  padding: 0;
-  font: 400 10px/1.7 var(--font-code);
+  gap: var(--space-2) var(--space-4);
   color: var(--muted);
-  background: none;
+  font-size: var(--text-xs);
 }
-.projects.projects :global(.work-in-progress) {
-  width: auto;
-  max-width: none;
-  min-height: 240px;
-  margin: 0;
-  padding: 28px 18px;
-  border: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+.meta {
+  align-items: center;
+}
+.open {
+  padding: 0;
+  min-height: 0;
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  color: var(--ink);
+  font: 500 var(--text-title)/1.45 var(--font-editorial);
+  text-align: start;
+  overflow-wrap: anywhere;
+  transition: color var(--motion-quick);
+}
+.entry[data-lead="true"] .open {
+  font-size: clamp(22px, 3.2vw, 28px);
+}
+.open svg {
+  flex: none;
+  color: var(--accent);
+}
+.open:is(:hover, :focus-visible) {
+  color: var(--accent);
+}
+.subtitle {
+  margin-top: var(--space-2);
+  font: 400 var(--text-body)/1.6 var(--font-editorial);
+}
+.description {
+  margin-top: var(--space-2);
+  max-width: 70ch;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+.stack {
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  font-family: var(--font-code);
+}
+.folio {
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+}
+.folio .stack {
+  margin-top: var(--space-1);
   justify-content: center;
-  gap: 14px;
-  background: none;
 }
-.projects.projects :global(.work-in-progress > svg) {
-  width: 32px;
-  height: 32px;
-  opacity: 0.65;
+.sketch {
+  --paper: var(--sand);
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  min-height: 55px;
+  padding: var(--space-2);
+  color: var(--muted);
 }
-.projects.projects :global(.work-in-progress h3) {
-  font: 400 16px/1.8 var(--font-editorial);
+.entry[data-lead="true"] .sketch {
+  min-height: 108px;
 }
-.projects.projects :global(.work-in-progress p) {
-  max-width: 27ch;
-  margin-top: 7px;
-  font: 400 12px/1.85 var(--font-ui);
+.sketch[data-tint="sage"] {
+  --paper: var(--sage);
 }
-.projects.projects :global(.project-card:focus-visible) {
-  outline: 1px dashed var(--accent);
-  outline-offset: 4px;
+.sketch[data-tint="peach"] {
+  --paper: var(--peach);
 }
-@media (min-width: 1250px) {
-  .projects.projects :global(.project-grid) {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
+.sketch > :global(.mini-sketch) {
+  width: min(60%, 92px);
+  height: auto;
 }
-@media (max-width: 1050px) {
-  .projects.projects :global(.project-grid) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.entry[data-lead="true"] .sketch > :global(.mini-sketch) {
+  width: min(70%, 152px);
+}
+.sketch > svg:last-child {
+  width: 70%;
+}
+.signoff {
+  display: flex;
+  gap: var(--space-3);
+  align-items: start;
+  padding-block: var(--space-6);
+  color: var(--muted);
+}
+.signoff svg {
+  width: 18px;
+  flex: none;
+}
+.signoff h2,
+.signoff p {
+  font-size: var(--text-sm);
+}
+.empty {
+  padding-block: var(--space-6);
+  color: var(--muted);
+}
+.detail {
+  margin-bottom: var(--space-5);
+}
+.detail h2 {
+  font: 500 var(--text-title)/1.5 var(--font-editorial);
 }
 @media (max-width: 700px) {
-  .projects.projects {
-    margin: 8px auto 30px;
+  .entry[data-lead="true"] {
+    grid-template-columns: 38px minmax(0, 1fr);
   }
-  .projects.projects :global(.project-grid) {
-    grid-template-columns: 1fr;
-    gap: 18px;
+  .entry {
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: var(--space-2);
   }
-  .projects.projects :global(.project-card:nth-child(even)) {
-    margin-top: 0;
+  .sketch {
+    display: none;
   }
-  .projects.projects :global(.work-in-progress) {
-    min-height: 0;
-    padding: 18px;
-    flex-direction: row;
-    align-items: flex-start;
-  }
-  .projects.projects :global(.project-cover) {
-    height: 135px;
+  .folio {
+    grid-column: 2;
+    justify-items: start;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .projects.projects * {
-    transition: none !important;
+  .open {
+    transition: none;
   }
 }

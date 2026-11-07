@@ -1,70 +1,47 @@
 import "server-only";
-import { and, eq, isNull, or } from "drizzle-orm";
-import { z } from "zod";
+import { isNull, or } from "drizzle-orm";
 import { getDb, type Database } from "@/server/db/client";
-import { workbenchRecordsTable as records } from "@/server/workbench/schema";
-import {
-  conflictError,
-  notFoundError,
-  validationError,
-} from "@/server/http/errors";
-import { localeSchema } from "@/shared/i18n/schema";
+import { conflictError, validationError } from "@/server/http/errors";
 import { isUploadedAssetId } from "@/shared/contracts/asset-path";
-import { parseSiteDateTime } from "@/shared/lib/date-time";
 import {
-  articleDraftSchema,
   publicationIssues,
   translationOf,
   type EditorNode,
 } from "@/modules/content/domain/editor-document";
 import { articlesTable as articles } from "@/modules/content/infrastructure/schema";
 import { requireOwnedAssets } from "@/modules/media/server";
-
-const publicationRequest = z
-  .object({
-    id: z.string().min(1).max(128),
-    locale: localeSchema,
-    revision: z.number().int().positive(),
-  })
-  .strict();
+import {
+  publicationRequestSchema,
+  publicationCopy,
+  publicationDate,
+} from "@/modules/content/domain/publication";
+import {
+  articleDraftSource,
+  readDraftPublication,
+  requirePublicationDraft,
+} from "./publication-records";
 
 export async function publishArticle(
   ownerId: string,
   input: unknown,
   db: Database = getDb(),
 ) {
-  const { id, locale, revision } = publicationRequest.parse(input);
+  const request = publicationRequestSchema.parse(input);
+  const { id, locale, revision } = request;
   return db.transaction(async (tx) => {
-    const [record] = await tx
-      .select({ value: records.value })
-      .from(records)
-      .where(and(eq(records.ownerId, ownerId), eq(records.key, "articles")))
-      .for("update");
-    const draft =
-      record &&
-      articleDraftSchema
-        .array()
-        .parse(record.value)
-        .find((item) => item.id === id && !item.deletedAt);
-    if (!draft) throw notFoundError();
-    if (draft.revision !== revision) throw conflictError();
+    const database = tx as unknown as Database;
+    const draft = await requirePublicationDraft(
+      ownerId,
+      request,
+      database,
+      true,
+    );
     const issues = publicationIssues(draft, locale);
     if (issues.length) throw validationError({ fields: issues });
     const translation = translationOf(draft, locale);
     const { slug } = translation;
-    const owned = and(
-      eq(articles.sourceOwner, ownerId),
-      eq(articles.sourceDraft, id),
-    );
-    const [previous] = await tx
-      .select({
-        slug: articles.slug,
-        publishedAt: articles.publishedAt,
-        revision: articles.sourceRevision,
-      })
-      .from(articles)
-      .where(and(owned, eq(articles.locale, locale)))
-      .limit(1);
+    const owned = articleDraftSource(ownerId, id);
+    const previous = await readDraftPublication(ownerId, request, database);
     if (previous && previous.slug !== slug) throw conflictError();
     if (previous?.revision === revision) return { slug, locale };
 
@@ -83,19 +60,23 @@ export async function publishArticle(
     collectAssets(translation.body);
     if ([...assetIds].some((asset) => !isUploadedAssetId(asset)))
       throw validationError();
-    await requireOwnedAssets(ownerId, [...assetIds], tx as unknown as Database);
+    await requireOwnedAssets(ownerId, [...assetIds], database);
 
     const legacy =
       id === `import-${slug}` ? isNull(articles.sourceOwner) : undefined;
     const now = new Date();
-    const publishedAt = draft.publishedAt
-      ? parseSiteDateTime(draft.publishedAt)!
-      : (previous?.publishedAt ?? now);
+    const publishedAt = publicationDate(
+      draft.publishedAt,
+      previous?.publishedAt,
+      now,
+    )!;
+    const { title, excerpt, seoTitle, seoDescription } =
+      publicationCopy(translation);
     const value = {
       slug,
       locale,
-      title: translation.title.trim(),
-      excerpt: translation.excerpt.trim(),
+      title,
+      excerpt,
       category: draft.category,
       tags: [
         ...new Set(translation.tags.map((tag) => tag.trim()).filter(Boolean)),
@@ -106,8 +87,8 @@ export async function publishArticle(
       body: translation.body,
       publication: {
         author: draft.author.trim(),
-        seoTitle: translation.seoTitle.trim(),
-        seoDescription: translation.seoDescription.trim(),
+        seoTitle,
+        seoDescription,
         publishedAt: publishedAt.toISOString(),
         ...(draft.coverAssetId
           ? {

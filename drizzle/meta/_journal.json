@@ -71,6 +71,20 @@
       "when": 1794052945790,
       "tag": "0009_article_publication",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1794059297993,
+      "tag": "0010_gallery_publication",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1794059850508,
+      "tag": "0011_editorial_collections",
+      "breakpoints": true
     }
   ]
 }

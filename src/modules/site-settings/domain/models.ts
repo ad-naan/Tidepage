@@ -24,3 +24,5 @@ export const settingsDraftSchema = z
       }
     }
   });
+
+export type SettingsDraft = z.infer<typeof settingsDraftSchema>;

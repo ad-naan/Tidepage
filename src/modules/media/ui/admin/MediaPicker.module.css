@@ -12,7 +12,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 16px;
-  margin-top: 20px;
 }
 .mediaItem {
   position: relative;
@@ -42,4 +41,20 @@
 .error {
   color: var(--accent);
   font-size: var(--text-sm);
+}
+.picker {
+  block-size: min(540px, 64dvh);
+}
+.results {
+  margin-top: var(--space-5);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mediaGrid {
+    animation: reveal var(--motion-quick) ease-out both;
+  }
+}
+@keyframes reveal {
+  from {
+    opacity: 0;
+  }
 }

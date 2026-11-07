@@ -19,10 +19,6 @@
   bottom: 0;
   left: 0;
 }
-.gallery.gallery :global(.gallery-upload) {
-  margin-left: auto;
-  font-size: 11px;
-}
 .gallery.gallery :global(.gallery-meta) {
   border: 0;
   padding: 0;
@@ -103,9 +99,5 @@
   }
   .gallery.gallery :global(.masonry-gallery figcaption h3) {
     font-size: 13px;
-  }
-  .gallery.gallery :global(.gallery-meta > span:last-child) {
-    max-width: 55%;
-    text-align: end;
   }
 }

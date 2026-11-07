@@ -1,13 +1,8 @@
 "use client";
-import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocale, useMessages, useTranslations } from "next-intl";
-import { z } from "zod";
 import { locales, localeRegistry, type Locale } from "@/shared/i18n/config";
-import {
-  readWorkbenchRecord,
-  updateWorkbenchRecord,
-} from "@/shared/lib/workbench-store";
+import { updateWorkbenchRecord } from "@/shared/lib/workbench-store";
 import { Field } from "@/shared/ui/field/Field";
 import { Input } from "@/shared/ui/field/Input";
 import { Textarea } from "@/shared/ui/field/Textarea";
@@ -20,14 +15,34 @@ import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 import { UnsavedChangesGuard } from "@/shared/ui/navigation/UnsavedChangesGuard";
 import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import styles from "./SiteSettingsView.module.css";
-import { settingsDraftSchema as schema } from "@/modules/site-settings/domain/models";
+import {
+  settingsDraftSchema,
+  type SettingsDraft,
+} from "@/modules/site-settings/domain/models";
 import { PageDocumentEditor } from "./PageDocumentEditor";
 import { SiteEditorialAssistant } from "./SiteEditorialAssistant";
+
+const multilineFields = new Set([
+  "intro",
+  "siteDescription",
+  "heroDescription",
+  "aboutIntro",
+  "siteAboutIntro",
+  "footer",
+]);
+const fullWidthFields = new Set(["siteName", "avatarAssetId", "shareAssetId"]);
+const draftOnlyFields = new Set([
+  "contact",
+  "featuredSlugs",
+  "navigationOrder",
+  "footer",
+]);
+
 export function SiteSettingsView({
-  pageDefaults,
+  initialSettings,
   aiEnabled = false,
 }: {
-  pageDefaults: Record<string, Record<string, string>>;
+  initialSettings: SettingsDraft | null;
   aiEnabled?: boolean;
 }) {
   const t = useTranslations("admin");
@@ -36,41 +51,12 @@ export function SiteSettingsView({
   const { notify } = useNotice();
   const [locale, setLocale] = useState<Locale>(uiLocale);
   const [tab, setTab] = useState("profile");
-  const [value, setValue] = useState<z.infer<typeof schema> | null>(null);
+  const [value, setValue] = useState(initialSettings);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [assetField, setAssetField] = useState<string | null>(null);
-  useEffect(() => {
-    readWorkbenchRecord("site-settings")
-      .then((data) => {
-        const stored =
-          data === undefined
-            ? { revision: 0, translations: {} }
-            : schema.parse(data);
-        setValue({
-          ...stored,
-          translations: Object.fromEntries(
-            locales.map((locale) => [
-              locale,
-              { ...pageDefaults[locale], ...stored.translations[locale] },
-            ]),
-          ),
-        });
-      })
-      .catch(() => setError(t("storageError")));
-  }, []);
-  useEffect(() => {
-    const before = (e: BeforeUnloadEvent) => {
-      if (dirty) {
-        e.preventDefault();
-        e.returnValue = "";
-      }
-    };
-    window.addEventListener("beforeunload", before);
-    return () => window.removeEventListener("beforeunload", before);
-  }, [dirty]);
   const fields = {
     profile: [
       "name",
@@ -113,19 +99,21 @@ export function SiteSettingsView({
     ],
     siteAbout: ["siteAboutTitle", "siteAboutIntro", "siteAboutBody"],
   };
-  function updateField(key: string, content: string) {
-    if (!value) return;
-    setValue({
-      ...value,
-      translations: {
-        ...value.translations,
-        [locale]: { ...value.translations[locale], [key]: content },
-      },
-    });
+  function updateFields(fields: Record<string, string>) {
+    setValue(
+      (current) =>
+        current && {
+          ...current,
+          translations: {
+            ...current.translations,
+            [locale]: { ...current.translations[locale], ...fields },
+          },
+        },
+    );
     setDirty(true);
   }
   return (
-    <>
+    <div className={styles.workspace}>
       <UnsavedChangesGuard dirty={dirty} />
       <header className={styles.heading}>
         <div>
@@ -133,19 +121,21 @@ export function SiteSettingsView({
           <p>{t("settings.description")}</p>
         </div>
         <Button
-          variant="quiet"
+          variant="primary"
           busy={busy}
-          disabled={!value || uploading}
+          disabled={!value || !dirty || uploading}
           onClick={async () => {
             if (!value) return;
             setBusy(true);
+            setError("");
             try {
               const saved = await updateWorkbenchRecord(
                 "site-settings",
                 (current) => {
                   if (
                     current &&
-                    schema.parse(current).revision !== value.revision
+                    settingsDraftSchema.parse(current).revision !==
+                      value.revision
                   )
                     throw new Error("CONFLICT");
                   return { ...value, revision: value.revision + 1 };
@@ -161,156 +151,150 @@ export function SiteSettingsView({
             }
           }}
         >
-          {t("editor.save")}
+          {t("settings.save")}
         </Button>
       </header>
-      <FilterTabs
-        label={t("settings.tabsLabel")}
-        value={tab}
-        onChange={setTab}
-        options={Object.keys(fields).map((value) => ({
-          value,
-          label: (copy.tabs as Record<string, string>)[value],
-        }))}
-      />
-      {error && <p role="alert">{error}</p>}
-      {!value && !error && <LoadingSkeleton variant="rows" />}
-      {value && (
-        <div className={styles.fields}>
-          <Select
-            value={locale}
-            label={t("editor.contentLocale")}
-            options={locales.map((value) => ({
+      <section className={styles.surface} aria-label={t("settings.tabsLabel")}>
+        <div className={styles.controls}>
+          <FilterTabs
+            label={t("settings.tabsLabel")}
+            value={tab}
+            onChange={setTab}
+            options={Object.keys(fields).map((value) => ({
               value,
-              label: localeRegistry[value].name,
+              label: (copy.tabs as Record<string, string>)[value],
             }))}
-            onValueChange={setLocale}
           />
-          {aiEnabled && tab === "basic" && (
-            <SiteEditorialAssistant
-              key={locale}
-              locale={locale}
-              fields={value.translations[locale] ?? pageDefaults[locale]}
-              apply={({ seoTitle, seoDescription }) => {
-                setValue({
-                  ...value,
-                  translations: {
-                    ...value.translations,
-                    [locale]: {
-                      ...value.translations[locale],
-                      seoTitle,
-                      seoDescription,
-                    },
-                  },
-                });
-                setDirty(true);
-              }}
+          <Field id="site-content-locale" label={t("editor.contentLocale")}>
+            <Select
+              className={styles.locale}
+              value={locale}
+              label={t("editor.contentLocale")}
+              options={locales.map((value) => ({
+                value,
+                label: localeRegistry[value].name,
+              }))}
+              onValueChange={setLocale}
             />
-          )}
-          {(fields as Record<string, string[]>)[tab].map((key) =>
-            key === "aboutBody" || key === "siteAboutBody" ? (
-              <PageDocumentEditor
-                key={`${locale}:${key}`}
-                label={(copy.fields as Record<string, string>)[key]}
-                value={value.translations[locale]?.[key] ?? ""}
-                legacy={
-                  value.translations[locale]?.[
-                    key === "aboutBody" ? "aboutSections" : "siteAboutSections"
-                  ]
-                }
-                onChange={(content) => updateField(key, content)}
-                onUploading={setUploading}
-              />
-            ) : (
-              <Field
-                key={`${locale}:${key}`}
-                id={`site-${key}`}
-                label={(copy.fields as Record<string, string>)[key]}
-              >
-                {key.endsWith("AssetId") ? (
-                  <Button
-                    onClick={() => setAssetField(key)}
-                    className={styles.assetButton}
-                    variant="quiet"
+          </Field>
+        </div>
+        {(error || !value) && (
+          <p className={styles.error} role="alert">
+            {error || t("storageError")}
+          </p>
+        )}
+        {value && (
+          <div className={styles.fields} key={`${tab}:${locale}`} inert={busy}>
+            {aiEnabled && tab === "basic" && (
+              <div className={styles.full}>
+                <SiteEditorialAssistant
+                  locale={locale}
+                  fields={value.translations[locale]}
+                  apply={({ seoTitle, seoDescription }) => {
+                    updateFields({ seoTitle, seoDescription });
+                  }}
+                />
+              </div>
+            )}
+            {(fields as Record<string, string[]>)[tab].map((key) =>
+              key === "aboutBody" || key === "siteAboutBody" ? (
+                <div key={key} className={styles.full}>
+                  <PageDocumentEditor
+                    label={(copy.fields as Record<string, string>)[key]}
+                    value={value.translations[locale]?.[key] ?? ""}
+                    legacy={
+                      value.translations[locale]?.[
+                        key === "aboutBody"
+                          ? "aboutSections"
+                          : "siteAboutSections"
+                      ]
+                    }
+                    onChange={(content) => updateFields({ [key]: content })}
+                    onUploading={setUploading}
+                  />
+                </div>
+              ) : (
+                <div
+                  key={key}
+                  className={
+                    multilineFields.has(key) || fullWidthFields.has(key)
+                      ? styles.full
+                      : undefined
+                  }
+                >
+                  <Field
+                    id={`site-${key}`}
+                    label={(copy.fields as Record<string, string>)[key]}
+                    description={
+                      draftOnlyFields.has(key)
+                        ? t("settings.draftOnly")
+                        : undefined
+                    }
                   >
-                    {value.translations[locale]?.[key] && (
-                      <AssetImage
-                        id={value.translations[locale][key]}
-                        alt={value.translations[locale]?.[`${key}Alt`] ?? ""}
+                    {key.endsWith("AssetId") ? (
+                      <Button
+                        onClick={() => setAssetField(key)}
+                        className={styles.assetButton}
+                        variant="quiet"
+                      >
+                        {value.translations[locale]?.[key] && (
+                          <AssetImage
+                            id={value.translations[locale][key]}
+                            alt={
+                              value.translations[locale]?.[`${key}Alt`] ?? ""
+                            }
+                          />
+                        )}
+                        <span>{t("editor.cover")}</span>
+                      </Button>
+                    ) : multilineFields.has(key) ? (
+                      <Textarea
+                        value={value.translations[locale]?.[key] ?? ""}
+                        rows={4}
+                        onChange={(e) =>
+                          updateFields({ [key]: e.target.value })
+                        }
+                      />
+                    ) : (
+                      <Input
+                        value={value.translations[locale]?.[key] ?? ""}
+                        onChange={(e) =>
+                          updateFields({ [key]: e.target.value })
+                        }
                       />
                     )}
-                    <span>{t("editor.cover")}</span>
-                  </Button>
-                ) : [
-                    "intro",
-                    "siteDescription",
-                    "heroDescription",
-                    "aboutSections",
-                    "aboutIntro",
-                    "siteAboutIntro",
-                    "footer",
-                  ].includes(key) ? (
-                  <Textarea
-                    value={value.translations[locale]?.[key] ?? ""}
-                    rows={4}
-                    onChange={(e) => {
-                      setValue({
-                        ...value,
-                        translations: {
-                          ...value.translations,
-                          [locale]: {
-                            ...value.translations[locale],
-                            [key]: e.target.value,
-                          },
-                        },
-                      });
-                      setDirty(true);
-                    }}
-                  />
-                ) : (
-                  <Input
-                    value={value.translations[locale]?.[key] ?? ""}
-                    onChange={(e) => {
-                      setValue({
-                        ...value,
-                        translations: {
-                          ...value.translations,
-                          [locale]: {
-                            ...value.translations[locale],
-                            [key]: e.target.value,
-                          },
-                        },
-                      });
-                      setDirty(true);
-                    }}
-                  />
-                )}
-              </Field>
-            ),
-          )}
-        </div>
-      )}
+                  </Field>
+                  {key.endsWith("AssetId") &&
+                    value.translations[locale]?.[key] && (
+                      <Button
+                        className={styles.removeAsset}
+                        size="sm"
+                        onClick={() =>
+                          updateFields({ [key]: "", [`${key}Alt`]: "" })
+                        }
+                      >
+                        {t("settings.removeImage")}
+                      </Button>
+                    )}
+                </div>
+              ),
+            )}
+          </div>
+        )}
+      </section>
       {assetField && value && (
         <Dialog title={t("nav.media")} wide onClose={() => setAssetField(null)}>
           <MediaPicker
             onSelect={(asset, alt) => {
-              setValue({
-                ...value,
-                translations: {
-                  ...value.translations,
-                  [locale]: {
-                    ...value.translations[locale],
-                    [assetField]: asset.id,
-                    [`${assetField}Alt`]: alt,
-                  },
-                },
+              updateFields({
+                [assetField]: asset.id,
+                [`${assetField}Alt`]: alt,
               });
-              setDirty(true);
               setAssetField(null);
             }}
           />
         </Dialog>
       )}
-    </>
+    </div>
   );
 }

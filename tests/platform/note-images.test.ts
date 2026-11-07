@@ -139,6 +139,13 @@ test("note publication retains separate ordered images and checks saved revision
     assert.deepEqual(note.images, [second, first]);
     assert.equal(note.text, "Independent text");
     assert.equal(note.body, undefined);
+    const [preview] = await fixture.repository.listNotes("zh-CN");
+    assert.deepEqual(preview.cover, {
+      assetId: second.assetId,
+      alt: second.alt,
+    });
+    assert.equal(preview.imageCount, 2);
+    assert.equal("body" in preview, false);
     await fixture.db
       .update(mediaAssetsTable)
       .set({ archived: true })

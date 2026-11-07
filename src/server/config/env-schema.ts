@@ -27,6 +27,9 @@ export const envSchema = z
     AI_CHAT_COMPLETIONS_URL: optionalUrl,
     AI_API_KEY: optionalText(1, 1024),
     AI_MODEL: optionalText(1, 160),
+    AI_MCP_PUBLICATION_URL: optionalUrl,
+    AI_MCP_PUBLICATION_TOOL: optionalText(1, 96),
+    AI_MCP_PUBLICATION_TOKEN: optionalText(1, 1024),
     AI_GUIDE_ENABLED: z
       .enum(["true", "false"])
       .default("false")
@@ -77,9 +80,13 @@ export const envSchema = z
         path: ["REDIS_URL"],
         message: "Use redis:// or rediss://",
       });
-    if (env.AI_CHAT_COMPLETIONS_URL) {
-      const endpoint = URL.parse(env.AI_CHAT_COMPLETIONS_URL);
-      if (!endpoint) return;
+    for (const key of [
+      "AI_CHAT_COMPLETIONS_URL",
+      "AI_MCP_PUBLICATION_URL",
+    ] as const) {
+      const value = env[key];
+      const endpoint = value && URL.parse(value);
+      if (!endpoint) continue;
       const local = ["localhost", "127.0.0.1", "[::1]"].includes(
         endpoint.hostname,
       );
@@ -93,10 +100,29 @@ export const envSchema = z
       )
         context.addIssue({
           code: "custom",
-          path: ["AI_CHAT_COMPLETIONS_URL"],
+          path: [key],
           message: "Use an HTTPS endpoint or a loopback HTTP endpoint",
         });
     }
+    if (
+      Boolean(env.AI_MCP_PUBLICATION_URL) !==
+        Boolean(env.AI_MCP_PUBLICATION_TOOL) ||
+      (env.AI_MCP_PUBLICATION_TOKEN && !env.AI_MCP_PUBLICATION_URL)
+    )
+      context.addIssue({
+        code: "custom",
+        path: ["AI_MCP_PUBLICATION_TOOL"],
+        message: "Configure the publication MCP URL and tool name together",
+      });
+    if (
+      env.AI_MCP_PUBLICATION_TOOL &&
+      !/^[a-zA-Z0-9_.-]+$/.test(env.AI_MCP_PUBLICATION_TOOL)
+    )
+      context.addIssue({
+        code: "custom",
+        path: ["AI_MCP_PUBLICATION_TOOL"],
+        message: "Invalid MCP tool name",
+      });
     if (env.INDEXING_ENABLED && origin?.protocol !== "https:")
       context.addIssue({
         code: "custom",

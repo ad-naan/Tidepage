@@ -905,9 +905,6 @@ body {
 .gallery-meta > span:last-child {
   font-size: 12px;
 }
-.gallery-upload {
-  font-size: 13px;
-}
 .gallery-ending {
   font-family: var(--ui-font);
   font-size: 14px;
@@ -2007,12 +2004,6 @@ body {
   }
   .gallery-toolbar .tabs {
     gap: 19px;
-  }
-  .gallery-upload {
-    font-size: 12px;
-  }
-  .gallery-upload > span {
-    display: none;
   }
   .gallery-meta {
     font-size: 12px;

@@ -3,18 +3,27 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowUpRight, Copy, Mail } from "lucide-react";
-import type { SiteLinkInfo } from "@/modules/friends/domain/models";
-import { ContentHeading } from "@/modules/content/ui/layout/ContentHeading";
+import type {
+  PublicFriend,
+  SiteLinkInfo,
+} from "@/modules/friends/domain/models";
 import { Button } from "@/shared/ui/button/Button";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { Disclosure } from "@/shared/ui/disclosure/Disclosure";
 import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
+import { ContentHeading } from "@/modules/content/ui/layout/ContentHeading";
 import { ExternalLink } from "@/shared/ui/link/Anchor";
 import { CoastGlyph, PencilLine } from "@/shared/ui/drawing/CoastalMarks";
 import { profile } from "@/shared/config/profile";
 import styles from "./FriendsView.module.css";
 
-export function FriendsView({ siteInfo }: { siteInfo: SiteLinkInfo }) {
+export function FriendsView({
+  siteInfo,
+  friends,
+}: {
+  siteInfo: SiteLinkInfo;
+  friends: PublicFriend[];
+}) {
   const t = useTranslations("friends");
   const [open, setOpen] = useState(false);
   const { notify } = useNotice();
@@ -43,28 +52,55 @@ export function FriendsView({ siteInfo }: { siteInfo: SiteLinkInfo }) {
         title={t("title")}
         description={t("description")}
       />
-      <div className={styles.layout}>
+      <div className={styles.book}>
         <section aria-labelledby="friends-directory-title">
           <div className={styles.sectionHeading}>
-            <div>
-              <span className={styles.eyebrow}>{t("eyebrow")}</span>
-              <h2 id="friends-directory-title">{t("directoryTitle")}</h2>
-            </div>
+            <h2 id="friends-directory-title">{t("directoryTitle")}</h2>
+            <span className={styles.eyebrow}>{t("eyebrow")}</span>
           </div>
-          <p className={styles.empty}>{t("empty")}</p>
+          {friends.length ? (
+            <ol className={styles.directory}>
+              {friends.map((friend, index) => (
+                <li key={friend.id}>
+                  <span className={styles.index} aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <div className={styles.entry}>
+                    <span className={styles.eyebrow}>
+                      {t(`categories.${friend.category}`)}
+                    </span>
+                    <h3>
+                      <ExternalLink href={friend.url}>
+                        {friend.name}
+                        <ArrowUpRight size={16} aria-hidden="true" />
+                      </ExternalLink>
+                    </h3>
+                    <span className={styles.domain}>
+                      {new URL(friend.url).hostname}
+                    </span>
+                    {friend.description && <p>{friend.description}</p>}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className={styles.empty}>{t("empty")}</p>
+          )}
           <p className={styles.footnote}>
             <CoastGlyph kind="tide" />
             {t("footnote")}
           </p>
         </section>
         <aside
-          className={styles.margin}
+          className={styles.exchange}
           aria-labelledby="friends-exchange-title"
         >
-          <CoastGlyph kind="shell" className={styles.shell} />
-          <span className={styles.eyebrow}>{t("exchangeEyebrow")}</span>
-          <h2 id="friends-exchange-title">{t("exchangeTitle")}</h2>
-          <p>{t("exchangeDescription")}</p>
+          <CoastGlyph kind="shell" />
+          <div>
+            <span className={styles.eyebrow}>{t("exchangeEyebrow")}</span>
+            <h2 id="friends-exchange-title">{t("exchangeTitle")}</h2>
+            <p>{t("exchangeDescription")}</p>
+          </div>
           <Button
             variant="quiet"
             className={styles.exchangeButton}
@@ -74,8 +110,20 @@ export function FriendsView({ siteInfo }: { siteInfo: SiteLinkInfo }) {
             {t("exchange")}
             <ArrowUpRight size={13} aria-hidden="true" />
           </Button>
-          <PencilLine />
-          <Disclosure summary={t("siteInfoTitle")} open>
+          <div className={styles.station}>
+            <img
+              src={siteInfo.avatar}
+              alt=""
+              width={34}
+              height={34}
+              loading="lazy"
+            />
+            <div>
+              <strong>{siteInfo.name}</strong>
+              <p>{siteInfo.description}</p>
+            </div>
+          </div>
+          <Disclosure summary={t("siteInfoTitle")}>
             {info}
             <Button size="sm" variant="quiet" onClick={copyInfo}>
               <Copy size={13} aria-hidden="true" />
@@ -103,7 +151,7 @@ export function FriendsView({ siteInfo }: { siteInfo: SiteLinkInfo }) {
               {t("contact")}
               <ArrowUpRight size={14} aria-hidden="true" />
             </ExternalLink>
-            <Disclosure summary={t("siteInfoTitle")}>
+            <Disclosure summary={t("siteInfoTitle")} open>
               {info}
               <Button variant="quiet" size="sm" onClick={copyInfo}>
                 <Copy size={13} aria-hidden="true" />

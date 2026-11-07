@@ -24,11 +24,13 @@ export function SiteShell({
   children,
   articles,
   navigation,
+  avatar,
   year,
 }: {
   children: ReactNode;
   articles: ArticleSummary[];
   navigation: NavigationOverview;
+  avatar: string;
   year: string;
 }) {
   const t = useTranslations("nav"),
@@ -65,6 +67,7 @@ export function SiteShell({
         <SiteHeader
           articles={articles}
           navigation={navigation}
+          avatar={avatar}
           label={t(
             nav.find(
               (item) =>

@@ -25,7 +25,10 @@ import { useArticleSearch } from "@/modules/content/ui/articles/useArticleSearch
 import { useReadingArticle } from "@/modules/content/ui/articles/ReadingArticleContext";
 import { spring } from "@/shared/lib/motion";
 import { useDisclosure } from "@/shared/hooks/useDisclosure";
-import { LoginTrigger } from "@/modules/identity/ui/IdentityProvider";
+import {
+  LoginTrigger,
+  useIdentity,
+} from "@/modules/identity/ui/IdentityProvider";
 import { AuthorPresence } from "@/modules/presence/ui/AuthorPresence";
 import { MusicPlayer } from "@/modules/media/ui/player/MusicPlayer";
 import { SiteNavigation } from "@/widgets/site-shell/navigation/SiteNavigation";
@@ -42,6 +45,7 @@ type HeaderPanel = keyof typeof surfaces;
 type Props = {
   articles: ArticleSummary[];
   navigation: NavigationOverview;
+  avatar: string;
   label: string;
   immersive: boolean;
   onImmersiveChange: () => void;
@@ -50,12 +54,14 @@ type Props = {
 export function SiteHeader({
   articles,
   navigation,
+  avatar,
   label,
   immersive,
   onImmersiveChange,
 }: Props) {
   const t = useTranslations("header"),
     categories = useTranslations("categories");
+  const { principal } = useIdentity();
   const pathname = usePathname();
   const { open, setOpen, ref } = useDisclosure("header");
   const [panel, setPanel] = useState<HeaderPanel>("search");
@@ -137,7 +143,7 @@ export function SiteHeader({
           <HeaderSky />
           <div className="living-header-row">
             <div className={styles.identity}>
-              <HeaderBrand />
+              <HeaderBrand avatar={avatar} />
               <div className={styles.context}>
                 <AuthorPresence boundary={header} />
               </div>
@@ -168,15 +174,19 @@ export function SiteHeader({
               >
                 <path d="M7 3Q3 12 5 25M9 5l-3 2m2 13-3 2" />
               </svg>
-              <MusicPlayer
-                expanded={open && panel === "music"}
-                onExpandedChange={(value) => {
-                  if (value) show("music");
-                  else if (panel === "music") setOpen(false);
-                }}
-                panelContainer={musicContainer}
-              />
-              <span className="header-widget-divider" />
+              {principal?.role === "admin" && (
+                <>
+                  <MusicPlayer
+                    expanded={open && panel === "music"}
+                    onExpandedChange={(value) => {
+                      if (value) show("music");
+                      else if (panel === "music") setOpen(false);
+                    }}
+                    panelContainer={musicContainer}
+                  />
+                  <span className="header-widget-divider" />
+                </>
+              )}
               <Button
                 ref={trigger}
                 className={`living-search-trigger ${open && panel === "search" ? "selected" : ""}`}

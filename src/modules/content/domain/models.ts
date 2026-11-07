@@ -66,6 +66,11 @@ export type Note = {
   tag: string;
   sketch: z.infer<typeof sketchSchema>;
 };
+export type NoteListEntry = Omit<Note, "body" | "images"> & {
+  cover: Pick<NoteImage, "assetId" | "alt"> | null;
+  imageCount: number;
+  truncated: boolean;
+};
 export type Project = {
   body?: Article["body"];
   locale: Locale;

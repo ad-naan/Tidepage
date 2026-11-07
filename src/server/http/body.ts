@@ -1,7 +1,10 @@
 import "server-only";
 import { AppError } from "./errors";
 
-export async function boundedBody(request: Request, maxBytes: number) {
+export async function boundedBody(
+  request: Pick<Request, "headers" | "body">,
+  maxBytes: number,
+) {
   const length = request.headers.get("content-length");
   if (length && Number(length) > maxBytes)
     throw new AppError("BODY_TOO_LARGE", "", 413);

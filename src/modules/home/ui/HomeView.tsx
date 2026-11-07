@@ -7,6 +7,7 @@ import { HomeHero } from "@/modules/home/ui/HomeHero";
 import { Journey } from "@/modules/home/ui/Journey";
 import { ArticleList } from "@/modules/content/ui/articles/ArticleList";
 import styles from "./HomeView.module.css";
+import type { HomeCopy } from "@/modules/site-settings/domain/identity";
 import type {
   ArticleSummary,
   NotePreview,
@@ -18,16 +19,18 @@ export async function HomeView({
   total,
   note,
   quote,
+  homeCopy,
 }: {
   articles: ArticleSummary[];
   total: number;
   note: NotePreview | null;
   quote: Pick<Quote, "text"> | null;
+  homeCopy: HomeCopy;
 }) {
   const t = await getTranslations("home");
   return (
     <div className={styles.home}>
-      <HomeHero />
+      <HomeHero copy={homeCopy} />
       <section className="home-middle">
         <Journey />
         <div className="latest">

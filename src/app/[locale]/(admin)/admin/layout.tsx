@@ -21,7 +21,7 @@ export default async function Layout({
       />
     );
   return (
-    <AdminShell>
+    <AdminShell canManageGallery={principal.role === "admin"}>
       {children}
       <CustomScrollbars />
     </AdminShell>

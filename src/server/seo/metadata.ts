@@ -18,6 +18,7 @@ import {
   type Locale,
 } from "@/shared/i18n/config";
 import type { Article } from "@/modules/content/domain/models";
+import { articleSeoCopy } from "@/modules/content/domain/publication";
 export function absoluteUrl(path: string) {
   return new URL(path, getEnv().SITE_URL).toString();
 }
@@ -35,6 +36,9 @@ export function languageAlternates(
     languages["x-default"] = localizedUrl(defaultLocale, path);
   return languages;
 }
+export function pageTitle(path: string, title: string, identity: SiteIdentity) {
+  return path === "/" ? identity.title : `${title} · ${identity.name}`;
+}
 export function pageMetadata(
   path: string,
   title: string,
@@ -43,8 +47,11 @@ export function pageMetadata(
   available: readonly Locale[],
   identity: SiteIdentity,
 ): Metadata {
-  const fullTitle =
-    path === "/" ? identity.title : `${title} · ${identity.name}`;
+  const fullTitle = pageTitle(path, title, identity);
+  const image = {
+    url: absoluteUrl(identity.shareImage?.path ?? shareImagePath),
+    alt: identity.shareImage?.alt ?? identity.name,
+  };
   return {
     title: { absolute: fullTitle },
     description,
@@ -64,18 +71,13 @@ export function pageMetadata(
       url: localizedUrl(locale, path),
       title: fullTitle,
       description,
-      images: [
-        {
-          url: absoluteUrl(shareImagePath),
-          alt: identity.name,
-        },
-      ],
+      images: [image],
     },
     twitter: {
       card: "summary_large_image",
       title: fullTitle,
       description,
-      images: [absoluteUrl(shareImagePath)],
+      images: [image],
     },
   };
 }
@@ -117,10 +119,11 @@ export async function articleMetadata(
   available: readonly Locale[],
 ): Promise<Metadata> {
   const { publication } = article;
+  const { title, description } = articleSeoCopy(article);
   const base = pageMetadata(
     `/articles/${article.slug}`,
-    publication?.seoTitle || article.title,
-    publication?.seoDescription || article.excerpt,
+    title,
+    description,
     article.locale,
     available,
     await getPublicSiteIdentity(article.locale),

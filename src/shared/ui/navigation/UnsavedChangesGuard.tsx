@@ -10,12 +10,17 @@ export function UnsavedChangesGuard({ dirty }: { dirty: boolean }) {
   latest.current = dirty;
   const [destination, setDestination] = useState<string | null>(null);
   useEffect(() => {
+    if (!dirty) return;
     const before = (e: BeforeUnloadEvent) => {
       if (latest.current) {
         e.preventDefault();
         e.returnValue = "";
       }
     };
+    window.addEventListener("beforeunload", before);
+    return () => window.removeEventListener("beforeunload", before);
+  }, [dirty]);
+  useEffect(() => {
     const click = (e: MouseEvent) => {
       if (
         !latest.current ||
@@ -40,12 +45,8 @@ export function UnsavedChangesGuard({ dirty }: { dirty: boolean }) {
       e.stopPropagation();
       setDestination(a.href);
     };
-    window.addEventListener("beforeunload", before);
     document.addEventListener("click", click, true);
-    return () => {
-      window.removeEventListener("beforeunload", before);
-      document.removeEventListener("click", click, true);
-    };
+    return () => document.removeEventListener("click", click, true);
   }, []);
   return destination ? (
     <Dialog title={t("title")} onClose={() => setDestination(null)}>

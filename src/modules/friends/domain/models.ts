@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { safeWebUrl } from "@/shared/contracts/rich-text";
 
-const friendCategorySchema = z.enum(["technology", "design", "life"]);
+export const friendCategorySchema = z.enum(["technology", "design", "life"]);
 export const friendDraftSchema = z.object({
   id: z.string(),
   revision: z.number().int().min(0),
@@ -18,5 +18,12 @@ export type SiteLinkInfo = {
   name: string;
   url: string;
   avatar: string;
+  description: string;
+};
+export type PublicFriend = {
+  id: string;
+  url: string;
+  category: z.infer<typeof friendCategorySchema>;
+  name: string;
   description: string;
 };

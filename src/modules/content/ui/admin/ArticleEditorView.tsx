@@ -52,6 +52,7 @@ import { loadArticleDrafts, saveArticleDraft } from "./draft-store";
 import { imageUploader } from "@/modules/media/ui/admin/media-client";
 import { apiSend, ApiClientError } from "@/shared/http/client";
 import { ArticleAssistant } from "./ArticleAssistant";
+import { PublicationReviewPanel } from "./PublicationReviewPanel";
 import styles from "./ArticleEditorView.module.css";
 export function ArticleEditorView({
   id,
@@ -736,6 +737,14 @@ export function ArticleEditorView({
           {(dirty || draft.revision === 0) && (
             <p>{t("editor.saveBeforePublish")}</p>
           )}
+          <PublicationReviewPanel
+            key={`${draft.id}:${locale}:${draft.revision}`}
+            draft={{ id: draft.id, locale, revision: draft.revision }}
+            enabled={aiEnabled}
+            disabled={
+              dirty || draft.revision === 0 || saving || uploading || publishing
+            }
+          />
           {publishError && <p role="alert">{publishError}</p>}
           <Button
             variant="quiet"

@@ -9,6 +9,7 @@ import { Link } from "@/shared/i18n/navigation";
 import { HeroSketch } from "@/modules/world/ui/CoastIllustration";
 import { ProfileLinks } from "./ProfileLinks";
 import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
+import type { HomeCopy } from "@/modules/site-settings/domain/identity";
 import styles from "./HomeHero.module.css";
 
 const modes = ["intro", "theme"] as const;
@@ -18,7 +19,7 @@ const controls: Record<Mode, { next: Mode; label: "reveal" | "restore" }> = {
   theme: { next: "intro", label: "restore" },
 };
 
-export function HomeHero() {
+export function HomeHero({ copy }: { copy: HomeCopy }) {
   const t = useTranslations("home");
   const [mode, setMode] = useState<Mode>("intro");
   const reduce = useReducedMotion();
@@ -78,13 +79,15 @@ export function HomeHero() {
               >
                 <span>
                   {panel === "intro" ? (
-                    <AuthorSignature size="hero" mark />
+                    <AuthorSignature size="hero" mark name={copy.name} />
                   ) : (
                     t(`hero.${panel}.line1`)
                   )}
                 </span>
                 <span className={styles.lastLine}>
-                  {t(`hero.${panel}.line2`)}
+                  {panel === "intro" && copy.heading
+                    ? copy.heading
+                    : t(`hero.${panel}.line2`)}
                   {panel === "theme" && (
                     <svg viewBox="0 0 430 30" fill="none" aria-hidden="true">
                       <motion.path
@@ -114,7 +117,9 @@ export function HomeHero() {
                 animate={appearance(panel)}
                 transition={transition}
               >
-                {t(`hero.${panel}.description`)}
+                {panel === "intro" && copy.description
+                  ? copy.description
+                  : t(`hero.${panel}.description`)}
               </motion.p>
             ))}
           </div>
@@ -127,7 +132,7 @@ export function HomeHero() {
           <span className={styles.connectionDivider} aria-hidden="true">
             /
           </span>
-          <ProfileLinks />
+          <ProfileLinks links={copy.links} />
         </div>
       </div>
       <HeroSketch quiet onWish={() => setMode("theme")} />

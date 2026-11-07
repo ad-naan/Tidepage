@@ -40,7 +40,13 @@ const entries = [
   ["friends", "/admin/friends", Shell],
   ["site", "/admin/site", Settings],
 ] as const;
-export function AdminShell({ children }: { children: ReactNode }) {
+export function AdminShell({
+  children,
+  canManageGallery,
+}: {
+  children: ReactNode;
+  canManageGallery: boolean;
+}) {
   const t = useTranslations("admin");
   const pathname = usePathname();
   const main = useRef<HTMLElement>(null);
@@ -85,26 +91,28 @@ export function AdminShell({ children }: { children: ReactNode }) {
             data-custom-scroll={t("navigation")}
           >
             <nav aria-label={t("navigation")}>
-              {entries.map(([key, href, Icon]) => (
-                <Link
-                  key={key}
-                  href={href}
-                  prefetch
-                  aria-current={
-                    (
-                      href === "/admin"
-                        ? pathname === href
-                        : pathname.startsWith(href)
-                    )
-                      ? "page"
-                      : undefined
-                  }
-                >
-                  <Icon size={15} aria-hidden="true" />
-                  <span>{t(`nav.${key}`)}</span>
-                  <HanddrawnMark className={styles.mark} />
-                </Link>
-              ))}
+              {entries
+                .filter(([key]) => key !== "gallery" || canManageGallery)
+                .map(([key, href, Icon]) => (
+                  <Link
+                    key={key}
+                    href={href}
+                    prefetch
+                    aria-current={
+                      (
+                        href === "/admin"
+                          ? pathname === href
+                          : pathname.startsWith(href)
+                      )
+                        ? "page"
+                        : undefined
+                    }
+                  >
+                    <Icon size={15} aria-hidden="true" />
+                    <span>{t(`nav.${key}`)}</span>
+                    <HanddrawnMark className={styles.mark} />
+                  </Link>
+                ))}
             </nav>
             <div className={styles.preferences}>
               <Suspense>
@@ -130,7 +138,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
             className={styles.main}
             data-custom-scroll={t("workspace")}
           >
-            <div className={styles.mode}>{t("localDetail")}</div>
+            {pathname !== "/admin/site" && (
+              <div className={styles.mode}>{t("localDetail")}</div>
+            )}
             {children}
           </main>
         </div>

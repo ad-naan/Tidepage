@@ -16,11 +16,17 @@ import {
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import { getDb, type Database } from "@/server/db/client";
 import { dateKey, formatDate } from "@/shared/lib/date-time";
-import { noteImagesSchema } from "@/modules/content/domain/note-images";
+import {
+  noteImageSchema,
+  noteImagesSchema,
+} from "@/modules/content/domain/note-images";
+import type { Locale } from "@/shared/i18n/config";
 import {
   articleSchema,
   articleSummarySchema,
   type ArticleSummary,
+  type Note,
+  type NoteListEntry,
 } from "@/modules/content/domain/models";
 import type { ContentRepository } from "@/modules/content/application/repository";
 import {
@@ -63,9 +69,26 @@ const published = (table: {
   publishedAt: AnyPgColumn;
 }) =>
   and(eq(table.visibility, "published"), lte(table.publishedAt, new Date()));
+function fullNote(row: typeof n.$inferSelect): Note {
+  return {
+    locale: row.locale,
+    id: row.id,
+    date: formatDate(row.publishedOn, row.locale),
+    publishedOn: row.publishedOn,
+    mood: row.mood,
+    images: noteImagesSchema.parse(row.images),
+    text: row.text,
+    body: row.body ?? undefined,
+    tag: row.tag,
+    sketch: row.sketch,
+  };
+}
 export function postgresContentRepository(
   db: Database = getDb(),
-): ContentRepository {
+): ContentRepository & {
+  listNotes(locale: Locale): Promise<NoteListEntry[]>;
+  noteById(id: string, locale: Locale): Promise<Note | null>;
+} {
   return {
     latestNote: async (locale) => {
       const [row] = await db
@@ -226,6 +249,40 @@ export function postgresContentRepository(
         pageCount: Math.ceil(total / query.pageSize),
       };
     },
+    listNotes: async (locale) =>
+      (
+        await db
+          .select({
+            locale: n.locale,
+            id: n.id,
+            publishedOn: n.publishedOn,
+            mood: n.mood,
+            text: sql<string>`left(${n.text}, 180)`,
+            truncated: sql<boolean>`length(${n.text}) > 180`,
+            imageCount: sql<number>`jsonb_array_length(${n.images})`,
+            cover: sql<unknown>`case when jsonb_array_length(${n.images}) > 0 then jsonb_build_object('assetId', ${n.images}->0->>'assetId', 'alt', ${n.images}->0->>'alt') end`,
+            tag: n.tag,
+            sketch: n.sketch,
+          })
+          .from(n)
+          .where(and(published(n), eq(n.locale, locale)))
+          .orderBy(desc(n.publishedOn), asc(n.id))
+      ).map((row) => ({
+        ...row,
+        date: formatDate(row.publishedOn, locale),
+        cover: noteImageSchema
+          .pick({ assetId: true, alt: true })
+          .nullable()
+          .parse(row.cover),
+      })),
+    noteById: async (id, locale) => {
+      const [row] = await db
+        .select()
+        .from(n)
+        .where(and(published(n), eq(n.locale, locale), eq(n.id, id)))
+        .limit(1);
+      return row ? fullNote(row) : null;
+    },
     notes: async (locale) =>
       (
         await db
@@ -233,18 +290,7 @@ export function postgresContentRepository(
           .from(n)
           .where(and(published(n), eq(n.locale, locale)))
           .orderBy(desc(n.publishedOn), asc(n.id))
-      ).map((row) => ({
-        locale: row.locale,
-        id: row.id,
-        date: formatDate(row.publishedOn, locale),
-        publishedOn: row.publishedOn,
-        mood: row.mood,
-        images: noteImagesSchema.parse(row.images),
-        text: row.text,
-        body: row.body ?? undefined,
-        tag: row.tag,
-        sketch: row.sketch,
-      })),
+      ).map(fullNote),
     projects: async (locale) =>
       (
         await db

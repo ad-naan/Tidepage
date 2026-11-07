@@ -100,6 +100,11 @@ export const listArticles = async (input: unknown) =>
 export const getNotes = cache(async (locale: Locale = defaultLocale) =>
   (await service()).notes(locale),
 );
+export const listNotes = cache((locale: Locale) =>
+  postgresContentRepository().listNotes(locale),
+);
+export const getNote = (id: string, locale: Locale) =>
+  postgresContentRepository().noteById(id, locale);
 export const getProjects = cache(async (locale: Locale = defaultLocale) =>
   (await service()).projects(locale),
 );
@@ -117,4 +122,12 @@ export async function invalidateContentCache(slug: string, locale: Locale) {
 export function invalidateNotePreview(locale: Locale) {
   return getCacheStore().delete(key(locale, "latest-note"));
 }
+export function invalidateProjectPreviews(locale: Locale) {
+  return getCacheStore().delete(key(locale, "project-previews"));
+}
 export { articleMarkdown } from "@/modules/content/application/markdown";
+export {
+  articleFeedItem,
+  escapeXml,
+  renderArticleFeedItem,
+} from "@/modules/content/application/feed";

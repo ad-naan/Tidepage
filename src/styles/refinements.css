@@ -1310,25 +1310,6 @@ mark {
   gap: 15px;
   border-bottom: 1px solid var(--line);
 }
-.gallery-upload {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: var(--muted);
-  font-size: 10px;
-  cursor: pointer;
-}
-.gallery-upload:hover {
-  color: var(--accent);
-}
-.gallery-upload input {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  opacity: 0;
-  cursor: pointer;
-}
 .gallery-meta {
   display: flex;
   align-items: center;
@@ -1930,10 +1911,6 @@ mark {
   .gallery-toolbar .tabs {
     gap: 19px;
   }
-  .gallery-upload {
-    font-size: 9px;
-    gap: 5px;
-  }
   .gallery-ending {
     font-size: 14px;
     margin-top: 28px;
@@ -1991,9 +1968,6 @@ mark {
   }
   .gallery-toolbar .tabs {
     gap: 15px;
-  }
-  .gallery-upload > span {
-    display: none;
   }
   .masonry-gallery h3 {
     font-size: 12px;

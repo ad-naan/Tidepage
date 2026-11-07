@@ -1,17 +1,18 @@
 ﻿"use client";
 import { DateTime } from "@/shared/ui/typography/DateTime";
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { ArrowUpRight, Bookmark, Images } from "lucide-react";
 import {
-  PencilFrame,
   PencilLine,
+  PencilFrame,
   SketchLabel,
 } from "@/shared/ui/drawing/CoastalMarks";
 import { HanddrawnMark } from "@/shared/ui/drawing/HanddrawnMark";
 import { ContentHeading } from "@/modules/content/ui/layout/ContentHeading";
-import type { Note } from "@/modules/content/domain/models";
 import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
+import type { Note, NoteListEntry } from "@/modules/content/domain/models";
+import { apiGet } from "@/shared/http/client";
 import { Button } from "@/shared/ui/button/Button";
 import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
@@ -32,7 +33,15 @@ import { targetKey } from "@/modules/engagement/domain/target";
 import { useIdentity } from "@/modules/identity/ui/IdentityProvider";
 import styles from "./NotesView.module.css";
 
-export function NotesView({ notes }: { notes: Note[] }) {
+const sketches = ["sun", "mountain", "boat", "tree"] as const;
+function noteSketch(id: string) {
+  let hash = 0;
+  for (const char of id)
+    hash = (Math.imul(hash, 31) + char.charCodeAt(0)) >>> 0;
+  return sketches[hash % sketches.length];
+}
+
+export function NotesView({ notes }: { notes: NoteListEntry[] }) {
   return (
     <EngagementProvider
       targets={notes.map((note) => ({ type: "note", id: note.id }))}
@@ -41,15 +50,36 @@ export function NotesView({ notes }: { notes: Note[] }) {
     </EngagementProvider>
   );
 }
-function NotesContent({ notes }: { notes: Note[] }) {
+function NotesContent({ notes }: { notes: NoteListEntry[] }) {
   const t = useTranslations("notes");
+  const format = useFormatter();
   const { states, loading, error } = useEngagement();
   const { principal, openLogin } = useIdentity();
   const [onlySaved, setOnlySaved] = useState(false);
   const [selected, setSelected] = useState<Note | null>(null);
+  const [opening, setOpening] = useState<string | null>(null);
+  const [readError, setReadError] = useState(false);
+  async function open(note: NoteListEntry) {
+    if (opening) return;
+    setOpening(note.id);
+    setReadError(false);
+    try {
+      const query = new URLSearchParams({ id: note.id, locale: note.locale });
+      setSelected(await apiGet<Note>(`/api/v1/notes?${query}`));
+    } catch {
+      setReadError(true);
+    } finally {
+      setOpening(null);
+    }
+  }
   const isSaved = (id: string) =>
     states[targetKey({ type: "note", id })]?.saved;
   const visible = notes.filter((note) => !onlySaved || isSaved(note.id));
+  const months = new Map(
+    [...new Set(visible.map((note) => note.publishedOn.slice(0, 7)))].map(
+      (month, i) => [month, i],
+    ),
+  );
   return (
     <div className={`inner-page ${styles.notes}`}>
       <ContentHeading
@@ -84,73 +114,93 @@ function NotesContent({ notes }: { notes: Note[] }) {
         <PencilLine className={styles.shore} />
       </div>
       <EngagementStatus />
+      {readError && (
+        <p role="alert" className={styles.readError}>
+          {t("reader.loadError")}
+        </p>
+      )}
       <ProgressiveList
         key={String(onlySaved)}
         items={visible}
-        className={styles.grid}
+        as="ul"
+        className={styles.timeline}
       >
-        {(note) => {
-          const images = note.images;
+        {(note, index) => {
+          const month = note.publishedOn.slice(0, 7);
+          const startsMonth =
+            month !== visible[index - 1]?.publishedOn.slice(0, 7);
           return (
-            <article className={styles.card} key={note.id}>
-              <PencilFrame kind="note" />
-              <Button
-                className={styles.open}
-                onClick={() => setSelected(note)}
-                aria-haspopup="dialog"
-                aria-label={t("reader.open", {
-                  date: note.date,
-                  text: note.text.slice(0, 45),
-                })}
-                pressEffect={false}
-              >
-                <span
-                  className={`${styles.cover} ${!images.length ? styles.illustrated : ""}`}
-                >
-                  {images[0] ? (
-                    <img
-                      src={images[0].assetId}
-                      alt={images[0].alt}
-                      loading="lazy"
-                    />
-                  ) : (
-                    <CoastalVignette
-                      kind={note.sketch}
-                      className={styles.coverSketch}
-                    />
-                  )}
-                  {images.length > 0 && (
-                    <span className={styles.imageCount}>
-                      <Images size={13} />
-                      {images.length}
+            <li
+              className={styles.entry}
+              key={note.id}
+              data-side={(months.get(month) ?? 0) % 2 === 0 ? "left" : "right"}
+            >
+              {startsMonth && (
+                <h2 className={styles.month}>
+                  {format.dateTime(new Date(`${month}-15T12:00:00Z`), {
+                    year: "numeric",
+                    month: "long",
+                  })}
+                </h2>
+              )}
+              <div className={styles.row}>
+                <div className={styles.story}>
+                  <div className={styles.date}>
+                    <DateTime value={note.publishedOn} />
+                    {note.mood && <span>{note.mood}</span>}
+                  </div>
+                  <Button
+                    className={styles.open}
+                    onClick={() => void open(note)}
+                    aria-busy={opening === note.id}
+                    aria-haspopup="dialog"
+                    aria-label={t("reader.open", {
+                      date: note.date,
+                      text: note.text.slice(0, 45),
+                    })}
+                    pressEffect={false}
+                  >
+                    <span className={styles.preview}>
+                      {note.text}
+                      {note.truncated ? "…" : ""}
                     </span>
+                    <span className={styles.readMore}>
+                      {t("readMore")}
+                      <ArrowUpRight size={13} />
+                    </span>
+                  </Button>
+                  <div className={styles.entryFooter}>
+                    <span>
+                      {note.tag ? `#${note.tag}` : t("reader.aMoment")}
+                    </span>
+                    <InteractionButton
+                      target={{ type: "note", id: note.id }}
+                      kind="save"
+                      iconOnly
+                    />
+                  </div>
+                </div>
+                <figure className={styles.cover} data-illustrated={!note.cover}>
+                  <PencilFrame kind="note" />
+                  {note.cover ? (
+                    <>
+                      <img
+                        src={note.cover.assetId}
+                        alt={note.cover.alt}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <span className={styles.imageCount} aria-hidden="true">
+                        <Images size={13} />
+                        {note.imageCount}
+                      </span>
+                    </>
+                  ) : (
+                    <CoastalVignette kind={noteSketch(note.id)} />
                   )}
-                  <span className={styles.openHint}>
-                    <ArrowUpRight size={18} />
-                  </span>
-                </span>
-                <span className={styles.meta}>
-                  <DateTime value={note.publishedOn} />
-                  <span>{note.mood}</span>
-                </span>
-                <span className={styles.preview}>
-                  {note.text.slice(0, 180)}
-                  {note.text.length > 180 ? "…" : ""}
-                </span>
-                <span className={styles.readMore}>
-                  {t("readMore")}
-                  <ArrowUpRight size={13} />
-                </span>
-              </Button>
-              <div className={styles.cardFooter}>
-                <span>{note.tag ? `#${note.tag}` : t("reader.aMoment")}</span>
-                <InteractionButton
-                  target={{ type: "note", id: note.id }}
-                  kind="save"
-                  iconOnly
-                />
+                </figure>
               </div>
-            </article>
+            </li>
           );
         }}
       </ProgressiveList>

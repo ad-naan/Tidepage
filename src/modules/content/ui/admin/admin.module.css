@@ -27,6 +27,9 @@
   padding: 8px 12px;
   font-size: var(--text-sm);
 }
+.deleteButton:hover {
+  color: var(--accent);
+}
 .fields {
   display: grid;
   gap: 16px;

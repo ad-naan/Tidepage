@@ -4,11 +4,16 @@ import { createContentTestStore } from "../fixtures/content";
 import type { Database } from "../../src/server/db/client";
 import { usersTable } from "../../src/modules/identity/infrastructure/schema";
 import { workbenchRecordsTable } from "../../src/server/workbench/schema";
+import { mediaAssetsTable } from "../../src/modules/media/infrastructure/schema";
 import { workbenchRecords } from "../../src/server/workbench/records";
-import { resolveSiteIdentity } from "../../src/modules/site-settings/domain/identity";
+import {
+  resolveHomeCopy,
+  resolveSiteIdentity,
+} from "../../src/modules/site-settings/domain/identity";
 import {
   readPublicSiteIdentity,
   readPublicSiteFields,
+  readSiteSettingsEditorState,
 } from "../../src/modules/site-settings/server";
 import {
   parsePageSections,
@@ -43,9 +48,12 @@ test("editable personal and site pages preserve sections, interests and locale i
     { title: "Reading", paragraphs: ["A new book."] },
   ];
   try {
-    const [owner] = await db
+    const [owner, other] = await db
       .insert(usersTable)
-      .values({ displayName: "Owner", role: "admin" })
+      .values([
+        { displayName: "Owner", role: "admin" },
+        { displayName: "Other owner" },
+      ])
       .returning();
     await workbenchRecords(db).write(owner.id, "site-settings", 0, {
       revision: 1,
@@ -61,6 +69,17 @@ test("editable personal and site pages preserve sections, interests and locale i
         },
       },
     });
+    const editor = await readSiteSettingsEditorState(owner.id, db);
+    assert.equal(editor.revision, 1);
+    assert.equal(editor.translations["zh-CN"].contact, "private contact");
+    assert.equal(editor.translations.en.contact, undefined);
+    const otherEditor = await readSiteSettingsEditorState(other.id, db);
+    assert.equal(otherEditor.revision, 0);
+    assert.equal(otherEditor.translations["zh-CN"].contact, undefined);
+    assert.equal(
+      editor.translations.en.aboutTitle,
+      otherEditor.translations.en.aboutTitle,
+    );
     const fields = await readPublicSiteFields("zh-CN", db);
     assert.equal(fields.contact, undefined);
     const page = resolvePersonalPage(fields, personal);
@@ -170,7 +189,8 @@ test("site metadata reads only owner settings, isolates locales and reflects a s
       defaults,
     );
     const store = workbenchRecords(db);
-    await store.write(owner.id, "site-settings", 0, {
+    const shareAssetId = `/uploads/${"a".repeat(64)}.png`;
+    const updates = {
       revision: 1,
       translations: {
         "zh-CN": {
@@ -178,15 +198,62 @@ test("site metadata reads only owner settings, isolates locales and reflects a s
           seoTitle: "Exact homepage title",
           seoDescription: "Public summary",
           contact: "private contact",
+          identity: "Profile heading",
+          heroTitle: "Homepage override",
+          heroDescription: "Homepage description",
+          shareAssetId,
+          shareAssetIdAlt: "Notebook cover",
+          github: "https://github.com/example",
+          gitee: "javascript:invalid",
         },
       },
+    };
+    await assert.rejects(store.write(owner.id, "site-settings", 0, updates), {
+      status: 400,
     });
+    await fixture.db.insert(mediaAssetsTable).values({
+      id: shareAssetId,
+      ownerId: owner.id,
+      name: "share.png",
+      mime: "image/png",
+      size: 100,
+      width: 1200,
+      height: 630,
+      archived: true,
+    });
+    await store.write(owner.id, "site-settings", 0, updates);
     const identity = await readPublicSiteIdentity("zh-CN", defaults, db);
     assert.deepEqual(identity, {
       name: "Owner's journal",
       title: "Exact homepage title",
       description: "Public summary",
+      shareImage: { path: shareAssetId, alt: "Notebook cover" },
     });
+    const metadata = pageMetadata(
+      "/",
+      identity.name,
+      identity.description,
+      "zh-CN",
+      ["zh-CN"],
+      identity,
+    );
+    assert.match(JSON.stringify(metadata.openGraph?.images), /Notebook cover/);
+    assert.match(JSON.stringify(metadata.twitter?.images), /Notebook cover/);
+    const home = resolveHomeCopy(await readPublicSiteFields("zh-CN", db));
+    assert.equal(home.heading, "Homepage override");
+    assert.equal(home.description, "Homepage description");
+    assert.equal(
+      home.links.find(({ key }) => key === "github")?.href,
+      "https://github.com/example",
+    );
+    assert.equal(
+      home.links.find(({ key }) => key === "gitee")?.href,
+      "https://gitee.com/adnaan",
+    );
+    assert.equal(
+      resolveHomeCopy(await readPublicSiteFields("en", db)).heading,
+      undefined,
+    );
     assert.equal(JSON.stringify(identity).includes("private contact"), false);
     assert.deepEqual(
       await readPublicSiteIdentity("en", defaults, db),

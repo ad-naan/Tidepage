@@ -38,6 +38,18 @@
   overscroll-behavior: contain;
   padding: 2px 12px 4px 2px;
 }
+@media (prefers-reduced-motion: no-preference) {
+  /* Opacity preserves the scroll host's geometry during entry. */
+  .dialog[open] .inner,
+  .dialog[open]::backdrop {
+    animation: reveal var(--motion-quick) ease-out both;
+  }
+}
+@keyframes reveal {
+  from {
+    opacity: 0;
+  }
+}
 .paper {
   --paper-opacity: 1;
 }

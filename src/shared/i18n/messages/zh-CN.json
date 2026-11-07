@@ -286,7 +286,7 @@
     "pause": "暂停音乐",
     "volume": "音量",
     "queue": "查看播放列表",
-    "import": "导入本地音乐",
+    "import": "试听本地音频",
     "localArtist": "本地音乐 · 仅本次浏览有效",
     "dockOpen": "展开音乐播放器",
     "dockClose": "收起音乐播放器",
@@ -386,6 +386,7 @@
     "empty": "点击书签，收藏想再读一遍的片段。",
     "noNotes": "新的手记还在路上。",
     "reader": {
+      "loadError": "暂时打不开这条手记，再点一次即可重试。",
       "title": "手记 · {date}",
       "open": "阅读 {date} 的手记：{text}",
       "photos": "手记相册",
@@ -490,7 +491,8 @@
     "next": "下一页，仍在尝试。",
     "progress": "完成一段，再开始一段。新的想法会继续留在这里。",
     "drag": "拖动这颗小太阳，再轻轻松手。",
-    "filterLabel": "按作品分类"
+    "filterLabel": "按作品分类",
+    "empty": "这个分类还没有项目。"
   },
   "gallery": {
     "description": "记录沿途的风景与日常。",
@@ -502,22 +504,18 @@
       "nature": "自然",
       "travel": "在路上"
     },
-    "upload": "添加照片",
-    "uploadAria": "添加本地照片",
-    "sizeError": "请选择小于 15 MB 的图片。",
-    "notice": "照片只在本次浏览中展示，不会上传。",
-    "defaultCaption": "刚刚留下的一片光。",
-    "myPhotos": "我的相片",
+    "empty": "这个分类还没有已发布的照片。",
     "count": "{count} 个被收藏的瞬间",
-    "source": "照片管理服务尚未接入",
-    "closeNotice": "关闭提示",
-    "like": "喜欢《{title}》",
-    "unlike": "取消喜欢《{title}》",
     "ending": "把瞬间留下，让生活继续。",
     "previous": "上一张照片",
     "next": "下一张照片",
     "filterLabel": "按照片分类",
-    "added": "照片已放入这一页"
+    "publish": "发布照片",
+    "unpublish": "下架照片",
+    "published": "照片已发布到当前语言的照片廊",
+    "unpublished": "照片已从当前语言的照片廊下架",
+    "publishError": "无法更新照片廊。请保存最新草稿，并检查标题、日期、图片和替代文字。",
+    "publishHelp": "发布和下架作用于当前内容语言。将草稿移入回收站会保留已发布版本。"
   },
   "identity": {
     "welcome": "让好想法相遇",
@@ -1219,6 +1217,62 @@
       "loading": "图片加载中…",
       "local": "站点媒体库。图片上传后可在文章、项目和站点资料中重复使用。"
     },
+    "publicationReview": {
+      "title": "Agent 发布前检查",
+      "description": "检查已保存草稿、相关公开文章、SEO 和 RSS 预览。相关草稿片段会发送到你配置的模型。请审阅建议后自行修改和发布。",
+      "unavailable": "配置支持工具调用的模型后即可运行 Agent 检查。",
+      "run": "运行 Agent 检查",
+      "cancel": "停止检查",
+      "running": "正在检查已保存草稿、网页元数据和订阅预览…",
+      "failed": "Agent 未能完成检查，请重试。",
+      "conflict": "已保存的草稿有变更，请重新打开最新版本再检查。",
+      "revision": "已检查保存版本 {revision}",
+      "evidence": "查看工具证据",
+      "externalSource": "外部参考",
+      "citations": "依据 {ids}",
+      "priority": {
+        "high": "高优先级",
+        "medium": "中优先级",
+        "low": "低优先级"
+      },
+      "tools": {
+        "read_draft": "已保存草稿",
+        "search_articles": "公开文章查询",
+        "check_seo": "SEO 预览",
+        "preview_rss": "RSS 条目预览"
+      },
+      "facts": {
+        "revision": "保存版本",
+        "title": "草稿标题",
+        "slug": "草稿链接别名",
+        "draftIssues": "发布校验指出的字段",
+        "bodyRange": "本次读取的正文字数范围",
+        "query": "查询关键词",
+        "matches": "已发布的匹配数量",
+        "publishedSlug": "已绑定到这篇草稿的链接别名",
+        "matchingSlug": "此链接别名下的公开文章",
+        "seoTitle": "实际页面标题",
+        "seoDescription": "实际搜索描述",
+        "canonical": "规范链接",
+        "indexing": "搜索收录设置",
+        "coverAlt": "封面替代文字",
+        "rssStatus": "订阅条目预计可见状态",
+        "rssTitle": "RSS 标题",
+        "rssDescription": "RSS 描述",
+        "rssDate": "RSS 发布日期",
+        "rssUrl": "RSS 条目链接",
+        "currentFeed": "打开当前 RSS 订阅源",
+        "empty": "空白",
+        "none": "无",
+        "enabled": "已启用",
+        "disabled": "已关闭",
+        "noCover": "使用站点默认分享图",
+        "scheduled": "到达设定的发布时间后可进入订阅源",
+        "onPublish": "发布后可进入订阅源",
+        "incomplete": "草稿存在未通过的发布检查",
+        "externalGuidance": "已配置的 MCP 编辑参考"
+      }
+    },
     "ai": {
       "title": "写作助手",
       "preview": "尚未连接 LLM 服务，创作功能暂不可用。",
@@ -1275,7 +1329,13 @@
       "publishFailed": "发布未成功，请检查内容、日期及图片描述，并确认草稿已保存。"
     },
     "collection": {
-      "description": "按内容语言分别整理字段；公共属性只维护一份。保存为站点工作副本。",
+      "description": "管理已发布内容和工作副本，各语言独立编辑。",
+      "draft": "工作副本",
+      "publishedLanguages": "已发布 · {languages}",
+      "publish": "发布当前语言",
+      "published": "已发布当前语言",
+      "publishHelp": "先保存工作副本。发布后，当前语言的内容会更新到前台。",
+      "publishFailed": "发布失败。请检查必填字段，并保存最新工作副本。",
       "new": "新建",
       "empty": "还没有工作副本。",
       "saveFirst": "请先保存，或使用“放弃修改”关闭。",
@@ -1301,9 +1361,12 @@
       "back": "返回列表"
     },
     "settings": {
-      "description": "站名、SEO、自述和此站点保存后直接更新前台；各语言独立设置。其余资料仍保存为工作副本。",
+      "description": "按语言编辑，保存后更新前台的首页、作者资料、分享图、SEO 和页面正文。",
       "saved": "站点设置已保存",
       "tabsLabel": "设置分组",
+      "save": "保存设置",
+      "draftOnly": "此项保存为工作副本，暂未接入前台展示。",
+      "removeImage": "移除图片",
       "tabs": {
         "profile": "个人资料",
         "basic": "基本信息",
@@ -1387,6 +1450,17 @@
       "apply": "保存裁剪"
     },
     "workspace": "工作区内容",
+    "editorialList": {
+      "description": "在这里编辑、发布或删除内容。",
+      "all": "全部内容",
+      "draft": "草稿",
+      "deleted": "已删除",
+      "empty": "没有符合条件的内容。",
+      "delete": "删除",
+      "deleteTitle": "删除这条内容？",
+      "deleteHelp": "“{name}”会移入回收站。已发布的版本会从前台隐藏，恢复后重新显示。",
+      "actionFailed": "操作失败，请刷新列表后重试。"
+    },
     "crud": {
       "filter": "内容状态",
       "active": "工作副本",
@@ -1402,7 +1476,13 @@
       "mediaHelp": "“{name}”将移出可选媒体列表。已有内容仍可正常显示这张图片，原文件会保留以便恢复。"
     },
     "friend": {
-      "description": "整理各语言的友站工作副本。公开发布与申请审核服务尚未接入。",
+      "description": "按语言编辑友链。站长可将保存的友链发布到前台目录。",
+      "publish": "发布当前语言",
+      "unpublish": "下架当前语言",
+      "published": "友链已发布",
+      "unpublished": "友链已下架",
+      "publishHelp": "先保存工作副本再发布。若要从前台移除友链，请先下架，再将工作副本移入回收站。",
+      "publishError": "无法更新友链目录。请检查网址并保存最新工作副本。",
       "name": "站点名称",
       "summary": "一句话介绍",
       "url": "站点地址",

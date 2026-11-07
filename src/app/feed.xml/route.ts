@@ -1,22 +1,14 @@
-import { getArticles } from "@/modules/content/server";
+import {
+  getArticles,
+  articleFeedItem,
+  escapeXml,
+  renderArticleFeedItem,
+} from "@/modules/content/server";
 import { localizedUrl } from "@/server/seo/metadata";
 import { getPublicSiteIdentity } from "@/modules/site-settings/server";
 import { defineRoute } from "@/server/http/route";
 import { localeQuerySchema } from "@/shared/i18n/schema";
 export const dynamic = "force-dynamic";
-function escapeXml(value: string) {
-  return value.replace(
-    /[<>&"']/g,
-    (c) =>
-      ({
-        "<": "&lt;",
-        ">": "&gt;",
-        "&": "&amp;",
-        '"': "&quot;",
-        "'": "&apos;",
-      })[c]!,
-  );
-}
 export const GET = defineRoute(async (request) => {
   const locale = localeQuerySchema.parse(
     new URL(request.url).searchParams.get("locale") ?? undefined,
@@ -27,10 +19,14 @@ export const GET = defineRoute(async (request) => {
   ]);
   const origin = escapeXml(localizedUrl(locale, "/"));
   const items = articles
-    .map((article) => {
-      const url = escapeXml(localizedUrl(locale, `/articles/${article.slug}`));
-      return `<item><title>${escapeXml(article.title)}</title><link>${url}</link><guid>${url}</guid><description>${escapeXml(article.excerpt)}</description><pubDate>${new Date(article.date).toUTCString()}</pubDate></item>`;
-    })
+    .map((article) =>
+      renderArticleFeedItem(
+        articleFeedItem(
+          article,
+          localizedUrl(locale, `/articles/${article.slug}`),
+        ),
+      ),
+    )
     .join("");
   const xml = `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${escapeXml(identity.title)}</title><link>${origin}</link><description>${escapeXml(identity.description)}</description><language>${locale}</language>${items}</channel></rss>`;
   return new Response(xml, {

@@ -1,20 +1,28 @@
 import { getLocale } from "next-intl/server";
 import { FriendsView } from "@/modules/friends/ui/FriendsView";
-import { getPublicSiteIdentity } from "@/modules/site-settings/server";
+import { listPublicFriends } from "@/modules/friends/server";
+import {
+  getPublicSiteAvatar,
+  getPublicSiteIdentity,
+} from "@/modules/site-settings/server";
 import { getPageMetadata, absoluteUrl } from "@/server/seo/metadata";
-import { profile } from "@/shared/config/profile";
 
 export const generateMetadata = () => getPageMetadata("/friends");
 export default async function Page() {
   const locale = await getLocale();
-  const identity = await getPublicSiteIdentity(locale);
+  const [identity, avatar, friends] = await Promise.all([
+    getPublicSiteIdentity(locale),
+    getPublicSiteAvatar(locale),
+    listPublicFriends(locale),
+  ]);
   return (
     <FriendsView
+      friends={friends}
       siteInfo={{
         name: identity.name,
         description: identity.description,
         url: absoluteUrl("/"),
-        avatar: absoluteUrl(profile.avatar),
+        avatar: absoluteUrl(avatar),
       }}
     />
   );

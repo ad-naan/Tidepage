@@ -1,9 +1,7 @@
 "use client";
-import { useEffect, useRef, type ReactNode } from "react";
-import { motion } from "motion/react";
+import { useLayoutEffect, useRef, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
-import { spring } from "@/shared/lib/motion";
 import { IconButton } from "@/shared/ui/button/Button";
 import { PencilFrame } from "@/shared/ui/drawing/CoastalMarks";
 import styles from "./Dialog.module.css";
@@ -24,36 +22,34 @@ export function Dialog({
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const t = useTranslations("ui.dialog");
-  useEffect(() => {
+  useLayoutEffect(() => {
     const dialog = ref.current;
-    const previous = document.activeElement as HTMLElement;
-    dialog?.showModal();
+    if (!dialog) return;
+    const previous = document.activeElement;
+    dialog.showModal();
     const before = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
-      dialog?.close();
+      dialog.close();
       document.body.style.overflow = before;
-      previous?.focus();
+      if (previous instanceof HTMLElement && previous.isConnected)
+        previous.focus({ preventScroll: true });
     };
   }, []);
   return (
     <dialog
       ref={ref}
       className={`${styles.dialog} ${wide ? styles.wide : ""} ${layout === "split" ? styles.split : ""} ${size === "compact" ? styles.compact : ""}`}
-      onCancel={onClose}
+      onCancel={(event) => {
+        event.preventDefault();
+        onClose();
+      }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
       aria-label={title}
     >
-      <motion.div
-        className={styles.inner}
-        // Transforms here expand the scroll host during entry and can leave a
-        // custom rail measured against that temporary overflow. Fade in place.
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={spring}
-      >
+      <div className={styles.inner}>
         <PencilFrame className={styles.paper} />
         <div className={styles.heading}>
           <span>{title}</span>
@@ -68,7 +64,7 @@ export function Dialog({
         <div className={styles.content} data-custom-scroll={t("region")}>
           {children}
         </div>
-      </motion.div>
+      </div>
     </dialog>
   );
 }

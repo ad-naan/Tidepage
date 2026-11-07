@@ -7,6 +7,7 @@ import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { Input } from "@/shared/ui/field/Input";
 import { UploadField } from "@/shared/ui/field/UploadField";
 import { Field } from "@/shared/ui/field/Field";
+import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
 import { PencilFrame } from "@/shared/ui/drawing/CoastalMarks";
 import type { ImageAsset } from "@/modules/media/domain/assets";
 import { imageUploader, listAssets, archiveAsset } from "./media-client";
@@ -22,6 +23,8 @@ export function MediaPicker({
 }) {
   const t = useTranslations("admin.media");
   const [assets, setAssets] = useState<ImageAsset[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [listError, setListError] = useState(false);
   const [alt, setAlt] = useState("");
   const [progress, setProgress] = useState<number | null>(null);
   const [error, setError] = useState("");
@@ -30,16 +33,32 @@ export function MediaPicker({
   const [view, setView] = useState("active");
   const [cropping, setCropping] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<ImageAsset | null>(null);
-  const refresh = () =>
-    listAssets(management)
-      .then(setAssets)
-      .catch(() => setError(t("loadError")));
+  async function refresh(signal?: AbortSignal) {
+    try {
+      const next = await listAssets(management, signal);
+      if (!signal?.aborted) {
+        setAssets(next);
+        setListError(false);
+      }
+    } catch {
+      if (!signal?.aborted) setListError(true);
+    } finally {
+      if (!signal?.aborted) setLoading(false);
+    }
+  }
   useEffect(() => {
-    void refresh();
-    return () => controller.current?.abort();
-  }, []);
+    const task = new AbortController();
+    void refresh(task.signal);
+    return () => {
+      task.abort();
+      controller.current?.abort();
+    };
+  }, [management]);
+  const visibleAssets = assets.filter(
+    (asset) => !!asset.archived === (view === "trash"),
+  );
   return (
-    <div>
+    <div className={onSelect ? styles.picker : undefined}>
       <div className={styles.upload}>
         <Field id="media-file" label={t("upload")} description={t("help")}>
           <UploadField
@@ -58,7 +77,7 @@ export function MediaPicker({
                   signal: task.signal,
                   onProgress: setProgress,
                 });
-                await refresh();
+                await refresh(task.signal);
               } catch {
                 if (!task.signal.aborted) setError(t("uploadError"));
               } finally {
@@ -102,58 +121,66 @@ export function MediaPicker({
           ]}
         />
       )}
-      <div className={styles.mediaGrid}>
-        {assets
-          .filter((asset) =>
-            view === "trash" ? !!asset.archived : !asset.archived,
-          )
-          .map((asset) => (
-            <div key={asset.id} className={styles.mediaItem}>
-              <PencilFrame />
-              <AssetImage id={asset.id} alt={asset.name} />
-              <p>{asset.name}</p>
-              <small>
-                {asset.width} × {asset.height} ·{" "}
-                {(asset.size / 1024).toFixed(0)} KB
-              </small>
-              {onSelect && (
-                <Button
-                  variant="quiet"
-                  size="sm"
-                  disabled={!alt.trim()}
-                  onClick={() => onSelect(asset, alt.trim())}
-                >
-                  {t("insert")}
-                </Button>
-              )}
-              {management && (
-                <div className={styles.actions}>
-                  {asset.archived ? (
-                    <Button
-                      size="sm"
-                      onClick={async () => {
-                        await archiveAsset(asset.id, false);
-                        await refresh();
-                      }}
-                    >
-                      {admin("crud.restore")}
-                    </Button>
-                  ) : (
-                    <>
-                      <Button size="sm" onClick={() => setCropping(asset.id)}>
-                        {admin("image.crop")}
+      <div className={styles.results} aria-busy={loading}>
+        {loading && <LoadingSkeleton variant="cards" />}
+        {listError && (
+          <p role="alert" className={styles.error}>
+            {t("loadError")}
+          </p>
+        )}
+        {!loading && !listError && !visibleAssets.length && (
+          <p className={styles.empty}>{t("empty")}</p>
+        )}
+        {!!visibleAssets.length && (
+          <div className={styles.mediaGrid}>
+            {visibleAssets.map((asset) => (
+              <div key={asset.id} className={styles.mediaItem}>
+                <PencilFrame />
+                <AssetImage id={asset.id} alt={asset.name} />
+                <p>{asset.name}</p>
+                <small>
+                  {asset.width} × {asset.height} ·{" "}
+                  {(asset.size / 1024).toFixed(0)} KB
+                </small>
+                {onSelect && (
+                  <Button
+                    variant="quiet"
+                    size="sm"
+                    disabled={!alt.trim()}
+                    onClick={() => onSelect(asset, alt.trim())}
+                  >
+                    {t("insert")}
+                  </Button>
+                )}
+                {management && (
+                  <div className={styles.actions}>
+                    {asset.archived ? (
+                      <Button
+                        size="sm"
+                        onClick={async () => {
+                          await archiveAsset(asset.id, false);
+                          await refresh();
+                        }}
+                      >
+                        {admin("crud.restore")}
                       </Button>
-                      <Button size="sm" onClick={() => setDeleting(asset)}>
-                        {admin("crud.delete")}
-                      </Button>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-          ))}
+                    ) : (
+                      <>
+                        <Button size="sm" onClick={() => setCropping(asset.id)}>
+                          {admin("image.crop")}
+                        </Button>
+                        <Button size="sm" onClick={() => setDeleting(asset)}>
+                          {admin("crud.delete")}
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-      {!assets.length && <p className={styles.empty}>{t("empty")}</p>}
       {cropping && (
         <ImageCropDialog
           assetId={cropping}

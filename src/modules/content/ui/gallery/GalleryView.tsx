@@ -1,6 +1,5 @@
 "use client";
 import { ProgressiveList } from "@/shared/ui/loading/ProgressiveList";
-import { FileInput } from "@/shared/ui/field/Input";
 import { Button } from "@/shared/ui/button/Button";
 import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 import {
@@ -8,48 +7,25 @@ import {
   PencilLine,
   CoastGlyph,
 } from "@/shared/ui/drawing/CoastalMarks";
-import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import { ContentHeading } from "@/modules/content/ui/layout/ContentHeading";
 import styles from "./GalleryView.module.css";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Camera,
-  Heart,
-  MapPin,
-  Upload,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Camera, MapPin } from "lucide-react";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
-type PhotoCategory = "daily" | "nature" | "travel";
-type Photo = {
-  id: string;
-  src: string;
-  title: string;
-  caption: string;
-  place: string;
-  category: PhotoCategory;
-  ratio: string;
-  position?: string;
-};
-const galleryTabs = ["all", "daily", "nature", "travel"] as const;
+import {
+  galleryCategories,
+  type GalleryPhoto,
+} from "@/modules/content/domain/gallery";
+const galleryTabs = ["all", ...galleryCategories] as const;
 type GalleryTab = (typeof galleryTabs)[number];
-export function GalleryView() {
+export function GalleryView({ photos }: { photos: GalleryPhoto[] }) {
   const t = useTranslations("gallery");
-  const [displayed, setItems] = useState<Photo[]>([]);
   const [filter, setFilter] = useState<GalleryTab>("all");
-  const [selected, setSelected] = useState<Photo | null>(null);
-  const [liked, setLiked] = useState<string[]>([]);
-  const { notify } = useNotice();
-  const localUrls = useRef<string[]>([]);
-  useEffect(
-    () => () => localUrls.current.forEach((u) => URL.revokeObjectURL(u)),
-    [],
-  );
-  const filtered = displayed.filter(
+  const [selected, setSelected] = useState<GalleryPhoto | null>(null);
+  const filtered = photos.filter(
     (p) => filter === "all" || p.category === filter,
   );
   function next(n: number) {
@@ -74,50 +50,6 @@ export function GalleryView() {
           label={t("filterLabel")}
           onChange={setFilter}
         />
-        <label className="gallery-upload">
-          <Upload size={13} />
-          <span>{t("upload")}</span>
-          <FileInput
-            accept="image/jpeg,image/png,image/webp,image/avif"
-            aria-label={t("uploadAria")}
-            multiple
-            onChange={(e) => {
-              const files = Array.from(e.target.files || []);
-              const newPhotos: Photo[] = [];
-              for (const file of files) {
-                if (file.size > 15 * 1024 * 1024) {
-                  notify({
-                    title: t("sizeError"),
-                    tone: "error",
-                    duration: 6500,
-                  });
-                  continue;
-                }
-                const src = URL.createObjectURL(file);
-                localUrls.current.push(src);
-                newPhotos.push({
-                  id: src,
-                  src,
-                  title: file.name.replace(/\.[^.]+$/, ""),
-                  caption: t("defaultCaption"),
-                  place: t("myPhotos"),
-                  category: "daily",
-                  ratio: "3/4",
-                });
-              }
-              setItems((v) => [...newPhotos, ...v]);
-              setFilter("all");
-              if (newPhotos.length)
-                notify({
-                  title: t("added"),
-                  detail: t("notice"),
-                  tone: "success",
-                  duration: 6500,
-                });
-              e.target.value = "";
-            }}
-          />
-        </label>
         <PencilLine className="toolbar-shore" />
       </div>
       <div className="gallery-meta">
@@ -125,8 +57,8 @@ export function GalleryView() {
           <Camera size={13} />
           {t("count", { count: filtered.length })}
         </span>
-        <span>{t("source")}</span>
       </div>
+      {!filtered.length && <p className="empty-state">{t("empty")}</p>}
       <ProgressiveList
         key={filter}
         items={filtered}
@@ -143,16 +75,13 @@ export function GalleryView() {
             <Button
               className="photo-button"
               onClick={() => setSelected(photo)}
-              style={{ aspectRatio: photo.ratio }}
+              style={{ aspectRatio: photo.width / photo.height }}
             >
               <img
                 src={photo.src}
-                alt={photo.title}
+                alt={photo.alt}
                 loading={i < 3 ? "eager" : "lazy"}
-                style={{
-                  objectPosition: photo.position,
-                  transform: photo.position ? "scale(1.5)" : undefined,
-                }}
+                decoding="async"
               />
               <span className="photo-overlay">
                 <MapPin size={12} />
@@ -166,26 +95,6 @@ export function GalleryView() {
                 <h3>{photo.title}</h3>
                 <p>{photo.place}</p>
               </div>
-              <Button
-                className={liked.includes(photo.id) ? "liked" : ""}
-                aria-label={
-                  liked.includes(photo.id)
-                    ? t("unlike", { title: photo.title })
-                    : t("like", { title: photo.title })
-                }
-                onClick={() =>
-                  setLiked((v) =>
-                    v.includes(photo.id)
-                      ? v.filter((id) => id !== photo.id)
-                      : [...v, photo.id],
-                  )
-                }
-              >
-                <Heart
-                  size={14}
-                  fill={liked.includes(photo.id) ? "currentColor" : "none"}
-                />
-              </Button>
             </figcaption>
           </motion.figure>
         )}
@@ -197,7 +106,7 @@ export function GalleryView() {
       {selected && (
         <Dialog wide title={selected.title} onClose={() => setSelected(null)}>
           <div className="photo-lightbox">
-            <img src={selected.src} alt={selected.title} />
+            <img src={selected.src} alt={selected.alt} />
             <div className="lightbox-caption">
               <p>{selected.caption}</p>
               <span>

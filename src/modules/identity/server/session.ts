@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { createHash, randomBytes } from "node:crypto";
 import { cookies } from "next/headers";
 import { and, eq, gt } from "drizzle-orm";
@@ -16,26 +17,28 @@ const sessionCookieName = "adnaan_session";
 const tokenDigest = (value: string) =>
   createHash("sha256").update(value).digest("hex");
 
-export async function getCurrentPrincipal(): Promise<Principal | null> {
-  const token = (await cookies()).get(sessionCookieName)?.value;
-  if (!token || !/^[a-zA-Z0-9_-]{43,128}$/.test(token)) return null;
-  const [user] = await getDb()
-    .select({
-      id: usersTable.id,
-      displayName: usersTable.displayName,
-      role: usersTable.role,
-    })
-    .from(sessionsTable)
-    .innerJoin(usersTable, eq(sessionsTable.userId, usersTable.id))
-    .where(
-      and(
-        eq(sessionsTable.tokenHash, tokenDigest(token)),
-        gt(sessionsTable.expiresAt, new Date()),
-      ),
-    )
-    .limit(1);
-  return user ?? null;
-}
+export const getCurrentPrincipal = cache(
+  async (): Promise<Principal | null> => {
+    const token = (await cookies()).get(sessionCookieName)?.value;
+    if (!token || !/^[a-zA-Z0-9_-]{43,128}$/.test(token)) return null;
+    const [user] = await getDb()
+      .select({
+        id: usersTable.id,
+        displayName: usersTable.displayName,
+        role: usersTable.role,
+      })
+      .from(sessionsTable)
+      .innerJoin(usersTable, eq(sessionsTable.userId, usersTable.id))
+      .where(
+        and(
+          eq(sessionsTable.tokenHash, tokenDigest(token)),
+          gt(sessionsTable.expiresAt, new Date()),
+        ),
+      )
+      .limit(1);
+    return user ?? null;
+  },
+);
 
 /** 为任意角色的用户签发会话：令牌哈希入库，原始令牌只进 HttpOnly cookie。 */
 export async function issueSession(userId: string) {

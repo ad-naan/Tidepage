@@ -1,8 +1,8 @@
 import "server-only";
 import { getEnv } from "@/server/config/env";
-import { AppError, tooManyRequestsError } from "@/server/http/errors";
 import { readEventStream } from "@/shared/http/event-stream";
 import { z } from "zod";
+import { acquireModelSlot, requestModel } from "./provider";
 import {
   metadataSuggestionSchema,
   siteSuggestionSchema,
@@ -41,36 +41,17 @@ export function generateEditorialText(
   );
 }
 
-let active = 0;
 async function* generateModelText(
   instruction: string,
   input: unknown,
   signal: AbortSignal,
   maxTokens: number,
 ) {
-  const env = getEnv();
-  if (!env.AI_CHAT_COMPLETIONS_URL || !env.AI_MODEL)
-    throw new AppError(
-      "AI_UNAVAILABLE",
-      "The writing provider is not configured",
-      503,
-    );
-  if (active >= 4) throw tooManyRequestsError(5);
-  active++;
+  const release = acquireModelSlot();
   try {
     const deadline = AbortSignal.any([signal, AbortSignal.timeout(60_000)]);
-    const response = await fetch(env.AI_CHAT_COMPLETIONS_URL, {
-      method: "POST",
-      signal: deadline,
-      cache: "no-store",
-      redirect: "error",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "text/event-stream",
-        ...(env.AI_API_KEY && { Authorization: `Bearer ${env.AI_API_KEY}` }),
-      },
-      body: JSON.stringify({
-        model: env.AI_MODEL,
+    const response = await requestModel(
+      {
         stream: true,
         max_completion_tokens: maxTokens,
         messages: [
@@ -80,15 +61,13 @@ async function* generateModelText(
           },
           { role: "user", content: JSON.stringify(input) },
         ],
-      }),
-    });
-    if (!response.ok || !response.body) {
-      await response.body?.cancel();
-      throw new Error("Provider request failed");
-    }
+      },
+      deadline,
+      "text/event-stream",
+    );
     let length = 0;
     let finished = false;
-    for await (const frame of readEventStream(response.body, deadline)) {
+    for await (const frame of readEventStream(response.body!, deadline)) {
       if (frame === "[DONE]") break;
       const choice = JSON.parse(frame).choices?.[0];
       if (!choice) continue;
@@ -100,7 +79,7 @@ async function* generateModelText(
     }
     if (!finished || !length) throw new Error("Provider response incomplete");
   } finally {
-    active--;
+    release();
   }
 }
 

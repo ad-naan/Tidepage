@@ -37,6 +37,7 @@ export type ArticleTranslation = z.infer<typeof articleTranslationSchema>;
 export const articleDraftSchema = z.object({
   schemaVersion: z.literal(1),
   deletedAt: z.iso.datetime().optional(),
+  trashedLocales: z.array(z.enum(locales)).optional(),
   id: z.string().min(1),
   revision: z.number().int().min(0),
   author: z.string().max(100),

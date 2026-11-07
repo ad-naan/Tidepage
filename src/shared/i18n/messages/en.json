@@ -286,7 +286,7 @@
     "pause": "Pause music",
     "volume": "Volume",
     "queue": "View the playlist",
-    "import": "Import local music",
+    "import": "Preview a local audio file",
     "localArtist": "Local file · this session only",
     "dockOpen": "Expand the music player",
     "dockClose": "Fold the music player",
@@ -386,6 +386,7 @@
     "empty": "Tap a bookmark to keep a moment you want to revisit.",
     "noNotes": "The next note is on its way.",
     "reader": {
+      "loadError": "Could not open this note. Select it again to retry.",
       "title": "Note · {date}",
       "open": "Read the note from {date}: {text}",
       "photos": "Note photos",
@@ -490,7 +491,8 @@
     "next": "The next page is still taking shape.",
     "progress": "Finish one experiment, then begin another.",
     "drag": "Drag the little sun, then let go.",
-    "filterLabel": "Filter projects"
+    "filterLabel": "Filter projects",
+    "empty": "No projects in this category yet."
   },
   "gallery": {
     "description": "Places and small moments worth keeping.",
@@ -502,22 +504,18 @@
       "nature": "Nature",
       "travel": "On the road"
     },
-    "upload": "Add photos",
-    "uploadAria": "Add local photos",
-    "sizeError": "Please choose images smaller than 15 MB.",
-    "notice": "Photos are shown for this session only and never uploaded.",
-    "defaultCaption": "A little light, just captured.",
-    "myPhotos": "My photos",
+    "empty": "No published photos in this category yet.",
     "count": "{count} kept moments",
-    "source": "Photo management is not connected yet",
-    "closeNotice": "Dismiss the notice",
-    "like": "Like “{title}”",
-    "unlike": "Unlike “{title}”",
     "ending": "Keep the moment, keep living.",
     "previous": "Previous photo",
     "next": "Next photo",
     "filterLabel": "Filter photographs",
-    "added": "Photos added to this page"
+    "publish": "Publish photo",
+    "unpublish": "Unpublish photo",
+    "published": "Photo published in this language",
+    "unpublished": "Photo removed from this language's gallery",
+    "publishError": "Could not update the gallery. Save the latest revision and check its title, date, image and alt text.",
+    "publishHelp": "Publish or unpublish the selected language. Moving a draft to the trash keeps its published version."
   },
   "identity": {
     "welcome": "A place for good ideas",
@@ -1219,6 +1217,62 @@
       "loading": "Loading image…",
       "local": "Your site media library. Reuse uploaded images in articles, projects and site settings."
     },
+    "publicationReview": {
+      "title": "Agent publication review",
+      "description": "The agent checks the saved draft, related published articles, SEO and the RSS preview. Relevant draft excerpts are sent to your configured model. Review suggestions before editing or publishing.",
+      "unavailable": "Connect a model with tool calling to run the agent review.",
+      "run": "Run agent review",
+      "cancel": "Stop review",
+      "running": "Checking the saved draft, site metadata and feed…",
+      "failed": "The agent could not finish the checks. Try again.",
+      "conflict": "The saved draft changed. Reopen the latest revision and review it again.",
+      "revision": "Reviewed saved revision {revision}",
+      "evidence": "Evidence from tools",
+      "externalSource": "External reference",
+      "citations": "Evidence {ids}",
+      "priority": {
+        "high": "High priority",
+        "medium": "Medium priority",
+        "low": "Low priority"
+      },
+      "tools": {
+        "read_draft": "Saved draft",
+        "search_articles": "Published article search",
+        "check_seo": "SEO preview",
+        "preview_rss": "RSS item preview"
+      },
+      "facts": {
+        "revision": "Saved revision",
+        "title": "Draft title",
+        "slug": "Draft slug",
+        "draftIssues": "Fields flagged by the publishing validator",
+        "bodyRange": "Body character range reviewed",
+        "query": "Search term",
+        "matches": "Published matches",
+        "publishedSlug": "Slug already bound to this draft",
+        "matchingSlug": "Public article at this slug",
+        "seoTitle": "Effective page title",
+        "seoDescription": "Effective search description",
+        "canonical": "Canonical URL",
+        "indexing": "Search indexing",
+        "coverAlt": "Cover alternative text",
+        "rssStatus": "Projected feed visibility",
+        "rssTitle": "RSS title",
+        "rssDescription": "RSS description",
+        "rssDate": "RSS publication date",
+        "rssUrl": "RSS item URL",
+        "currentFeed": "Open the current RSS feed",
+        "empty": "Empty",
+        "none": "None",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "noCover": "Default share image",
+        "scheduled": "Eligible after the scheduled publication time",
+        "onPublish": "Eligible after publication",
+        "incomplete": "Draft fails a publication check",
+        "externalGuidance": "Configured MCP editorial reference"
+      }
+    },
     "ai": {
       "title": "Writing assistant",
       "preview": "The LLM service is not connected. AI writing is unavailable.",
@@ -1275,7 +1329,13 @@
       "publishFailed": "Could not publish. Check the text, date and photo descriptions, and save the draft first."
     },
     "collection": {
-      "description": "Edit translations separately and keep shared properties together. Saved as a site working copy.",
+      "description": "Manage published entries and working copies. Edit each language separately.",
+      "draft": "Working copy",
+      "publishedLanguages": "Published in {languages}",
+      "publish": "Publish this language",
+      "published": "Published in the selected language",
+      "publishHelp": "Save your working copy first. Publishing updates the selected language on the public site.",
+      "publishFailed": "Could not publish. Check the required fields and save the latest working copy.",
       "new": "New",
       "empty": "No working copies yet.",
       "saveFirst": "Save first, or choose Discard to close.",
@@ -1301,9 +1361,12 @@
       "back": "Back to list"
     },
     "settings": {
-      "description": "Site identity, SEO, personal and site pages update publicly after saving. Languages are edited separately. Other profile fields remain working copies.",
+      "description": "Save to update the public homepage, profile, share image, SEO and page content in the selected language.",
       "saved": "Site settings saved",
       "tabsLabel": "Settings groups",
+      "save": "Save settings",
+      "draftOnly": "Saved as a working copy. This field is not displayed on the public site.",
+      "removeImage": "Remove image",
       "tabs": {
         "profile": "Profile",
         "basic": "Basics",
@@ -1387,6 +1450,17 @@
       "apply": "Save crop"
     },
     "workspace": "Workspace content",
+    "editorialList": {
+      "description": "Edit, publish, or delete entries from this list.",
+      "all": "All content",
+      "draft": "Draft",
+      "deleted": "In trash",
+      "empty": "No matching entries.",
+      "delete": "Delete",
+      "deleteTitle": "Delete this entry?",
+      "deleteHelp": "“{name}” will move to the trash. Published versions will be hidden until you restore the entry.",
+      "actionFailed": "Could not update this entry. Refresh the list and try again."
+    },
     "crud": {
       "filter": "Record status",
       "active": "Working copies",
@@ -1402,7 +1476,13 @@
       "mediaHelp": "“{name}” will move out of the selectable library. Existing references will continue to load it; the original file is retained for restoration."
     },
     "friend": {
-      "description": "Manage multilingual friend-site working copies. Publishing and application review are not connected.",
+      "description": "Edit friend links by language. The site owner can publish them to the directory.",
+      "publish": "Publish this language",
+      "unpublish": "Unpublish this language",
+      "published": "Friend link published",
+      "unpublished": "Friend link unpublished",
+      "publishHelp": "Save the working copy before publishing. Unpublish a link before moving its working copy to the trash if you want to remove it from the directory.",
+      "publishError": "Could not update the directory. Check the link and save the latest working copy.",
       "name": "Site name",
       "summary": "Introduction",
       "url": "Site URL",

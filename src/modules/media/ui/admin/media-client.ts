@@ -9,10 +9,13 @@ import {
 } from "@/modules/media/domain/assets";
 export async function listAssets(
   includeArchived = false,
+  signal?: AbortSignal,
 ): Promise<ImageAsset[]> {
   return assetSchema
     .array()
-    .parse(await apiGet(`/api/v1/media?archived=${includeArchived}`));
+    .parse(
+      await apiGet(`/api/v1/media?archived=${includeArchived}`, { signal }),
+    );
 }
 export const imageUploader: ImageUploader = {
   async upload(file, { signal, onProgress }) {

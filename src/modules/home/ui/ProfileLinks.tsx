@@ -2,16 +2,16 @@
 import { ExternalLink } from "@/shared/ui/link/Anchor";
 import { Github, GitBranch, Sparkles, ArrowUpRight } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { profileLinks } from "@/shared/config/profile";
+import type { HomeCopy } from "@/modules/site-settings/domain/identity";
 import { HanddrawnMark } from "@/shared/ui/drawing/HanddrawnMark";
 import styles from "./ProfileLinks.module.css";
 
 const icons = { github: Github, gitee: GitBranch, spark: Sparkles };
-export function ProfileLinks() {
+export function ProfileLinks({ links }: Pick<HomeCopy, "links">) {
   const t = useTranslations("home.social");
   return (
     <nav className={styles.links} aria-label={t("label")}>
-      {profileLinks.map((item) => {
+      {links.map((item) => {
         const Icon = icons[item.key];
         return (
           <ExternalLink

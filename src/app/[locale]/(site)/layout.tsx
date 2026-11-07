@@ -4,6 +4,7 @@ import { CustomScrollbars } from "@/shared/ui/scroll-area/CustomScrollbars";
 import { IdentityProvider } from "@/modules/identity/ui/IdentityProvider";
 import { ReadingArticleProvider } from "@/modules/content/ui/articles/ReadingArticleContext";
 import { dateKey } from "@/shared/lib/date-time";
+import { getPublicSiteAvatar } from "@/modules/site-settings/server";
 import {
   getCurrentPrincipal,
   listConfiguredOAuthProviders,
@@ -22,19 +23,22 @@ export default async function SiteLayout({
   children: React.ReactNode;
 }) {
   const locale = await getLocale();
-  const [articles, note, projects, principal, providers] = await Promise.all([
-    getFeaturedArticles(locale),
-    getLatestNote(locale),
-    getProjectPreviews(locale),
-    getCurrentPrincipal(),
-    listConfiguredOAuthProviders(),
-  ]);
+  const [articles, note, projects, principal, providers, avatar] =
+    await Promise.all([
+      getFeaturedArticles(locale),
+      getLatestNote(locale),
+      getProjectPreviews(locale),
+      getCurrentPrincipal(),
+      listConfiguredOAuthProviders(),
+      getPublicSiteAvatar(locale),
+    ]);
   return (
     <IdentityProvider principal={principal} providers={providers}>
       <ReadingArticleProvider>
         <SiteShell
           articles={articles.items}
           navigation={{ note, projects }}
+          avatar={avatar}
           year={dateKey(new Date()).slice(0, 4)}
         >
           {children}

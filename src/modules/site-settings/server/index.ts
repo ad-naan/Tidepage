@@ -4,10 +4,17 @@ import { and, desc, eq } from "drizzle-orm";
 import { getDb, type Database } from "@/server/db/client";
 import { getCatalog } from "@/server/i18n/messages";
 import { workbenchRecordsTable } from "@/server/workbench/schema";
+import { workbenchRecords } from "@/server/workbench/records";
 import { usersTable } from "@/modules/identity/server/schema";
 import { locales, type Locale } from "@/shared/i18n/config";
-import { settingsDraftSchema } from "../domain/models";
-import { resolveSiteIdentity, type SiteIdentity } from "../domain/identity";
+import { profile } from "@/shared/config/profile";
+import { isUploadedAssetId } from "@/shared/contracts/asset-path";
+import { settingsDraftSchema, type SettingsDraft } from "../domain/models";
+import {
+  resolveHomeCopy,
+  resolveSiteIdentity,
+  type SiteIdentity,
+} from "../domain/identity";
 import { resolvePersonalPage, resolveSitePage } from "../domain/pages";
 
 export async function readPublicSiteFields(
@@ -40,6 +47,16 @@ export async function readPublicSiteFields(
           "seoTitle",
           "siteDescription",
           "seoDescription",
+          "shareAssetId",
+          "shareAssetIdAlt",
+          "avatarAssetId",
+          "name",
+          "identity",
+          "intro",
+          "github",
+          "gitee",
+          "heroTitle",
+          "heroDescription",
           "aboutTitle",
           "aboutIntro",
           "aboutIdentity",
@@ -68,6 +85,17 @@ const getPublicSiteFields = cache((locale: Locale) =>
   readPublicSiteFields(locale),
 );
 
+export const getPublicHomeCopy = cache(async (locale: Locale) =>
+  resolveHomeCopy(await getPublicSiteFields(locale)),
+);
+
+export const getPublicSiteAvatar = cache(async (locale: Locale) => {
+  const { avatarAssetId } = await getPublicSiteFields(locale);
+  return avatarAssetId && isUploadedAssetId(avatarAssetId)
+    ? avatarAssetId
+    : profile.avatar;
+});
+
 // Request-local memoization only: saving settings is visible on the next request.
 export const getPublicSiteIdentity = cache(async (locale: Locale) => {
   const { site } = await getCatalog(locale);
@@ -94,7 +122,7 @@ export const getSitePage = cache(async (locale: Locale) => {
   return resolveSitePage(fields, catalog.siteAbout.content);
 });
 
-export async function getPageEditorDefaults() {
+async function getPageEditorDefaults() {
   return Object.fromEntries(
     await Promise.all(
       locales.map(async (locale) => {
@@ -124,4 +152,24 @@ export async function getPageEditorDefaults() {
       }),
     ),
   );
+}
+
+export async function readSiteSettingsEditorState(
+  ownerId: string,
+  db: Database = getDb(),
+): Promise<SettingsDraft> {
+  const [defaults, record] = await Promise.all([
+    getPageEditorDefaults(),
+    workbenchRecords(db).read(ownerId, "site-settings"),
+  ]);
+  const stored = record.value ?? { revision: 0, translations: {} };
+  return {
+    revision: stored.revision,
+    translations: Object.fromEntries(
+      locales.map((locale) => [
+        locale,
+        { ...defaults[locale], ...stored.translations[locale] },
+      ]),
+    ),
+  };
 }

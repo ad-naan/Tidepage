@@ -5,15 +5,14 @@ import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 import {
   PencilFrame,
   PencilLine,
-  SketchLabel,
   CoastGlyph,
+  SketchLabel,
 } from "@/shared/ui/drawing/CoastalMarks";
 import { ContentHeading } from "@/modules/content/ui/layout/ContentHeading";
 import styles from "./ProjectsView.module.css";
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { softSpring } from "@/shared/lib/motion";
 import { ArrowUpRight } from "lucide-react";
 import type { Project } from "@/modules/content/domain/models";
 import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
@@ -26,6 +25,11 @@ export function ProjectsView({ projects }: { projects: Project[] }) {
   const t = useTranslations("projects");
   const [category, setCategory] = useState("all");
   const [selected, setSelected] = useState<Project | null>(null);
+  const visible = projects.filter(
+    (p) => category === "all" || p.category === category,
+  );
+  const order = new Map(projects.map(({ id }, index) => [id, index + 1]));
+  const categories = ["all", "product", "open-source", "experiment"] as const;
   return (
     <div className={`inner-page ${styles.projects}`}>
       <ContentHeading
@@ -33,12 +37,10 @@ export function ProjectsView({ projects }: { projects: Project[] }) {
         title={t("title")}
         description={t("description")}
       />
-      <div className="room-toolbar">
+      <div className={styles.toolbar}>
         <FilterTabs
           value={category}
-          options={(
-            ["all", "product", "open-source", "experiment"] as const
-          ).map((value) => ({
+          options={categories.map((value) => ({
             value,
             label: t(value),
             count: projects.filter(
@@ -48,82 +50,93 @@ export function ProjectsView({ projects }: { projects: Project[] }) {
           label={t("filterLabel")}
           onChange={setCategory}
         />
-        <PencilLine className="toolbar-shore" />
       </div>
       <ProgressiveList
         key={category}
-        items={projects.filter(
-          (p) => category === "all" || p.category === category,
-        )}
-        className="project-grid"
-        trailing={
-          <aside className="work-in-progress">
-            <CoastGlyph kind="leaf" />
-            <div>
-              <h3>{t("next")}</h3>
-              <p>{t("progress")}</p>
-            </div>
-          </aside>
-        }
+        items={visible}
+        className={styles.index}
+        as="ul"
       >
-        {(p) => (
-          <Button
+        {(p, index) => (
+          <li
             key={p.id}
-            className="project-card"
-            onClick={() => setSelected(p)}
-            whileHover={{ y: -3 }}
-            whileTap={{ scale: 0.98 }}
-            transition={softSpring}
+            className={styles.entry}
+            data-lead={index === 0 && category === "all"}
           >
-            <PencilFrame kind="ticket" />
-            <div className={`project-cover ${p.color}`}>
-              <SketchLabel className="project-status" kind="wind">
-                {p.status}
-              </SketchLabel>
-              <CoastalVignette kind={p.sketch} />
-              <span className="project-cover-label">{p.name}</span>
-              <span className="project-cover-caption">{p.subtitle}</span>
-              <span className="project-arrow">
-                <ArrowUpRight size={22} />
-              </span>
-            </div>
-            <div className="project-info">
-              <PencilLine kind="fold" className="project-fold" />
+            <span className={styles.number} aria-hidden="true">
+              {String(order.get(p.id)).padStart(2, "0")}
+            </span>
+            <div className={styles.copy}>
+              <p className={styles.meta}>
+                {p.category === "product" ||
+                p.category === "open-source" ||
+                p.category === "experiment"
+                  ? t(p.category)
+                  : p.category}
+                {p.status && <SketchLabel kind="wind">{p.status}</SketchLabel>}
+              </p>
               <h2>
-                {p.name}
-                <small>
-                  {p.category === "product" ||
-                  p.category === "open-source" ||
-                  p.category === "experiment"
-                    ? t(p.category)
-                    : p.category}
-                </small>
+                <Button
+                  className={styles.open}
+                  onClick={() => setSelected(p)}
+                  aria-haspopup="dialog"
+                  pressEffect={false}
+                >
+                  {p.name}
+                  <ArrowUpRight size={18} aria-hidden="true" />
+                </Button>
               </h2>
-              <p>{p.description}</p>
-              <div className="tags">
-                {p.stack.map((s) => (
-                  <span key={s}>{s}</span>
-                ))}
-              </div>
+              {p.subtitle && !p.stack.includes(p.subtitle) && (
+                <p className={styles.subtitle}>{p.subtitle}</p>
+              )}
+              <p className={styles.description}>{p.description}</p>
             </div>
-          </Button>
+            <div className={styles.folio}>
+              <div
+                className={styles.sketch}
+                data-tint={p.color}
+                aria-hidden="true"
+              >
+                {index === 0 && category === "all" && (
+                  <PencilFrame kind="ticket" />
+                )}
+                <CoastalVignette kind={p.sketch} />
+                <PencilLine kind="trail" />
+              </div>
+              {!!p.stack.length && (
+                <ul className={styles.stack}>
+                  {p.stack.map((s) => (
+                    <li key={s}>{s}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </li>
         )}
       </ProgressiveList>
+      {!visible.length && <p className={styles.empty}>{t("empty")}</p>}
+      <aside className={styles.signoff}>
+        <CoastGlyph kind="leaf" />
+        <div>
+          <h2>{t("next")}</h2>
+          <p>{t("progress")}</p>
+        </div>
+      </aside>
       {selected && (
-        <Dialog title={selected.name} onClose={() => setSelected(null)}>
-          <div className="project-detail">
-            <div className={`project-detail-art ${selected.color}`}>
-              <CoastalVignette kind={selected.sketch} />
-            </div>
-            <span className="eyebrow">{selected.status}</span>
-            <h2>{selected.subtitle}</h2>
+        <Dialog title={selected.name} wide onClose={() => setSelected(null)}>
+          <div className={styles.detail}>
+            <p className={styles.meta}>{selected.status}</p>
+            <h2>{selected.name}</h2>
+            {selected.subtitle && (
+              <p className={styles.subtitle}>{selected.subtitle}</p>
+            )}
             <p>{selected.description}</p>
             {selected.body && <RichText document={selected.body} />}
-            <div className="tags">
+            <ul className={styles.stack}>
               {selected.stack.map((s) => (
-                <span key={s}>{s}</span>
+                <li key={s}>{s}</li>
               ))}
-            </div>
+            </ul>
           </div>
           <ContentEngagementActions
             target={{ type: "project", id: selected.id }}

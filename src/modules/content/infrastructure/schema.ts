@@ -10,10 +10,12 @@ import {
   check,
   primaryKey,
   uniqueIndex,
+  uuid,
 } from "drizzle-orm/pg-core";
 import type { Locale } from "@/shared/i18n/config";
 import type { Article, Category } from "@/modules/content/domain/models";
 import type { NoteImage } from "@/modules/content/domain/note-images";
+import type { GalleryPhoto } from "@/modules/content/domain/gallery";
 const publication = () => ({
   locale: text("locale").$type<Locale>().notNull().default("zh-CN"),
   visibility: text("visibility")
@@ -81,6 +83,7 @@ export const notesTable = pgTable(
   "notes",
   {
     id: text("id").notNull(),
+    sourceOwner: uuid("source_owner"),
     publishedOn: date("published_on").notNull(),
     mood: text("mood").notNull(),
     text: text("text").notNull(),
@@ -103,6 +106,7 @@ export const projectsTable = pgTable(
   "projects",
   {
     id: text("id").notNull(),
+    sourceOwner: uuid("source_owner"),
     name: text("name").notNull(),
     subtitle: text("subtitle").notNull(),
     category: text("category").notNull(),
@@ -131,6 +135,7 @@ export const quotesTable = pgTable(
   "quotes",
   {
     id: text("id").notNull(),
+    sourceOwner: uuid("source_owner"),
     text: text("text").notNull(),
     author: text("author").notNull(),
     sortOrder: integer("sort_order").notNull().default(0),
@@ -142,6 +147,42 @@ export const quotesTable = pgTable(
     check(
       "quotes_visibility_valid",
       sql`${t.visibility} in ('draft','published')`,
+    ),
+  ],
+);
+
+export const galleryPhotosTable = pgTable(
+  "gallery_photos",
+  {
+    id: text("id").notNull(),
+    ownerId: uuid("owner_id").notNull(),
+    locale: text("locale").$type<Locale>().notNull(),
+    assetId: text("asset_id").notNull(),
+    title: text("title").notNull(),
+    caption: text("caption").notNull(),
+    alt: text("alt").notNull(),
+    place: text("place").notNull(),
+    category: text("category").$type<GalleryPhoto["category"]>().notNull(),
+    width: integer("width").notNull(),
+    height: integer("height").notNull(),
+    sortOrder: integer("sort_order").notNull(),
+    publishedOn: date("published_on").notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.id, table.locale] }),
+    index("gallery_photos_listing_idx").on(
+      table.locale,
+      table.sortOrder,
+      table.publishedOn.desc(),
+      table.id,
+    ),
+    check(
+      "gallery_photos_category_valid",
+      sql`${table.category} in ('daily', 'nature', 'travel')`,
+    ),
+    check(
+      "gallery_photos_dimensions_valid",
+      sql`${table.width} > 0 and ${table.height} > 0`,
     ),
   ],
 );

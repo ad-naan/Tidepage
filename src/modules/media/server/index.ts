@@ -13,6 +13,7 @@ export async function requireOwnedAssets(
   ownerId: string,
   ids: string[],
   db: Database = getDb(),
+  includeArchived = false,
 ) {
   if (!ids.length) return;
   const rows = await db
@@ -21,7 +22,7 @@ export async function requireOwnedAssets(
     .where(
       and(
         eq(assets.ownerId, ownerId),
-        eq(assets.archived, false),
+        includeArchived ? undefined : eq(assets.archived, false),
         inArray(assets.id, ids),
       ),
     );
@@ -48,6 +49,25 @@ export async function uploadImage(
     ...saved,
     createdAt: saved.createdAt.toISOString(),
   });
+}
+
+export async function requireOwnedImageDimensions(
+  ownerId: string,
+  id: string,
+  db: Database = getDb(),
+) {
+  const [image] = await db
+    .select({ width: assets.width, height: assets.height })
+    .from(assets)
+    .where(
+      and(
+        eq(assets.ownerId, ownerId),
+        eq(assets.id, id),
+        eq(assets.archived, false),
+      ),
+    );
+  if (!image) throw validationError();
+  return image;
 }
 export async function listAssets(ownerId: string, includeArchived = false) {
   const rows = await getDb()

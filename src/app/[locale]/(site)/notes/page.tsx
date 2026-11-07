@@ -1,10 +1,10 @@
 import { getLocale } from "next-intl/server";
 import { NotesView } from "@/modules/content/ui/notes/NotesView";
-import { getNotes } from "@/modules/content/server";
+import { listNotes } from "@/modules/content/server";
 import { getPageMetadata } from "@/server/seo/metadata";
 export const generateMetadata = () => getPageMetadata("/notes");
 export default async function Page() {
   const locale = await getLocale();
-  const notes = await getNotes(locale);
+  const notes = await listNotes(locale);
   return <NotesView notes={notes} />;
 }
