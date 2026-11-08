@@ -126,6 +126,7 @@ export function HarborView({
     night,
     studio,
     talking,
+    saying,
     listening,
     blocked: help || talking || saying || !!photo || !!socialPanel,
     reduced: !!reduced,
@@ -136,6 +137,7 @@ export function HarborView({
     night,
     studio,
     talking,
+    saying,
     listening,
     blocked: help || talking || saying || !!photo || !!socialPanel,
     reduced: !!reduced,
@@ -306,6 +308,13 @@ export function HarborView({
       if (event.key === "Escape") {
         setStudio(false);
         setHelp(false);
+        setTalking(false);
+        setListening(false);
+        setSaying(false);
+        if (!document.querySelector("dialog[open]"))
+          requestAnimationFrame(() =>
+            host.current?.parentElement?.focus({ preventScroll: true }),
+          );
       }
     };
     const visibility = () => {
@@ -697,7 +706,7 @@ export function HarborView({
         </>
       )}
       <HarborGuide
-        key={principal?.id ?? "guest"}
+        key={`guide:${principal?.id ?? "guest"}`}
         open={talking}
         enabled={guideEnabled}
         night={night}
@@ -714,7 +723,7 @@ export function HarborView({
       />
       {saying && (
         <HarborNearbySpeech
-          key={principal?.id ?? "guest"}
+          key={`nearby-speech:${principal?.id ?? "guest"}`}
           network={network}
           onClose={() => {
             setSaying(false);

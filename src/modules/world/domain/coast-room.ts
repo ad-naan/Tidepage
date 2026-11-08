@@ -308,7 +308,8 @@ export function leaveCoastRoom(room: CoastRoom, id: string, owner: string) {
   const session = room.sessions[id];
   if (session?.owner !== owner) return;
   session.owner = null;
-  if (room.speech) room.speech = room.speech.filter(line=>line.playerId!==id);
+  if (room.speech)
+    room.speech = room.speech.filter((line) => line.playerId !== id);
   cancelCoastPhotos(room, id);
   session.input = idleInput();
   room.revision++;

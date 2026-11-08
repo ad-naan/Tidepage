@@ -52,6 +52,7 @@ type HarborState = {
   night: boolean;
   studio: boolean;
   talking: boolean;
+  saying: boolean;
   listening: boolean;
   blocked: boolean;
   reduced: boolean;
@@ -562,7 +563,7 @@ function createLoadedHarborScene(
     const delta = Math.min((now - previous) / 1000, 0.05);
     previous = now;
     const state = options.state();
-    if (!state.blocked || state.talking) elapsed += delta;
+    if (!state.blocked || state.talking || state.saying) elapsed += delta;
     if (state.appearance !== lastAppearance) {
       avatar.dress(state.appearance);
       lastAppearance = state.appearance;
