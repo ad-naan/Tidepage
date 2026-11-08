@@ -16,6 +16,7 @@ import {
   type CoastPhoto,
   type CoastSnapshot,
   type CoastReceiptAck,
+  type CoastSpeech,
 } from "@/shared/contracts/coast-space";
 import type { HarborPlace } from "../domain/coast-harbor";
 import { coastMovementInput } from "../domain/coast-movement";
@@ -36,6 +37,7 @@ export class CoastRpcError extends Error {
   }
 }
 type Actions = {
+  say: (id: string, text: string) => Promise<void>;
   invite: (target: string) => Promise<void>;
   respond: (
     id: string,
@@ -49,6 +51,7 @@ const unavailable = async (): Promise<never> => {
   throw new CoastRpcError("NOT_JOINED");
 };
 const noActions: Actions = {
+  say: unavailable,
   invite: unavailable,
   respond: unavailable,
   receipt: unavailable,
@@ -73,6 +76,8 @@ export function useCoastConnection(options: {
   const [selfId, setSelfId] = useState("");
   const [players, setPlayers] = useState<CoastSnapshot["players"]>([]);
   const [photo, setPhoto] = useState<CoastPhoto | null>(null);
+  const [speech, setSpeech] = useState<CoastSpeech[]>([]);
+  const [speechReady, setSpeechReady] = useState(false);
   const snapshot = useRef<CoastSnapshot | null>(null);
   const clockOffset = useRef(0);
   const completed = useRef(new Set<string>());
@@ -87,6 +92,8 @@ export function useCoastConnection(options: {
       setCount(0);
       setPlayers([]);
       setPhoto(null);
+      setSpeech([]);
+      setSpeechReady(false);
       return;
     }
     const retained = retainRealtime();
@@ -113,6 +120,9 @@ export function useCoastConnection(options: {
       metadata = "",
       photoSignature = "";
     let movementVersion: 1 | 2 | 3 = 1;
+    let requestSpeech = true;
+    let supportsSpeech = false;
+    let speechSignature = "";
     let identityAt = 0,
       identityPending = false;
     const identityTicket = () =>
@@ -125,6 +135,18 @@ export function useCoastConnection(options: {
         throw new CoastRpcError("NOT_JOINED");
     };
     actions.current = {
+      say: async (id, text) => {
+        ensureJoined();
+        if (!supportsSpeech) throw new CoastRpcError("UNAVAILABLE");
+        check(
+          await socket
+            .timeout(4000)
+            .emitWithAck("world:identity", await identityTicket()),
+        );
+        check(
+          await socket.timeout(4000).emitWithAck("world:say", { id, text }),
+        );
+      },
       invite: async (target) => {
         ensureJoined();
         check(
@@ -165,6 +187,9 @@ export function useCoastConnection(options: {
       setCount(0);
       setPlayers([]);
       setPhoto(null);
+      setSpeech([]);
+      setSpeechReady(false);
+      speechSignature = "";
       snapshot.current = null;
       metadata = "";
       photoSignature = "";
@@ -212,6 +237,12 @@ export function useCoastConnection(options: {
       clockOffset.current = value.serverTime - Date.now();
       latest.current.controls.current?.synchronize(value, playerId);
       latest.current.onNight(value.night);
+      const nextSpeech = JSON.stringify(value.speech ?? []);
+      if (speechSignature !== nextSpeech) {
+        speechSignature = nextSpeech;
+        setSpeech(value.speech ?? []);
+      }
+      setSpeechReady(supportsSpeech);
       setCount(value.players.length);
       const nextMetadata = JSON.stringify(
         value.players.map(({ id, name, host, avatarUrl }) => ({
@@ -263,6 +294,7 @@ export function useCoastConnection(options: {
         "world:join",
         {
           version: 1,
+          ...(requestSpeech ? { speechVersion: 1 as const } : {}),
           appearance,
           ...(resumeToken ? { resumeToken } : {}),
           ...(ticket ? { identityTicket: ticket } : {}),
@@ -276,6 +308,11 @@ export function useCoastConnection(options: {
             return;
           }
           if (!result.ok) {
+            if (result.code === "INVALID_PAYLOAD" && requestSpeech) {
+              requestSpeech = false;
+              retryAt = 0;
+              return;
+            }
             retryAt = Date.now() + 4000;
             if (result.code === "ROOM_FULL") {
               terminal = true;
@@ -285,6 +322,7 @@ export function useCoastConnection(options: {
           }
           joined = true;
           movementVersion = result.movementVersion ?? 1;
+          supportsSpeech = result.speechVersion === 1;
           revision = -1;
           playerId = result.playerId;
           setSelfId(playerId);
@@ -406,6 +444,9 @@ export function useCoastConnection(options: {
     selfId,
     players,
     photo,
+    speech,
+    speechReady,
+    say: (id: string, text: string) => actions.current.say(id, text),
     serverNow,
     invite: (target: string) => actions.current.invite(target),
     respond: (id: string, action: "accept" | "decline" | "cancel") =>

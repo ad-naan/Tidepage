@@ -12,6 +12,24 @@
   background: #171c283b;
   backdrop-filter: blur(4px);
 }
+.dialog[data-backdrop="clear"]::backdrop {
+  background: transparent;
+  backdrop-filter: none;
+}
+.dialog[data-placement="bottom"] {
+  top: auto;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  margin: 0 auto;
+  width: min(700px, calc(100vw - 24px));
+  max-height: 45dvh;
+}
+.dialog[data-placement="bottom"] .inner {
+  padding: 16px 20px;
+  max-height: calc(45dvh - 16px);
+}
+.dialog[data-placement="bottom"] .heading {
+  margin-bottom: 6px;
+}
 .wide {
   width: min(900px, calc(100vw - 32px));
 }

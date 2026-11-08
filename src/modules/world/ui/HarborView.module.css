@@ -362,6 +362,8 @@
   }
 }
 @media (max-width: 370px) {
+  .actions { gap: 0; }
+  .actions button { width:40px; height:44px; }
   .topbar {
     gap: 6px;
     inset-inline: 12px;
@@ -379,18 +381,6 @@
     transition: none;
   }
 }
-.guideCompanion {
-  margin-block: var(--space-3);
-  padding-block: var(--space-3);
-  border-block-start: 1px solid currentColor;
-}
-
-.guideTurns {
-  max-height: 12rem;
-  overflow: auto;
-  overflow-wrap: anywhere;
-}
-
 .travelHint {
   position: absolute;
   top: 84px;

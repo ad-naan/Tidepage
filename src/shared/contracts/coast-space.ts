@@ -25,6 +25,7 @@ export type CoastPose = z.infer<typeof coastPoseSchema>;
 export const coastJoinSchema = z
   .object({
     version: z.literal(1),
+    speechVersion: z.literal(1).optional(),
     appearance: coastAvatarSchema,
     identityTicket: z.string().min(1).max(4096).optional(),
     resumeToken: z
@@ -104,6 +105,27 @@ export const coastReceiptRequestSchema = z.union([
   z.object({ place: coastPlaceSchema }).strict(),
   z.object({ photoId: z.uuid() }).strict(),
 ]);
+export const COAST_SPEECH_RADIUS = 12;
+export const COAST_SPEECH_MS = 20_000;
+export const coastSpeechTextSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(180)
+  .regex(
+    /^[^\u0000-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2066-\u2069]*$/u,
+  );
+export const coastSaySchema = z
+  .object({ id: z.uuid(), text: coastSpeechTextSchema })
+  .strict();
+export const coastSpeechSchema = coastSaySchema.extend({
+  playerId: z.uuid(),
+  x: z.number().finite(),
+  z: z.number().finite(),
+  createdAt: z.number().int().nonnegative(),
+  expiresAt: z.number().int().nonnegative(),
+});
+export type CoastSpeech = z.infer<typeof coastSpeechSchema>;
 export const coastSnapshotSchema = z
   .object({
     version: z.literal(1),
@@ -113,6 +135,7 @@ export const coastSnapshotSchema = z
     night: z.boolean(),
     players: z.array(coastPlayerSchema).max(12),
     photo: coastPhotoSchema.nullable().default(null),
+    speech: z.array(coastSpeechSchema).max(12).optional(),
   })
   .strict();
 export type CoastSnapshot = z.infer<typeof coastSnapshotSchema>;
@@ -141,9 +164,14 @@ export type CoastJoinAck =
       resumeToken: string;
       snapshot: CoastSnapshot;
       movementVersion?: 2 | 3;
+      speechVersion?: 1;
     }
   | { ok: false; code: CoastErrorCode };
 export interface CoastClientEvents {
+  "world:say": (
+    input: z.infer<typeof coastSaySchema>,
+    ack: (result: CoastAck) => void,
+  ) => void;
   "world:identity": (
     ticket: string | null,
     ack: (result: CoastAck) => void,

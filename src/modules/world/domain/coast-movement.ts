@@ -23,7 +23,7 @@ export function coastMovementInput(
 
 /** Physical keys keep working while a Chinese IME owns event.key. */
 export function harborInputKey(event: { code: string; key: string }): string {
-  if (/^Key[WASDJLIKQER]$/.test(event.code))
+  if (/^Key[WASDJLIKQERV]$/.test(event.code))
     return event.code.slice(3).toLowerCase();
   if (event.code === "Space") return " ";
   if (event.code === "ShiftLeft" || event.code === "ShiftRight") return "shift";

@@ -13,6 +13,8 @@ export function Dialog({
   wide = false,
   layout = "default",
   size = "default",
+  placement = "center",
+  backdrop = "dim",
 }: {
   children: ReactNode;
   title: string;
@@ -20,6 +22,8 @@ export function Dialog({
   wide?: boolean;
   layout?: "default" | "split";
   size?: "default" | "compact";
+  placement?: "center" | "bottom";
+  backdrop?: "dim" | "clear";
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const [closing, setClosing] = useState(false);
@@ -60,6 +64,8 @@ export function Dialog({
     <dialog
       ref={ref}
       data-closing={closing}
+      data-placement={placement}
+      data-backdrop={backdrop}
       className={`${styles.dialog} ${wide ? styles.wide : ""} ${layout === "split" ? styles.split : ""} ${size === "compact" ? styles.compact : ""}`}
       onCancel={(event) => {
         event.preventDefault();

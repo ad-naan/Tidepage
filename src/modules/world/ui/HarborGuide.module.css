@@ -1,0 +1,62 @@
+.bar {
+  position: absolute;
+  left: 50%;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: min(620px, calc(100% - 32px));
+  padding: 10px 14px;
+  background: var(--harbor-paper, #f4eddb);
+  color: var(--ink);
+  border: 1px solid #68777055;
+  border-radius: 20px 18px 22px 17px;
+  font: 400 var(--text-sm)/1.6 var(--font-ui);
+}
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.row > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+.composer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.composer input {
+  flex: 1;
+  min-width: 0;
+}
+.composer button,
+.row > button {
+  flex-shrink: 0;
+}
+.note {
+  margin: 6px 2px 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+.about {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  margin-top: 6px;
+}
+.about p {
+  margin: 6px 0 0;
+  max-height: 18dvh;
+  overflow: auto;
+}
+.listening {
+  color: var(--muted);
+}
+@media (max-width: 600px) {
+  .bar {
+    bottom: max(12px, env(safe-area-inset-bottom));
+    padding: 8px 10px;
+  }
+  .row {
+    gap: 4px;
+  }
+}

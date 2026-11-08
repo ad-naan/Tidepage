@@ -11,6 +11,7 @@ import {
   coastPhotoInviteSchema,
   coastPhotoRespondSchema,
   coastReceiptRequestSchema,
+  coastSaySchema,
   type CoastAck,
   type CoastJoinAck,
 } from "../../src/shared/contracts/coast-space";
@@ -33,6 +34,7 @@ import {
   leaveCoastRoom,
 } from "../../src/modules/world/domain/coast-room";
 import type { CoastStore } from "./coast-store";
+import { sayInCoastRoom } from "../../src/modules/world/domain/coast-speech";
 
 const channel = "world:sunset";
 const digest = (token: string) =>
@@ -43,7 +45,7 @@ export function attachCoastGateway(
   store: CoastStore,
   signingKey: string,
 ) {
-  const members = new Map<string, string>();
+  const members = new Map<string, { id: string; speech: boolean }>();
   let ticking = false,
     closed = false;
   const tick = setInterval(() => {
@@ -52,9 +54,9 @@ export function attachCoastGateway(
     void store
       .mutate((room, now) => {
         advanceCoastRoom(room, now);
-        return Array.from(members, ([owner, id]) => ({
+        return Array.from(members, ([owner, member]) => ({
           owner,
-          snapshot: coastRoomSnapshot(room, now, id),
+          snapshot: coastRoomSnapshot(room, now, member.id, member.speech),
         }));
       })
       .then((snapshots) => {
@@ -142,15 +144,46 @@ export function attachCoastGateway(
             playerId: session.player.id,
             resumeToken: token,
             movementVersion: 3,
-            snapshot: coastRoomSnapshot(room, now, session.player.id),
+            ...(parsed.data.speechVersion ? { speechVersion: 1 as const } : {}),
+            snapshot: coastRoomSnapshot(
+              room,
+              now,
+              session.player.id,
+              !!parsed.data.speechVersion,
+            ),
           };
         });
         if (result.ok) {
           membership = { id: result.playerId, token };
-          members.set(socket.id, result.playerId);
+          members.set(socket.id, {
+            id: result.playerId,
+            speech: !!parsed.data.speechVersion,
+          });
           await socket.join(channel);
         }
         ack(result);
+      });
+    });
+    socket.on("world:say", (raw, ack) => {
+      if (typeof ack !== "function") return;
+      const parsed = coastSaySchema.safeParse(raw);
+      if (!parsed.success) {
+        ack({ ok: false, code: "INVALID_PAYLOAD" });
+        return;
+      }
+      if (limited("say", 2)) {
+        ack({ ok: false, code: "RATE_LIMITED" });
+        return;
+      }
+      schedule(ack, async () => {
+        if (!membership) {
+          ack({ ok: false, code: "NOT_JOINED" });
+          return;
+        }
+        const code = await store.mutate((room, now) =>
+          sayInCoastRoom(room, membership!.id, socket.id, parsed.data, now),
+        );
+        ack(code ? { ok: false, code } : { ok: true });
       });
     });
     socket.on("world:input", (raw, ack) => {

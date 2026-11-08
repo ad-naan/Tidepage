@@ -30,6 +30,7 @@ export function createCoastCompanions(
     peers.clear();
   };
   return {
+    position: (id: string) => peers.get(id)?.model.root.position ?? null,
     reconcile(players: CoastPlayer[], selfId: string) {
       const present = new Set(
         players.filter((p) => p.id !== selfId).map((p) => p.id),

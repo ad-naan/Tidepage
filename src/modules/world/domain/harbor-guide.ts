@@ -9,6 +9,8 @@ const destination = z.enum(harborDestinationIds);
 export const guideRequestSchema = z
   .object({
     locale: localeSchema,
+    companionId: z.literal("otter").default("otter"),
+    context: z.object({ night: z.boolean() }).strict().optional(),
     place: destination.nullable(),
     turns: z
       .array(

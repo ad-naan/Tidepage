@@ -1,0 +1,75 @@
+.layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.layer[data-hidden="true"] {
+  visibility: hidden;
+}
+.bubble {
+  position: absolute;
+  width: max-content;
+  max-width: min(260px, calc(100vw - 32px));
+  padding: 10px 14px;
+  color: var(--ink);
+  background: var(--harbor-paper, #f4eddb);
+  border: 1px solid #68777055;
+  border-radius: 18px 20px 17px 19px;
+  box-shadow: 0 3px 12px #122b291c;
+  pointer-events: auto;
+  font: 400 var(--text-sm)/1.65 var(--font-ui);
+}
+.bubble[data-visible="false"] {
+  visibility: hidden;
+  pointer-events: none;
+}
+.bubble::after {
+  content: "";
+  position: absolute;
+  left: var(--speech-tail, 50%);
+  bottom: -7px;
+  width: 12px;
+  height: 12px;
+  background: inherit;
+  border-right: 1px solid #68777055;
+  border-bottom: 1px solid #68777055;
+  transform: rotate(45deg);
+}
+.bubble p {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 24dvh;
+  overflow: auto;
+}
+.bubble a {
+  display: block;
+  font-size: var(--text-xs);
+}
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+.heading button {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+}
+.heading > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.unmute {
+  position: absolute;
+  left: 16px;
+  bottom: 90px;
+  pointer-events: auto;
+  background: var(--harbor-paper);
+}

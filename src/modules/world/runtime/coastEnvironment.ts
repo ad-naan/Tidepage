@@ -13,7 +13,7 @@ export function createCoastEnvironment(scene: THREE.Scene, fantasy = false) {
       sunDirection: { value: direction },
       fantasy: { value: fantasy ? 1 : 0 },
     },
-    vertexShader: `varying vec3 ray; void main(){ray=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    vertexShader: `varying vec3 ray; void main(){ray=position;vec4 clip=projectionMatrix*mat4(mat3(viewMatrix))*vec4(position,1.);gl_Position=clip.xyww;}`,
     fragmentShader: `varying vec3 ray;uniform float night;uniform float time;uniform float fantasy;uniform vec3 sunDirection;
     float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
     float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+1.),f.x),f.y);}
@@ -28,7 +28,9 @@ export function createCoastEnvironment(scene: THREE.Scene, fantasy = false) {
       dusk=mix(dusk,vec3(.65,.45,.4)+pow(sun,12.)*vec3(.65,.29,.10),cloud*.45);
       vec3 col=mix(dusk,midnight,night);
       float band=exp(-pow((r.x*.67+r.y*.35+r.z*.55-.14)*9.,2.));float dust=fbm(r.xz*16.+r.y*7.);
-      col+=night*band*vec3(.038,.042,.08)*smoothstep(.26,.7,dust)*smoothstep(.08,.3,h);
+      float lane=smoothstep(.36,.62,fbm(r.xz*28.+r.y*13.));
+      vec3 galaxy=mix(vec3(.035,.07,.10),vec3(.15,.10,.20),dust);
+      col+=night*band*galaxy*(.25+lane*.75)*smoothstep(.08,.3,h);
       float disc=smoothstep(.99955,.9998,sun);float crater=.8+.2*fbm(r.xz*450.);
       col+=mix(vec3(3.,1.8,.7),vec3(.9,1.1,1.35)*crater,night)*disc;
       col+=mix(vec3(.7,.23,.05),vec3(.15,.21,.35),night)*pow(sun,260.)*.3;
@@ -39,6 +41,7 @@ export function createCoastEnvironment(scene: THREE.Scene, fantasy = false) {
   });
   const skyGeometry = new THREE.SphereGeometry(fantasy ? 10000 : 170, 48, 24);
   const sky = new THREE.Mesh(skyGeometry, skyMaterial);
+  sky.frustumCulled = false;
   scene.add(sky);
   const waterGeometry = new THREE.PlaneGeometry(
     fantasy ? 20000 : 340,
@@ -119,10 +122,11 @@ export function createCoastEnvironment(scene: THREE.Scene, fantasy = false) {
       time: { value: 0 },
       pixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
     },
-    vertexShader: `attribute float magnitude;attribute float phase;uniform float time;uniform float pixelRatio;varying float glow;void main(){glow=.65+.35*sin(time*.7+phase);gl_PointSize=magnitude*pixelRatio;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    vertexShader: `attribute float magnitude;attribute float phase;uniform float time;uniform float pixelRatio;varying float glow;void main(){glow=.65+.35*sin(time*.7+phase);gl_PointSize=magnitude*pixelRatio;vec4 clip=projectionMatrix*mat4(mat3(viewMatrix))*vec4(position,1.);gl_Position=clip.xyww;}`,
     fragmentShader: `uniform float night;varying float glow;void main(){float d=length(gl_PointCoord-.5);gl_FragColor=vec4(.78,.85,1.,smoothstep(.5,.05,d)*night*glow);}`,
   });
   const stars = new THREE.Points(starGeometry, starMaterial);
+  stars.frustumCulled = false;
   scene.add(stars);
   return {
     water,

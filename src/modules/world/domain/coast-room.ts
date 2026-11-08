@@ -5,6 +5,7 @@ import type {
   CoastSnapshot,
   CoastErrorCode,
   CoastPhoto,
+  CoastSpeech,
 } from "@/shared/contracts/coast-space";
 import type { CoastIdentity } from "@/shared/contracts/coast-memories";
 import {
@@ -23,6 +24,7 @@ import {
   harborLanding,
 } from "./coast-harbor";
 import { harborSailable } from "./harbor-terrain";
+import { nearbyCoastSpeech, pruneCoastSpeech } from "./coast-speech";
 
 export const COAST_CAPACITY = 12;
 export const COAST_PRESENCE_MS = 15_000;
@@ -41,6 +43,8 @@ export type CoastSession = {
   player: CoastPlayer;
 };
 export type CoastRoom = {
+  speech?: CoastSpeech[];
+  speechRates?: Record<string, number[]>;
   photos?: Record<string, CoastPhoto>;
   revision: number;
   startedAt: number;
@@ -130,6 +134,7 @@ export function advanceCoastRoom(room: CoastRoom, now: number) {
     if (previous !== `${p.x},${p.z},${p.yaw},${p.pose}`) room.revision++;
   }
   advanceCoastPhotos(room, now);
+  pruneCoastSpeech(room, now);
 }
 
 export function joinCoastRoom(
@@ -303,6 +308,7 @@ export function leaveCoastRoom(room: CoastRoom, id: string, owner: string) {
   const session = room.sessions[id];
   if (session?.owner !== owner) return;
   session.owner = null;
+  if (room.speech) room.speech = room.speech.filter(line=>line.playerId!==id);
   cancelCoastPhotos(room, id);
   session.input = idleInput();
   room.revision++;
@@ -312,8 +318,12 @@ export function coastRoomSnapshot(
   room: CoastRoom,
   now: number,
   viewerId?: string,
+  includeSpeech = false,
 ): CoastSnapshot {
   return {
+    ...(includeSpeech
+      ? { speech: nearbyCoastSpeech(room, viewerId, now) }
+      : {}),
     version: 1,
     room: "sunset",
     revision: room.revision,

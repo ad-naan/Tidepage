@@ -4,6 +4,7 @@ import {
   harborIslands,
   shoreRadius,
 } from "./harbor-terrain";
+import { harborCompanion } from "./harbor-companion";
 export type HarborPoint = { x: number; z: number };
 export const harborMooring: HarborPoint = { x: 2.28, z: 12.5 };
 export const HARBOR_SAIL_SPEED = 8;
@@ -52,6 +53,7 @@ export function harborStandingPoint(point: HarborPoint): HarborPoint {
 export const HARBOR_WALK_SPEED = 2.4;
 export const HARBOR_RUN_SPEED = 4.2;
 export const harborInteractions = {
+  talk: { ...harborCompanion.position, radius: harborCompanion.radius },
   bench: { x: -5, z: -1.5, radius: 1.7 },
   chair: { x: 3.15, z: -3.5, radius: 1.15 },
   door: { x: 4.5, z: -0.7, radius: 1.5 },

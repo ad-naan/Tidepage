@@ -597,15 +597,23 @@
     "description": "Bring your own character to Sunset Bay, take a quiet walk, and keep a coastal photograph.",
     "harbor": {
       "companion": {
-        "title": "Ask the harbor otter",
-        "intro": "Ask about the site, what to read, or where to walk. Your question and recent replies are sent to the configured model.",
+        "title": "Harbor otter · AI companion",
+        "intro": "The otter is an AI companion. Sending shares your words, the last three exchanges, and your in-game location and time of day with the configured model. This page keeps the conversation only while you stay here.",
         "conversation": "Harbor conversation",
-        "question": "What would you like to explore?",
-        "ask": "Ask",
+        "question": "What would you like to tell the otter?",
+        "ask": "Say it",
         "stop": "Stop",
         "walk": "Walk to {destination}",
         "login": "Sign in to talk",
-        "error": "The otter could not answer this time. Try again."
+        "error": "That reply did not arrive. Your words are still here; you can try again.",
+        "meet": "Walk over to the otter",
+        "you": "You",
+        "otter": "Otter",
+        "greetingDay": "There you are. The sea breeze feels lovely. Stay with me a little?",
+        "greetingNight": "The stars are bright tonight. Come closer; there is no hurry.",
+        "thinking": "The otter is thinking…",
+        "about": "About this conversation",
+        "unavailable": "The otter is here to share the sea. Free conversation is not enabled yet."
       },
       "network": {
         "title": "Coastal company",
@@ -682,7 +690,7 @@
       "guide": {
         "title": "A walk by the sea",
         "move": "Click the ground or use WASD / arrows. Hold Shift to run, Space to jump. Near an object, press E or tap its interaction icon.",
-        "camera": "Drag to look, scroll to zoom; J / L turn, I / K tilt, Q / R zoom.",
+        "camera": "Drag to look around and upward to see the sky; scroll to zoom. J / L turn, I / K look up / down, Q / R zoom. V toggles sky view.",
         "destinations": "Destinations on this coast",
         "host": "Walk through the open house door. Press E near your boat to board; press E beside a beach or pier to step ashore. Your boat stays where you leave it. Find lamp fragments on Shell Island, Wind Island and in the house, then visit the lighthouse."
       },
@@ -784,7 +792,8 @@
         "hearth": "Tend the hearth",
         "crystal": "Resonate with the crystal",
         "sail": "Board the boat",
-        "land": "Step ashore"
+        "land": "Step ashore",
+        "talk": "Talk with the otter"
       },
       "travel": {
         "discovery": "{place} · Explore",
@@ -804,6 +813,34 @@
         "gallery": "West coast lookout",
         "about": "Moonlit grove",
         "secret": "Star Island"
+      },
+      "lookSky": "Look at the sky",
+      "returnView": "Return to the shore",
+      "speech": {
+        "nearby": "Talk to nearby travelers",
+        "voices": "Voices in the bay",
+        "otter": "Otter · AI",
+        "turtle": "Turtle · AI",
+        "traveler": "Traveler",
+        "mute": "Mute {name} for now",
+        "unmute": "Hear all travelers again",
+        "placeholder": "Say something to nearby travelers…",
+        "send": "Say it",
+        "close": "Finish talking and keep walking",
+        "range": "Travelers within 12 meters can see your words until they fade. Enter to speak, Esc to close.",
+        "login": "Sign in to talk with travelers",
+        "offline": "You are watching the sea alone. Join company to speak with travelers.",
+        "join": "Join company",
+        "upgrade": "The bay’s multiplayer service needs an update before chat is available.",
+        "failed": "Delivery was not confirmed. Your words are still here; try again.",
+        "rateLimited": "Take a breath and wait a few seconds before speaking again.",
+        "loginExpired": "Your sign-in has expired. Sign in again to speak.",
+        "listen": "Listen to the otter and turtle",
+        "listenShort": "Listen in",
+        "listening": "The otter and turtle are chatting. You can interrupt any time.",
+        "nightTopic": "Talk together about the galaxy and starlight over the bay tonight.",
+        "dayTopic": "Talk together about the sea breeze, sunset and small encounters today.",
+        "aiPrivacy": "The otter and turtle are AI companions. Your words, the last three exchanges and in-game time of day go to the configured model. Each conversation lasts at most four turns; stopping or leaving cancels subsequent requests. AI conversations play only in your current scene and are not sent to other players."
       }
     },
     "ui": {
