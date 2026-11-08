@@ -84,8 +84,8 @@ export function createCoastEnvironment(scene: THREE.Scene, fantasy = false) {
       float fresnel=.05+.93*pow(1.-max(dot(n,view),0.),4.);vec3 deep=mix(vec3(.015,.10,.12),vec3(.003,.018,.038),night);vec3 sea=mix(deep,reflection,.42+fresnel*.55);
       // Broaden unresolved glints instead of letting them jump between pixels.
       vec3 nx=dFdx(n),ny=dFdy(n);float variance=dot(nx,nx)+dot(ny,ny);
-      float exponent=180./(1.+180.*variance);
-      float spec=pow(max(dot(reflect(-sunDirection,n),view),0.),exponent)*exponent/180.;sea+=mix(vec3(1.7,.67,.2),vec3(.4,.65,1.),night)*spec;
+      float exponent=48./(1.+48.*variance);
+      float spec=pow(max(dot(reflect(-sunDirection,n),view),0.),exponent)*exponent/48.;sea+=mix(vec3(.45,.22,.10),vec3(.10,.17,.25),night)*spec;
       float age=time-ripple.z;float d=distance(p,ripple.xy);float ring=exp(-pow((d-age*2.2)*4.,2.))*max(0.,1.-age/3.);if(age>=0.)sea+=ring*vec3(.13,.23,.23);
       vec2 trail=p-wake.xy;float wakeGlow=exp(-dot(trail,trail)*.48)*wake.z*(.35+.65*pow(sin(d*12.-time*4.),2.));sea+=wakeGlow*mix(vec3(.1,.16,.14),vec3(.015,.45,.62),night);
       gl_FragColor=vec4(sea,1.);

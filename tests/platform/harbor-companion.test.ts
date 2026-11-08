@@ -4,6 +4,7 @@ import * as THREE from "three";
 import {
   harborCameraFrame,
   clampHarborPitch,
+  harborDialogueFrame,
 } from "../../src/modules/world/domain/harbor-camera";
 import {
   harborCompanion,
@@ -16,6 +17,37 @@ import {
 } from "../../src/modules/world/domain/coast-harbor";
 import { guideRequestSchema } from "../../src/modules/world/domain/harbor-guide";
 import { createHarborCompanion } from "../../src/modules/world/runtime/createHarborCompanion";
+
+test("dialogue framing separates the two speakers on desktop and narrow screens", () => {
+  for (const width of [390, 1280]) {
+    for (const angle of [0, 0.7, 1.5, 3, 4.6]) {
+      const otter = new THREE.Vector3(-3.4, 0.49, 1.2);
+      const player = otter
+        .clone()
+        .add(
+          new THREE.Vector3(Math.sin(angle) * 1.7, 0, Math.cos(angle) * 1.7),
+        );
+      const frame = harborDialogueFrame(
+        player,
+        otter,
+        { x: 5, y: 5, z: 12 },
+        width < 600,
+        false,
+      );
+      const camera = new THREE.PerspectiveCamera(48, width / 800, 0.1, 20000);
+      camera.position.set(frame.position.x, frame.position.y, frame.position.z);
+      camera.lookAt(frame.target.x, frame.target.y, frame.target.z);
+      camera.updateMatrixWorld();
+      const a = player.clone().project(camera),
+        b = otter.clone().project(camera);
+      assert.ok(
+        (Math.abs(a.x - b.x) * width) / 2 > 100,
+        "speakers overlap in projection",
+      );
+      assert.ok(Math.abs(a.x) < 0.85 && Math.abs(b.x) < 0.85);
+    }
+  }
+});
 
 test("sky look reaches near zenith without lowering the camera through terrain", () => {
   const pivot = { x: 75, y: 1.6, z: -46 };
@@ -37,6 +69,30 @@ test("sky look reaches near zenith without lowering the camera through terrain",
   }
   assert.equal(clampHarborPitch(-100), -1.4);
   assert.equal(clampHarborPitch(100), 1.35);
+});
+
+test("three-person framing keeps the turtle beside the otter instead of behind it", () => {
+  const actors = [
+    new THREE.Vector3(0, 0.49, 0),
+    new THREE.Vector3(-1.7, 0.49, 0),
+    new THREE.Vector3(-1.45, 0.49, 1.6),
+  ];
+  const frame = harborDialogueFrame(
+    actors[0],
+    actors[1],
+    { x: 2, y: 4, z: 7 },
+    true,
+    false,
+    actors[2],
+  );
+  const camera = new THREE.PerspectiveCamera(48, 390 / 844, 0.1, 20000);
+  camera.position.set(frame.position.x, frame.position.y, frame.position.z);
+  camera.lookAt(frame.target.x, frame.target.y, frame.target.z);
+  camera.updateMatrixWorld();
+  const projected = actors.map((p) => p.clone().project(camera));
+  for (let i = 0; i < 3; i++)
+    for (let j = i + 1; j < 3; j++)
+      assert.ok((Math.abs(projected[i].x - projected[j].x) * 390) / 2 > 70);
 });
 
 test("the otter can be reached on foot from spawn and is only nearby locally", () => {

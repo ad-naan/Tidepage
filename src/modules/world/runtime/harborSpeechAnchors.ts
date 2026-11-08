@@ -15,15 +15,58 @@ export function updateHarborSpeechAnchors(
     "[data-world-composer]",
   );
   const bottomInset = Math.max(100, (composer?.offsetHeight ?? 0) + 36);
+  const nodes = [...host.querySelectorAll<HTMLElement>("[data-world-speaker]")];
+  // Protect faces as well as other text. A wide mobile bubble above the otter
+  // otherwise covers the taller player's head beside it.
+  const faces: { left: number; top: number; right: number; bottom: number }[] =
+    [];
+  for (const id of new Set([
+    "self",
+    "otter",
+    "turtle",
+    ...nodes.map((node) => node.dataset.worldSpeaker!),
+  ])) {
+    const actor = resolve(id);
+    if (!actor || actor.position.distanceTo(player) > COAST_SPEECH_RADIUS + 1)
+      continue;
+    const center = actor.position
+      .clone()
+      .add(new THREE.Vector3(0, actor.height - 0.45, 0));
+    const side = center
+      .clone()
+      .addScaledVector(
+        new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0),
+        0.5,
+      )
+      .project(camera);
+    center.project(camera);
+    if (
+      center.z < -1 ||
+      center.z > 1 ||
+      Math.abs(center.x) > 1 ||
+      Math.abs(center.y) > 1
+    )
+      continue;
+    const x = (center.x * 0.5 + 0.5) * width,
+      y = (0.5 - center.y * 0.5) * height;
+    const radius = Math.max(
+      18,
+      Math.min(64, (Math.abs(side.x - center.x) * width) / 2),
+    );
+    faces.push({
+      left: x - radius,
+      right: x + radius,
+      top: y - radius,
+      bottom: y + radius,
+    });
+  }
   const occupied: {
     left: number;
     top: number;
     right: number;
     bottom: number;
   }[] = [];
-  for (const node of host.querySelectorAll<HTMLElement>(
-    "[data-world-speaker]",
-  )) {
+  for (const node of nodes) {
     const anchor = resolve(node.dataset.worldSpeaker!);
     if (
       !anchor ||
@@ -53,7 +96,9 @@ export function updateHarborSpeechAnchors(
       Math.max(12, width - w - 12),
     );
     let top = Math.max(80, (0.5 - point.y * 0.5) * height - h - 14);
-    for (const box of occupied) {
+    // Walk upward through the lowest blockers first; the next box can then
+    // only move the bubble farther away from already-cleared boxes.
+    for (const box of [...faces, ...occupied].sort((a, b) => b.top - a.top)) {
       if (
         left < box.right + 8 &&
         left + w > box.left - 8 &&

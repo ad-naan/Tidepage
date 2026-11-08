@@ -113,6 +113,27 @@ test("companions can follow across the shore and ocean to a second island withou
   assert.equal(companionTraversable(4001, 0), false);
 });
 
+test("companions settle apart beside the cottage even when their fallback positions overlap", () => {
+  for (let heading = 0; heading < Math.PI * 2; heading += Math.PI / 4) {
+    const otter = createHarborFollower({ x: 1, z: 1.93 }, -1);
+    const turtle = createHarborFollower({ x: 0.84, z: 1.17 }, 1);
+    const player = { x: 2.26, z: 1.06 };
+    for (let i = 0; i < 400; i++) {
+      otter.step(player, heading, 0.05, true, false, turtle.position);
+      turtle.step(player, heading, 0.05, true, false, otter.position);
+      assert.ok(companionTraversable(otter.position.x, otter.position.z));
+      assert.ok(companionTraversable(turtle.position.x, turtle.position.z));
+    }
+    assert.ok(
+      Math.hypot(
+        otter.position.x - turtle.position.x,
+        otter.position.z - turtle.position.z,
+      ) > 1.8,
+      `companions overlap at heading ${heading}`,
+    );
+  }
+});
+
 test("ordinary company is quiet when paused or far away and does not repeat idle greetings", () => {
   const moments = createHarborMoments();
   const input = {
@@ -140,6 +161,34 @@ test("ordinary company is quiet when paused or far away and does not repeat idle
       moments.step({ ...input, nearby: false, sitting: true }),
       null,
     );
+});
+
+test("a companion keeps moving smoothly behind a steady walker instead of stopping at every planning tick", () => {
+  const follower = createHarborFollower({ x: 0, z: -22 }, 1);
+  let stopped = 0;
+  let previousSpeed = 0;
+  for (let i = 0; i < 360; i++) {
+    const before = { ...follower.position };
+    const movement = follower.step(
+      { x: 0, z: -22 - (i * 2.4) / 60 },
+      Math.PI,
+      1 / 60,
+      true,
+      false,
+    );
+    const speed =
+      Math.hypot(
+        follower.position.x - before.x,
+        follower.position.z - before.z,
+      ) * 60;
+    if (i > 120 && !movement.moving) stopped++;
+    assert.ok(
+      speed <= previousSpeed + 8 / 60 + 1e-6,
+      `abrupt acceleration at ${i}`,
+    );
+    previousSpeed = speed;
+  }
+  assert.equal(stopped, 0);
 });
 
 test("all mainland destinations remain reachable and the three islands require a sea crossing", () => {

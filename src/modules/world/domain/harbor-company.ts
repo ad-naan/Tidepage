@@ -54,6 +54,7 @@ export function createHarborFollower(start: HarborPoint, side: -1 | 1) {
   let cooldown = 0;
   let destination: HarborPoint | null = null;
   let yaw = 0;
+  let speed = 0;
   return {
     position,
     step(
@@ -62,37 +63,53 @@ export function createHarborFollower(start: HarborPoint, side: -1 | 1) {
       seconds: number,
       active: boolean,
       sailing: boolean,
+      peer?: HarborPoint,
     ) {
       const dt = Math.max(0, Math.min(seconds, 0.05));
       if (!active) {
         route = [];
         destination = null;
         cooldown = 0;
+        speed = 0;
         return { moving: false, yaw };
       }
       cooldown -= dt;
       if (cooldown <= 0) {
-        cooldown = 0.8;
+        cooldown = 0.25;
         const offset = sailing ? 2.8 : 1.45;
-        const candidates = [0, Math.PI / 2, -Math.PI / 2, Math.PI].map(
-          (angle) => ({
-            x:
-              player.x +
-              Math.cos(heading + angle) * offset * side -
-              Math.sin(heading + angle) * 1.2,
-            z:
-              player.z -
-              Math.sin(heading + angle) * offset * side -
-              Math.cos(heading + angle) * 1.2,
-          }),
-        );
+        const candidates = [
+          0,
+          Math.PI / 4,
+          -Math.PI / 4,
+          Math.PI / 2,
+          -Math.PI / 2,
+          Math.PI * 0.75,
+          -Math.PI * 0.75,
+          Math.PI,
+        ].map((angle) => ({
+          x:
+            player.x +
+            Math.cos(heading + angle) * offset * side -
+            Math.sin(heading + angle) * 1.2,
+          z:
+            player.z -
+            Math.sin(heading + angle) * offset * side -
+            Math.cos(heading + angle) * 1.2,
+        }));
         const next = candidates.find(
-          (p) => companionTraversable(p.x, p.z) && clearSegment(player, p),
+          (p) =>
+            companionTraversable(p.x, p.z) &&
+            clearSegment(player, p) &&
+            (!peer || Math.hypot(p.x - peer.x, p.z - peer.z) >= 1.9),
         );
+        if (!next) {
+          destination = null;
+          route = [];
+        }
         if (
           next &&
           (!destination ||
-            Math.hypot(next.x - destination.x, next.z - destination.z) > 0.65)
+            Math.hypot(next.x - destination.x, next.z - destination.z) > 0.18)
         ) {
           destination = next;
           // A network relocation must not cause an unbounded search or teleport a pet.
@@ -104,7 +121,23 @@ export function createHarborFollower(start: HarborPoint, side: -1 | 1) {
                 : harborRoute(position, next, companionTraversable);
         }
       }
-      let remaining = dt * (sailing ? 9.2 : 4.6);
+      // Ease into motion and slow near the end of a route instead of sprinting
+      // to an old target and waiting for the next planning tick.
+      const distanceToGoal = destination
+        ? Math.hypot(destination.x - position.x, destination.z - position.z)
+        : 0;
+      const desiredSpeed = !route.length
+        ? 0
+        : Math.min(
+            sailing ? 9.2 : 4.6,
+            route.length > 1 ? Infinity : distanceToGoal * 3,
+          );
+      const acceleration = (sailing ? 14 : 8) * dt;
+      speed += Math.max(
+        -acceleration,
+        Math.min(acceleration, desiredSpeed - speed),
+      );
+      let remaining = dt * speed;
       let moving = false;
       while (route.length && remaining > 0) {
         const next = route[0];

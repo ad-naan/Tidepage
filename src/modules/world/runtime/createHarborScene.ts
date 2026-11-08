@@ -33,7 +33,11 @@ import {
 } from "../domain/coast-harbor";
 import type { CoastAvatar, AvatarPose } from "../domain/coast-avatar";
 import { harborInputKey } from "../domain/coast-movement";
-import { clampHarborPitch, harborCameraFrame } from "../domain/harbor-camera";
+import {
+  clampHarborPitch,
+  harborCameraFrame,
+  harborDialogueFrame,
+} from "../domain/harbor-camera";
 import {
   harborCompanion,
   harborTurtle,
@@ -729,6 +733,7 @@ function createLoadedHarborScene(
         delta,
         following && !state.blocked && !state.studio && !talkOnArrival,
         sailing,
+        model === otter ? turtleFollower.position : otterFollower.position,
       );
       model.root.position.set(
         follower.position.x,
@@ -933,22 +938,24 @@ function createLoadedHarborScene(
     );
     desiredTarget.set(framing.target.x, framing.target.y, framing.target.z);
     if (state.talking) {
-      const centerX = (p.x + otter.root.position.x) / 2;
-      const centerZ = (p.z + otter.root.position.z) / 2;
-      const indoors = harborInside(p.x, p.z);
-      // Put both speakers above the bottom dialogue without moving either actor.
-      desiredTarget.set(centerX, 0.55, centerZ);
-      desiredCamera.set(
-        centerX + 1.8,
-        indoors ? 7 : 3.4,
-        centerZ + (indoors ? 1.5 : camera.aspect < 0.8 ? 8 : 6),
+      const dialogue = harborDialogueFrame(
+        p,
+        otter.root.position,
+        desiredCamera,
+        camera.aspect < 0.8,
+        harborInside(p.x, p.z),
+        state.listening ? turtle.root.position : undefined,
       );
-      if (state.listening) {
-        desiredTarget.x =
-          (p.x + otter.root.position.x + turtle.root.position.x) / 3;
-        desiredCamera.x = desiredTarget.x + 1.8;
-        desiredCamera.z += 1;
-      }
+      desiredTarget.set(
+        dialogue.target.x,
+        dialogue.target.y,
+        dialogue.target.z,
+      );
+      desiredCamera.set(
+        dialogue.position.x,
+        dialogue.position.y,
+        dialogue.position.z,
+      );
     }
     target.lerp(desiredTarget, state.reduced ? 1 : 1 - Math.exp(-delta * 5));
     camera.position.lerp(

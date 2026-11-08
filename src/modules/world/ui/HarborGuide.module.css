@@ -58,8 +58,13 @@
   margin-top: 6px;
   font-size: var(--text-xs);
 }
-.choices button {
-  min-height: 36px;
+.bar .choices button {
+  min-height: 32px;
+  padding: 4px 6px;
+  font-size: inherit;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
 }
 @media (max-width: 600px) {
   .bar {
