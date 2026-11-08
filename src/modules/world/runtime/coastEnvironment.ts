@@ -50,7 +50,7 @@ export function createCoastEnvironment(scene: THREE.Scene, fantasy = false) {
   const water = new Reflector(waterGeometry, {
     textureWidth: 768,
     textureHeight: 768,
-    multisample: 0,
+    multisample: 4,
     clipBias: 0.002,
     shader: {
       name: "CoastalWater",
@@ -66,11 +66,26 @@ export function createCoastEnvironment(scene: THREE.Scene, fantasy = false) {
       },
       vertexShader: `uniform mat4 textureMatrix;varying vec4 reflected;varying vec3 world;void main(){world=(modelMatrix*vec4(position,1.)).xyz;reflected=textureMatrix*vec4(position,1.);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
       fragmentShader: `uniform sampler2D tDiffuse;uniform float time;uniform float night;uniform vec3 sunDirection;uniform vec3 ripple;uniform vec3 wake;varying vec4 reflected;varying vec3 world;
-    float wave(vec2 p){float h=0.;float f=.65,a=.12;vec2 dir=vec2(.8,.6);for(int i=0;i<7;i++){h+=sin(dot(p,dir)*f+time*(.7+float(i)*.19))*a;dir=mat2(.8,-.6,.6,.8)*dir;f*=1.83;a*=.48;}return h;}
-    void main(){vec2 p=world.xz;float e=.045;float h=wave(p);vec3 n=normalize(vec3((h-wave(p+vec2(e,0.)))/e,1.,(h-wave(p+vec2(0.,e)))/e));vec3 view=normalize(cameraPosition-world);float distanceToEye=distance(cameraPosition,world);
+    // Filter waves by their screen footprint before they perturb the reflection.
+    // MSAA alone cannot filter subpixel detail inside a fragment shader.
+    vec2 waveGradient(vec2 p){
+      vec2 gradient=vec2(0.);float f=.65,a=.12;vec2 dir=vec2(.8,.6);
+      for(int i=0;i<7;i++){
+        float phase=dot(p,dir)*f+time*(.7+float(i)*.19);
+        float footprint=abs(dFdx(phase))+abs(dFdy(phase));
+        float resolved=1.-smoothstep(.5,3.14159,footprint);
+        gradient+=cos(phase)*dir*f*a*resolved;
+        dir=mat2(.8,-.6,.6,.8)*dir;f*=1.83;a*=.48;
+      }
+      return gradient;
+    }
+    void main(){vec2 p=world.xz;vec2 slope=waveGradient(p);vec3 n=normalize(vec3(-slope.x,1.,-slope.y));vec3 view=normalize(cameraPosition-world);float distanceToEye=distance(cameraPosition,world);
       vec2 uv=reflected.xy/reflected.w;uv+=n.xz*.014*min(1.,14./distanceToEye);vec3 reflection=texture2D(tDiffuse,clamp(uv,.002,.998)).rgb;
       float fresnel=.05+.93*pow(1.-max(dot(n,view),0.),4.);vec3 deep=mix(vec3(.015,.10,.12),vec3(.003,.018,.038),night);vec3 sea=mix(deep,reflection,.42+fresnel*.55);
-      float spec=pow(max(dot(reflect(-sunDirection,n),view),0.),180.);sea+=mix(vec3(1.7,.67,.2),vec3(.4,.65,1.),night)*spec;
+      // Broaden unresolved glints instead of letting them jump between pixels.
+      vec3 nx=dFdx(n),ny=dFdy(n);float variance=dot(nx,nx)+dot(ny,ny);
+      float exponent=180./(1.+180.*variance);
+      float spec=pow(max(dot(reflect(-sunDirection,n),view),0.),exponent)*exponent/180.;sea+=mix(vec3(1.7,.67,.2),vec3(.4,.65,1.),night)*spec;
       float age=time-ripple.z;float d=distance(p,ripple.xy);float ring=exp(-pow((d-age*2.2)*4.,2.))*max(0.,1.-age/3.);if(age>=0.)sea+=ring*vec3(.13,.23,.23);
       vec2 trail=p-wake.xy;float wakeGlow=exp(-dot(trail,trail)*.48)*wake.z*(.35+.65*pow(sin(d*12.-time*4.),2.));sea+=wakeGlow*mix(vec3(.1,.16,.14),vec3(.015,.45,.62),night);
       gl_FragColor=vec4(sea,1.);
@@ -79,6 +94,10 @@ export function createCoastEnvironment(scene: THREE.Scene, fantasy = false) {
     }`,
     },
   });
+  // Distortion can minify the reflected shoreline even at close range.
+  const reflectionTexture = water.getRenderTarget().texture;
+  reflectionTexture.generateMipmaps = true;
+  reflectionTexture.minFilter = THREE.LinearMipmapLinearFilter;
   water.rotation.x = -Math.PI / 2;
   water.position.y = -0.16;
   scene.add(water);

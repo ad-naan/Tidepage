@@ -10,7 +10,15 @@ export const guideRequestSchema = z
   .object({
     locale: localeSchema,
     companionId: z.literal("otter").default("otter"),
-    context: z.object({ night: z.boolean() }).strict().optional(),
+    context: z
+      .object({
+        night: z.boolean(),
+        sailing: z.boolean().optional(),
+        lookingSky: z.boolean().optional(),
+        following: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
     place: destination.nullable(),
     turns: z
       .array(

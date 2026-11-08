@@ -36,11 +36,18 @@ import { harborInputKey } from "../domain/coast-movement";
 import { clampHarborPitch, harborCameraFrame } from "../domain/harbor-camera";
 import {
   harborCompanion,
+  harborTurtle,
   nearHarborCompanion,
 } from "../domain/harbor-companion";
 import { createHarborCompanion } from "./createHarborCompanion";
 import { createHarborTurtle } from "./createHarborTurtle";
 import { updateHarborSpeechAnchors } from "./harborSpeechAnchors";
+import {
+  createHarborFollower,
+  createHarborMoments,
+  companionApproach,
+  type HarborMoment,
+} from "../domain/harbor-company";
 
 import { harborGroundHeight, harborSailable } from "../domain/harbor-terrain";
 import { harborJourneyStops } from "../domain/harbor-journey";
@@ -54,6 +61,7 @@ type HarborState = {
   talking: boolean;
   saying: boolean;
   listening: boolean;
+  quiet: boolean;
   blocked: boolean;
   reduced: boolean;
 };
@@ -69,6 +77,7 @@ export type HarborControls = {
   jump: () => void;
   interact: () => void;
   meetCompanion: () => void;
+  setCompany: (following: boolean) => void;
   lookSky: () => void;
   say: () => void;
   networkIntent: () => CoastIntent;
@@ -81,12 +90,16 @@ type HarborSceneOptions = {
   speechHost?: HTMLElement;
   state: () => HarborState;
   onPlace: (place: HarborPlace | null) => void;
+  onLocation: (place: HarborDestination | null) => void;
   onPose: (pose: AvatarPose) => void;
   onInteraction: (interaction: HarborInteraction | null) => void;
   onTravel: (sailing: boolean) => void;
   onTalk: () => void;
   onSay: () => void;
   onSky: (sky: boolean) => void;
+  onMoment: (moment: HarborMoment) => void;
+  onCompany: (following: boolean) => void;
+  onTurtleNearby: (nearby: boolean) => void;
   onJourney: (id: JourneyId) => void;
   onNearbyJourney: (id: JourneyId | null) => void;
   onNavigation: (reason: "noRoute" | "needBoat" | "upgrade") => void;
@@ -153,6 +166,13 @@ function createLoadedHarborScene(
   const landscape = createHarborLandscape(scene);
   const otter = createHarborCompanion(scene);
   const turtle = createHarborTurtle(scene);
+  const otterFollower = createHarborFollower(harborCompanion.position, -1);
+  const turtleFollower = createHarborFollower(harborTurtle.position, 1);
+  const moments = createHarborMoments();
+  let following = false;
+  let turtleNearby = true;
+  let companyMoment: HarborMoment | null = null;
+  let companyDelay = 0;
   const avatar = createCoastAvatar(options.state().appearance, lease.asset);
   const companions = createCoastCompanions(scene, lease.asset);
   let authority: CoastPlayer | null = null;
@@ -224,7 +244,7 @@ function createLoadedHarborScene(
     options.onSay();
   }
   function talk() {
-    if (sailing || !nearHarborCompanion(avatar.root.position)) return;
+    if (!canTalk()) return;
     stand();
     route = [];
     keys.clear();
@@ -234,10 +254,16 @@ function createLoadedHarborScene(
     jumpUntil = 0;
     setPose("idle");
     avatar.root.rotation.y = Math.atan2(
-      harborCompanion.position.x - avatar.root.position.x,
-      harborCompanion.position.z - avatar.root.position.z,
+      otter.root.position.x - avatar.root.position.x,
+      otter.root.position.z - avatar.root.position.z,
     );
     options.onTalk();
+  }
+  function canTalk() {
+    return (
+      nearHarborCompanion(avatar.root.position, otter.root.position) ||
+      (sailing && avatar.root.position.distanceTo(otter.root.position) < 5)
+    );
   }
   let dragging: {
     id: number;
@@ -249,6 +275,7 @@ function createLoadedHarborScene(
   } | null = null;
   let lastAppearance = options.state().appearance;
   let lastPlace: HarborPlace | null = null;
+  let lastLocation: HarborDestination | null = null;
   let lastStudio = false;
   const setPose = (next: AvatarPose) => {
     if (next === pose) return;
@@ -518,6 +545,10 @@ function createLoadedHarborScene(
       (-(event.clientY - rect.top) / rect.height) * 2 + 1,
     );
     raycaster.setFromCamera(pointer, camera);
+    if (raycaster.intersectObject(otter.root, true).length) {
+      meetCompanion();
+      return;
+    }
     if (raycaster.ray.intersectPlane(floor, intersection)) {
       boardOnArrival = false;
       navigate(intersection);
@@ -688,13 +719,77 @@ function createLoadedHarborScene(
       }
     }
     companions.update(now / 1000, delta, state.reduced);
+    for (const [model, follower] of [
+      [otter, otterFollower],
+      [turtle, turtleFollower],
+    ] as const) {
+      const motion = follower.step(
+        avatar.root.position,
+        avatar.root.rotation.y,
+        delta,
+        following && !state.blocked && !state.studio && !talkOnArrival,
+        sailing,
+      );
+      model.root.position.set(
+        follower.position.x,
+        Math.max(
+          -0.15,
+          harborGroundHeight(follower.position.x, follower.position.z),
+        ),
+        follower.position.z,
+      );
+      if (motion.moving) {
+        const angle = Math.atan2(
+          Math.sin(motion.yaw - model.root.rotation.y),
+          Math.cos(motion.yaw - model.root.rotation.y),
+        );
+        model.root.rotation.y +=
+          angle * (state.reduced ? 1 : 1 - Math.exp(-delta * 9));
+      }
+      model.root.rotation.z =
+        state.reduced || !motion.moving ? 0 : Math.sin(elapsed * 8) * 0.035;
+    }
+    const nearbyOtter = nearHarborCompanion(
+      avatar.root.position,
+      otter.root.position,
+    );
+    const nearbyTurtle =
+      otter.root.position.distanceTo(turtle.root.position) < 7;
+    if (nearbyTurtle !== turtleNearby) {
+      turtleNearby = nearbyTurtle;
+      options.onTurtleNearby(nearbyTurtle);
+    }
+    const moment = moments.step({
+      seconds: delta,
+      nearby: otter.root.position.distanceTo(avatar.root.position) < 7,
+      paused: state.blocked || state.studio || state.quiet,
+      wave: pose === "wave",
+      sitting: pose === "sit",
+      sky: lookingSky,
+      sailing,
+      night: state.night,
+    });
+    if (!state.blocked && !state.studio && companyMoment) {
+      companyDelay -= delta;
+      if (companyDelay <= 0) {
+        options.onMoment(companyMoment);
+        companyMoment = null;
+      }
+    } else if (moment) options.onMoment(moment);
     otter.update(
       elapsed,
       state.listening ? turtle.root.position : avatar.root.position,
-      state.talking,
+      state.talking || (nearbyOtter && pose !== "walk" && pose !== "run"),
       state.reduced,
     );
-    turtle.update(elapsed, otter.root.position, state.listening, state.reduced);
+    turtle.update(
+      elapsed,
+      state.listening ? otter.root.position : avatar.root.position,
+      state.listening ||
+        (turtle.root.position.distanceTo(avatar.root.position) < 5 &&
+          pose === "idle"),
+      state.reduced,
+    );
     if (sailing)
       boat = { x: avatar.root.position.x, z: avatar.root.position.z };
     avatar.root.position.y = sailing
@@ -717,7 +812,9 @@ function createLoadedHarborScene(
     const near: HarborInteraction | null = sailing
       ? harborLanding(avatar.root.position)
         ? "land"
-        : null
+        : canTalk()
+          ? "talk"
+          : null
       : Math.hypot(
             avatar.root.position.x - boat.x,
             avatar.root.position.z - boat.z,
@@ -735,8 +832,10 @@ function createLoadedHarborScene(
               .map(([id, point]) => ({
                 id,
                 distance: Math.hypot(
-                  point.x - avatar.root.position.x,
-                  point.z - avatar.root.position.z,
+                  (id === "talk" ? otter.root.position.x : point.x) -
+                    avatar.root.position.x,
+                  (id === "talk" ? otter.root.position.z : point.z) -
+                    avatar.root.position.z,
                 ),
                 radius: point.radius,
               }))
@@ -757,6 +856,21 @@ function createLoadedHarborScene(
     if (place !== lastPlace) {
       options.onPlace(place);
       lastPlace = place;
+    }
+    const location =
+      (Object.entries(harborDestinations) as [HarborDestination, HarborPoint][])
+        .map(([id, point]) => ({
+          id,
+          distance: Math.hypot(
+            point.x - avatar.root.position.x,
+            point.z - avatar.root.position.z,
+          ),
+        }))
+        .filter((point) => point.distance < 12)
+        .sort((a, b) => a.distance - b.distance)[0]?.id ?? null;
+    if (location !== lastLocation) {
+      lastLocation = location;
+      options.onLocation(location);
     }
     night = THREE.MathUtils.damp(
       night,
@@ -819,14 +933,15 @@ function createLoadedHarborScene(
     );
     desiredTarget.set(framing.target.x, framing.target.y, framing.target.z);
     if (state.talking) {
-      const centerX = (p.x + harborCompanion.position.x) / 2;
-      const centerZ = (p.z + harborCompanion.position.z) / 2;
+      const centerX = (p.x + otter.root.position.x) / 2;
+      const centerZ = (p.z + otter.root.position.z) / 2;
+      const indoors = harborInside(p.x, p.z);
       // Put both speakers above the bottom dialogue without moving either actor.
       desiredTarget.set(centerX, 0.55, centerZ);
       desiredCamera.set(
         centerX + 1.8,
-        3.4,
-        centerZ + (camera.aspect < 0.8 ? 8 : 6),
+        indoors ? 7 : 3.4,
+        centerZ + (indoors ? 1.5 : camera.aspect < 0.8 ? 8 : 6),
       );
       if (state.listening) {
         desiredTarget.x =
@@ -864,6 +979,22 @@ function createLoadedHarborScene(
   };
   document.addEventListener("visibilitychange", visibility);
   frame = requestAnimationFrame(update);
+  function meetCompanion() {
+    if (canTalk()) talk();
+    else if (sailing) options.onNavigation("noRoute");
+    else {
+      const point = companionApproach(
+        otter.root.position,
+        avatar.root.position,
+      );
+      if (!point) {
+        options.onNavigation("noRoute");
+        return;
+      }
+      navigate(point);
+      talkOnArrival = route.length > 0;
+    }
+  }
   return {
     goTo,
     voyage,
@@ -876,16 +1007,12 @@ function createLoadedHarborScene(
     interact,
     lookSky,
     say,
-    meetCompanion: () => {
-      if (sailing) {
-        options.onNavigation("noRoute");
-        return;
-      }
-      if (nearHarborCompanion(avatar.root.position)) talk();
-      else {
-        navigate(harborCompanion.approach);
-        talkOnArrival = route.length > 0;
-      }
+    meetCompanion,
+    setCompany: (value) => {
+      following = value;
+      options.onCompany(value);
+      companyMoment = value ? "together" : "stay";
+      companyDelay = 0.6;
     },
     synchronize: (snapshot, selfId) => {
       const self = snapshot.players.find((player) => player.id === selfId);

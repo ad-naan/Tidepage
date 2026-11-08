@@ -596,6 +596,24 @@
     "name": "The Coast",
     "description": "Bring your own character to Sunset Bay, take a quiet walk, and keep a coastal photograph.",
     "harbor": {
+      "company": {
+        "choices": "Time with your companions",
+        "follow": "Come along with me",
+        "stay": "Rest here for a while",
+        "sky": "Look at the sky together",
+        "quiet": "A little quiet company",
+        "voicesOn": "Let's hear your voices again",
+        "moments": {
+          "welcome": "Hello there. Tap me, or come close and press E. We could take a walk together.",
+          "wave": "Hello! Which way shall we go today?",
+          "rest": "You can hear the sea from here. We can sit a little longer.",
+          "sky": "Look up. There's time to stay here a while.",
+          "sail": "Take your time rowing. We'll swim alongside.",
+          "night": "It's getting dark. Shall we look at the stars?",
+          "together": "The turtle and I will come along. When you stop, we'll wait with you.",
+          "stay": "We'll rest right here. Come find us when you'd like company again."
+        }
+      },
       "companion": {
         "title": "Harbor otter · AI companion",
         "intro": "The otter is an AI companion. Sending shares your words, the last three exchanges, and your in-game location and time of day with the configured model. This page keeps the conversation only while you stay here.",
@@ -606,7 +624,7 @@
         "walk": "Walk to {destination}",
         "login": "Sign in to talk",
         "error": "That reply did not arrive. Your words are still here; you can try again.",
-        "meet": "Walk over to the otter",
+        "meet": "Talk with the otter",
         "you": "You",
         "otter": "Otter",
         "greetingDay": "There you are. The sea breeze feels lovely. Stay with me a little?",
@@ -840,7 +858,7 @@
         "listening": "The otter and turtle are chatting. You can interrupt any time.",
         "nightTopic": "Talk together about the galaxy and starlight over the bay tonight.",
         "dayTopic": "Talk together about the sea breeze, sunset and small encounters today.",
-        "aiPrivacy": "The otter and turtle are AI companions. Your words, the last three exchanges and in-game time of day go to the configured model. Each conversation lasts at most four turns; stopping or leaving cancels subsequent requests. AI conversations play only in your current scene and are not sent to other players."
+        "aiPrivacy": "Everyday greetings and following run locally in the scene. Free conversation uses AI: your words, the last three exchanges, and your in-game location, time of day and companion state go to the configured model. Each conversation lasts at most four turns; stopping or leaving cancels subsequent requests. AI conversations play only in your current scene and are not sent to other players."
       }
     },
     "ui": {

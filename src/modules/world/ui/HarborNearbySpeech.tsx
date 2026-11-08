@@ -58,6 +58,7 @@ export function HarborNearbySpeech({
   return (
     <section
       className={styles.bar}
+      data-world-composer
       aria-label={t("nearby")}
       onKeyDown={(event) => {
         if (event.key === "Escape") {

@@ -11,6 +11,10 @@ export function updateHarborSpeechAnchors(
   if (!host) return;
   const width = host.clientWidth,
     height = host.clientHeight;
+  const composer = host.parentElement?.querySelector<HTMLElement>(
+    "[data-world-composer]",
+  );
+  const bottomInset = Math.max(100, (composer?.offsetHeight ?? 0) + 36);
   const occupied: {
     left: number;
     top: number;
@@ -59,7 +63,7 @@ export function updateHarborSpeechAnchors(
         top = box.top - h - 12;
     }
     // Do not stack speech over the controls or force off-screen voices onto the screen.
-    if (top < 72 || top + h > height - 100) {
+    if (top < 72 || top + h > height - bottomInset) {
       node.dataset.visible = "false";
       continue;
     }

@@ -147,6 +147,7 @@
   gap: 9px;
   min-width: 48px;
   min-height: 44px;
+  max-width: calc(100% - 32px);
   justify-content: center;
   padding: 8px 12px;
   border-radius: 24px;
@@ -161,23 +162,9 @@
   font-size: var(--text-xs);
 }
 .context > span {
-  position: absolute;
-  bottom: calc(100% + 8px);
-  padding: 5px 10px;
-  background: var(--harbor-paper);
-  border-radius: 14px;
-  white-space: nowrap;
   font-size: var(--text-sm);
-  opacity: 0;
-  pointer-events: none;
-}
-.context:focus-visible > span {
-  opacity: 1;
-}
-@media (hover: hover) {
-  .context:hover > span {
-    opacity: 1;
-  }
+  line-height: 1.5;
+  text-align: left;
 }
 @media (pointer: coarse) {
   .context kbd {

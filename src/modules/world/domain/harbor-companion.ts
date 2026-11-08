@@ -22,11 +22,12 @@ export type HarborDialogueMessage = {
   text: string;
 };
 
-export function nearHarborCompanion(point: { x: number; z: number }) {
+export function nearHarborCompanion(
+  point: { x: number; z: number },
+  companion: { x: number; z: number } = harborCompanion.position,
+) {
   return (
-    Math.hypot(
-      point.x - harborCompanion.position.x,
-      point.z - harborCompanion.position.z,
-    ) < harborCompanion.radius
+    Math.hypot(point.x - companion.x, point.z - companion.z) <
+    harborCompanion.radius
   );
 }

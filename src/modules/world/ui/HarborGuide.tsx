@@ -38,22 +38,39 @@ export function HarborGuide({
   open,
   enabled,
   night,
+  sailing,
+  lookingSky,
   onClose,
   place,
   speech,
   onListening,
+  company,
+  quiet,
+  turtleNearby,
+  onCompany,
+  onQuiet,
+  onSky,
 }: {
   open: boolean;
   enabled: boolean;
   night: boolean;
+  sailing: boolean;
+  lookingSky: boolean;
   onClose: () => void;
   place: HarborDestination | null;
   speech: ReturnType<typeof useHarborSpeech>;
   onListening: (listening: boolean) => void;
+  company: boolean;
+  quiet: boolean;
+  turtleNearby: boolean;
+  onCompany: () => void;
+  onQuiet: () => void;
+  onSky: () => void;
 }) {
   const locale = useLocale();
   const t = useTranslations("world.harbor.companion");
   const s = useTranslations("world.harbor.speech");
+  const c = useTranslations("world.harbor.company");
   const { principal, openLogin } = useIdentity();
   const [question, setQuestion] = useState("");
   const [turns, setTurns] = useState<
@@ -120,7 +137,7 @@ export function HarborGuide({
           locale,
           place,
           companionId: "otter",
-          context: { night },
+          context: { night, sailing, lookingSky, following: company },
           question: text,
           turns: turns
             .slice(-3)
@@ -146,7 +163,7 @@ export function HarborGuide({
     }
   }
   async function listen() {
-    if (!principal || !enabled || request.current) return;
+    if (!principal || !enabled || !turtleNearby || request.current) return;
     const controller = new AbortController();
     request.current = controller;
     setBusy(true);
@@ -162,7 +179,7 @@ export function HarborGuide({
           apiSend<CompanionTurn>(
             "/api/v1/world/companions",
             "POST",
-            { locale, night, topic, turns },
+            { locale, night, place, sailing, topic, turns },
             { signal },
           ),
         speak: (turn) => {
@@ -185,6 +202,7 @@ export function HarborGuide({
   return (
     <section
       className={styles.bar}
+      data-world-composer
       aria-label={t("conversation")}
       onKeyDown={(event) => {
         if (event.key === "Escape") {
@@ -242,6 +260,7 @@ export function HarborGuide({
             <Button
               aria-label={s("listen")}
               title={s("listen")}
+              disabled={!turtleNearby}
               onClick={() => void listen()}
             >
               <MessagesSquare size={20} />
@@ -251,6 +270,27 @@ export function HarborGuide({
         <IconButton autoFocus aria-label={s("close")} onClick={onClose}>
           <X size={18} />
         </IconButton>
+      </div>
+      <div className={styles.choices} role="group" aria-label={c("choices")}>
+        <Button
+          variant="quiet"
+          disabled={busy}
+          aria-pressed={company}
+          onClick={onCompany}
+        >
+          {c(company ? "stay" : "follow")}
+        </Button>
+        <Button variant="quiet" disabled={busy} onClick={onSky}>
+          {c("sky")}
+        </Button>
+        <Button
+          variant="quiet"
+          disabled={busy}
+          aria-pressed={quiet}
+          onClick={onQuiet}
+        >
+          {c(quiet ? "voicesOn" : "quiet")}
+        </Button>
       </div>
       {error && (
         <p className={styles.note} role="alert">

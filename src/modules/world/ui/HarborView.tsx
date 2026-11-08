@@ -96,6 +96,9 @@ export function HarborView({
   const [help, setHelp] = useState(false);
   const [talking, setTalking] = useState(false);
   const [listening, setListening] = useState(false);
+  const [company, setCompany] = useState(false);
+  const [quiet, setQuiet] = useState(false);
+  const [turtleNearby, setTurtleNearby] = useState(true);
   const [saying, setSaying] = useState(false);
   const speech = useHarborSpeech();
   const speechHost = useRef<HTMLDivElement>(null);
@@ -103,6 +106,7 @@ export function HarborView({
   const [sound, setSound] = useState(false);
   const [pose, setPose] = useState<AvatarPose>("idle");
   const [place, setPlace] = useState<HarborPlace | null>(null);
+  const [location, setLocation] = useState<HarborDestination | null>(null);
   const [interaction, setInteraction] = useState<HarborInteraction | null>(
     null,
   );
@@ -128,6 +132,7 @@ export function HarborView({
     talking,
     saying,
     listening,
+    quiet,
     blocked: help || talking || saying || !!photo || !!socialPanel,
     reduced: !!reduced,
   });
@@ -139,6 +144,7 @@ export function HarborView({
     talking,
     saying,
     listening,
+    quiet,
     blocked: help || talking || saying || !!photo || !!socialPanel,
     reduced: !!reduced,
   };
@@ -266,12 +272,17 @@ export function HarborView({
             speechHost: speechHost.current ?? undefined,
             state: () => current.current,
             onPlace: setPlace,
+            onLocation: setLocation,
             onPose: setPose,
             onInteraction: setInteraction,
             onTravel: setSailing,
             onTalk: () => setTalking(true),
             onSay: () => setSaying(true),
             onSky: setLookingSky,
+            onCompany: setCompany,
+            onTurtleNearby: setTurtleNearby,
+            onMoment: (moment) =>
+              speech.speak("otter", t(`company.moments.${moment}`)),
             onNearbyJourney: setNearbyJourney,
             onJourney: (id) => discover.current(id),
             onNavigation: (reason) =>
@@ -677,7 +688,6 @@ export function HarborView({
               <p className={styles.localNote}>{t("guide.host")}</p>
               <Button
                 variant="quiet"
-                disabled={sailing}
                 onClick={() => {
                   setHelp(false);
                   requestAnimationFrame(() =>
@@ -710,8 +720,37 @@ export function HarborView({
         open={talking}
         enabled={guideEnabled}
         night={night}
+        sailing={sailing}
+        lookingSky={lookingSky}
         speech={speech}
         onListening={setListening}
+        company={company}
+        quiet={quiet}
+        turtleNearby={turtleNearby}
+        onCompany={() => {
+          controls.current?.setCompany(!company);
+          setTalking(false);
+          setListening(false);
+          requestAnimationFrame(() =>
+            host.current?.parentElement?.focus({ preventScroll: true }),
+          );
+        }}
+        onQuiet={() => {
+          setQuiet(!quiet);
+          setTalking(false);
+          setListening(false);
+          requestAnimationFrame(() =>
+            host.current?.parentElement?.focus({ preventScroll: true }),
+          );
+        }}
+        onSky={() => {
+          setTalking(false);
+          setListening(false);
+          requestAnimationFrame(() => {
+            if (!lookingSky) controls.current?.lookSky();
+            host.current?.parentElement?.focus({ preventScroll: true });
+          });
+        }}
         onClose={() => {
           setTalking(false);
           setListening(false);
@@ -719,7 +758,7 @@ export function HarborView({
             host.current?.parentElement?.focus({ preventScroll: true }),
           );
         }}
-        place={place}
+        place={location}
       />
       {saying && (
         <HarborNearbySpeech

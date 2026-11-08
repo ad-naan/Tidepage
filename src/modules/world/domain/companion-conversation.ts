@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { localeSchema } from "@/shared/i18n/schema";
+import { harborDestinationIds } from "./harbor-guide";
 
 export const companionTurnSchema = z
   .object({
@@ -12,6 +13,8 @@ export const companionConversationSchema = z
   .object({
     locale: localeSchema,
     night: z.boolean(),
+    place: z.enum(harborDestinationIds).nullable().optional(),
+    sailing: z.boolean().optional(),
     topic: z.string().trim().min(1).max(180),
     turns: z.array(companionTurnSchema).max(3),
   })
