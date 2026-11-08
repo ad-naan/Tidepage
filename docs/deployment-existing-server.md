@@ -88,6 +88,8 @@ docker exec base-nginx wget -qO- http://adnaan-realtime:3101/healthz
 
 Web 和 Realtime 分别通过 `adnaan-web`、`adnaan-realtime` 网络别名被访问，容器内端口 3000 / 3101 不发布到主机，不与 devlog 的主机 3000 端口冲突。数据库迁移脚本位于 `tools` 镜像，不在精简的 Web 镜像中执行。
 
+如果旧版本 `db:migrate` 成功、`db:check` 却持续提示一项未完成，可能是 Windows CRLF 与 Linux LF 的文件哈希差异。新版 `db:check` 会明确识别纯换行差异，不修改数据库迁移记录；SQL 实际变更和缺失记录仍会失败并列出文件名。更新代码后需 `docker compose -f compose.production.yaml build tools` 再运行检查，仅更新宿主机脚本不会改变镜像中的脚本。
+
 ## 4. 配置 CDN，再替换旧博客 Nginx 文件
 
 CDN 需要保留原始 Host 回源 HTTP 80；对外强制 HTTPS、启用 WebSocket，空闲超时至少 120 秒。`www.adnaan.site` 会跳转到 `https://adnaan.site`，两域名的 CDN 证书都需有效。源站主域名不能再强制跳转 HTTPS，否则 HTTPS → HTTP 回源会循环重定向。

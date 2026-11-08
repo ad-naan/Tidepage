@@ -1,6 +1,8 @@
 import { config } from "dotenv";
 import { readMigrationFiles } from "drizzle-orm/migrator";
+import { readFileSync } from "node:fs";
 import { getPool, closeDatabase } from "../src/server/db/client";
+import { migrationStatus } from "./lib/migration-status";
 
 config({ path: [".env.local", ".env"], quiet: true });
 
@@ -26,23 +28,47 @@ try {
           )
         ).rows
       : [];
-    const pending = expected.filter(
-      (migration) =>
-        !applied.some(
-          (row) =>
-            row.hash === migration.hash &&
-            Number(row.created_at) === migration.folderMillis,
-        ),
-    );
+    const journal = JSON.parse(
+      readFileSync("./drizzle/meta/_journal.json", "utf8"),
+    ) as { entries: { when: number; tag: string }[] };
+    const statuses = expected.map((migration) => ({
+      name:
+        journal.entries.find((entry) => entry.when === migration.folderMillis)
+          ?.tag ?? String(migration.folderMillis),
+      timestamp: migration.folderMillis,
+      status: migrationStatus(migration, applied),
+    }));
+    for (const item of statuses.filter(
+      (item) => item.status === "line-endings",
+    ))
+      console.info(`✓ ${item.name}：已迁移，仅 LF/CRLF 换行不同`);
+    const pending = statuses.filter((item) => item.status === "missing");
+    const changed = statuses.filter((item) => item.status === "changed");
     if (pending.length) {
       console.error(
-        `还有 ${pending.length} 项数据库迁移未完成。运行 pnpm run db:migrate 后重新检查。`,
+        `缺少 ${pending.length} 项迁移记录：${pending.map((item) => item.name).join(", ")}。`,
+      );
+      const latest = Math.max(
+        0,
+        ...applied.map((row) => Number(row.created_at)),
+      );
+      console.error(
+        pending.some((item) => item.timestamp <= latest)
+          ? "存在早于已执行迁移的缺失项，自动迁移不会补跑。请核对部署版本和数据库结构，不要直接删除或补写迁移记录。"
+          : "运行 pnpm run db:migrate 后重新检查。",
       );
       process.exitCode = 1;
-    } else {
-      console.info(`✓ 数据库迁移已就绪（${expected.length} 项）`);
     }
-    if (!pending.length) console.info("✓ 内容数据源：PostgreSQL");
+    if (changed.length) {
+      console.error(
+        `已执行的迁移文件内容不一致：${changed.map((item) => item.name).join(", ")}。请核对原始 SQL 与部署版本；重复迁移不会修复，不要直接修改数据库迁移记录。`,
+      );
+      process.exitCode = 1;
+    }
+    if (!pending.length && !changed.length) {
+      console.info(`✓ 数据库迁移已就绪（${expected.length} 项）`);
+      console.info("✓ 内容数据源：PostgreSQL");
+    }
   }
 } catch (error) {
   const code =
