@@ -7,6 +7,7 @@ import {
   harborWalkable,
   harborRoute,
   harborSpawn,
+  harborMooring,
 } from "../../src/modules/world/domain/coast-harbor";
 import {
   emptyCoastRoom,
@@ -118,14 +119,20 @@ test("the skiff has outward-facing external skin and an inward-facing open inter
   try {
     const ray = new THREE.Raycaster();
     // Looking down into the boat should hit its inside; looking up sees the hull.
-    ray.set(new THREE.Vector3(2.28, 2, 8.05), new THREE.Vector3(0, -1, 0));
+    ray.set(
+      new THREE.Vector3(harborMooring.x, 2, harborMooring.z),
+      new THREE.Vector3(0, -1, 0),
+    );
     const inside = ray
       .intersectObject(skiff)
       .find(
         (hit) => (hit.object as THREE.Mesh).material === kit.palette.paleWood,
       );
     assert.ok(inside, "inside hull is culled");
-    ray.set(new THREE.Vector3(2.28, -2, 8.05), new THREE.Vector3(0, 1, 0));
+    ray.set(
+      new THREE.Vector3(harborMooring.x, -2, harborMooring.z),
+      new THREE.Vector3(0, 1, 0),
+    );
     const outside = ray
       .intersectObject(skiff)
       .find((hit) => (hit.object as THREE.Mesh).material === kit.palette.roof);
@@ -146,6 +153,32 @@ test("the house has an accessible doorway and solid walls and furniture", () => 
     [2.35, -4.4],
   ])
     assert.equal(harborWalkable(x, z), false);
+  const scene = new THREE.Scene();
+  const landscape = createHarborLandscape(scene);
+  try {
+    landscape.update(0, 0, new THREE.Vector3(4.5, 0.49, -2.7));
+    scene.updateMatrixWorld(true);
+    const ray = new THREE.Raycaster(
+      new THREE.Vector3(4.5, 1.5, 0),
+      new THREE.Vector3(0, 0, -1),
+    );
+    const wall = ray
+      .intersectObjects(scene.children, true)
+      .find(
+        (hit) =>
+          (hit.object as THREE.Mesh).material instanceof
+            THREE.MeshStandardMaterial &&
+          ((hit.object as THREE.Mesh).material as THREE.MeshStandardMaterial)
+            .name === "lime-plaster",
+      );
+    assert.ok(
+      wall && wall.point.z < -4.9,
+      "a solid front wall still closes the doorway",
+    );
+    assert.equal(scene.getObjectByName("sea-house-canopy")?.visible, false);
+  } finally {
+    landscape.dispose();
+  }
 });
 
 test("running and jumping use bounded server authority and expire naturally", () => {

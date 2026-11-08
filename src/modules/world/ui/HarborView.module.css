@@ -390,3 +390,15 @@
   overflow: auto;
   overflow-wrap: anywhere;
 }
+
+.travelHint {
+  position: absolute;
+  top: 84px;
+  left: 28px;
+  max-width: calc(100% - 56px);
+  padding: 8px 12px;
+  background: var(--harbor-paper);
+  border-radius: 16px;
+  font-size: var(--text-body);
+  pointer-events: none;
+}

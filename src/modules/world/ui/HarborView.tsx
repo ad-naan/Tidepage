@@ -53,16 +53,33 @@ import { CoastRpcError, useCoastConnection } from "./useCoastConnection";
 import { HarborSocial } from "./HarborSocial";
 import styles from "./HarborView.module.css";
 import { HarborGuide } from "./HarborGuide";
+import {
+  emptyJourney,
+  restoreJourney,
+  interactJourney,
+  type JourneyId,
+} from "../domain/coast-journey";
 
 export function HarborView({
-  onVoyage,
   guideEnabled = false,
 }: {
-  onVoyage: () => void;
   guideEnabled?: boolean;
 }) {
   const t = useTranslations("world.harbor");
   const world = useTranslations("world.ui");
+  const notices = useTranslations("world.notices");
+  const [journey, setJourney] = useState(emptyJourney);
+  const [sailing, setSailing] = useState(false);
+  const [nearbyJourney, setNearbyJourney] = useState<JourneyId | null>(null);
+  const discover = useRef<(id: JourneyId) => void>(() => {});
+  discover.current = (id) => {
+    const result = interactJourney(journey, id, current.current.night);
+    setJourney(result.journey);
+    notify({
+      title: notices(result.notice.key, { count: result.notice.count ?? 0 }),
+      tone: "info",
+    });
+  };
   const { notify } = useNotice();
   const { principal, openLogin } = useIdentity();
   const reduced = useReducedMotion();
@@ -95,6 +112,7 @@ export function HarborView({
   const storageWarning = useRef(false);
   const current = useRef({
     appearance,
+    journey,
     night,
     studio,
     blocked: help || !!photo || !!socialPanel,
@@ -102,6 +120,7 @@ export function HarborView({
   });
   current.current = {
     appearance,
+    journey,
     night,
     studio,
     blocked: help || !!photo || !!socialPanel,
@@ -187,6 +206,8 @@ export function HarborView({
 
   useEffect(() => {
     try {
+      const savedJourney = localStorage.getItem("coast-journey-v1");
+      if (savedJourney) setJourney(restoreJourney(JSON.parse(savedJourney)));
       const saved = localStorage.getItem("coast-avatar-v1");
       if (saved) setAppearance(restoreAvatar(JSON.parse(saved)));
     } catch {
@@ -206,6 +227,14 @@ export function HarborView({
     }
   }, [appearance, loaded, notify, t]);
   useEffect(() => {
+    if (!loaded) return;
+    try {
+      localStorage.setItem("coast-journey-v1", JSON.stringify(journey));
+    } catch {
+      /* Exploration remains available without storage. */
+    }
+  }, [journey, loaded]);
+  useEffect(() => {
     mounted.current = true;
     let cancelled = false;
     const abort = new AbortController();
@@ -220,7 +249,11 @@ export function HarborView({
             onPlace: setPlace,
             onPose: setPose,
             onInteraction: setInteraction,
-            onVoyage,
+            onTravel: setSailing,
+            onNearbyJourney: setNearbyJourney,
+            onJourney: (id) => discover.current(id),
+            onNavigation: (reason) =>
+              notify({ title: t(`travel.${reason}`), tone: "info" }),
             onError: () => setFailed(true),
           });
           if (cancelled) {
@@ -384,6 +417,9 @@ export function HarborView({
               ? t("network.count", { count: network.count })
               : t(`network.${network.phase}`)}
           </span>
+          {sailing && (
+            <span className={styles.travelHint}>{t("travel.hint")}</span>
+          )}
           {studio && (
             <HarborWardrobe
               appearance={appearance}
@@ -398,6 +434,7 @@ export function HarborView({
               aria-label={t("actions")}
             >
               <Button
+                disabled={sailing}
                 aria-label={t("dress")}
                 onClick={() => {
                   setHelp(false);
@@ -415,6 +452,7 @@ export function HarborView({
                 <span>{t("wave")}</span>
               </Button>
               <Button
+                disabled={sailing}
                 aria-label={t(pose === "sit" ? "stand" : "sit")}
                 aria-pressed={pose === "sit"}
                 onClick={() =>
@@ -438,6 +476,7 @@ export function HarborView({
                 <span>{t("photo")}</span>
               </Button>
               <Button
+                disabled={sailing}
                 aria-label={t("jump")}
                 onClick={() => controls.current?.jump()}
               >
@@ -446,6 +485,25 @@ export function HarborView({
               </Button>
             </div>
           )}
+          {nearbyJourney &&
+            !interaction &&
+            !studio &&
+            !help &&
+            !socialPanel &&
+            !photo && (
+              <Button
+                className={styles.context}
+                onClick={() => discover.current(nearbyJourney)}
+              >
+                <Gem size={19} />
+                <kbd>{t("interact.key")}</kbd>
+                <span>
+                  {t("travel.discovery", {
+                    place: t(`discoveries.${nearbyJourney}`),
+                  })}
+                </span>
+              </Button>
+            )}
           {interaction && !studio && !help && !socialPanel && !photo && (
             <Button
               className={styles.context}
@@ -480,6 +538,16 @@ export function HarborView({
               </div>
               <p>{t("guide.move")}</p>
               <p>{t("guide.camera")}</p>
+              <p>
+                {t("travel.progress", { count: journey.fragments.length })}{" "}
+                {journey.discovered
+                  ? world("objectiveDiscovered")
+                  : journey.beacon
+                    ? world("objectiveGlow")
+                    : journey.fragments.length === 3
+                      ? world("objectiveBeacon")
+                      : world("objectiveFragments")}
+              </p>
               <div className={styles.location}>
                 <span>{t(`places.${place ?? "bay"}.name`)}</span>
                 <p>{t(`places.${place ?? "bay"}.description`)}</p>
@@ -521,8 +589,18 @@ export function HarborView({
                   }}
                 />
               )}
-              <Button variant="quiet" onClick={onVoyage}>
-                {t("voyage")}
+              <Button
+                variant="quiet"
+                onClick={() => {
+                  setHelp(false);
+                  requestAnimationFrame(() =>
+                    sailing
+                      ? controls.current?.goTo("dock")
+                      : controls.current?.voyage(),
+                  );
+                }}
+              >
+                {t(sailing ? "travel.returnRoute" : "voyage")}
               </Button>
             </section>
           )}

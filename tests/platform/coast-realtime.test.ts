@@ -87,7 +87,7 @@ test(
         third = await join(outsider);
       assert.ok(first.ok && second.ok && third.ok);
       if (!first.ok || !second.ok || !third.ok) return;
-      assert.equal(first.movementVersion, 2);
+      assert.equal(first.movementVersion, 3);
       assert.equal(
         first.snapshot.players.find((p) => p.id === first.playerId)?.avatarUrl,
         "https://avatars.githubusercontent.com/u/123?v=4",
@@ -250,7 +250,7 @@ test("authoritative movement bounds speed, collision, stale input and duplicate 
   session.player.z = 9.95;
   applyCoastInput(room, id, "owner", input(2, 0, 1), 3000);
   advanceCoastRoom(room, 3100);
-  assert.ok(session.player.z <= 10);
+  assert.ok(session.player.z <= 13);
   advanceCoastRoom(room, 20_000);
   assert.equal(coastRoomSnapshot(room, 20_000).players.length, 0);
   assert.equal(

@@ -12,6 +12,10 @@ import type {
 } from "@/shared/contracts/coast-space";
 import {
   harborPlaces,
+  harborMooring,
+  harborLanding,
+  harborSailingRoute,
+  HARBOR_SAIL_SPEED,
   harborDestinations,
   harborRoute,
   harborSpawn,
@@ -30,7 +34,12 @@ import {
 import type { CoastAvatar, AvatarPose } from "../domain/coast-avatar";
 import { harborInputKey } from "../domain/coast-movement";
 
+import { harborGroundHeight, harborSailable } from "../domain/harbor-terrain";
+import { harborJourneyStops } from "../domain/harbor-journey";
+import type { Journey, JourneyId } from "../domain/coast-journey";
+
 type HarborState = {
+  journey: Journey;
   appearance: CoastAvatar;
   night: boolean;
   studio: boolean;
@@ -39,6 +48,7 @@ type HarborState = {
 };
 export type HarborControls = {
   goTo: (place: HarborDestination) => void;
+  voyage: () => void;
   pose: (pose: "idle" | "wave" | "sit") => void;
   capture: () => Promise<Blob>;
   captureTogether: (composition: CoastPhotoComposition) => Promise<Blob>;
@@ -58,7 +68,10 @@ type HarborSceneOptions = {
   onPlace: (place: HarborPlace | null) => void;
   onPose: (pose: AvatarPose) => void;
   onInteraction: (interaction: HarborInteraction | null) => void;
-  onVoyage: () => void;
+  onTravel: (sailing: boolean) => void;
+  onJourney: (id: JourneyId) => void;
+  onNearbyJourney: (id: JourneyId | null) => void;
+  onNavigation: (reason: "noRoute" | "needBoat" | "upgrade") => void;
   onError: () => void;
 };
 
@@ -97,7 +110,7 @@ function createLoadedHarborScene(
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xd8b49b);
   scene.fog = new THREE.FogExp2(0xc2aa97, 0.003);
-  const camera = new THREE.PerspectiveCamera(48, 1, 0.1, 300);
+  const camera = new THREE.PerspectiveCamera(48, 1, 0.1, 20000);
   const ambient = new THREE.HemisphereLight(0xffe7cb, 0x697f83, 2.3);
   scene.add(ambient);
   const sun = new THREE.DirectionalLight(0xffd0a0, 3);
@@ -123,6 +136,16 @@ function createLoadedHarborScene(
   const avatar = createCoastAvatar(options.state().appearance, lease.asset);
   const companions = createCoastCompanions(scene, lease.asset);
   let authority: CoastPlayer | null = null;
+  let sailing = false;
+  let requestedTravel: "walk" | "sail" = "walk";
+  let boat = { ...harborMooring };
+  let nearbyJourney: JourneyId | null = null;
+  let boardOnArrival = false;
+  const setTravel = (next: boolean) => {
+    if (next !== sailing) options.onTravel(next);
+    sailing = next;
+    requestedTravel = next ? "sail" : "walk";
+  };
   let inputDirection = { x: 0, z: 0 };
   scene.add(avatar.root);
   avatar.root.position.set(harborSpawn.x, 0.49, harborSpawn.z);
@@ -175,13 +198,84 @@ function createLoadedHarborScene(
     }
     setPose("idle");
   };
-  function goTo(place: HarborDestination) {
+  function navigate(point: HarborPoint) {
     stand();
-    route = harborRoute(avatar.root.position, harborDestinations[place]);
+    route = sailing
+      ? harborSailingRoute(avatar.root.position, point)
+      : harborRoute(avatar.root.position, point);
     arrival = null;
     keys.clear();
+    if (!route.length) options.onNavigation(sailing ? "noRoute" : "needBoat");
+  }
+  function goTo(place: HarborDestination) {
+    boardOnArrival = false;
+    navigate(harborDestinations[place]);
+  }
+  function changeTravel() {
+    if (authority && authority.travel === undefined) {
+      options.onNavigation("upgrade");
+      return;
+    }
+    route = [];
+    keys.clear();
+    arrival = null;
+    if (sailing) {
+      const landing = harborLanding(avatar.root.position);
+      if (!landing) return;
+      boat = { x: avatar.root.position.x, z: avatar.root.position.z };
+      requestedTravel = "walk";
+      if (!authority) {
+        setTravel(false);
+        avatar.root.position.set(
+          landing.x,
+          harborGroundHeight(landing.x, landing.z),
+          landing.z,
+        );
+      }
+    } else {
+      if (
+        Math.hypot(
+          avatar.root.position.x - boat.x,
+          avatar.root.position.z - boat.z,
+        ) > 3.2
+      )
+        return;
+      requestedTravel = "sail";
+      if (!authority) {
+        stand();
+        setTravel(true);
+        avatar.root.position.set(boat.x, 0.1, boat.z);
+      }
+    }
+  }
+  function voyage() {
+    if (options.state().blocked || options.state().studio) return;
+    if (
+      sailing ||
+      Math.hypot(
+        avatar.root.position.x - boat.x,
+        avatar.root.position.z - boat.z,
+      ) < 3.2
+    ) {
+      changeTravel();
+      return;
+    }
+    const landing = harborLanding(boat);
+    if (!landing) {
+      options.onNavigation("noRoute");
+      return;
+    }
+    navigate(landing);
+    boardOnArrival = route.length > 0;
   }
   function selectPose(next: "idle" | "wave" | "sit") {
+    if (sailing) {
+      if (next === "wave") {
+        setPose("wave");
+        waveUntil = performance.now() + 2500;
+      }
+      return;
+    }
     stand();
     route = [];
     keys.clear();
@@ -199,6 +293,10 @@ function createLoadedHarborScene(
           ),
       )[0];
       route = harborRoute(avatar.root.position, seatingTarget.approach);
+      if (!route.length) {
+        options.onNavigation("needBoat");
+        return;
+      }
       arrival = "sit";
     } else {
       setPose(next);
@@ -207,6 +305,7 @@ function createLoadedHarborScene(
   }
   function jump() {
     if (
+      sailing ||
       options.state().blocked ||
       options.state().studio ||
       performance.now() < jumpUntil
@@ -218,12 +317,7 @@ function createLoadedHarborScene(
   }
   function interact() {
     if (options.state().blocked || options.state().studio) return;
-    if (
-      interaction === "bench" ||
-      interaction === "chair" ||
-      interaction === "squareLeft" ||
-      interaction === "squareRight"
-    )
+    if (interaction === "bench" || interaction === "chair")
       selectPose(pose === "sit" ? "idle" : "sit");
     else if (interaction === "door") {
       stand();
@@ -233,9 +327,10 @@ function createLoadedHarborScene(
           ? { x: 4.5, z: 0.1 }
           : { x: 4.5, z: -2.7 },
       );
-    } else if (interaction === "sail") options.onVoyage();
+    } else if (interaction === "sail" || interaction === "land") changeTravel();
     else if (interaction === "hearth" || interaction === "crystal")
       landscape.interact(interaction);
+    else if (nearbyJourney) options.onJourney(nearbyJourney);
   }
   const relevantKeys = new Set([
     "w",
@@ -299,6 +394,7 @@ function createLoadedHarborScene(
       stand();
       route = [];
       arrival = null;
+      boardOnArrival = false;
     }
   };
   const onKeyUp = (event: KeyboardEvent) => keys.delete(harborInputKey(event));
@@ -347,13 +443,9 @@ function createLoadedHarborScene(
       (-(event.clientY - rect.top) / rect.height) * 2 + 1,
     );
     raycaster.setFromCamera(pointer, camera);
-    if (
-      raycaster.ray.intersectPlane(floor, intersection) &&
-      harborWalkable(intersection.x, intersection.z)
-    ) {
-      stand();
-      route = harborRoute(avatar.root.position, intersection);
-      arrival = null;
+    if (raycaster.ray.intersectPlane(floor, intersection)) {
+      boardOnArrival = false;
+      navigate(intersection);
     }
   };
   const onWheel = (event: WheelEvent) => {
@@ -445,17 +537,22 @@ function createLoadedHarborScene(
       }
       const length = Math.hypot(dx, dz);
       if (length > 0) {
-        const speed = keys.has("shift") ? HARBOR_RUN_SPEED : HARBOR_WALK_SPEED;
+        const speed = sailing
+          ? HARBOR_SAIL_SPEED
+          : keys.has("shift")
+            ? HARBOR_RUN_SPEED
+            : HARBOR_WALK_SPEED;
+        const traversable = sailing ? harborSailable : harborWalkable;
         const step = Math.min(speed * delta, route.length ? length : Infinity);
         let nx = avatar.root.position.x + (dx / length) * step;
         let nz = avatar.root.position.z + (dz / length) * step;
-        if (!harborWalkable(nx, nz)) {
-          if (harborWalkable(nx, avatar.root.position.z))
+        if (!traversable(nx, nz)) {
+          if (traversable(nx, avatar.root.position.z))
             nz = avatar.root.position.z;
-          else if (harborWalkable(avatar.root.position.x, nz))
+          else if (traversable(avatar.root.position.x, nz))
             nx = avatar.root.position.x;
         }
-        if (harborWalkable(nx, nz)) {
+        if (traversable(nx, nz)) {
           inputDirection = { x: dx / length, z: dz / length };
           avatar.root.position.x = nx;
           avatar.root.position.z = nz;
@@ -465,7 +562,7 @@ function createLoadedHarborScene(
               Math.sin(facing - avatar.root.rotation.y),
               Math.cos(facing - avatar.root.rotation.y),
             ) * Math.min(1, delta * 12);
-          setPose(keys.has("shift") ? "run" : "walk");
+          setPose(sailing ? "idle" : keys.has("shift") ? "run" : "walk");
         } else {
           route = [];
           arrival = null;
@@ -485,7 +582,11 @@ function createLoadedHarborScene(
         (pose === "wave" && now > waveUntil)
       )
         setPose("idle");
-      if (now < jumpUntil) setPose("jump");
+      if (now < jumpUntil && !sailing) setPose("jump");
+      if (boardOnArrival && !route.length) {
+        boardOnArrival = false;
+        changeTravel();
+      }
     }
     if (authority) {
       const gap = Math.hypot(
@@ -509,23 +610,53 @@ function createLoadedHarborScene(
       }
     }
     companions.update(now / 1000, delta, state.reduced);
-    const near =
-      (
-        Object.entries(harborInteractions) as [
-          HarborInteraction,
-          { x: number; z: number; radius: number },
-        ][]
-      )
-        .map(([id, point]) => ({
-          id,
-          distance: Math.hypot(
-            point.x - avatar.root.position.x,
-            point.z - avatar.root.position.z,
-          ),
-          radius: point.radius,
-        }))
-        .filter((point) => point.distance < point.radius)
-        .sort((a, b) => a.distance - b.distance)[0]?.id ?? null;
+    if (sailing)
+      boat = { x: avatar.root.position.x, z: avatar.root.position.z };
+    avatar.root.position.y = sailing
+      ? 0.1
+      : harborGroundHeight(avatar.root.position.x, avatar.root.position.z);
+    const landmark = !sailing
+      ? (harborJourneyStops.find(
+          (stop) =>
+            Math.hypot(
+              stop.x - avatar.root.position.x,
+              stop.z - avatar.root.position.z,
+            ) < 1.65 &&
+            (stop.id !== "secret" || (state.journey.beacon && state.night)),
+        )?.id ?? null)
+      : null;
+    if (landmark !== nearbyJourney) {
+      nearbyJourney = landmark;
+      options.onNearbyJourney(landmark);
+    }
+    const near: HarborInteraction | null = sailing
+      ? harborLanding(avatar.root.position)
+        ? "land"
+        : null
+      : Math.hypot(
+            avatar.root.position.x - boat.x,
+            avatar.root.position.z - boat.z,
+          ) < 3.2
+        ? "sail"
+        : landmark
+          ? null
+          : ((
+              Object.entries(harborInteractions) as [
+                HarborInteraction,
+                { x: number; z: number; radius: number },
+              ][]
+            )
+              .filter(([id]) => id !== "sail" && id !== "land")
+              .map(([id, point]) => ({
+                id,
+                distance: Math.hypot(
+                  point.x - avatar.root.position.x,
+                  point.z - avatar.root.position.z,
+                ),
+                radius: point.radius,
+              }))
+              .filter((point) => point.distance < point.radius)
+              .sort((a, b) => a.distance - b.distance)[0]?.id ?? null);
     if (near !== interaction) {
       interaction = near;
       options.onInteraction(near);
@@ -556,12 +687,21 @@ function createLoadedHarborScene(
       .set(0xd8b49b)
       .lerp(new THREE.Color(0x0a1628), night);
     avatar.update(elapsed, pose, state.reduced);
-    landscape.update(elapsed, night, avatar.root.position, state.reduced);
+    landscape.update(
+      elapsed,
+      night,
+      avatar.root.position,
+      state.reduced,
+      boat,
+      sailing,
+      avatar.root.rotation.y,
+      state.journey,
+    );
     environment.update(
       state.reduced ? 0 : elapsed,
       night,
-      new THREE.Vector3(1000, 0, 1000),
-      0,
+      sailing ? avatar.root.position : new THREE.Vector3(1000, 0, 1000),
+      sailing ? Math.hypot(inputDirection.x, inputDirection.z) : 0,
     );
     const p = avatar.root.position;
     desiredTarget.set(
@@ -573,7 +713,7 @@ function createLoadedHarborScene(
       ? avatar.root.rotation.y + 0.18
       : heading;
     const inside = harborInside(p.x, p.z);
-    const cameraElevation = state.studio ? 0.12 : inside ? 0.72 : elevation;
+    const cameraElevation = state.studio ? 0.12 : inside ? 1.25 : elevation;
     const cameraDistance = state.studio
       ? camera.aspect < 0.8
         ? 8.1
@@ -610,11 +750,10 @@ function createLoadedHarborScene(
   frame = requestAnimationFrame(update);
   return {
     goTo,
+    voyage,
     walkTo: (point) => {
-      stand();
-      route = harborRoute(avatar.root.position, point);
-      arrival = null;
-      keys.clear();
+      boardOnArrival = false;
+      navigate(point);
     },
     pose: selectPose,
     jump,
@@ -630,6 +769,18 @@ function createLoadedHarborScene(
         avatar.root.rotation.y = self.yaw;
         setPose(self.pose);
       }
+      if (sailing !== (self.travel === "sail")) {
+        route = [];
+        keys.clear();
+        setTravel(self.travel === "sail");
+        avatar.root.position.set(
+          self.x,
+          sailing ? 0.1 : harborGroundHeight(self.x, self.z),
+          self.z,
+        );
+        setPose("idle");
+      }
+      if (self.boat) boat = { ...self.boat };
       authority = self;
       if (snapshot.photo?.state === "scheduled") {
         route = [];
@@ -649,6 +800,7 @@ function createLoadedHarborScene(
     networkIntent: () => {
       const state = options.state();
       return {
+        travel: requestedTravel,
         direction:
           state.studio || state.blocked || document.hidden
             ? { x: 0, z: 0 }

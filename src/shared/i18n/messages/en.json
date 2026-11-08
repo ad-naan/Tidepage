@@ -637,7 +637,7 @@
       "stand": "Stand up",
       "photo": "Take a photo",
       "hint": "Click to walk · Drag to look around · WASD / arrow keys to move",
-      "voyage": "Board a boat and explore the islands",
+      "voyage": "Walk to your boat and board",
       "return": "Back to Sunset Bay",
       "photoTitle": "Keep this moment",
       "photoAlt": "My character on the Coast",
@@ -683,8 +683,8 @@
         "title": "A walk by the sea",
         "move": "Click the ground or use WASD / arrows. Hold Shift to run, Space to jump. Near an object, press E or tap its interaction icon.",
         "camera": "Drag to look, scroll to zoom; J / L turn, I / K tilt, Q / R zoom.",
-        "destinations": "Walking destinations",
-        "host": "The sea-house opens as you approach. Tend its hearth, resonate with tidal crystals, or board a boat at the pier. A verified host appears under Companions when online."
+        "destinations": "Destinations on this coast",
+        "host": "Walk through the open house door. Press E near your boat to board; press E beside a beach or pier to step ashore. Your boat stays where you leave it. Find lamp fragments on Shell Island, Wind Island and in the house, then visit the lighthouse."
       },
       "places": {
         "bay": {
@@ -765,10 +765,14 @@
         "beach": "Tidal beach",
         "bench": "Seaside bench",
         "cottage": "Sea-house",
-        "square": "Travelers' courtyard",
-        "grove": "Moonlit grove and tide pool",
-        "ruins": "Ancient tidal ring",
-        "lookout": "West coast lookout"
+        "square": "Woodland clearing",
+        "grove": "Moonlit grove",
+        "ruins": "East coast stone path",
+        "lookout": "West coast lookout",
+        "lighthouse": "Coastal lighthouse",
+        "shellIsland": "Shell Island",
+        "windIsland": "Wind Island",
+        "starIsland": "Star Island"
       },
       "interact": {
         "key": "E",
@@ -779,7 +783,27 @@
         "door": "Enter / leave",
         "hearth": "Tend the hearth",
         "crystal": "Resonate with the crystal",
-        "sail": "Board the boat"
+        "sail": "Board the boat",
+        "land": "Step ashore"
+      },
+      "travel": {
+        "discovery": "{place} · Explore",
+        "hint": "Sailing ? Click the sea or use WASD ? E near shore to land",
+        "noRoute": "No clear route here. Choose nearby water or a shore.",
+        "needBoat": "No walking route here. Board your boat to reach offshore islands.",
+        "upgrade": "This multiplayer server needs an update for sailing. Update it, or leave multiplayer under Companions to sail locally.",
+        "discover": "Explore",
+        "progress": "Fragments {count} / 3 ?",
+        "returnRoute": "Sail back to the pier"
+      },
+      "discoveries": {
+        "quotes": "Shell Island fragment",
+        "notes": "Sea-house fragment",
+        "projects": "Wind Island fragment",
+        "articles": "Coastal lighthouse",
+        "gallery": "West coast lookout",
+        "about": "Moonlit grove",
+        "secret": "Star Island"
       }
     },
     "ui": {

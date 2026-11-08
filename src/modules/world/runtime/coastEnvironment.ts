@@ -37,10 +37,13 @@ export function createCoastEnvironment(scene: THREE.Scene, fantasy = false) {
       #include <colorspace_fragment>
     }`,
   });
-  const skyGeometry = new THREE.SphereGeometry(170, 48, 24);
+  const skyGeometry = new THREE.SphereGeometry(fantasy ? 10000 : 170, 48, 24);
   const sky = new THREE.Mesh(skyGeometry, skyMaterial);
   scene.add(sky);
-  const waterGeometry = new THREE.PlaneGeometry(340, 340);
+  const waterGeometry = new THREE.PlaneGeometry(
+    fantasy ? 20000 : 340,
+    fantasy ? 20000 : 340,
+  );
   const water = new Reflector(waterGeometry, {
     textureWidth: 768,
     textureHeight: 768,

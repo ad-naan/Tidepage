@@ -1,11 +1,11 @@
 import * as THREE from "three";
 import { v3, type HarborModeler } from "./harborModeling";
 import { harborTrees } from "../domain/coast-harbor";
+import { harborIslands, shoreEdge } from "../domain/harbor-terrain";
 
 /** The playable interior stays flat; only the outer shore slopes into the sea. */
 export function harborShorePoint(angle: number, radius: number) {
-  const edge =
-    1 + Math.sin(angle * 3 + 0.5) * 0.027 + Math.sin(angle * 7 - 0.8) * 0.014;
+  const edge = shoreEdge(angle);
   return v3(
     Math.sin(angle) * 64.7 * edge * radius,
     0,
@@ -15,6 +15,26 @@ export function harborShorePoint(angle: number, radius: number) {
 
 export function buildHarborTerrain(parent: THREE.Group, kit: HarborModeler) {
   const { palette: p, mesh, sculptSurface, pebble } = kit;
+  for (const island of harborIslands.slice(1)) {
+    mesh(
+      parent,
+      "walkable-offshore-island",
+      sculptSurface(
+        (u, v) => {
+          const angle = u * Math.PI * 2;
+          const radius = v * 1.065 * shoreEdge(angle);
+          return v3(
+            island.x + Math.sin(angle) * island.rx * radius,
+            0.44 - THREE.MathUtils.smoothstep(v, 0.93, 1) * 0.66,
+            island.z + Math.cos(angle) * island.rz * radius,
+          );
+        },
+        48,
+        12,
+      ),
+      p.sand,
+    );
+  }
   mesh(
     parent,
     "sculpted-dune-shore",
@@ -24,8 +44,8 @@ export function buildHarborTerrain(parent: THREE.Group, kit: HarborModeler) {
         point.y = 0.44 - THREE.MathUtils.smoothstep(v, 0.93, 1) * 0.66;
         return point;
       },
-      144,
-      36,
+      96,
+      24,
     ),
     p.sand,
   );
@@ -64,8 +84,8 @@ export function buildHarborTerrain(parent: THREE.Group, kit: HarborModeler) {
             z + Math.cos(a) * d * edge * v,
           );
         },
-        72,
-        8,
+        48,
+        6,
       ),
       p.grass,
     );
@@ -421,16 +441,4 @@ export function buildHarborNature(
     ],
     0.025,
   );
-  for (let i = 0; i < 7; i++)
-    pebble(
-      parent,
-      i % 2 ? p.rock : p.pine,
-      -65 + i * 22,
-      -2.9,
-      -95 - Math.sin(i) * 12,
-      18,
-      5 + (i % 3),
-      8,
-      i,
-    );
 }

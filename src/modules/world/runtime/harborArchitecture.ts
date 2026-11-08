@@ -11,26 +11,32 @@ export function buildHarborArchitecture(
   cottage.name = "sea-house";
   cottage.position.set(4, 0.46, -3.3);
   parent.add(cottage);
-  // A solid extruded gable closes both ends, with real eaves and exposed rafters.
+  // Hollow walls and a real opening match the authoritative doorway.
+  box(cottage, p.plaster, -2.3, 1.5, 0, 0.2, 3, 3.9);
+  box(cottage, p.plaster, 2.3, 1.5, 0, 0.2, 3, 3.9);
+  box(cottage, p.plaster, 0, 1.5, -1.95, 4.8, 3, 0.2);
+  box(cottage, p.plaster, -1.2, 1.5, 1.95, 2.4, 3, 0.2);
+  box(cottage, p.plaster, 1.7, 1.5, 1.95, 1.4, 3, 0.2);
+  box(cottage, p.plaster, 0.5, 2.65, 1.95, 1, 0.7, 0.2);
+  box(cottage, p.paleWood, 0, 0, 0, 4.4, 0.06, 3.8);
+  const canopy = new THREE.Group();
+  canopy.name = "sea-house-canopy";
+  cottage.add(canopy);
   const outline = new THREE.Shape();
-  outline.moveTo(-2.4, 0.18);
-  outline.lineTo(2.4, 0.18);
+  outline.moveTo(-2.4, 2.93);
   outline.lineTo(2.4, 2.93);
   outline.lineTo(0, 4.2);
-  outline.lineTo(-2.4, 2.93);
   outline.closePath();
-  mesh(
-    cottage,
-    "gable-wall-shell",
-    new THREE.ExtrudeGeometry(outline, {
-      depth: 3.9,
-      bevelEnabled: false,
-    }),
-    p.plaster,
-    0,
-    0,
-    -1.95,
-  );
+  for (const z of [-1.95, 1.85])
+    mesh(
+      canopy,
+      "gable",
+      new THREE.ExtrudeGeometry(outline, { depth: 0.1, bevelEnabled: false }),
+      p.plaster,
+      0,
+      0,
+      z,
+    );
   for (let i = 0; i < 12; i++) {
     const stone = box(
       cottage,
@@ -49,7 +55,7 @@ export function buildHarborArchitecture(
     const roof = new THREE.Group();
     roof.position.set(side * 1.3, 3.56, 0);
     roof.rotation.z = -side * 0.486;
-    cottage.add(roof);
+    canopy.add(roof);
     box(roof, p.wood, 0, -0.05, 0, 3.06, 0.16, 4.7);
     // Overlapping cedar shingles carry the silhouette down to the drip edge.
     for (let row = 0; row < 7; row++)
@@ -78,7 +84,7 @@ export function buildHarborArchitecture(
       0.065,
     );
   }
-  box(cottage, p.roof, 0, 4.29, 0, 0.18, 0.13, 4.85);
+  box(canopy, p.roof, 0, 4.29, 0, 0.18, 0.13, 4.85);
   box(cottage, p.wood, 0, 2.92, 2.025, 4.8, 0.12, 0.12);
   beam(cottage, p.wood, v3(0, 2.95, 2.04), v3(0, 4.17, 2.04), 0.045);
   // Circular attic window, deep jamb, four mullions and a projecting sill.
@@ -104,13 +110,22 @@ export function buildHarborArchitecture(
   pane.castShadow = false;
   box(cottage, p.cream, 0, 3.38, 2.06, 0.035, 0.56, 0.035);
   box(cottage, p.cream, 0, 3.38, 2.06, 0.56, 0.035, 0.035);
-  box(cottage, p.wood, 0.55, 1.21, 2.005, 1.13, 2.15, 0.14);
-  for (let i = 0; i < 6; i++)
-    box(cottage, p.roof, 0.14 + i * 0.165, 1.2, 2.09, 0.155, 1.98, 0.055);
-  box(cottage, p.wood, 0.55, 1.68, 2.14, 0.65, 0.7, 0.05);
-  box(cottage, p.glass, 0.55, 1.68, 2.175, 0.54, 0.58, 0.025);
-  box(cottage, p.cream, 0.55, 1.68, 2.2, 0.034, 0.6, 0.025);
-  pebble(cottage, p.brass, 0.91, 1.03, 2.17, 0.042, 0.042, 0.045);
+  // The door rests open against the outside wall, leaving a visible passage.
+  const openDoor = box(cottage, p.roof, 1.16, 1.1, 2.46, 0.1, 2.1, 0.95);
+  openDoor.name = "open-sea-house-door";
+  // Furniture uses the same footprints as the movement rules.
+  box(cottage, p.wood, 1.65, 0.3, -0.9, 1.2, 0.5, 1.8);
+  box(cottage, p.cream, 1.65, 0.62, -0.9, 1.18, 0.15, 1.75);
+  box(cottage, p.wood, -1.65, 0.8, -1.1, 1.2, 0.12, 0.7);
+  box(cottage, p.wood, -1.65, 0.52, -0.2, 0.65, 0.1, 0.65);
+  box(cottage, p.wood, -1.95, 0.9, -0.2, 0.1, 0.75, 0.65);
+  for (const x of [-1.88, -1.42])
+    for (const z of [-0.43, 0.03])
+      box(cottage, p.wood, x, 0.25, z, 0.06, 0.5, 0.06);
+  box(cottage, p.rock, 1.65, 0.5, 1.15, 1, 1, 0.7);
+  box(cottage, p.dark, 1.4, 0.45, 1.52, 0.6, 0.6, 0.03);
+  const fire = box(cottage, p.glass, 1.4, 0.3, 1.55, 0.4, 0.25, 0.04);
+  fire.name = "hearth-embers";
   const window = (group: THREE.Group) => {
     box(group, p.wood, 0, 0, 0, 1.35, 1.33, 0.14);
     box(group, p.glass, 0, 0, 0.08, 1.16, 1.14, 0.035);
@@ -236,8 +251,8 @@ export function buildHarborArchitecture(
   dock.name = "arrival-pier";
   parent.add(dock);
   for (const x of [-0.83, 0.83])
-    box(dock, p.wood, x, 0.27, 6.7, 0.17, 0.27, 7.25);
-  for (let i = 0; i < 30; i++) {
+    box(dock, p.wood, x, 0.27, 8.15, 0.17, 0.27, 10.25);
+  for (let i = 0; i < 43; i++) {
     const z = 3.03 + i * 0.236;
     const plank = box(
       dock,
@@ -410,14 +425,17 @@ export function buildHarborArchitecture(
         i,
       );
   }
+  for (const part of [...cottage.children]) {
+    if (part !== canopy && part.position.y > 2.9) canopy.add(part);
+  }
   if (!includeCottage) cottage.removeFromParent();
 }
 
-export function buildHarborSkiff(parent: THREE.Group, kit: HarborModeler) {
+export function buildHarborSkiff(parent: THREE.Object3D, kit: HarborModeler) {
   const { palette: p, mesh, box, tube, sculptSurface } = kit;
   const boat = new THREE.Group();
   boat.name = "clinker-built-skiff";
-  boat.position.set(2.28, -0.03, 8.05);
+  boat.position.set(2.28, -0.03, 12.5);
   boat.rotation.y = 0.15;
   parent.add(boat);
   // A U-shaped hull loft: open at the gunwale, closed along the tapered keel.

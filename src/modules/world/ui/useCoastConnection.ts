@@ -112,7 +112,7 @@ export function useCoastConnection(options: {
       sentAppearance = "",
       metadata = "",
       photoSignature = "";
-    let movementVersion: 1 | 2 = 1;
+    let movementVersion: 1 | 2 | 3 = 1;
     let identityAt = 0,
       identityPending = false;
     const identityTicket = () =>
@@ -284,7 +284,7 @@ export function useCoastConnection(options: {
             return;
           }
           joined = true;
-          movementVersion = result.movementVersion === 2 ? 2 : 1;
+          movementVersion = result.movementVersion ?? 1;
           revision = -1;
           playerId = result.playerId;
           setSelfId(playerId);
@@ -379,8 +379,8 @@ export function useCoastConnection(options: {
           (err: Error | null, result: CoastAck) => {
             inputPending = false;
             if (!cancelled && !err && result && !result.ok) {
-              if (result.code === "INVALID_PAYLOAD" && movementVersion === 2) {
-                movementVersion = 1;
+              if (result.code === "INVALID_PAYLOAD" && movementVersion > 1) {
+                movementVersion = movementVersion === 3 ? 2 : 1;
                 lastIntent = "";
               } else error(result.code);
             }

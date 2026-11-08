@@ -117,6 +117,8 @@ export function respondCoastPhoto(
     session.player.z = 3.2;
     session.player.yaw = 0;
     session.player.pose = "wave";
+    session.player.travel = "walk";
+    session.player.boat = { x: 2.28, z: 12.5 };
     session.input = {
       sequence: session.sequence,
       direction: { x: 0, z: 0 },

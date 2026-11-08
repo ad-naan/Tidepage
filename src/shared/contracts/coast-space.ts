@@ -42,6 +42,7 @@ export const coastInputSchema = z
       .refine((d) => Math.hypot(d.x, d.z) <= 1.001),
     action: z.enum(["idle", "wave", "sit", "jump"]),
     running: z.boolean().optional(),
+    travel: z.enum(["walk", "sail"]).optional(),
   })
   .strict();
 export type CoastInput = z.infer<typeof coastInputSchema>;
@@ -50,8 +51,16 @@ export const coastPlayerSchema = z
   .object({
     id: z.uuid(),
     appearance: coastAvatarSchema,
-    x: z.number().min(-128).max(128),
-    z: z.number().min(-128).max(128),
+    x: z.number().min(-4096).max(4096),
+    z: z.number().min(-4096).max(4096),
+    travel: z.enum(["walk", "sail"]).optional(),
+    boat: z
+      .object({
+        x: z.number().min(-4096).max(4096),
+        z: z.number().min(-4096).max(4096),
+      })
+      .strict()
+      .optional(),
     yaw: z.number().min(-Math.PI).max(Math.PI),
     pose: coastPoseSchema,
     name: z.string().min(1).max(60).nullable().default(null),
@@ -131,7 +140,7 @@ export type CoastJoinAck =
       playerId: string;
       resumeToken: string;
       snapshot: CoastSnapshot;
-      movementVersion?: 2;
+      movementVersion?: 2 | 3;
     }
   | { ok: false; code: CoastErrorCode };
 export interface CoastClientEvents {

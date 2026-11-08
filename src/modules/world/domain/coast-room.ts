@@ -18,7 +18,11 @@ import {
   harborWalkable,
   HARBOR_WALK_SPEED,
   HARBOR_RUN_SPEED,
+  HARBOR_SAIL_SPEED,
+  harborMooring,
+  harborLanding,
 } from "./coast-harbor";
+import { harborSailable } from "./harbor-terrain";
 
 export const COAST_CAPACITY = 12;
 export const COAST_PRESENCE_MS = 15_000;
@@ -88,26 +92,39 @@ export function advanceCoastRoom(room: CoastRoom, now: number) {
       now - session.seenAt < 600 &&
       Math.hypot(input.direction.x, input.direction.z) > 0.001;
     if (moving) {
-      const speed = input.running ? HARBOR_RUN_SPEED : HARBOR_WALK_SPEED;
+      const sailing = p.travel === "sail";
+      const traversable = sailing ? harborSailable : harborWalkable;
+      const speed = sailing
+        ? HARBOR_SAIL_SPEED
+        : input.running
+          ? HARBOR_RUN_SPEED
+          : HARBOR_WALK_SPEED;
       const steps = Math.max(1, Math.ceil((speed * delta) / 0.08));
       let moved = false;
       for (let step = 0; step < steps; step++) {
         const x = p.x + (input.direction.x * speed * delta) / steps;
         const z = p.z + (input.direction.z * speed * delta) / steps;
-        if (harborWalkable(x, z)) {
+        if (traversable(x, z)) {
           p.x = x;
           p.z = z;
           moved = true;
-        } else if (harborWalkable(x, p.z)) {
+        } else if (traversable(x, p.z)) {
           p.x = x;
           moved = true;
-        } else if (harborWalkable(p.x, z)) {
+        } else if (traversable(p.x, z)) {
           p.z = z;
           moved = true;
         } else break;
       }
       p.yaw = Math.atan2(input.direction.x, input.direction.z);
-      p.pose = moved ? (input.running ? "run" : "walk") : "idle";
+      p.pose = sailing
+        ? "idle"
+        : moved
+          ? input.running
+            ? "run"
+            : "walk"
+          : "idle";
+      if (sailing) p.boat = { x: p.x, z: p.z };
     } else p.pose = session.waveUntil > now ? "wave" : "idle";
     if ((session.jumpUntil ?? 0) > now) p.pose = "jump";
     if (previous !== `${p.x},${p.z},${p.yaw},${p.pose}`) room.revision++;
@@ -157,6 +174,8 @@ export function joinCoastRoom(
         ...spawn,
         yaw: 0.3,
         pose: "idle",
+        travel: "walk",
+        boat: { ...harborMooring },
         name: null,
         host: false,
       },
@@ -176,6 +195,8 @@ export function joinCoastRoom(
   session.player.host = identity?.host ?? false;
   cancelCoastPhotos(room, session.player.id);
   session.player.appearance = appearance;
+  session.player.travel ??= "walk";
+  session.player.boat ??= { ...harborMooring };
   if (session.player.pose === "sit") {
     Object.assign(session.player, harborStandingPoint(session.player));
   }
@@ -210,6 +231,32 @@ export function applyCoastInput(
     return null;
   }
   const p = session.player;
+  if (input.travel && input.travel !== (p.travel ?? "walk")) {
+    const boat = p.boat ?? harborMooring;
+    if (input.travel === "sail") {
+      if (
+        Math.hypot(p.x - boat.x, p.z - boat.z) > 3.2 ||
+        !harborSailable(boat.x, boat.z)
+      )
+        return "OUT_OF_REACH";
+      Object.assign(p, boat);
+    } else {
+      const landing = harborLanding(p);
+      if (!landing) return "OUT_OF_REACH";
+      p.boat = { x: p.x, z: p.z };
+      Object.assign(p, landing);
+    }
+    p.travel = input.travel;
+    p.pose = "idle";
+    session.jumpUntil = 0;
+    session.waveUntil = 0;
+    room.revision++;
+  }
+  if (
+    p.travel === "sail" &&
+    (input.action === "sit" || input.action === "jump")
+  )
+    return "OUT_OF_REACH";
   if (input.action === "sit" && p.pose !== "sit") {
     const seating = harborSeating.find(
       (group) =>

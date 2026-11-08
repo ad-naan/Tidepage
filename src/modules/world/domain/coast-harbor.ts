@@ -1,6 +1,14 @@
+import {
+  harborLand,
+  harborSailable,
+  harborIslands,
+  shoreRadius,
+} from "./harbor-terrain";
 export type HarborPoint = { x: number; z: number };
+export const harborMooring: HarborPoint = { x: 2.28, z: 12.5 };
+export const HARBOR_SAIL_SPEED = 8;
 export const harborPlaces = {
-  dock: { x: 0, z: 8.5 },
+  dock: { x: 0, z: 12 },
   beach: { x: -4.5, z: 3.5 },
   bench: { x: -5, z: -1.5 },
   cottage: { x: 3.6, z: 0.4 },
@@ -12,6 +20,10 @@ export const harborDestinations = {
   grove: { x: -22, z: -31 },
   ruins: { x: 28, z: -53 },
   lookout: { x: -42, z: -49 },
+  lighthouse: { x: -18, z: -21.5 },
+  shellIsland: { x: -34, z: 32 },
+  windIsland: { x: 34, z: 39 },
+  starIsland: { x: 76, z: -46 },
 } as const;
 export type HarborDestination = keyof typeof harborDestinations;
 export const harborSpawn: HarborPoint = { x: 0, z: 5 };
@@ -22,16 +34,6 @@ export const harborSeating = [
     approach: { x: 3.15, z: -3.5 },
     seats: [{ x: 2.35, z: -3.5 }],
     yaw: Math.PI,
-  },
-  {
-    approach: { x: -6, z: -22.5 },
-    seats: [-7.1, -6, -4.9].map((x) => ({ x, z: -23.45 })),
-    yaw: 0,
-  },
-  {
-    approach: { x: 6, z: -22.5 },
-    seats: [4.9, 6, 7.1].map((x) => ({ x, z: -23.45 })),
-    yaw: 0,
   },
 ];
 export function harborStandingPoint(point: HarborPoint): HarborPoint {
@@ -52,12 +54,11 @@ export const HARBOR_RUN_SPEED = 4.2;
 export const harborInteractions = {
   bench: { x: -5, z: -1.5, radius: 1.7 },
   chair: { x: 3.15, z: -3.5, radius: 1.15 },
-  squareLeft: { x: -6, z: -22.5, radius: 1.7 },
-  squareRight: { x: 6, z: -22.5, radius: 1.7 },
   door: { x: 4.5, z: -0.7, radius: 1.5 },
   hearth: { x: 5.1, z: -2.1, radius: 1.1 },
   crystal: { x: -1.6, z: -4.5, radius: 1.6 },
-  sail: { x: 0, z: 8.5, radius: 1.5 },
+  sail: { x: 0, z: 12, radius: 3 },
+  land: { x: 0, z: 12, radius: 3 },
 } as const;
 export type HarborInteraction = keyof typeof harborInteractions;
 export const harborInside = (x: number, z: number) =>
@@ -87,8 +88,9 @@ export const harborTrees = [
 ] as const;
 
 export function harborWalkable(x: number, z: number) {
-  const land = (x / 62) ** 2 + ((z + 39) / 46) ** 2 < 0.9;
-  const dock = Math.abs(x) < 1.1 && z >= 3 && z <= 10;
+  const land = harborLand(x, z);
+  const dock = Math.abs(x) < 1.1 && z >= 3 && z <= 13;
+  if (!land && !dock) return false;
   const footprint = x > 1.3 && x < 6.8 && z > -6 && z < -0.5;
   const doorway = x > 4 && x < 5 && z > -2 && z < -0.4;
   const interior = x > 1.95 && x < 6.05 && z > -4.95 && z < -1.6;
@@ -99,45 +101,71 @@ export function harborWalkable(x: number, z: number) {
   const cottage =
     footprint && !(doorway || (interior && !bed && !desk && !fireplace));
   const bench = x > -6.6 && x < -3.4 && z > -3 && z < -2;
-  const squareBenches = harborSeating
-    .slice(2)
-    .some(
-      (group) =>
-        Math.abs(x - group.approach.x) < 1.7 &&
-        Math.abs(z - group.seats[0].z) < 0.55,
-    );
-  const pond = ((x + 30) / 6.5) ** 2 + ((z + 32) / 8) ** 2 < 1;
-  const cottages = [
-    { x: -15, z: -23 },
-    { x: 15, z: -28 },
-    { x: 24, z: -43 },
-  ].some((c) => Math.abs(x - c.x) < 3.1 && Math.abs(z - c.z) < 3);
+  const beacon = Math.hypot(x + 18, z + 24) < 1.35;
   const trunk = harborTrees.some(
     (tree) => Math.hypot(x - tree.x, z - tree.z) < 0.22 * tree.scale + 0.28,
   );
-  return (
-    (land || dock) &&
-    !cottage &&
-    !bench &&
-    !trunk &&
-    !chair &&
-    !squareBenches &&
-    !pond &&
-    !cottages
-  );
+  return (land || dock) && !cottage && !bench && !trunk && !chair && !beacon;
 }
 
 /** Bounded half-metre grid shared by pointer navigation and destination controls. */
 export function harborRoute(
   start: HarborPoint,
   end: HarborPoint,
+  traversable = harborWalkable,
+  grid = 0.5,
 ): HarborPoint[] {
-  if (!harborWalkable(end.x, end.z)) return [];
+  if (!traversable(end.x, end.z)) return [];
+  if (traversable === harborWalkable) {
+    const islandAt = (p: HarborPoint) =>
+      Math.max(
+        0,
+        harborIslands.findIndex(
+          (island) => shoreRadius(p.x, p.z, island) < 1.025,
+        ),
+      );
+    if (islandAt(start) !== islandAt(end)) return [];
+  }
+  const segmentClear = (a: HarborPoint, b: HarborPoint) => {
+    const steps = Math.max(
+      1,
+      Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 0.08),
+    );
+    for (let i = 1; i <= steps; i++)
+      if (
+        !traversable(
+          a.x + ((b.x - a.x) * i) / steps,
+          a.z + ((b.z - a.z) * i) / steps,
+        )
+      )
+        return false;
+    return true;
+  };
+  const snap = (point: HarborPoint) => {
+    const candidates: HarborPoint[] = [];
+    for (let dx = -1; dx <= 1; dx++)
+      for (let dz = -1; dz <= 1; dz++) {
+        const p = {
+          x: (Math.round(point.x / grid) + dx) * grid,
+          z: (Math.round(point.z / grid) + dz) * grid,
+        };
+        if (traversable(p.x, p.z) && segmentClear(point, p)) candidates.push(p);
+      }
+    return candidates.sort(
+      (a, b) =>
+        Math.hypot(a.x - point.x, a.z - point.z) -
+        Math.hypot(b.x - point.x, b.z - point.z),
+    )[0];
+  };
+  const from = snap(start),
+    to = snap(end);
+  if (!from || !to) return [];
   const key = (x: number, z: number) => `${x},${z}`;
-  const sx = Math.round(start.x * 2),
-    sz = Math.round(start.z * 2);
-  const ex = Math.round(end.x * 2),
-    ez = Math.round(end.z * 2);
+  const sx = Math.round(from.x / grid),
+    sz = Math.round(from.z / grid);
+  const ex = Math.round(to.x / grid),
+    ez = Math.round(to.z / grid);
+  if (!traversable(ex * grid, ez * grid)) return [];
   const open = [{ x: sx, z: sz, cost: 0, score: 0 }];
   const costs = new Map([[key(sx, sz), 0]]);
   const parents = new Map<string, string>();
@@ -153,9 +181,10 @@ export function harborRoute(
       let cursor = id;
       while (parents.has(cursor)) {
         const [x, z] = cursor.split(",").map(Number);
-        path.push({ x: x / 2, z: z / 2 });
+        path.push({ x: x * grid, z: z * grid });
         cursor = parents.get(cursor)!;
       }
+      path.push(from);
       return path.reverse();
     }
     for (const [dx, dz] of [
@@ -169,7 +198,11 @@ export function harborRoute(
       const next = key(x, z),
         cost = current.cost + 1;
       if (
-        !harborWalkable(x / 2, z / 2) ||
+        !traversable(x * grid, z * grid) ||
+        !segmentClear(
+          { x: current.x * grid, z: current.z * grid },
+          { x: x * grid, z: z * grid },
+        ) ||
         cost >= (costs.get(next) ?? Infinity)
       )
         continue;
@@ -184,4 +217,47 @@ export function harborRoute(
     }
   }
   return [];
+}
+
+/** Only step ashore within reach; a boat is never teleported across the map. */
+export function harborLanding(point: HarborPoint): HarborPoint | null {
+  for (let radius = 0.5; radius <= 3; radius += 0.25)
+    for (let i = 0; i < 64; i++) {
+      const angle = (i / 64) * Math.PI * 2;
+      const candidate = {
+        x: point.x + Math.sin(angle) * radius,
+        z: point.z + Math.cos(angle) * radius,
+      };
+      if (harborWalkable(candidate.x, candidate.z)) return candidate;
+    }
+  return null;
+}
+
+export function harborSailingRoute(
+  start: HarborPoint,
+  destination: HarborPoint,
+) {
+  let end = destination;
+  if (!harborSailable(end.x, end.z)) {
+    const candidates: HarborPoint[] = [];
+    for (let radius = 1; radius <= 75; radius++) {
+      for (let i = 0; i < 96; i++) {
+        const angle = (i / 96) * Math.PI * 2;
+        const point = {
+          x: destination.x + Math.sin(angle) * radius,
+          z: destination.z + Math.cos(angle) * radius,
+        };
+        if (harborSailable(point.x, point.z) && harborLanding(point))
+          candidates.push(point);
+      }
+      if (candidates.length) break;
+    }
+    end = candidates.sort(
+      (a, b) =>
+        Math.hypot(a.x - start.x, a.z - start.z) -
+        Math.hypot(b.x - start.x, b.z - start.z),
+    )[0];
+    if (!end) return [];
+  }
+  return harborRoute(start, end, harborSailable, 0.5);
 }

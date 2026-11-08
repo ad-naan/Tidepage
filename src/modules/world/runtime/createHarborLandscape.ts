@@ -1,4 +1,7 @@
 import * as THREE from "three";
+import { harborInside, type HarborPoint } from "../domain/coast-harbor";
+import { harborJourneyStops } from "../domain/harbor-journey";
+import type { Journey } from "../domain/coast-journey";
 import { createHarborMagic } from "./harborMagic";
 import { createHarborModeler } from "./harborModeling";
 import {
@@ -25,19 +28,46 @@ export function createHarborLandscape(scene: THREE.Scene) {
   buildHarborArchitecture(land, kit);
   buildHarborBeacon(land, kit);
   buildHarborNature(land, kit);
+  const canopy = land.getObjectByName("sea-house-canopy")!;
+  root.updateMatrixWorld(true);
+  root.attach(canopy);
+  canopy.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) return;
+    if (
+      [kit.palette.cream, kit.palette.rock, kit.palette.rockLight].includes(
+        object.material as THREE.MeshStandardMaterial,
+      )
+    )
+      object.material = kit.palette.plaster;
+    if (
+      [kit.palette.dark, kit.palette.brass].includes(
+        object.material as THREE.MeshStandardMaterial,
+      )
+    )
+      object.material = kit.palette.wood;
+    if (object.material === kit.palette.glass)
+      object.material = kit.palette.roofLight;
+  });
+  kit.batch(canopy as THREE.Group);
+  const markerSource = kit.mesh(
+    root,
+    "discovery-source",
+    new THREE.OctahedronGeometry(0.24),
+    kit.palette.glass,
+  );
+  markerSource.removeFromParent();
+  const markers = new THREE.InstancedMesh(
+    markerSource.geometry,
+    kit.palette.glass,
+    harborJourneyStops.length,
+  );
+  markers.name = "coast-discoveries";
+  markers.frustumCulled = false;
+  root.add(markers);
+  const markerTransform = new THREE.Object3D();
   kit.batch(land);
   const skiff = buildHarborSkiff(root, kit);
   const magic = typeof window !== "undefined" ? createHarborMagic(root) : null;
-  kit.tube(
-    root,
-    kit.palette.rope,
-    [
-      new THREE.Vector3(1.2, 0.95, 7.5),
-      new THREE.Vector3(1.45, 0.3, 7.6),
-      new THREE.Vector3(2.04, 0.37, 6.52),
-    ],
-    0.018,
-  );
   const foamGeometry = kit.sculptSurface(
     (u, v) => {
       const point = harborShorePoint(u * Math.PI * 2, 1.04 + v * 0.03);
@@ -66,23 +96,55 @@ export function createHarborLandscape(scene: THREE.Scene) {
     root.add(light);
     return { light, strength };
   });
+  const beaconLight = new THREE.PointLight(0xffce83, 0, 25, 2);
+  beaconLight.position.set(-18, 7.14, -24);
+  root.add(beaconLight);
   let disposed = false;
+  let hearthLit = true;
   return {
+    skiff,
     interact: (kind: "hearth" | "crystal") => {
       if (kind === "crystal") magic?.resonate();
+      else hearthLit = !hearthLit;
     },
     update: (
       time: number,
       night: number,
       _player?: THREE.Vector3,
       reduced = false,
+      boat?: HarborPoint,
+      sailing = false,
+      yaw = 0,
+      journey?: Journey,
     ) => {
       magic?.update(time, night, reduced);
-      skiff.position.y = -0.03 + Math.sin(time * 1.1) * 0.035;
-      skiff.rotation.z = Math.sin(time * 0.8) * 0.022;
+      beaconLight.intensity = journey?.beacon ? 35 : 0;
+      if (boat) {
+        skiff.position.x = boat.x;
+        skiff.position.z = boat.z;
+      }
+      skiff.position.y = -0.03 + (reduced ? 0 : Math.sin(time * 1.1) * 0.035);
+      skiff.rotation.z = reduced ? 0 : Math.sin(time * 0.8) * 0.022;
+      if (sailing) skiff.rotation.y = yaw;
+      canopy.visible = !_player || !harborInside(_player.x, _player.z);
+      harborJourneyStops.forEach((stop, index) => {
+        const visible =
+          stop.id === "secret"
+            ? !!journey?.beacon && night > 0.5
+            : !journey?.fragments.some((id) => id === stop.id);
+        markerTransform.position.set(stop.x, 1.25, stop.z);
+        markerTransform.scale.setScalar(visible ? 1 : 0);
+        markerTransform.rotation.y = reduced ? 0 : time * 0.5;
+        markerTransform.updateMatrix();
+        markers.setMatrixAt(index, markerTransform.matrix);
+      });
+      markers.instanceMatrix.needsUpdate = true;
       kit.palette.glass.emissiveIntensity = 0.3 + night * 1.5;
       lights.forEach(({ light, strength }) => {
-        light.intensity = strength * (0.12 + night * 0.88);
+        light.intensity =
+          strength *
+          (0.12 + night * 0.88) *
+          (light === lights[0].light && !hearthLit ? 0.1 : 1);
       });
       foamMaterial.opacity =
         (0.11 + (Math.sin(time * 0.8) * 0.5 + 0.5) * 0.11) * (1 - night * 0.65);
@@ -91,6 +153,8 @@ export function createHarborLandscape(scene: THREE.Scene) {
       if (disposed) return;
       disposed = true;
       magic?.dispose();
+      markers.dispose();
+      beaconLight.dispose();
       kit.dispose();
       foamGeometry.dispose();
       foamMaterial.dispose();

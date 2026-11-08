@@ -4,7 +4,7 @@ import type { CoastInput, CoastIntent } from "@/shared/contracts/coast-space";
 export function coastMovementInput(
   intent: CoastIntent,
   sequence: number,
-  movementVersion: 1 | 2,
+  movementVersion: 1 | 2 | 3,
 ): CoastInput {
   const input = {
     sequence,
@@ -14,6 +14,8 @@ export function coastMovementInput(
         ? "idle"
         : intent.action,
   };
+  if (movementVersion === 3)
+    return { ...input, running: !!intent.running, travel: intent.travel };
   return movementVersion === 2
     ? { ...input, running: !!intent.running }
     : input;
