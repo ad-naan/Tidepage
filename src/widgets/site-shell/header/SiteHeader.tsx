@@ -40,7 +40,7 @@ import type { SitePresentation } from "@/modules/site-settings/domain/presentati
 
 const surfaces = {
   search: { selector: ".living-search-trigger", width: 480, align: "end" },
-  music: { selector: ".music-open", width: 620, align: "end" },
+  music: { selector: "[data-music-trigger]", width: 620, align: "end" },
 } as const;
 type HeaderPanel = keyof typeof surfaces;
 type Props = {

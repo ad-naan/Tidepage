@@ -46,4 +46,9 @@ export type MusicTrack = {
   artist: string;
   source: string;
   cover: string;
+  lyricsSource?: string;
+  lyricsKey?: string;
 };
+
+export type LyricLine = { time: number; text: string; translation?: string };
+export type MusicLyrics = { lines: LyricLine[]; plain: string[] };

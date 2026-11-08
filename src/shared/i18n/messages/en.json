@@ -286,8 +286,6 @@
     "pause": "Pause music",
     "volume": "Volume",
     "queue": "View the playlist",
-    "import": "Preview a local audio file",
-    "localArtist": "Local file · this session only",
     "dockOpen": "Expand the music player",
     "dockClose": "Fold the music player",
     "dockPanelClose": "Close the player panel",
@@ -300,8 +298,38 @@
     "sourceError": "This track is unavailable, possibly due to licensing or service restrictions. Try the next track.",
     "empty": "No music selected",
     "loadingPlaylist": "Loading playlist…",
-    "playlistError": "The online playlist is unavailable. You can still import local audio.",
-    "retryPlaylist": "Retry playlist"
+    "playlistError": "The online playlist is unavailable. Please try again shortly.",
+    "retryPlaylist": "Retry playlist",
+    "lyrics": {
+      "region": "Synchronized lyrics",
+      "seek": "Seek to {time}: {text}",
+      "interlude": "A little room for the music",
+      "prelude": "Waiting for the first words",
+      "untimed": "These lyrics have no timestamps",
+      "seekHint": "Choose a line to hear it",
+      "browsing": "Browsing freely",
+      "following": "Following along",
+      "resume": "Back to this line",
+      "loading": "Finding the words",
+      "loadingHint": "Let the music lead for a moment",
+      "error": "The lyrics could not be reached",
+      "empty": "Let the music speak",
+      "emptyHint": "Enjoy the song, even without the words",
+      "retry": "Try again",
+      "openHint": "Open the player and follow the lyrics",
+      "dockFallback": "Slow down, listen a little",
+      "views": "Player content",
+      "tab": "Lyrics",
+      "queueTab": "Up next",
+      "note": "A few words to stay with you",
+      "queueNote": "Another song to look forward to"
+    },
+    "mode": {
+      "loop": "Repeat all",
+      "single": "Repeat one",
+      "shuffle": "Shuffle",
+      "switch": "Current mode: {current}. Switch to {next}"
+    }
   },
   "activity": {
     "unavailable": "Activity information is not connected yet.",
@@ -373,7 +401,8 @@
     "BODY_TOO_LARGE": "The request is too large",
     "WORLD_UNAVAILABLE": "Coastal account services are not ready. Please try again later.",
     "WORLD_PROOF_INVALID": "This memory proof expired or belongs to another account. Please check in again.",
-    "MUSIC_UNAVAILABLE": "The music playlist is unavailable. Check the settings or try again later."
+    "MUSIC_UNAVAILABLE": "The music playlist is unavailable. Check the settings or try again later.",
+    "LYRICS_UNAVAILABLE": "Lyrics are temporarily unavailable. Please try again later."
   },
   "notes": {
     "readMore": "Read this moment",
@@ -1620,7 +1649,7 @@
     },
     "music": {
       "enabled": "Online playlist",
-      "enabledHelp": "Local audio imports remain available when the online playlist is off.",
+      "enabledHelp": "The player will not load an online playlist while this is off.",
       "off": "Off",
       "on": "On",
       "server": "Music platform",

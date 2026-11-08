@@ -35,6 +35,9 @@ export function parseMetingPlaylist(value: unknown): MusicTrack[] {
       artist: typeof artist === "string" ? artist.slice(0, 300) : "",
       source: item.url,
       cover: httpsUrl.safeParse(item.pic).success ? item.pic : "",
+      ...(httpsUrl.safeParse(item.lrc).success
+        ? { lyricsSource: item.lrc }
+        : {}),
     });
   }
   return tracks;

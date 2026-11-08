@@ -1,9 +1,18 @@
 "use client";
 import { Button } from "@/shared/ui/button/Button";
-import { RangeSlider, FileInput } from "@/shared/ui/field/Input";
+import { RangeSlider } from "@/shared/ui/field/Input";
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, LayoutGroup, motion } from "motion/react";
-import { PlayerRecord, Equalizer } from "./PlayerRecord";
+import {
+  AnimatePresence,
+  LayoutGroup,
+  motion,
+  useReducedMotion,
+} from "motion/react";
+import { PlayerDock } from "./PlayerDock";
+import { LyricsPanel } from "./LyricsPanel";
+import { useLyrics } from "./useLyrics";
+import { activeLyricIndex, lyricProgress } from "@/modules/media/domain/lyrics";
+import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 import { RecordDeck } from "./RecordDeck";
 import {
   ChevronDown,
@@ -11,11 +20,12 @@ import {
   ListMusic,
   Pause,
   Play,
+  Repeat,
+  Repeat1,
+  Shuffle,
   SkipBack,
   SkipForward,
-  Upload,
   Volume2,
-  X,
 } from "lucide-react";
 import { softSpring } from "@/shared/lib/motion";
 import { useTranslations } from "next-intl";
@@ -23,6 +33,12 @@ import { createPortal } from "react-dom";
 import { apiGet } from "@/shared/http/client";
 import type { MusicTrack } from "@/shared/contracts/music";
 import styles from "./MusicPlayer.module.css";
+import {
+  nextPlaybackMode,
+  playbackModes,
+  randomTrackIndex,
+  type PlaybackMode,
+} from "@/modules/media/domain/playback";
 const time = (n: number) =>
   Number.isFinite(n)
     ? `${Math.floor(n / 60)}:${String(Math.floor(n % 60)).padStart(2, "0")}`
@@ -38,7 +54,6 @@ export function MusicPlayer({
 }) {
   const t = useTranslations("player");
   const audio = useRef<HTMLAudioElement>(null);
-  const uploads = useRef<string[]>([]);
   const [tracks, setTracks] = useState<MusicTrack[]>([]);
   const [loading, setLoading] = useState(true);
   const [playlistFailed, setPlaylistFailed] = useState(false);
@@ -46,14 +61,73 @@ export function MusicPlayer({
   const playbackIntent = useRef(false);
   const [index, setIndex] = useState(0);
   const playerRef = useRef<HTMLDivElement>(null);
-  const togglePanel = () => setOpen(!open);
+  const detailsHeading = useRef<HTMLDivElement>(null);
+  const focusLyrics = useRef(false);
+  const reduced = useReducedMotion();
   const [queue, setQueue] = useState(false);
+  const [mode, setMode] = useState<PlaybackMode>("loop");
+  const history = useRef<number[]>([]);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.5);
   const [error, setError] = useState("");
   const track = tracks[index];
+  const ModeIcon =
+    mode === "shuffle" ? Shuffle : mode === "single" ? Repeat1 : Repeat;
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("tidepage:music-mode");
+      if (playbackModes.includes(saved as PlaybackMode))
+        setMode(saved as PlaybackMode);
+    } catch {
+      /* Playback does not require browser storage. */
+    }
+  }, []);
+  function switchMode() {
+    const next = nextPlaybackMode(mode);
+    setMode(next);
+    try {
+      localStorage.setItem("tidepage:music-mode", next);
+    } catch {
+      /* Optional preference. */
+    }
+  }
+  useEffect(() => {
+    if (!open || !panelContainer || !focusLyrics.current) return;
+    const frame = requestAnimationFrame(() => {
+      detailsHeading.current
+        ?.querySelector<HTMLButtonElement>("button")
+        ?.focus({ preventScroll: true });
+      focusLyrics.current = false;
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [open, panelContainer]);
+  const lyrics = useLyrics(track);
+  const activeLine = activeLyricIndex(lyrics.document.lines, progress);
+  const currentLine = lyrics.document.lines[activeLine];
+  const dockLine =
+    currentLine?.text ||
+    t(
+      lyrics.phase === "loading"
+        ? "lyrics.loading"
+        : lyrics.phase === "ready" && lyrics.document.lines.length
+          ? activeLine < 0
+            ? "lyrics.prelude"
+            : "lyrics.interlude"
+          : "lyrics.dockFallback",
+    );
+  const lineProgress = lyricProgress(
+    lyrics.document.lines,
+    activeLine,
+    progress,
+    duration,
+  );
+  function seek(time: number) {
+    if (!audio.current || !duration) return;
+    audio.current.currentTime = Math.max(0, Math.min(time, duration));
+    setProgress(audio.current.currentTime);
+  }
   useEffect(() => {
     const controller = new AbortController();
     setLoading(true);
@@ -92,10 +166,6 @@ export function MusicPlayer({
     setError("");
     if (playbackIntent.current && track) void play();
   }, [track?.source]); // Preserve intent when switching sources, including the first remote track.
-  useEffect(
-    () => () => uploads.current.forEach((url) => URL.revokeObjectURL(url)),
-    [],
-  );
   async function play() {
     const element = audio.current;
     if (!element || !track) return;
@@ -122,10 +192,31 @@ export function MusicPlayer({
       await play();
     }
   }
-  function change(offset: number) {
+  function selectTrack(next: number, remember = true) {
     setError("");
-    if (tracks.length)
-      setIndex((v) => (v + offset + tracks.length) % tracks.length);
+    if (next === index) {
+      if (audio.current) {
+        audio.current.currentTime = 0;
+        setProgress(0);
+      }
+      if (playbackIntent.current) void play();
+      return;
+    }
+    if (remember) {
+      history.current.push(index);
+      if (history.current.length > 100) history.current.shift();
+    }
+    setIndex(next);
+  }
+  function change(offset: number) {
+    if (!tracks.length) return;
+    if (mode === "shuffle") {
+      const previous = offset < 0 ? history.current.pop() : undefined;
+      selectTrack(
+        previous ?? randomTrackIndex(index, tracks.length),
+        previous === undefined,
+      );
+    } else selectTrack((index + offset + tracks.length) % tracks.length);
   }
   return (
     <LayoutGroup id="header-player">
@@ -152,10 +243,9 @@ export function MusicPlayer({
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
           onEnded={() => {
-            if (tracks.length === 1 && audio.current) {
-              audio.current.currentTime = 0;
-              if (playbackIntent.current) void play();
-            } else change(1);
+            if (mode === "single" || tracks.length === 1)
+              selectTrack(index, false);
+            else change(1);
           }}
           onError={() => {
             if (!track) return;
@@ -172,9 +262,17 @@ export function MusicPlayer({
                   layout
                   className="music-panel integrated"
                   data-custom-scroll={t("panelRegion")}
-                  initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                  initial={{
+                    opacity: 0,
+                    y: reduced ? 0 : 15,
+                    scale: reduced ? 1 : 0.95,
+                  }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                  exit={{
+                    opacity: 0,
+                    y: reduced ? 0 : 15,
+                    scale: reduced ? 1 : 0.95,
+                  }}
                   transition={softSpring}
                   aria-label={t("region")}
                 >
@@ -198,9 +296,9 @@ export function MusicPlayer({
                     <motion.div
                       className="player-track-info"
                       key={track?.source}
-                      initial={{ opacity: 0, y: 7 }}
+                      initial={{ opacity: 0, y: reduced ? 0 : 7 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -7 }}
+                      exit={{ opacity: 0, y: reduced ? 0 : -7 }}
                       transition={{ duration: 0.18 }}
                     >
                       <h3>
@@ -218,11 +316,7 @@ export function MusicPlayer({
                       step={0.1}
                       value={progress}
                       disabled={!track || !duration}
-                      onChange={(e) => {
-                        if (audio.current)
-                          audio.current.currentTime = Number(e.target.value);
-                        setProgress(Number(e.target.value));
-                      }}
+                      onChange={(e) => seek(Number(e.target.value))}
                     />
                     <div>
                       <span>{time(progress)}</span>
@@ -273,65 +367,98 @@ export function MusicPlayer({
                     <Button
                       className="icon-button"
                       aria-label={t("queue")}
+                      aria-pressed={queue}
                       onClick={() => setQueue((v) => !v)}
                     >
                       <ListMusic size={17} />
                     </Button>
-                    <label
-                      className="icon-button upload-music"
-                      title={t("import")}
+                    <Button
+                      className={styles.modeButton}
+                      aria-label={t("mode.switch", {
+                        current: t(`mode.${mode}`),
+                        next: t(`mode.${nextPlaybackMode(mode)}`),
+                      })}
+                      title={t("mode.switch", {
+                        current: t(`mode.${mode}`),
+                        next: t(`mode.${nextPlaybackMode(mode)}`),
+                      })}
+                      onClick={switchMode}
                     >
-                      <Upload size={15} />
-                      <FileInput
-                        aria-label={t("import")}
-
-                        accept="audio/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (!file) return;
-                          const url = URL.createObjectURL(file);
-                          uploads.current.push(url);
-                          setTracks((v) => [
-                            ...v,
-                            {
-                              title: file.name.replace(/\.[^.]+$/, ""),
-                              artist: t("localArtist"),
-                              source: url,
-                              cover: "",
-                            },
-                          ]);
-                          setQueue(true);
-                          e.target.value = "";
-                        }}
-                      />
-                    </label>
+                      <ModeIcon size={16} />
+                      <span className={styles.modeLabel}>
+                        {t(`mode.${mode}`)}
+                      </span>
+                    </Button>
                   </div>
-                  <AnimatePresence initial={false}>
-                    {queue && (
-                      <motion.div
-                        className="player-queue"
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={softSpring}
+                  <div className={styles.details}>
+                    <div ref={detailsHeading} className={styles.detailsHeading}>
+                      <FilterTabs
+                        label={t("lyrics.views")}
+                        value={queue ? "queue" : "lyrics"}
+                        options={[
+                          { value: "lyrics", label: t("lyrics.tab") },
+                          {
+                            value: "queue",
+                            label: t("lyrics.queueTab"),
+                            count: tracks.length,
+                          },
+                        ]}
+                        onChange={(value) => setQueue(value === "queue")}
+                      />
+                      <span className={styles.sideNote}>
+                        {t(queue ? "lyrics.queueNote" : "lyrics.note")}
+                      </span>
+                    </div>
+                    {queue ? (
+                      <div
+                        className={styles.queue}
+                        data-custom-scroll={t("queue")}
+                        role="group"
+                        aria-label={t("queue")}
                       >
-                        {tracks.map((t, i) => (
+                        {tracks.map((item, i) => (
                           <Button
-                            className={i === index ? "active" : ""}
-                            key={t.source}
+                            className={styles.queueItem}
+                            data-active={i === index}
+                            key={item.source}
+                            aria-pressed={i === index}
                             onClick={() => {
-                              setError("");
-                              setIndex(i);
+                              selectTrack(i);
                             }}
                           >
-                            <span>{String(i + 1).padStart(2, "0")}</span>
-                            {t.title}
-                            {i === index && <span>♪</span>}
+                            <span className={styles.trackNumber}>
+                              {String(i + 1).padStart(2, "0")}
+                            </span>
+                            <span className={styles.trackName}>
+                              {item.title}
+                              <small>{item.artist}</small>
+                            </span>
+                            {i === index && (
+                              <span
+                                className={styles.nowPlaying}
+                                aria-hidden="true"
+                              >
+                                ?
+                              </span>
+                            )}
                           </Button>
                         ))}
-                      </motion.div>
+                        {!tracks.length && (
+                          <p className={styles.queueEmpty}>{t("empty")}</p>
+                        )}
+                      </div>
+                    ) : (
+                      <LyricsPanel
+                        key={track?.source ?? "empty"}
+                        document={lyrics.document}
+                        phase={lyrics.phase}
+                        active={activeLine}
+                        canSeek={duration > 0}
+                        onSeek={seek}
+                        onRetry={lyrics.retry}
+                      />
                     )}
-                  </AnimatePresence>
+                  </div>
                   {error && (
                     <p className="player-error" role="status">
                       {error}
@@ -354,42 +481,20 @@ export function MusicPlayer({
             </AnimatePresence>,
             panelContainer,
           )}
-        <div className="music-dock">
-          <Button
-            className="music-open"
-            aria-label={open ? t("dockClose") : t("dockOpen")}
-            onClick={togglePanel}
-          >
-            <span className="record-dock-slot">
-              {!open ? (
-                <PlayerRecord playing={playing} cover={track?.cover ?? ""} />
-              ) : (
-                <Equalizer playing={playing} />
-              )}
-            </span>
-            <span>
-              {track?.title ?? t(loading ? "loadingPlaylist" : "empty")}
-              <small>{playing ? t("playing") : t("idle")}</small>
-            </span>
-          </Button>
-          <Button
-            className="dock-play"
-            aria-label={playing ? t("dockPause") : t("dockPlay")}
-            onClick={toggle}
-            disabled={!track}
-          >
-            {playing ? <Pause size={14} /> : <Play size={14} />}
-          </Button>
-          {open && (
-            <Button
-              className="dock-close"
-              aria-label={t("dockPanelClose")}
-              onClick={() => setOpen(false)}
-            >
-              <X size={12} />
-            </Button>
-          )}
-        </div>
+        <PlayerDock
+          track={track}
+          playing={playing}
+          open={open}
+          loading={loading}
+          line={dockLine}
+          lineProgress={lineProgress}
+          onToggle={toggle}
+          onOpen={(keyboard) => {
+            focusLyrics.current = keyboard;
+            setQueue(false);
+            if (!open || !queue) setOpen(!open);
+          }}
+        />
       </div>
     </LayoutGroup>
   );

@@ -286,8 +286,6 @@
     "pause": "暂停音乐",
     "volume": "音量",
     "queue": "查看播放列表",
-    "import": "试听本地音频",
-    "localArtist": "本地音乐 · 仅本次浏览有效",
     "dockOpen": "展开音乐播放器",
     "dockClose": "收起音乐播放器",
     "dockPanelClose": "关闭播放器面板",
@@ -300,8 +298,38 @@
     "sourceError": "这首歌暂时无法播放，可能受版权或接口限制。请尝试下一首。",
     "empty": "暂无音乐",
     "loadingPlaylist": "正在加载歌单…",
-    "playlistError": "在线歌单暂时不可用，仍可导入本地音频。",
-    "retryPlaylist": "重试歌单"
+    "playlistError": "在线歌单暂时不可用，请稍后重试。",
+    "retryPlaylist": "重试歌单",
+    "lyrics": {
+      "region": "同步歌词",
+      "seek": "跳转至 {time}：{text}",
+      "interlude": "留一点空白，听间奏",
+      "prelude": "前奏里，等第一句",
+      "untimed": "这份歌词没有时间标记",
+      "seekHint": "轻点一句，听到那里",
+      "browsing": "自由翻阅中",
+      "following": "正在跟随",
+      "resume": "回到当前句",
+      "loading": "歌词正在路上",
+      "loadingHint": "先听音乐，文字马上来",
+      "error": "歌词暂时没能送达",
+      "empty": "这一首，先用耳朵听",
+      "emptyHint": "没有歌词，也不妨碍好好听歌",
+      "retry": "再试一次",
+      "openHint": "打开播放器，逐句读歌词",
+      "dockFallback": "听一点，慢一点",
+      "views": "播放器内容",
+      "tab": "歌词",
+      "queueTab": "待播",
+      "note": "把这一句，留在耳边",
+      "queueNote": "下一首，也值得期待"
+    },
+    "mode": {
+      "loop": "列表循环",
+      "single": "单曲循环",
+      "shuffle": "随机播放",
+      "switch": "当前：{current}。点击切换为{next}"
+    }
   },
   "activity": {
     "unavailable": "活动信息尚未接入。",
@@ -373,7 +401,8 @@
     "BODY_TOO_LARGE": "上传内容过大",
     "WORLD_UNAVAILABLE": "海岸账号服务暂未就绪，请稍后再试。",
     "WORLD_PROOF_INVALID": "打卡凭证已过期或不属于当前账号，请重新打卡。",
-    "MUSIC_UNAVAILABLE": "暂时无法读取音乐歌单，请检查设置或稍后重试。"
+    "MUSIC_UNAVAILABLE": "暂时无法读取音乐歌单，请检查设置或稍后重试。",
+    "LYRICS_UNAVAILABLE": "歌词暂时无法读取，请稍后重试。"
   },
   "notes": {
     "readMore": "读这个瞬间",
@@ -1620,7 +1649,7 @@
     },
     "music": {
       "enabled": "在线歌单",
-      "enabledHelp": "关闭后仍可在播放器中导入本地音频。",
+      "enabledHelp": "关闭后，播放器不会加载在线歌单。",
       "off": "关闭",
       "on": "开启",
       "server": "音源平台",
