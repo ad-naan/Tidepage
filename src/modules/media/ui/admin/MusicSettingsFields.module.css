@@ -1,0 +1,26 @@
+.fields {
+  display: grid;
+  align-items: start;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5) var(--space-6);
+}
+.test {
+  grid-column: 1 / -1;
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+.test ul {
+  padding-left: var(--space-5);
+  margin-top: var(--space-2);
+}
+.test [role="alert"] {
+  color: var(--accent);
+}
+@media (max-width: 760px) {
+  .fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -55,6 +55,9 @@
   justify-content: space-between;
   gap: 48px;
 }
+.reading.reading :global(.prose) {
+  min-width: 0;
+}
 .reading.reading :global(.prose section) {
   scroll-margin-top: var(--reading-safe-gap);
   margin-bottom: 28px;
@@ -89,7 +92,7 @@
 }
 @media (max-width: 960px) {
   .reading.reading :global(.reading-layout) {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .reading.reading :global(.prose) {
     width: min(100%, 800px);

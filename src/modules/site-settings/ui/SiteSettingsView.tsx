@@ -28,6 +28,8 @@ import type { Principal } from "@/modules/identity/domain/principal";
 import { profile } from "@/shared/config/profile";
 import { shareImagePath } from "@/shared/config/site";
 import { Link } from "@/shared/i18n/navigation";
+import { MusicSettingsFields } from "@/modules/media/ui/admin/MusicSettingsFields";
+import { defaultMusicSettings } from "@/shared/contracts/music";
 
 const multilineFields = new Set([
   "intro",
@@ -123,6 +125,7 @@ export function SiteSettingsView({
       "signature",
     ],
     siteAbout: ["siteAboutTitle", "siteAboutIntro", "siteAboutBody"],
+    ...(account?.role === "admin" ? { music: [] } : {}),
   };
   function updateFields(fields: Record<string, string>) {
     setValue(
@@ -157,7 +160,9 @@ export function SiteSettingsView({
       <header className={styles.heading}>
         <div>
           <h1>{t("nav.site")}</h1>
-          <p>{t("settings.description")}</p>
+          <p>
+            {t(tab === "music" ? "music.description" : "settings.description")}
+          </p>
         </div>
         <Button
           variant="primary"
@@ -171,9 +176,10 @@ export function SiteSettingsView({
                 t("settings.invalidFields", {
                   fields: [
                     ...new Set(
-                      checked.error.issues.map(
-                        (issue) =>
-                          `${String(issue.path[1])}: ${(copy.fields as Record<string, string>)[String(issue.path[2])] ?? String(issue.path[2])}`,
+                      checked.error.issues.map((issue) =>
+                        issue.path[0] === "music"
+                          ? t("music.invalid")
+                          : `${String(issue.path[1])}: ${(copy.fields as Record<string, string>)[String(issue.path[2])] ?? String(issue.path[2])}`,
                       ),
                     ),
                   ].join(" / "),
@@ -227,21 +233,25 @@ export function SiteSettingsView({
               label: (copy.tabs as Record<string, string>)[value],
             }))}
           />
-          <Field id="site-content-locale" label={t("editor.contentLocale")}>
-            <Select
-              className={styles.locale}
-              value={locale}
-              label={t("editor.contentLocale")}
-              options={locales.map((value) => ({
-                value,
-                label: localeRegistry[value].name,
-              }))}
-              onValueChange={setLocale}
-            />
-          </Field>
+          {tab !== "music" && (
+            <Field id="site-content-locale" label={t("editor.contentLocale")}>
+              <Select
+                className={styles.locale}
+                value={locale}
+                label={t("editor.contentLocale")}
+                options={locales.map((value) => ({
+                  value,
+                  label: localeRegistry[value].name,
+                }))}
+                onValueChange={setLocale}
+              />
+            </Field>
+          )}
         </div>
         <div className={styles.guide}>
-          <p>{t("settings.defaultsHelp")}</p>
+          <p>
+            {t(tab === "music" ? "music.sharedHelp" : "settings.defaultsHelp")}
+          </p>
           <Link
             href={previewPath}
             locale={locale}
@@ -279,6 +289,18 @@ export function SiteSettingsView({
         )}
         {value && (
           <div className={styles.fields} key={`${tab}:${locale}`} inert={busy}>
+            {tab === "music" && (
+              <div className={styles.full}>
+                <MusicSettingsFields
+                  value={value.music ?? defaultMusicSettings}
+                  onChange={(music) => {
+                    setValue((current) => current && { ...current, music });
+                    setDirty(true);
+                    setError("");
+                  }}
+                />
+              </div>
+            )}
             {aiEnabled && tab === "basic" && (
               <div className={styles.full}>
                 <SiteEditorialAssistant

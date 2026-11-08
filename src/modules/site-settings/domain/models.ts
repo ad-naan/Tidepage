@@ -3,10 +3,12 @@ import { isEditorDocument } from "@/shared/contracts/rich-text";
 import { locales } from "@/shared/i18n/config";
 import { navigationItems } from "@/shared/config/site";
 import { settingList } from "./presentation";
+import { musicSettingsSchema } from "@/shared/contracts/music";
 export const settingsDraftSchema = z
   .object({
     revision: z.number().int().min(0),
     translations: z.record(z.string(), z.record(z.string(), z.string())),
+    music: musicSettingsSchema.optional(),
   })
   .superRefine((settings, ctx) => {
     for (const [locale, fields] of Object.entries(settings.translations)) {

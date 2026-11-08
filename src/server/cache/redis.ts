@@ -15,7 +15,7 @@ export async function getRedis(): Promise<Redis | null> {
     globalRedis.adnaanRedis = new Redis(url, {
       lazyConnect: true,
       enableOfflineQueue: false,
-      connectTimeout: 1500,
+      connectTimeout: getEnv().REDIS_CONNECT_TIMEOUT_MS,
       commandTimeout: 2000,
       maxRetriesPerRequest: 0,
       retryStrategy: () => null,

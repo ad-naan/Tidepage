@@ -297,8 +297,11 @@
     "idle": "Slow down, just a little",
     "playError": "This track can't be played right now.",
     "loadError": "Audio failed to load. Please try again later.",
-    "sourceError": "Audio is unavailable. You can import a local file.",
-    "empty": "No music selected"
+    "sourceError": "This track is unavailable, possibly due to licensing or service restrictions. Try the next track.",
+    "empty": "No music selected",
+    "loadingPlaylist": "Loading playlist…",
+    "playlistError": "The online playlist is unavailable. You can still import local audio.",
+    "retryPlaylist": "Retry playlist"
   },
   "activity": {
     "unavailable": "Activity information is not connected yet.",
@@ -369,7 +372,8 @@
     "RATE_LIMITED": "Too many requests, please try again later",
     "BODY_TOO_LARGE": "The request is too large",
     "WORLD_UNAVAILABLE": "Coastal account services are not ready. Please try again later.",
-    "WORLD_PROOF_INVALID": "This memory proof expired or belongs to another account. Please check in again."
+    "WORLD_PROOF_INVALID": "This memory proof expired or belongs to another account. Please check in again.",
+    "MUSIC_UNAVAILABLE": "The music playlist is unavailable. Check the settings or try again later."
   },
   "notes": {
     "readMore": "Read this moment",
@@ -1482,7 +1486,8 @@
         "basic": "Basics",
         "home": "Home and navigation",
         "about": "About",
-        "siteAbout": "This site"
+        "siteAbout": "This site",
+        "music": "Music"
       },
       "fields": {
         "name": "Name",
@@ -1612,6 +1617,27 @@
       "forbidden": "The account “{name}” does not have workbench access. Switch to a linked owner account.",
       "switchAccount": "Sign out to switch accounts",
       "backToSite": "Back to site"
+    },
+    "music": {
+      "enabled": "Online playlist",
+      "enabledHelp": "Local audio imports remain available when the online playlist is off.",
+      "off": "Off",
+      "on": "On",
+      "server": "Music platform",
+      "netease": "NetEase Cloud Music",
+      "tencent": "QQ Music",
+      "playlistId": "Playlist ID",
+      "playlistHelp": "Enter a public playlist’s numeric ID: id in NetEase links; id or disstid in QQ Music links.",
+      "apiUrl": "Meting API URL",
+      "apiHelp": "Uses INJAHOW by default. Enter the HTTPS API base URL without server, type or id parameters.",
+      "test": "Test playlist",
+      "testing": "Loading playlist…",
+      "testHelp": "Testing does not save changes. Reading a playlist does not guarantee full playback of every track.",
+      "success": "Loaded {count} tracks. Here are the first few:",
+      "failed": "Could not load the playlist. Check the API URL, platform and playlist ID, and make sure the playlist is public. The public service may also be temporarily unavailable.",
+      "invalid": "Enter a valid HTTPS API URL and numeric playlist ID.",
+      "sharedHelp": "Music settings apply to every language. Save and refresh the public site to load the playlist. Playback starts only when clicked.",
+      "description": "Configure the player’s music source and playlist for every language."
     }
   },
   "code": {

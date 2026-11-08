@@ -297,8 +297,11 @@
     "idle": "听一点，慢一点",
     "playError": "暂时无法播放这首音乐。",
     "loadError": "音频加载失败，请稍后重试。",
-    "sourceError": "暂时无法加载音频，可导入本地音乐。",
-    "empty": "暂无音乐"
+    "sourceError": "这首歌暂时无法播放，可能受版权或接口限制。请尝试下一首。",
+    "empty": "暂无音乐",
+    "loadingPlaylist": "正在加载歌单…",
+    "playlistError": "在线歌单暂时不可用，仍可导入本地音频。",
+    "retryPlaylist": "重试歌单"
   },
   "activity": {
     "unavailable": "活动信息尚未接入。",
@@ -369,7 +372,8 @@
     "RATE_LIMITED": "请求过于频繁，请稍后再试",
     "BODY_TOO_LARGE": "上传内容过大",
     "WORLD_UNAVAILABLE": "海岸账号服务暂未就绪，请稍后再试。",
-    "WORLD_PROOF_INVALID": "打卡凭证已过期或不属于当前账号，请重新打卡。"
+    "WORLD_PROOF_INVALID": "打卡凭证已过期或不属于当前账号，请重新打卡。",
+    "MUSIC_UNAVAILABLE": "暂时无法读取音乐歌单，请检查设置或稍后重试。"
   },
   "notes": {
     "readMore": "读这个瞬间",
@@ -1482,7 +1486,8 @@
         "basic": "基本信息",
         "home": "首页与导航",
         "about": "自述",
-        "siteAbout": "此站点"
+        "siteAbout": "此站点",
+        "music": "音乐"
       },
       "fields": {
         "name": "姓名",
@@ -1612,6 +1617,27 @@
       "forbidden": "当前账号「{name}」没有工作台权限。请切换到已绑定的站主账号。",
       "switchAccount": "退出并切换账号",
       "backToSite": "返回网站"
+    },
+    "music": {
+      "enabled": "在线歌单",
+      "enabledHelp": "关闭后仍可在播放器中导入本地音频。",
+      "off": "关闭",
+      "on": "开启",
+      "server": "音源平台",
+      "netease": "网易云音乐",
+      "tencent": "QQ 音乐",
+      "playlistId": "歌单 ID",
+      "playlistHelp": "填写公开歌单的数字 ID。网易云链接取 id 参数；QQ 音乐链接取 id 或 disstid。",
+      "apiUrl": "Meting 接口地址",
+      "apiHelp": "默认使用 INJAHOW。填写 HTTPS 接口基础地址，不需要填写 server、type、id 参数。",
+      "test": "测试歌单",
+      "testing": "正在读取歌单…",
+      "testHelp": "测试不保存设置；成功读取歌曲信息不代表每首歌都能完整播放。",
+      "success": "已读取 {count} 首歌曲，前几首如下：",
+      "failed": "歌单读取失败，请检查接口地址、平台和歌单 ID，并确认歌单公开。公共接口也可能暂时不可用。",
+      "invalid": "请填写有效的 HTTPS 接口地址和数字歌单 ID。",
+      "sharedHelp": "音乐设置全站共用。保存后刷新前台即可加载歌单，不会自动播放。",
+      "description": "设置前台播放器的音源和歌单，保存后对所有语言生效。"
     }
   },
   "code": {

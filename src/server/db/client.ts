@@ -12,7 +12,8 @@ export function getPool(): Pool {
     globalDb.adnaanPool = new Pool({
       connectionString: env.DATABASE_URL,
       max: env.DATABASE_POOL_MAX,
-      connectionTimeoutMillis: 3000,
+      connectionTimeoutMillis: env.DATABASE_CONNECT_TIMEOUT_MS,
+      keepAlive: true,
       idleTimeoutMillis: 30000,
       statement_timeout: 5000,
       query_timeout: 6000,

@@ -26,9 +26,11 @@ SITE_URL=https://example.com
 # 外部 PostgreSQL
 DATABASE_URL=postgresql://user:password@host:5432/adnaan
 DATABASE_POOL_MAX=10
+DATABASE_CONNECT_TIMEOUT_MS=10000
 
 # Web 侧可选缓存（可用另一个实例，允许留空）
 # REDIS_URL=redis://cache-host:6379
+# REDIS_CONNECT_TIMEOUT_MS=3000
 
 # 实时网关专用 Redis（必须满足上文配置要求）
 REALTIME_REDIS_URL=redis://:password@realtime-redis-host:6379
@@ -56,6 +58,10 @@ OAuth 回调地址为 `<SITE_URL>/api/v1/auth/github/callback` 或 `<SITE_URL>/a
 - `NEXT_PUBLIC_REALTIME_URL` 写域名根路径（不要带 `:3101`、不要带 `/socket.io`），浏览器经 nginx 的 `/socket.io/` 反代连网关。
 - 桌面助手的服务地址填 `https://example.com`（同样不带 `/socket.io`）。
 - `REALTIME_AUTHOR_TOKEN` 绝不能进 `NEXT_PUBLIC_` 前缀变量或提交仓库。
+
+Redis URL 中的用户名和密码要分别做百分号编码，例如密码里的 `@`、`#`、`%` 分别写成 `%40`、`%23`、`%25`，不要编码整个连接串。在 `.env` 中用引号包住完整值，避免 `#` 被当作注释；Web 的 `REDIS_URL` 和网关的 `REALTIME_REDIS_URL` 都需要检查。修改后重启对应服务，再确认 Web `/api/v1/health/ready` 的 `redis` 为 `ready`、网关 `/healthz` 正常。配置存在不代表认证已通过。
+
+远程 PostgreSQL 建连等待由 `DATABASE_CONNECT_TIMEOUT_MS` 控制，默认 10000 毫秒，范围 1000–30000。连接启用 TCP keepalive；SQL 执行仍受原有 5 秒 statement timeout 和 6 秒 query timeout 约束。Web Redis 建连等待由 `REDIS_CONNECT_TIMEOUT_MS` 控制，默认 3000 毫秒，范围 500–10000，命令等待仍为 2 秒。调长建连等待可以容纳网络抖动，不能替代排查数据库网络、容量或连接泄漏。
 
 ## 三、nginx 说明
 

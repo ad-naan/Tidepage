@@ -23,11 +23,9 @@ import {
 } from "../domain/presentation";
 import { getArticle, getFeaturedArticles } from "@/modules/content/server";
 import { summarize } from "@/modules/content/domain/models";
+import { defaultMusicSettings } from "@/shared/contracts/music";
 
-export async function readPublicSiteFields(
-  locale: Locale,
-  db: Database = getDb(),
-): Promise<Record<string, string>> {
+async function readPublicSettings(db: Database) {
   const [record] = await db
     .select({ value: workbenchRecordsTable.value })
     .from(workbenchRecordsTable)
@@ -43,9 +41,18 @@ export async function readPublicSiteFields(
       workbenchRecordsTable.ownerId,
     )
     .limit(1);
-  const fields = record
-    ? settingsDraftSchema.parse(record.value).translations[locale]
-    : undefined;
+  return record ? settingsDraftSchema.parse(record.value) : undefined;
+}
+
+export async function readPublicMusicSettings(db: Database = getDb()) {
+  return (await readPublicSettings(db))?.music ?? { ...defaultMusicSettings };
+}
+
+export async function readPublicSiteFields(
+  locale: Locale,
+  db: Database = getDb(),
+): Promise<Record<string, string>> {
+  const fields = (await readPublicSettings(db))?.translations[locale];
   return Object.fromEntries(
     Object.entries(fields ?? {}).filter(
       ([key]) =>
@@ -209,6 +216,7 @@ export async function readSiteSettingsEditorState(
   const stored = record.value ?? { revision: 0, translations: {} };
   return {
     revision: stored.revision,
+    music: stored.music ?? { ...defaultMusicSettings },
     translations: Object.fromEntries(
       locales.map((locale) => {
         const fields = { ...defaults[locale], ...stored.translations[locale] };

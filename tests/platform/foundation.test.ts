@@ -12,6 +12,23 @@ test("configuration validates booleans, service URLs and production indexing", (
   assert.throws(() => parseEnv({}), /DATABASE_URL/);
   const database = { DATABASE_URL: "postgresql://user:pass@localhost/blog" };
   assert.equal(parseEnv(database).DATABASE_URL, database.DATABASE_URL);
+  assert.equal(parseEnv(database).DATABASE_CONNECT_TIMEOUT_MS, 10000);
+  assert.equal(parseEnv(database).REDIS_CONNECT_TIMEOUT_MS, 3000);
+  for (const value of ["0", "10001", "invalid"])
+    assert.throws(
+      () => parseEnv({ ...database, REDIS_CONNECT_TIMEOUT_MS: value }),
+      /REDIS_CONNECT_TIMEOUT_MS/,
+    );
+  assert.equal(
+    parseEnv({ ...database, DATABASE_CONNECT_TIMEOUT_MS: "15000" })
+      .DATABASE_CONNECT_TIMEOUT_MS,
+    15000,
+  );
+  for (const value of ["0", "30001", "1.5", "unbounded"])
+    assert.throws(
+      () => parseEnv({ ...database, DATABASE_CONNECT_TIMEOUT_MS: value }),
+      /DATABASE_CONNECT_TIMEOUT_MS/,
+    );
 
   assert.equal(
     parseEnv({ ...database, INDEXING_ENABLED: "false" }).INDEXING_ENABLED,

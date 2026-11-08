@@ -17,6 +17,12 @@ export const envSchema = z
     SITE_URL: z.url().default("http://localhost:3000"),
     DATABASE_URL: z.url(),
     DATABASE_POOL_MAX: z.coerce.number().int().min(1).max(50).default(10),
+    DATABASE_CONNECT_TIMEOUT_MS: z.coerce
+      .number()
+      .int()
+      .min(1000)
+      .max(30000)
+      .default(10000),
     UPLOAD_DIR: z.string().min(1).default("./storage/uploads"),
     REALTIME_AUTHOR_TOKEN: z.string().min(32).max(512).optional(),
     OAUTH_GITHUB_CLIENT_ID: optionalText(1, 128),
@@ -24,6 +30,12 @@ export const envSchema = z
     OAUTH_GITEE_CLIENT_ID: optionalText(1, 128),
     OAUTH_GITEE_CLIENT_SECRET: optionalText(8, 256),
     REDIS_URL: optionalUrl,
+    REDIS_CONNECT_TIMEOUT_MS: z.coerce
+      .number()
+      .int()
+      .min(500)
+      .max(10000)
+      .default(3000),
     AI_CHAT_COMPLETIONS_URL: optionalUrl,
     AI_API_KEY: optionalText(1, 1024),
     AI_MODEL: optionalText(1, 160),

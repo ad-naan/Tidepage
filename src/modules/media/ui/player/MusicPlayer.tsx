@@ -20,9 +20,13 @@ import {
 import { softSpring } from "@/shared/lib/motion";
 import { useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
-type Track = { title: string; artist: string; source: string; cover: string };
+import { apiGet } from "@/shared/http/client";
+import type { MusicTrack } from "@/shared/contracts/music";
+import styles from "./MusicPlayer.module.css";
 const time = (n: number) =>
-  `${Math.floor(n / 60)}:${String(Math.floor(n % 60)).padStart(2, "0")}`;
+  Number.isFinite(n)
+    ? `${Math.floor(n / 60)}:${String(Math.floor(n % 60)).padStart(2, "0")}`
+    : "0:00";
 export function MusicPlayer({
   expanded: open,
   onExpandedChange: setOpen,
@@ -35,7 +39,11 @@ export function MusicPlayer({
   const t = useTranslations("player");
   const audio = useRef<HTMLAudioElement>(null);
   const uploads = useRef<string[]>([]);
-  const [tracks, setTracks] = useState<Track[]>([]);
+  const [tracks, setTracks] = useState<MusicTrack[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [playlistFailed, setPlaylistFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const playbackIntent = useRef(false);
   const [index, setIndex] = useState(0);
   const playerRef = useRef<HTMLDivElement>(null);
   const togglePanel = () => setOpen(!open);
@@ -47,6 +55,31 @@ export function MusicPlayer({
   const [error, setError] = useState("");
   const track = tracks[index];
   useEffect(() => {
+    const controller = new AbortController();
+    setLoading(true);
+    setPlaylistFailed(false);
+    void apiGet<{ enabled: boolean; tracks: MusicTrack[] }>("/api/v1/music", {
+      signal: controller.signal,
+    })
+      .then((result) => {
+        if (controller.signal.aborted) return;
+        setTracks((current) => [
+          ...current,
+          ...result.tracks.filter(
+            (item) =>
+              !current.some((existing) => existing.source === item.source),
+          ),
+        ]);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setPlaylistFailed(true);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+    return () => controller.abort();
+  }, [attempt]);
+  useEffect(() => {
     if (audio.current) {
       audio.current.volume = volume;
       if (Number.isFinite(audio.current.duration))
@@ -55,32 +88,42 @@ export function MusicPlayer({
   }, [volume]);
   useEffect(() => {
     setProgress(0);
-    if (playing)
-      audio.current?.play().catch(() => {
-        setPlaying(false);
-        setError(t("playError"));
-      });
-  }, [index]); // Preserve playback intent when changing tracks.
+    setDuration(0);
+    setError("");
+    if (playbackIntent.current && track) void play();
+  }, [track?.source]); // Preserve intent when switching sources, including the first remote track.
   useEffect(
     () => () => uploads.current.forEach((url) => URL.revokeObjectURL(url)),
     [],
   );
+  async function play() {
+    const element = audio.current;
+    if (!element || !track) return;
+    const source = element.getAttribute("src");
+    try {
+      await element.play();
+    } catch {
+      if (element.getAttribute("src") !== source || !playbackIntent.current)
+        return;
+      playbackIntent.current = false;
+      setPlaying(false);
+      setError(t("loadError"));
+    }
+  }
   async function toggle() {
     if (!audio.current || !track) return;
     setError("");
-    if (playing) {
+    if (playing || playbackIntent.current) {
+      playbackIntent.current = false;
       audio.current.pause();
       setPlaying(false);
     } else {
-      try {
-        await audio.current.play();
-        setPlaying(true);
-      } catch {
-        setError(t("loadError"));
-      }
+      playbackIntent.current = true;
+      await play();
     }
   }
   function change(offset: number) {
+    setError("");
     if (tracks.length)
       setIndex((v) => (v + offset + tracks.length) % tracks.length);
   }
@@ -99,9 +142,24 @@ export function MusicPlayer({
             if (audio.current && Number.isFinite(audio.current.duration))
               setDuration(audio.current.duration);
           }}
-          onLoadedMetadata={() => setDuration(audio.current?.duration || 0)}
-          onEnded={() => change(1)}
+          onLoadedMetadata={() =>
+            setDuration(
+              Number.isFinite(audio.current?.duration)
+                ? audio.current!.duration
+                : 0,
+            )
+          }
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+          onEnded={() => {
+            if (tracks.length === 1 && audio.current) {
+              audio.current.currentTime = 0;
+              if (playbackIntent.current) void play();
+            } else change(1);
+          }}
           onError={() => {
+            if (!track) return;
+            playbackIntent.current = false;
             setPlaying(false);
             setError(t("sourceError"));
           }}
@@ -145,7 +203,10 @@ export function MusicPlayer({
                       exit={{ opacity: 0, y: -7 }}
                       transition={{ duration: 0.18 }}
                     >
-                      <h3>{track?.title ?? t("empty")}</h3>
+                      <h3>
+                        {track?.title ??
+                          t(loading ? "loadingPlaylist" : "empty")}
+                      </h3>
                       <p>{track?.artist}</p>
                     </motion.div>
                   </AnimatePresence>
@@ -156,6 +217,7 @@ export function MusicPlayer({
                       max={duration || 1}
                       step={0.1}
                       value={progress}
+                      disabled={!track || !duration}
                       onChange={(e) => {
                         if (audio.current)
                           audio.current.currentTime = Number(e.target.value);
@@ -257,7 +319,10 @@ export function MusicPlayer({
                           <Button
                             className={i === index ? "active" : ""}
                             key={t.source}
-                            onClick={() => setIndex(i)}
+                            onClick={() => {
+                              setError("");
+                              setIndex(i);
+                            }}
                           >
                             <span>{String(i + 1).padStart(2, "0")}</span>
                             {t.title}
@@ -271,6 +336,18 @@ export function MusicPlayer({
                     <p className="player-error" role="status">
                       {error}
                     </p>
+                  )}
+                  {playlistFailed && (
+                    <div className={styles.status} role="status">
+                      <p>{t("playlistError")}</p>
+                      <Button
+                        variant="quiet"
+                        size="sm"
+                        onClick={() => setAttempt((value) => value + 1)}
+                      >
+                        {t("retryPlaylist")}
+                      </Button>
+                    </div>
                   )}
                 </motion.section>
               )}
@@ -291,7 +368,7 @@ export function MusicPlayer({
               )}
             </span>
             <span>
-              {track?.title ?? t("empty")}
+              {track?.title ?? t(loading ? "loadingPlaylist" : "empty")}
               <small>{playing ? t("playing") : t("idle")}</small>
             </span>
           </Button>
