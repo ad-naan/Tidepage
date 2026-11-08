@@ -1,5 +1,7 @@
 # 部署（Docker + 外部 PostgreSQL / Redis）
 
+已有 `base-nginx` / `base-pg` / `base-redis`、由 CDN 提供 HTTPS 的 adnaan.site 服务器，使用 [现有服务器部署步骤](deployment-existing-server.md) 和 `compose.production.yaml`；不要直接启动下文自带的 Nginx。
+
 `compose.yaml` 只编排本项目自身服务：`web`（Next.js standalone）、`realtime`（Socket.IO 网关）、`nginx`（唯一公网入口）。PostgreSQL 与 Redis 使用外部已有实例，地址全部通过 `.env` 注入，不在编排内启动。
 
 ## 一、Redis 需要做的配置（外部实例侧）
@@ -85,7 +87,7 @@ docker compose up -d --build
 
 # 验证
 curl -f https://<域名>/            # Next 应用
-curl -f https://<域名>/socket.io/  # 应返回 0 字节 200（Engine.IO 探测由 WebSocket 完成）
+# WebSocket 在浏览器 Network → WS 中验证 101 握手；普通 HTTP GET 不是健康检查。
 docker compose ps                   # realtime 应为 healthy
 docker compose logs realtime nginx
 ```

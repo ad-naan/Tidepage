@@ -1,0 +1,55 @@
+# 单独使用：docker compose -f compose.production.yaml ...
+# 复用 base-nginx / base-pg / base-redis，不创建基础设施、不发布宿主机端口。
+name: tidepage
+
+services:
+  web:
+    extends:
+      file: compose.yaml
+      service: web
+    environment:
+      DATABASE_CONNECT_TIMEOUT_MS: ${DATABASE_CONNECT_TIMEOUT_MS:-10000}
+      REDIS_CONNECT_TIMEOUT_MS: ${REDIS_CONNECT_TIMEOUT_MS:-3000}
+    networks:
+      base:
+        aliases:
+          - adnaan-web
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/v1/health/ready',{signal:AbortSignal.timeout(4000)}).then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+
+  realtime:
+    extends:
+      file: compose.yaml
+      service: realtime
+    networks:
+      base:
+        aliases:
+          - adnaan-realtime
+
+  tools:
+    profiles: [tools]
+    build:
+      context: .
+      target: tools
+    environment:
+      NODE_ENV: production
+      SITE_URL: ${SITE_URL:?Set SITE_URL in .env}
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL in .env}
+      DATABASE_POOL_MAX: "2"
+      DATABASE_CONNECT_TIMEOUT_MS: ${DATABASE_CONNECT_TIMEOUT_MS:-10000}
+    networks:
+      - base
+    restart: "no"
+
+networks:
+  base:
+    external: true
+    name: base-service_base-net

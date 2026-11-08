@@ -1,7 +1,8 @@
 # syntax=docker/dockerfile:1
-# 两个构建目标：
+# 三个运行目标：
 #   web      —— Next.js standalone 产物（compose: web）
 #   realtime —— Socket.IO 网关，直接以 tsx 运行 services/realtime（compose: realtime）
+#   tools    —— 一次性数据库迁移、检查和站主绑定，不启动 Web
 
 FROM node:24-alpine AS base
 ENV PNPM_HOME=/pnpm
@@ -19,6 +20,16 @@ COPY . .
 ARG NEXT_PUBLIC_REALTIME_URL=""
 ENV NEXT_PUBLIC_REALTIME_URL=${NEXT_PUBLIC_REALTIME_URL}
 RUN pnpm build
+
+# ---------- 运维工具（不依赖 Next 构建） ----------
+FROM deps AS tools
+ENV NODE_ENV=production
+COPY tsconfig.json ./
+COPY src ./src
+COPY services ./services
+COPY scripts ./scripts
+COPY drizzle ./drizzle
+CMD ["pnpm", "db:check"]
 
 # ---------- Next.js Web 应用 ----------
 FROM base AS web
