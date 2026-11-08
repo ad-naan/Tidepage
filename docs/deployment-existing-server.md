@@ -1,4 +1,4 @@
-# adnaan.site：替换旧博客，复用公共基础设施
+# www.adnaan.site：替换旧博客，复用公共基础设施
 
 适用于本次已确认的服务器：项目目录 `/home/adnaan/project/tidepage/`，网络 `base-service_base-net`，基础容器 `base-nginx`、`base-pg`、`base-redis`。Redis 8.6.3 已启用 `noeviction` 和 AOF。新站开发环境已经连接同一台 `base-pg`，部署沿用其现有数据库，不能新建空库替代。HTTPS 在 CDN 终止，以 HTTP 回源服务器。
 
@@ -21,9 +21,9 @@ chmod 600 .env
 nano .env
 ```
 
-填写已经有数据的 PostgreSQL 库名与账号，地址使用 `base-pg:5432`；Redis 地址使用 `base-redis:6379`。URL 中用户名与密码分别做百分号编码，不要编码整个 URL。环境变量文件中用单引号包住含凭据的值。模板中的 `TIDEPAGE_DOMAIN=adnaan.site` 也要保留：Compose 的 extends 会校验原文件的变量，虽然它不会启动原文件的 Nginx。使用 `openssl rand -hex 32` 生成私密 `REALTIME_AUTHOR_TOKEN`，Web 与网关共用；如果已有桌面助手，更新它的令牌与地址。
+填写已经有数据的 PostgreSQL 库名与账号，地址使用 `base-pg:5432`；Redis 地址使用 `base-redis:6379`。URL 中用户名与密码分别做百分号编码，不要编码整个 URL。环境变量文件中用单引号包住含凭据的值。模板中的 `TIDEPAGE_DOMAIN=www.adnaan.site` 也要保留：Compose 的 extends 会校验原文件的变量，虽然它不会启动原文件的 Nginx。使用 `openssl rand -hex 32` 生成私密 `REALTIME_AUTHOR_TOKEN`，Web 与网关共用；如果已有桌面助手，更新它的令牌与地址。
 
-至少填写一种生产 OAuth 配置。Gitee 回调为 `https://adnaan.site/api/v1/auth/gitee/callback`。已有站主绑定保存在同一个数据库，不需重新初始化；仅当尚未绑定时执行第 3 步的 `admin:setup`。
+至少填写一种生产 OAuth 配置。Gitee 回调为 `https://www.adnaan.site/api/v1/auth/gitee/callback`。已有站主绑定保存在同一个数据库，不需重新初始化；仅当尚未绑定时执行第 3 步的 `admin:setup`。
 
 把当前新站实际使用的 `UPLOAD_DIR` 中的文件同步到服务器 `storage/uploads/`，保留哈希文件名，不能使用旧博客的图片目录代替。Docker 镜像与 Git 都不包含这些文件。例如从本地 PowerShell 上传，先在服务器 `mkdir -p /home/adnaan/project/tidepage/storage/uploads`，再在本地执行（替换 SSH 地址，按实际上传目录调整源路径）：
 
@@ -92,9 +92,9 @@ Web 和 Realtime 分别通过 `adnaan-web`、`adnaan-realtime` 网络别名被�
 
 ## 4. 配置 CDN，再替换旧博客 Nginx 文件
 
-CDN 需要保留原始 Host 回源 HTTP 80；对外强制 HTTPS、启用 WebSocket，空闲超时至少 120 秒。`www.adnaan.site` 会跳转到 `https://adnaan.site`，两域名的 CDN 证书都需有效。源站主域名不能再强制跳转 HTTPS，否则 HTTPS → HTTP 回源会循环重定向。
+CDN 需要保留原始 Host 回源 HTTP 80；对外强制 HTTPS、启用 WebSocket，空闲超时至少 120 秒。`www.adnaan.site` 是主域名，必须配置该域名的 DNS、CDN 和 HTTPS 证书。`adnaan.site` 仅作为可选别名跳转到 `https://www.adnaan.site`；根域名未解析不影响 www 主站，如需根域名跳转则另行配置其 DNS、CDN 和证书。源站主域名不能再强制跳转 HTTPS，否则 HTTPS → HTTP 回源会循环重定向。
 
-禁用 HTML、API、登录/后台、RSC 请求与 `/socket.io/` 的强制缓存，尊重应用的 Cache-Control / Vary。`/_next/static/` 可以长期缓存；不要沿用旧站按所有 `.js/.css/.png` 扩展名强制一年缓存的全局规则。切换后清理旧站 CDN 缓存。
+禁用 HTML、API、登录/后台、RSC 请求与 `/socket.io/` 的强制缓存，尊重应用的 Cache-Control / Vary。`/_next/static/` 可以长期缓存；不要沿用旧站按所有 `.js/.css/.png` 扩展名强制一年缓存的全局规则。切换后清理旧站 CDN 缓存，包括以前 www 跳转到根域名的 308 响应；浏览器若缓存过该跳转，使用无痕窗口验证。
 
 新 Nginx 配置把 `X-Forwarded-Proto` 固定为外部 HTTPS，覆盖客户端提供的真实 IP 请求头，并关闭代理缓存和响应缓冲。容器 DNS 用 Docker resolver 定期刷新。当前 `$remote_addr` 可能是 CDN 节点地址，IP 限流会按节点聚合；要获得真实访客 IP，需根据实际 CDN 的官方来源网段设置 `set_real_ip_from` 和相应 `real_ip_header`，不能直接信任任意客户端 X-Forwarded-For。源站 HTTP 入口应只允许可信 CDN / 管理来源访问。
 
@@ -126,8 +126,10 @@ fi
 以上失败时不要继续停旧服务。新的源站配置在 HTTP 80 接收流量，但对应用声明 HTTPS；验证公开入口必须使用 CDN 的 HTTPS 域名。
 
 ```bash
-curl -fsS https://adnaan.site/api/v1/health/ready
+curl -fsS https://www.adnaan.site/api/v1/health/ready
 curl -I https://www.adnaan.site/
+# 可选：根域名已配置解析与证书时，应跳转到 www
+# curl -I https://adnaan.site/
 ```
 
 浏览器验证首页、文章图片、OAuth 登录、后台上传、音乐播放、实时连接。WebSocket 在开发者工具 Network → WS 中应握手 101；普通 `curl /socket.io/` 不是 WebSocket 健康检查，不能以它返回普通 200 为成功标准。
