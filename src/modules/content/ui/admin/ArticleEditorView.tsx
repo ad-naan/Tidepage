@@ -13,6 +13,7 @@ import {
   Eye,
   SlidersHorizontal,
   Sparkles,
+  Languages,
   X,
   Check,
   Circle,
@@ -31,6 +32,8 @@ import {
   newArticle,
   translationOf,
   articleDraftSchema,
+  articleTranslationSchema,
+  documentText,
   publicationIssues,
   type ArticleDraft,
   type ArticleTranslation,
@@ -52,9 +55,24 @@ import { RichText } from "@/modules/content/ui/rich-text/RichText";
 import { loadArticleDrafts, saveArticleDraft } from "./draft-store";
 import { imageUploader } from "@/modules/media/ui/admin/media-client";
 import { apiSend, ApiClientError } from "@/shared/http/client";
-import { ArticleAssistant } from "./ArticleAssistant";
+import {
+  articleContextLimit,
+  editorialTimeoutMs,
+  translationSegmentLimit,
+  translationTextLimit,
+  type MetadataSuggestion,
+} from "@/modules/ai/domain/writing";
+import { createHttpWritingAgent } from "@/modules/ai/ui/writing-agent";
+import {
+  applyTranslationSegments,
+  translationSegments,
+} from "@/modules/content/domain/translation";
 import { PublicationReviewPanel } from "./PublicationReviewPanel";
 import styles from "./ArticleEditorView.module.css";
+
+const editorialEndpoint = "/api/v1/ai/writing";
+const writingAgent = createHttpWritingAgent(editorialEndpoint);
+
 export function ArticleEditorView({
   id,
   initialDraft,
@@ -91,7 +109,7 @@ export function ArticleEditorView({
   const dirtyRef = useRef(false);
   const [saving, setSaving] = useState(false);
   const [preview, setPreview] = useState(false);
-  const [panel, setPanel] = useState<"metadata" | "ai" | null>(null);
+  const [panel, setPanel] = useState(false);
   const [focused, setFocused] = useState(false);
   const focusTrigger = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -112,12 +130,10 @@ export function ArticleEditorView({
     document.addEventListener("keydown", escape);
     return () => document.removeEventListener("keydown", escape);
   }, [focused, panel]);
-  const panelTriggers = useRef<
-    Partial<Record<"metadata" | "ai", HTMLButtonElement>>
-  >({});
+  const panelTrigger = useRef<HTMLButtonElement>(null);
   function closePanel() {
-    if (panel) panelTriggers.current[panel]?.focus({ preventScroll: true });
-    setPanel(null);
+    panelTrigger.current?.focus({ preventScroll: true });
+    setPanel(false);
   }
   useEffect(() => {
     if (!panel) return;
@@ -134,9 +150,6 @@ export function ArticleEditorView({
     document.addEventListener("keydown", escape);
     return () => document.removeEventListener("keydown", escape);
   }, [panel]);
-  const [readyEditors, setReadyEditors] = useState<
-    Partial<Record<Locale, Editor>>
-  >({});
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [cover, setCover] = useState(false);
@@ -144,6 +157,17 @@ export function ArticleEditorView({
   const [publishing, setPublishing] = useState(false);
   const [publishError, setPublishError] = useState("");
   const [pendingLink, setPendingLink] = useState<string | null>(null);
+  const [generating, setGenerating] = useState<"metadata" | "translate" | null>(
+    null,
+  );
+  const [confirmTranslation, setConfirmTranslation] = useState(false);
+  const [geoReview, setGeoReview] = useState<Partial<Record<Locale, string[]>>>(
+    {},
+  );
+  const generation = useRef<AbortController | null>(null);
+  const targetLocale = locale === "en" ? "zh-CN" : "en";
+  const targetLanguage = localeRegistry[targetLocale].name;
+  useEffect(() => () => generation.current?.abort(), [id]);
   const changes = useRef(0);
   const markDirty = useCallback(() => {
     changes.current++;
@@ -159,7 +183,6 @@ export function ArticleEditorView({
           (editor: Editor | null) => {
             if (editor) editors.current[code] = editor;
             else delete editors.current[code];
-            setReadyEditors({ ...editors.current });
           },
         ]),
       ) as Record<Locale, (editor: Editor | null) => void>,
@@ -259,6 +282,124 @@ export function ArticleEditorView({
       },
     });
     markDirty();
+  }
+  function requestTranslation() {
+    const current = snapshot();
+    if (!current) return;
+    const target = translationOf(current, targetLocale);
+    if (
+      translationSegments(target).length ||
+      target.body.content?.some(
+        (node) => node.type !== "paragraph" || node.content?.length,
+      )
+    ) {
+      setConfirmTranslation(true);
+    } else {
+      void generate("translate");
+    }
+  }
+  async function generate(task: "metadata" | "translate") {
+    const draft = snapshot();
+    if (
+      !aiEnabled ||
+      !draft ||
+      uploading ||
+      saving ||
+      publishing ||
+      generation.current
+    )
+      return;
+    const source = translationOf(draft, locale);
+    const context = documentText(source.body).trim();
+    const segments = task === "translate" ? translationSegments(source) : [];
+    if (task === "metadata" ? !context : !segments.length) {
+      notify({ title: t("ai.addContent"), tone: "error" });
+      return;
+    }
+    if (
+      segments.length > translationSegmentLimit ||
+      segments.reduce((total, segment) => total + segment.length, 0) >
+        translationTextLimit
+    ) {
+      notify({ title: t("ai.translationLimit"), tone: "error" });
+      return;
+    }
+    const version = changes.current;
+    const request = new AbortController();
+    generation.current = request;
+    setGenerating(task);
+    const options = { signal: request.signal, timeoutMs: editorialTimeoutMs };
+    function currentDraft() {
+      if (request.signal.aborted || draftRef.current?.id !== draft?.id)
+        return null;
+      if (changes.current === version) return draftRef.current;
+      notify({ title: t("ai.conflict"), tone: "error" });
+      return null;
+    }
+    try {
+      if (task === "metadata") {
+        const { excerpt, seoTitle, seoDescription, tags, review } =
+          await apiSend<MetadataSuggestion>(
+            editorialEndpoint,
+            "POST",
+            {
+              task,
+              locale,
+              title: source.title,
+              context: context.slice(0, articleContextLimit),
+            },
+            options,
+          );
+        if (!currentDraft()) return;
+        updateTranslation({ excerpt, seoTitle, seoDescription, tags });
+        setGeoReview((previous) => ({ ...previous, [locale]: review }));
+        notify({ title: t("ai.metadataReady"), tone: "success" });
+      } else {
+        const translated = await apiSend<string[]>(
+          editorialEndpoint,
+          "POST",
+          { task, locale: targetLocale, sourceLocale: locale, segments },
+          options,
+        );
+        const current = currentDraft();
+        if (!current) return;
+        const value = articleTranslationSchema.parse(
+          applyTranslationSegments(source, translated),
+        );
+        const target = editors.current[targetLocale];
+        if (
+          !target?.commands.setContent(value.body, {
+            emitUpdate: false,
+            errorOnInvalidContent: true,
+          })
+        )
+          throw new Error("TRANSLATION_EDITOR_UNAVAILABLE");
+        commit({
+          ...current,
+          translations: {
+            ...current.translations,
+            [targetLocale]: {
+              ...value,
+              slug: translationOf(current, targetLocale).slug || value.slug,
+            },
+          },
+        });
+        markDirty();
+        setLocale(targetLocale);
+        notify({
+          title: t("ai.translationReady", { language: targetLanguage }),
+          tone: "success",
+        });
+      }
+    } catch {
+      if (!request.signal.aborted)
+        notify({ title: t("ai.suggestionFailed"), tone: "error" });
+    } finally {
+      if (generation.current === request) {
+        generation.current = null;
+        setGenerating(null);
+      }
+    }
   }
   async function save() {
     const value = snapshot();
@@ -403,7 +544,7 @@ export function ArticleEditorView({
                 value,
                 label: localeRegistry[value].name,
               }))}
-              disabled={uploading || saving}
+              disabled={uploading || saving || !!generating}
               onValueChange={(next) => {
                 if (!isLocale(next) || next === locale) return;
                 const value = snapshot();
@@ -427,36 +568,41 @@ export function ArticleEditorView({
             {t(preview ? "editor.back" : "editor.preview")}
           </Button>
           {!preview && (
-            <>
-              <Button
-                variant="quiet"
-                size="sm"
-                aria-pressed={panel === "metadata"}
-                ref={(element) => {
-                  if (element) panelTriggers.current.metadata = element;
-                }}
-                aria-controls="article-side-panel"
-                onClick={() =>
-                  setPanel(panel === "metadata" ? null : "metadata")
-                }
-              >
-                <SlidersHorizontal size={15} />
-                {t("editor.metadata")}
-              </Button>
-              <Button
-                variant="quiet"
-                size="sm"
-                aria-pressed={panel === "ai"}
-                ref={(element) => {
-                  if (element) panelTriggers.current.ai = element;
-                }}
-                aria-controls="article-side-panel"
-                onClick={() => setPanel(panel === "ai" ? null : "ai")}
-              >
-                <Sparkles size={15} />
-                {t("editor.assistant")}
-              </Button>
-            </>
+            <Button
+              variant="quiet"
+              size="sm"
+              busy={generating === "translate"}
+              disabled={
+                !aiEnabled || !!generating || uploading || saving || publishing
+              }
+              title={!aiEnabled ? t("ai.unavailable") : undefined}
+              onClick={requestTranslation}
+            >
+              <Languages size={15} />
+              {t("ai.translateTo", { language: targetLanguage })}
+            </Button>
+          )}
+          {generating === "translate" && (
+            <Button
+              variant="quiet"
+              size="sm"
+              onClick={() => generation.current?.abort()}
+            >
+              {t("ai.stop")}
+            </Button>
+          )}
+          {!preview && (
+            <Button
+              variant="quiet"
+              size="sm"
+              aria-pressed={panel}
+              ref={panelTrigger}
+              aria-controls="article-side-panel"
+              onClick={() => setPanel(!panel)}
+            >
+              <SlidersHorizontal size={15} />
+              {t("editor.metadata")}
+            </Button>
           )}
           <Button
             size="sm"
@@ -511,6 +657,8 @@ export function ArticleEditorView({
                 onUploading={setUploading}
                 active={code === locale && !preview}
                 uploader={imageUploader}
+                writingAgent={aiEnabled ? writingAgent : undefined}
+                contentLocale={code}
               />
             </div>
           ))}
@@ -522,14 +670,10 @@ export function ArticleEditorView({
           className={styles.aside}
           id="article-side-panel"
           hidden={!panel || preview}
-          aria-label={t(
-            panel === "ai" ? "editor.assistant" : "editor.metadata",
-          )}
+          aria-label={t("editor.metadata")}
         >
           <div className={styles.panelHeader}>
-            <h2>
-              {t(panel === "ai" ? "editor.assistant" : "editor.metadata")}
-            </h2>
+            <h2>{t("editor.metadata")}</h2>
             <IconButton
               aria-label={t("editor.closePanel")}
               onClick={closePanel}
@@ -537,60 +681,38 @@ export function ArticleEditorView({
               <X size={15} />
             </IconButton>
           </div>
-          <div hidden={panel !== "ai"}>
-            {readyEditors[locale] && (
-              <ArticleAssistant
-                key={locale}
-                editor={readyEditors[locale]}
-                active={panel === "ai" && !preview}
-                locale={locale}
-                enabled={aiEnabled}
-                version={() => changes.current}
-                snapshot={() => translationOf(snapshot() ?? draft, locale)}
-                apply={(suggestion) => {
-                  if (saving || uploading || publishing || !draftRef.current)
-                    return false;
-                  if (suggestion.task === "metadata") {
-                    const { title, excerpt, seoTitle, seoDescription, tags } =
-                      suggestion.value;
-                    updateTranslation({
-                      title,
-                      excerpt,
-                      seoTitle,
-                      seoDescription,
-                      tags,
-                    });
-                    return true;
-                  }
-                  const target = editors.current[suggestion.locale];
-                  if (
-                    !target ||
-                    !target.commands.setContent(suggestion.value.body, {
-                      emitUpdate: true,
-                    })
-                  )
-                    return false;
-                  const current = draftRef.current;
-                  const previous = translationOf(current, suggestion.locale);
-                  commit({
-                    ...current,
-                    translations: {
-                      ...current.translations,
-                      [suggestion.locale]: {
-                        ...suggestion.value,
-                        slug: previous.slug || suggestion.value.slug,
-                      },
-                    },
-                  });
-                  markDirty();
-                  setLocale(suggestion.locale);
-                  return true;
-                }}
-              />
-            )}
-          </div>
-          <div className={styles.fields} hidden={panel !== "metadata"}>
+          <div className={styles.fields}>
             <p className={styles.localeNote}>{t("editor.localeHelp")}</p>
+            <div className={styles.generation}>
+              <Button
+                variant="quiet"
+                size="sm"
+                busy={generating === "metadata"}
+                disabled={
+                  !aiEnabled ||
+                  !!generating ||
+                  uploading ||
+                  saving ||
+                  publishing
+                }
+                onClick={() => void generate("metadata")}
+              >
+                <Sparkles size={15} />
+                {t("ai.metadata")}
+              </Button>
+              {generating === "metadata" && (
+                <Button
+                  variant="quiet"
+                  size="sm"
+                  onClick={() => generation.current?.abort()}
+                >
+                  {t("ai.stop")}
+                </Button>
+              )}
+              <p className={styles.localeNote}>
+                {t(aiEnabled ? "ai.metadataHelp" : "ai.unavailable")}
+              </p>
+            </div>
             <Field id="article-excerpt" label={t("editor.fields.excerpt")}>
               <Textarea
                 rows={3}
@@ -692,6 +814,16 @@ export function ArticleEditorView({
                 </Field>
               </div>
             </Disclosure>
+            {!!geoReview[locale]?.length && (
+              <div className={styles.generation}>
+                <strong>{t("ai.geoReview")}</strong>
+                <ul>
+                  {geoReview[locale]?.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <div className={styles.cover}>
               {draft.coverAssetId && (
                 <AssetImage
@@ -735,6 +867,27 @@ export function ArticleEditorView({
           </div>
         </aside>
       </div>
+      {confirmTranslation && (
+        <Dialog
+          title={t("ai.translateTo", { language: targetLanguage })}
+          onClose={() => setConfirmTranslation(false)}
+          size="compact"
+        >
+          <p>{t("ai.translationReview", { language: targetLanguage })}</p>
+          <Button variant="quiet" onClick={() => setConfirmTranslation(false)}>
+            {t("editor.keepEditing")}
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              setConfirmTranslation(false);
+              void generate("translate");
+            }}
+          >
+            {t("ai.replaceTranslation")}
+          </Button>
+        </Dialog>
+      )}
       {cover && (
         <Dialog title={t("editor.cover")} onClose={() => setCover(false)} wide>
           <MediaPicker

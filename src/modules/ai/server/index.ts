@@ -4,6 +4,7 @@ import { readEventStream } from "@/shared/http/event-stream";
 import { z } from "zod";
 import { acquireModelSlot, requestModel } from "./provider";
 import {
+  editorialTimeoutMs,
   metadataSuggestionSchema,
   siteSuggestionSchema,
   type EditorialRequest,
@@ -24,7 +25,7 @@ const tasks: Record<EditorialRequest["task"], string> = {
   metadata:
     "Return one JSON object with title, excerpt, seoTitle, seoDescription (strings), tags (up to 8 short strings), and review (up to 4 short strings). Make title and excerpt useful as an RSS item. Write an accurate search snippet. Use review for article-specific GEO improvements such as a direct answer, a missing source, or a definition. Do not invent facts, citations or links.",
   translate:
-    "Return a JSON array of translated strings. Translate each segment into the requested locale, preserving the exact number and order. Segments are sequential excerpts of one document and may contain inline formatting boundaries. Preserve names, identifiers and URLs. Return only the array.",
+    "Return a JSON array of translated strings. Translate each segment from the supplied source locale into the requested locale, preserving the exact number and order. Adjacent segments can be parts of the same sentence split at an inline formatting boundary. Include spaces and punctuation where needed so those segments read correctly when joined. Preserve names, identifiers and URLs. Return only the array.",
   site: "Return one JSON object with seoTitle, seoDescription (strings), and review (up to 4 short strings). Use review for practical steps for navigation, GEO, and the RSS feed. This site derives RSS, sitemap and llms.txt from published content; suggest improvements to source content and links, without inventing a domain, pages or configuration values.",
 };
 
@@ -101,11 +102,89 @@ export async function generateEditorialSuggestion(
   input: Exclude<EditorialRequest, { task: "write" }>,
   signal: AbortSignal,
 ) {
+  if (input.task === "translate") return translate(input, signal);
   const value = await collectJson(generateEditorialText(input, signal));
   if (input.task === "metadata") return metadataSuggestionSchema.parse(value);
-  if (input.task === "site") return siteSuggestionSchema.parse(value);
-  return z
-    .array(z.string().min(1).max(24_000))
-    .length(input.segments.length)
-    .parse(value);
+  return siteSuggestionSchema.parse(value);
+}
+
+const batchChars = 3_200;
+const batchSegments = 48;
+
+function translationPieces(text: string) {
+  const parts: string[] = [];
+  while (text.length > batchChars) {
+    const prefix = text.slice(0, batchChars);
+    const boundary = Math.max(
+      prefix.lastIndexOf(" "),
+      prefix.lastIndexOf("\n"),
+      prefix.lastIndexOf("。"),
+      prefix.lastIndexOf("！"),
+      prefix.lastIndexOf("？"),
+    );
+    const end =
+      boundary > batchChars / 2
+        ? boundary + 1
+        : /[\uD800-\uDBFF]$/.test(prefix)
+          ? batchChars - 1
+          : batchChars;
+    parts.push(text.slice(0, end));
+    text = text.slice(end);
+  }
+  parts.push(text);
+  return parts;
+}
+
+async function translate(
+  input: Extract<EditorialRequest, { task: "translate" }>,
+  signal: AbortSignal,
+) {
+  const deadline = AbortSignal.any([
+    signal,
+    AbortSignal.timeout(editorialTimeoutMs),
+  ]);
+  const parts = input.segments.map(translationPieces);
+  let batch: { text: string; segment: number; part: number }[] = [];
+  let length = 0;
+  async function flush() {
+    if (!batch.length) return;
+    deadline.throwIfAborted();
+    const value = await collectJson(
+      generateEditorialText(
+        { ...input, segments: batch.map((piece) => piece.text) },
+        deadline,
+      ),
+    );
+    const translated = z
+      .array(
+        z
+          .string()
+          .refine((text) => !!text.trim())
+          .max(24_000),
+      )
+      .length(batch.length)
+      .parse(value);
+    batch.forEach(({ segment, part }, index) => {
+      parts[segment][part] = translated[index];
+    });
+    batch = [];
+    length = 0;
+  }
+  for (const [segment, pieces] of parts.entries()) {
+    for (const [part, text] of pieces.entries()) {
+      if (!text.trim()) continue;
+      if (length + text.length > batchChars || batch.length >= batchSegments)
+        await flush();
+      batch.push({ text, segment, part });
+      length += text.length;
+    }
+  }
+  await flush();
+  return parts.map((pieces) =>
+    pieces.length === 1
+      ? pieces[0]
+      : pieces
+          .map((piece) => piece.trim())
+          .join(input.locale === "en" ? " " : ""),
+  );
 }

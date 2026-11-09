@@ -191,7 +191,6 @@
   display: grid;
   gap: 20px;
 }
-.fields[hidden],
 .aside[hidden] {
   display: none;
 }
@@ -278,11 +277,13 @@
     border-radius: 6px;
   }
 }
-.translationPreview {
-  max-height: 15rem;
-  overflow: auto;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  padding: var(--space-3);
-  background: var(--soft);
+.generation {
+  font-size: var(--text-sm);
+  line-height: 1.65;
+}
+.generation p {
+  margin-top: 6px;
+}
+.generation ul {
+  padding-inline-start: 18px;
 }

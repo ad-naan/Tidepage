@@ -1,0 +1,35 @@
+.assistant {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  font: 400 var(--text-sm)/1.65 var(--font-ui);
+}
+.assistant form {
+  display: grid;
+  gap: 6px;
+}
+.heading,
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.heading {
+  justify-content: space-between;
+}
+.selection,
+.result {
+  padding: 8px;
+  border-left: 2px solid var(--line);
+  background: var(--soft);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  max-height: 10rem;
+  overflow: auto;
+}
+.selection,
+.status {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}

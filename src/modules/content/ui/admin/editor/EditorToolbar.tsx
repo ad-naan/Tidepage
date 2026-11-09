@@ -25,7 +25,7 @@ import { AnchoredPanel } from "@/shared/ui/overlay/AnchoredPanel";
 import { OverlayScope } from "@/shared/ui/overlay/OverlayScope";
 import { useDisclosure } from "@/shared/hooks/useDisclosure";
 import { fontSizes, isFontSize } from "@/shared/contracts/rich-text";
-import { blockCommands, type BlockCommand } from "./block-commands";
+import { searchBlockCommands, type BlockCommand } from "./block-commands";
 import styles from "./editor.module.css";
 import { StickerPicker } from "../../rich-text/StickerPicker";
 import { DocumentTools } from "./DocumentTools";
@@ -35,11 +35,13 @@ export function EditorToolbar({
   onInsert,
   onLink,
   onHelp,
+  hasWritingAssistant,
 }: {
   editor: Editor;
   onInsert: (key: BlockCommand) => void;
   onLink: () => void;
   onHelp: () => void;
+  hasWritingAssistant: boolean;
 }) {
   const t = useTranslations("admin.editor");
   const id = useId();
@@ -47,10 +49,8 @@ export function EditorToolbar({
   const trigger = useRef<HTMLButtonElement>(null);
   const search = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
-  const filtered = blockCommands.filter((item) =>
-    `${t(`blocks.${item.key}`)} ${item.keywords}`
-      .toLocaleLowerCase()
-      .includes(query.toLocaleLowerCase()),
+  const filtered = searchBlockCommands(query, hasWritingAssistant, (key) =>
+    t(`blocks.${key}`),
   );
   useEffect(() => {
     if (menu.open) {

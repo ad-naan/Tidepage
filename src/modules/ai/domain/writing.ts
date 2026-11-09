@@ -2,6 +2,9 @@ import { z } from "zod";
 import { localeSchema } from "@/shared/i18n/schema";
 
 export const articleContextLimit = 16_000;
+export const translationTextLimit = 80_000;
+export const translationSegmentLimit = 2_048;
+export const editorialTimeoutMs = 240_000;
 const text = (max: number) => z.string().trim().min(1).max(max);
 export const writingRequestSchema = z.discriminatedUnion("task", [
   z
@@ -27,16 +30,16 @@ export const writingRequestSchema = z.discriminatedUnion("task", [
       locale: localeSchema,
       sourceLocale: localeSchema,
       segments: z
-        .array(z.string().min(1).max(articleContextLimit))
+        .array(z.string().min(1).max(translationTextLimit))
         .min(1)
-        .max(256),
+        .max(translationSegmentLimit),
     })
     .strict()
     .refine(
       (input) =>
         input.locale !== input.sourceLocale &&
         input.segments.reduce((total, value) => total + value.length, 0) <=
-          articleContextLimit,
+          translationTextLimit,
     ),
   z
     .object({

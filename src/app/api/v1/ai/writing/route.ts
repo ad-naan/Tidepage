@@ -21,7 +21,7 @@ export const POST = defineRoute(async (request, { requestId }) => {
   requireSameOrigin(request);
   const owner = await requirePrincipal(["author", "admin"]);
   const input = writingRequestSchema.parse(
-    await boundedJson(request, 128 * 1024),
+    await boundedJson(request, 512 * 1024),
   );
   if (!isEditorialAgentConfigured())
     throw new AppError(

@@ -14,6 +14,7 @@ import {
   Minus,
   MessageSquare,
   ChevronsUpDown,
+  Sparkles,
 } from "lucide-react";
 
 export const blockCommands = [
@@ -36,5 +37,21 @@ export const blockCommands = [
   { key: "web", icon: Globe2, keywords: "web link bookmark 网页" },
   { key: "movie", icon: Film, keywords: "movie film video 电影" },
   { key: "music", icon: Music2, keywords: "music audio 音乐" },
+  { key: "ai", icon: Sparkles, keywords: "ai write assistant 写作 润色 续写" },
 ] as const;
 export type BlockCommand = (typeof blockCommands)[number]["key"];
+
+export function searchBlockCommands(
+  query: string,
+  hasWritingAssistant: boolean,
+  label: (key: BlockCommand) => string,
+) {
+  const term = query.toLocaleLowerCase();
+  return blockCommands.filter((item) => {
+    if (term === "ai" && hasWritingAssistant) return item.key === "ai";
+    return (
+      (item.key !== "ai" || hasWritingAssistant) &&
+      `${label(item.key)} ${item.keywords}`.toLocaleLowerCase().includes(term)
+    );
+  });
+}

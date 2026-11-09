@@ -79,12 +79,27 @@ test("translation changes text while retaining links, code and media references"
       { type: "codeBlock", content: [{ type: "text", text: "const x = 42;" }] },
       {
         type: "assetImage",
-        attrs: { assetId: "/uploads/fixture.png", alt: "Image" },
+        attrs: {
+          assetId: "/uploads/fixture.png",
+          alt: "Image",
+          caption: "Coast",
+          width: 50,
+        },
       },
     ],
   };
-  assert.deepEqual(translationSegments(value), ["Title", "Read", "Image"]);
-  const translated = applyTranslationSegments(value, ["标题", "阅读", "图像"]);
+  assert.deepEqual(translationSegments(value), [
+    "Title",
+    "Read",
+    "Image",
+    "Coast",
+  ]);
+  const translated = applyTranslationSegments(value, [
+    "标题",
+    "阅读",
+    "图像",
+    "海岸",
+  ]);
   assert.equal(translated.title, "标题");
   assert.equal(
     translated.body.content?.[0].content?.[0].marks?.[0].attrs?.href,
@@ -94,6 +109,8 @@ test("translation changes text while retaining links, code and media references"
   assert.deepEqual(translated.body.content?.[2].attrs, {
     assetId: "/uploads/fixture.png",
     alt: "图像",
+    caption: "海岸",
+    width: 50,
   });
   assert.throws(
     () => applyTranslationSegments(value, ["标题"]),

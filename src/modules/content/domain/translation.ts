@@ -1,15 +1,15 @@
 import type { ArticleTranslation, EditorNode } from "./editor-document";
 
-const textAttributes: Record<string, string[]> = {
-  assetImage: ["alt", "caption"],
-  referenceCard: ["title", "description", "artworkAlt"],
-  callout: ["title"],
-  details: ["summary"],
+const textAttributes: Record<string, Record<string, number | undefined>> = {
+  assetImage: { alt: undefined, caption: undefined },
+  referenceCard: { title: 200, description: 2000, artworkAlt: 300 },
+  callout: { title: undefined },
+  details: { summary: 300 },
 };
 
 function mapTranslation(
   source: ArticleTranslation,
-  replace: (text: string) => string,
+  replace: (text: string, limit?: number) => string,
 ): ArticleTranslation {
   function visit(node: EditorNode): EditorNode {
     if (
@@ -19,8 +19,11 @@ function mapTranslation(
       return node;
     const attrs = node.attrs && { ...node.attrs };
     if (attrs) {
-      for (const key of textAttributes[node.type] ?? []) {
-        if (typeof attrs[key] === "string") attrs[key] = replace(attrs[key]);
+      for (const [key, limit] of Object.entries(
+        textAttributes[node.type] ?? {},
+      )) {
+        if (typeof attrs[key] === "string")
+          attrs[key] = replace(attrs[key], limit);
       }
     }
     return {
@@ -32,12 +35,12 @@ function mapTranslation(
   }
   return {
     ...source,
-    title: replace(source.title),
-    excerpt: replace(source.excerpt),
-    seoTitle: replace(source.seoTitle),
-    seoDescription: replace(source.seoDescription),
-    coverAlt: replace(source.coverAlt),
-    tags: source.tags.map(replace),
+    title: replace(source.title, 200),
+    excerpt: replace(source.excerpt, 1200),
+    seoTitle: replace(source.seoTitle, 200),
+    seoDescription: replace(source.seoDescription, 1200),
+    coverAlt: replace(source.coverAlt, 300),
+    tags: source.tags.map((tag) => replace(tag, 60)),
     body: visit(source.body),
   };
 }
@@ -56,9 +59,21 @@ export function applyTranslationSegments(
   translated: string[],
 ) {
   let index = 0;
-  const result = mapTranslation(source, (value) =>
-    value.trim() ? (translated[index++] ?? "") : value,
-  );
+  const result = mapTranslation(source, (value, limit) => {
+    if (!value.trim()) return value;
+    const text = translated[index++];
+    if (!text?.trim()) throw new Error("TRANSLATION_SEGMENT_MISMATCH");
+    if (limit)
+      return text
+        .trim()
+        .slice(0, limit)
+        .replace(/[\uD800-\uDBFF]$/, "");
+    return (
+      (text.trimStart() === text ? (value.match(/^\s*/)?.[0] ?? "") : "") +
+      text +
+      (text.trimEnd() === text ? (value.match(/\s*$/)?.[0] ?? "") : "")
+    );
+  });
   if (index !== translated.length)
     throw new Error("TRANSLATION_SEGMENT_MISMATCH");
   return result;

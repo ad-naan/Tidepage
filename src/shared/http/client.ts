@@ -12,17 +12,15 @@ export class ApiClientError extends Error {
 async function apiRequest<T>(
   path: `/api/v1/${string}`,
   init: RequestInit,
+  timeoutMs = init.body instanceof FormData ? 120_000 : 30_000,
 ): Promise<T> {
   const response = await fetch(path, {
     ...init,
     credentials: "same-origin",
     headers: { Accept: "application/json", ...init.headers },
     signal: init.signal
-      ? AbortSignal.any([
-          init.signal,
-          AbortSignal.timeout(init.body instanceof FormData ? 120_000 : 30_000),
-        ])
-      : AbortSignal.timeout(init.body instanceof FormData ? 120_000 : 30_000),
+      ? AbortSignal.any([init.signal, AbortSignal.timeout(timeoutMs)])
+      : AbortSignal.timeout(timeoutMs),
   });
   const body = (await response.json()) as ApiResponse<T> | ApiFailure;
   if (!response.ok || "error" in body) {
@@ -52,19 +50,23 @@ export async function apiSend<T>(
   path: `/api/v1/${string}`,
   method: "POST" | "PUT" | "PATCH" | "DELETE",
   body?: unknown,
-  options: { signal?: AbortSignal } = {},
+  options: { signal?: AbortSignal; timeoutMs?: number } = {},
 ): Promise<T> {
   const multipart = body instanceof FormData;
-  return apiRequest(path, {
-    method,
-    signal: options.signal,
-    headers: {
-      ...(body === undefined || multipart
+  return apiRequest(
+    path,
+    {
+      method,
+      signal: options.signal,
+      headers: {
+        ...(body === undefined || multipart
+          ? {}
+          : { "Content-Type": "application/json" }),
+      },
+      ...(body === undefined
         ? {}
-        : { "Content-Type": "application/json" }),
+        : { body: multipart ? body : JSON.stringify(body) }),
     },
-    ...(body === undefined
-      ? {}
-      : { body: multipart ? body : JSON.stringify(body) }),
-  });
+    options.timeoutMs,
+  );
 }

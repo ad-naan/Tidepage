@@ -13,15 +13,31 @@ import Typography from "@tiptap/extension-typography";
 import { useMessages, useTranslations } from "next-intl";
 import { StickerNode } from "../../rich-text/StickerNode";
 import { FontSizeMark } from "../../rich-text/RichTextMarks";
-import { Bold, Italic, Link2, Maximize, Minimize } from "lucide-react";
+import {
+  Bold,
+  Italic,
+  Link2,
+  Maximize,
+  Minimize,
+  Sparkles,
+} from "lucide-react";
 import { Button, IconButton } from "@/shared/ui/button/Button";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { Input } from "@/shared/ui/field/Input";
 import { useNotice, NoticeDock } from "@/shared/ui/feedback/NoticeProvider";
+import { useDisclosure } from "@/shared/hooks/useDisclosure";
+import { AnchoredPanel } from "@/shared/ui/overlay/AnchoredPanel";
+import { OverlayScope } from "@/shared/ui/overlay/OverlayScope";
+import type { Locale } from "@/shared/i18n/config";
+import type { WritingAgent } from "@/modules/ai/domain/writing";
+import {
+  WritingAssistant,
+  type WritingTarget,
+} from "@/modules/ai/ui/WritingAssistant";
 import { MediaPicker } from "@/modules/media/ui/admin/MediaPicker";
 import type { ImageUploader } from "@/modules/media/domain/assets";
 import { EditorToolbar } from "./EditorToolbar";
-import { blockCommands, type BlockCommand } from "./block-commands";
+import { searchBlockCommands, type BlockCommand } from "./block-commands";
 import {
   safeWebUrl,
   type EditorNode,
@@ -46,6 +62,8 @@ export function RichTextEditor({
   uploader,
   readOnly = false,
   active = true,
+  writingAgent,
+  contentLocale,
 }: {
   initial: EditorNode;
   onReady?: (editor: Editor | null) => void;
@@ -54,8 +72,11 @@ export function RichTextEditor({
   readOnly?: boolean;
   active?: boolean;
   uploader?: ImageUploader;
+  writingAgent?: WritingAgent;
+  contentLocale?: Locale;
 }) {
   const t = useTranslations("admin.editor");
+  const ai = useTranslations("admin.ai");
   const stickerLabels = useMessages().stickers.items as Record<string, string>;
   const { notify } = useNotice();
   const [imageOpen, setImageOpen] = useState(false);
@@ -73,6 +94,13 @@ export function RichTextEditor({
   const dismissed = useRef<number | null>(null);
   const syncSlash = useRef<(e: Editor) => void>(() => {});
   const linkAction = useRef<() => void>(() => {});
+  const writingAction = useRef<() => void>(() => {});
+  const writingId = useId();
+  const writingMenu = useDisclosure(writingId);
+  const writingTrigger = useRef<HTMLButtonElement>(null);
+  const [writingTarget, setWritingTarget] = useState<WritingTarget | null>(
+    null,
+  );
   const [slashIndex, setSlashIndex] = useState(0);
   const root = useRef<HTMLDivElement>(null);
   const scrollHost = useRef<HTMLDivElement>(null);
@@ -105,10 +133,8 @@ export function RichTextEditor({
   const slashRef = useRef<string | null>(null);
   slashRef.current = slash;
   const actionRef = useRef<(key: BlockCommand) => void>(() => {});
-  const filtered = blockCommands.filter((item) =>
-    `${t(`blocks.${item.key}`)} ${item.keywords}`
-      .toLocaleLowerCase()
-      .includes((slash ?? "").toLocaleLowerCase()),
+  const filtered = searchBlockCommands(slash ?? "", !!writingAgent, (key) =>
+    t(`blocks.${key}`),
   );
   const filteredRef = useRef(filtered);
   filteredRef.current = filtered;
@@ -237,6 +263,16 @@ export function RichTextEditor({
       handleKeyDown: (view, event) => {
         if (event.isComposing || view.composing) return false;
         if (
+          writingAgent &&
+          view.editable &&
+          (event.ctrlKey || event.metaKey) &&
+          event.shiftKey &&
+          event.key === "Enter"
+        ) {
+          writingAction.current();
+          return true;
+        }
+        if (
           view.editable &&
           event.altKey &&
           event.shiftKey &&
@@ -306,6 +342,9 @@ export function RichTextEditor({
   useEffect(() => {
     editor?.setEditable(!readOnly && active, false);
   }, [editor, readOnly, active]);
+  useEffect(() => {
+    if (!active || readOnly) writingMenu.setOpen(false);
+  }, [active, readOnly, writingMenu.setOpen]);
   useEffect(
     () => () => {
       for (const task of uploads.current) task.abort();
@@ -348,12 +387,24 @@ export function RichTextEditor({
     setLink(String(editor.getAttributes("link").href ?? ""));
     setLinkError(false);
   };
+  writingAction.current = () => {
+    if (!editor?.isEditable || !writingAgent || writingMenu.open) return;
+    setWritingTarget({
+      doc: editor.state.doc,
+      selection: editor.state.selection,
+    });
+    writingMenu.toggle();
+  };
   actionRef.current = (key) => {
     if (!editor) return;
     if (slashRange.current && slashRef.current !== null)
       editor.commands.deleteRange(slashRange.current);
     slashRange.current = null;
     setSlash(null);
+    if (key === "ai") {
+      writingAction.current();
+      return;
+    }
     const chain = editor.chain().focus();
     if (key === "heading") chain.setHeading({ level: 2 }).run();
     else if (key === "subheading") chain.setHeading({ level: 3 }).run();
@@ -411,6 +462,26 @@ export function RichTextEditor({
         <div className={styles.viewportTools}>
           <span>{t("bodyLabel")}</span>
           <div>
+            {writingAgent && (
+              <div ref={writingMenu.ref}>
+                <Button
+                  ref={writingTrigger}
+                  size="sm"
+                  variant="quiet"
+                  aria-expanded={writingMenu.open}
+                  aria-controls={writingId}
+                  onPointerDown={(event) => event.preventDefault()}
+                  onClick={() =>
+                    writingMenu.open
+                      ? writingMenu.setOpen(false)
+                      : writingAction.current()
+                  }
+                >
+                  <Sparkles size={15} />
+                  {ai("title")}
+                </Button>
+              </div>
+            )}
             <Button
               variant="quiet"
               size="sm"
@@ -440,7 +511,32 @@ export function RichTextEditor({
           onInsert={(key) => actionRef.current(key)}
           onLink={() => linkAction.current()}
           onHelp={() => setHelp(true)}
+          hasWritingAssistant={!!writingAgent}
         />
+      )}
+      {writingAgent && writingTarget && !readOnly && (
+        <OverlayScope owner={writingId}>
+          <AnchoredPanel
+            id={writingId}
+            label={ai("title")}
+            width={400}
+            anchor={writingTrigger.current}
+            open={writingMenu.open && active}
+            placement="auto"
+          >
+            <WritingAssistant
+              editor={editor}
+              target={writingTarget}
+              active={writingMenu.open && active}
+              contentLocale={contentLocale}
+              agent={writingAgent}
+              onClose={() => {
+                writingMenu.setOpen(false);
+                editor.commands.focus();
+              }}
+            />
+          </AnchoredPanel>
+        </OverlayScope>
       )}
       {slash !== null && active && (
         <div
@@ -510,6 +606,7 @@ export function RichTextEditor({
           shouldShow={({ state }) =>
             editor.isEditable &&
             !state.selection.empty &&
+            !writingMenu.open &&
             !editor.isActive("assetImage") &&
             !editor.isActive("referenceCard")
           }
@@ -536,11 +633,29 @@ export function RichTextEditor({
           >
             <Link2 size={15} />
           </IconButton>
+          {writingAgent && (
+            <IconButton
+              aria-label={ai("title")}
+              title={ai("title")}
+              onPointerDown={(event) => event.preventDefault()}
+              onClick={() => writingAction.current()}
+            >
+              <Sparkles size={15} />
+            </IconButton>
+          )}
         </BubbleMenu>
       )}
       {help && (
         <Dialog title={t("shortcuts")} onClose={() => setHelp(false)}>
           <dl className={styles.shortcuts}>
+            {writingAgent && (
+              <div>
+                <dt>{ai("title")}</dt>
+                <dd>
+                  <kbd>/ai</kbd> <kbd>Ctrl / Cmd + Shift + Enter</kbd>
+                </dd>
+              </div>
+            )}
             {(
               [
                 ["slash", "/"],
