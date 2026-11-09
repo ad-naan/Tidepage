@@ -1,8 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Dialog } from "@/shared/ui/dialog/Dialog";
-import { Button } from "@/shared/ui/button/Button";
+import { ConfirmDialog } from "@/shared/ui/dialog/ConfirmDialog";
 /** Shared page-leave behavior for local forms. Caller owns saving and dirty state. */
 export function UnsavedChangesGuard({ dirty }: { dirty: boolean }) {
   const t = useTranslations("ui.unsaved");
@@ -49,19 +48,17 @@ export function UnsavedChangesGuard({ dirty }: { dirty: boolean }) {
     return () => document.removeEventListener("click", click, true);
   }, []);
   return destination ? (
-    <Dialog title={t("title")} onClose={() => setDestination(null)}>
-      <p>{t("help")}</p>
-      <Button variant="quiet" onClick={() => setDestination(null)}>
-        {t("stay")}
-      </Button>
-      <Button
-        onClick={() => {
-          latest.current = false;
-          window.location.assign(destination);
-        }}
-      >
-        {t("leave")}
-      </Button>
-    </Dialog>
+    <ConfirmDialog
+      title={t("title")}
+      description={t("help")}
+      cancelLabel={t("stay")}
+      confirmLabel={t("leave")}
+      danger
+      onClose={() => setDestination(null)}
+      onConfirm={() => {
+        latest.current = false;
+        window.location.assign(destination);
+      }}
+    />
   ) : null;
 }

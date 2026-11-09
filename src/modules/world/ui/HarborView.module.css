@@ -275,30 +275,23 @@
   font-size: var(--text-sm);
   padding: 8px 0;
 }
-.photo {
-  display: block;
-  width: 100%;
-  height: auto;
-  max-height: 52svh;
-  object-fit: contain;
-  border-radius: 4px;
-}
 .photoCaption {
-  margin: 16px 0;
   font-family: var(--font-editorial);
-  font-size: var(--text-body);
-  line-height: 1.8;
 }
 .download {
   display: inline-flex;
-  padding: 8px 0;
-  font-size: var(--text-body);
+  padding: 6px 0;
+  color: inherit;
 }
 .photoActions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 12px 24px;
+}
+.photoActions > button {
+  color: inherit;
 }
 .location button {
   display: inline-flex;

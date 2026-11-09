@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/shared/ui/button/Button";
 import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
-import { Dialog } from "@/shared/ui/dialog/Dialog";
+import { ConfirmDialog } from "@/shared/ui/dialog/ConfirmDialog";
 import { Input } from "@/shared/ui/field/Input";
 import { UploadField } from "@/shared/ui/field/UploadField";
 import { Field } from "@/shared/ui/field/Field";
@@ -33,6 +33,8 @@ export function MediaPicker({
   const [view, setView] = useState("active");
   const [cropping, setCropping] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<ImageAsset | null>(null);
+  const [archiving, setArchiving] = useState(false);
+  const [archiveError, setArchiveError] = useState(false);
   async function refresh(signal?: AbortSignal) {
     try {
       const next = await listAssets(management, signal);
@@ -178,7 +180,10 @@ export function MediaPicker({
                         <Button
                           variant="quiet"
                           size="sm"
-                          onClick={() => setDeleting(asset)}
+                          onClick={() => {
+                            setArchiveError(false);
+                            setDeleting(asset);
+                          }}
                         >
                           {admin("crud.delete")}
                         </Button>
@@ -202,26 +207,30 @@ export function MediaPicker({
         />
       )}
       {deleting && (
-        <Dialog
-          title={admin("crud.deleteTitle")}
+        <ConfirmDialog
+          title={admin("crud.mediaTitle")}
+          description={admin("crud.mediaHelp", { name: deleting.name })}
+          cancelLabel={admin("crud.cancel")}
+          confirmLabel={admin("crud.mediaArchive")}
+          danger
+          busy={archiving}
           onClose={() => setDeleting(null)}
+          onConfirm={async () => {
+            setArchiving(true);
+            setArchiveError(false);
+            try {
+              await archiveAsset(deleting.id, true);
+              setDeleting(null);
+              await refresh();
+            } catch {
+              setArchiveError(true);
+            } finally {
+              setArchiving(false);
+            }
+          }}
         >
-          <p>{admin("crud.mediaHelp", { name: deleting.name })}</p>
-          <Button
-            variant="primary"
-            onClick={async () => {
-              try {
-                await archiveAsset(deleting.id, true);
-                setDeleting(null);
-                await refresh();
-              } catch {
-                setError(t("loadError"));
-              }
-            }}
-          >
-            {admin("crud.confirm")}
-          </Button>
-        </Dialog>
+          {archiveError && <p role="alert">{admin("crud.mediaFailed")}</p>}
+        </ConfirmDialog>
       )}
     </div>
   );

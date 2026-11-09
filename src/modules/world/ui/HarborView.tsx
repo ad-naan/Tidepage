@@ -33,7 +33,7 @@ import { apiSend, ApiClientError } from "@/shared/http/client";
 import type { CoastIdentityTicket } from "@/shared/contracts/coast-memories";
 import type { CoastPhoto } from "@/shared/contracts/coast-space";
 import { Button, IconButton } from "@/shared/ui/button/Button";
-import { Dialog } from "@/shared/ui/dialog/Dialog";
+import { ImageViewer } from "@/shared/ui/dialog/ImageViewer";
 import { Anchor } from "@/shared/ui/link/Anchor";
 import { Link } from "@/shared/i18n/navigation";
 import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
@@ -780,8 +780,12 @@ export function HarborView({
         version={memoryVersion}
       />
       {photo && (
-        <Dialog title={t("photoTitle")} onClose={() => setPhoto(null)} wide>
-          <img className={styles.photo} src={photo} alt={t("photoAlt")} />
+        <ImageViewer
+          title={t("photoTitle")}
+          onClose={() => setPhoto(null)}
+          src={photo}
+          alt={t("photoAlt")}
+        >
           <p className={styles.photoCaption}>{t("photoCaption")}</p>
           <div className={styles.photoActions}>
             <Anchor
@@ -805,7 +809,7 @@ export function HarborView({
               </Button>
             )}
           </div>
-        </Dialog>
+        </ImageViewer>
       )}
     </main>
   );

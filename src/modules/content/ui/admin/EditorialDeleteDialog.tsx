@@ -1,8 +1,6 @@
 "use client";
 import { useTranslations } from "next-intl";
-import { Button } from "@/shared/ui/button/Button";
-import { Dialog } from "@/shared/ui/dialog/Dialog";
-import styles from "./admin.module.css";
+import { ConfirmDialog } from "@/shared/ui/dialog/ConfirmDialog";
 
 export function EditorialDeleteDialog({
   name,
@@ -19,25 +17,18 @@ export function EditorialDeleteDialog({
 }) {
   const t = useTranslations("admin");
   return (
-    <Dialog
+    <ConfirmDialog
       title={t("editorialList.deleteTitle")}
-      onClose={() => {
-        if (!busy) onClose();
-      }}
-    >
-      <p>
-        {t(draftOnly ? "crud.deleteHelp" : "editorialList.deleteHelp", {
-          name,
-        })}
-      </p>
-      <div className={styles.actions}>
-        <Button variant="quiet" disabled={busy} onClick={onClose}>
-          {t("crud.cancel")}
-        </Button>
-        <Button variant="primary" busy={busy} onClick={onDelete}>
-          {t("editorialList.delete")}
-        </Button>
-      </div>
-    </Dialog>
+      description={t(
+        draftOnly ? "crud.deleteHelp" : "editorialList.deleteHelp",
+        { name },
+      )}
+      cancelLabel={t("crud.cancel")}
+      confirmLabel={t("editorialList.delete")}
+      danger
+      busy={busy}
+      onClose={onClose}
+      onConfirm={onDelete}
+    />
   );
 }

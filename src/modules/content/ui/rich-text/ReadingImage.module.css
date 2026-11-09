@@ -49,12 +49,10 @@
   font: 400 12px/1.8 var(--font-ui);
   text-align: center;
 }
-.full {
-  display: block;
-  max-width: 100%;
-  max-height: 75vh;
-  object-fit: contain;
-  margin: auto;
+@media (hover: none) {
+  .expand {
+    opacity: 0.9;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .expand {

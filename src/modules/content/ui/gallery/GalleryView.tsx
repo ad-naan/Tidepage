@@ -1,6 +1,6 @@
 "use client";
 import { ProgressiveList } from "@/shared/ui/loading/ProgressiveList";
-import { Button } from "@/shared/ui/button/Button";
+import { Button, IconButton } from "@/shared/ui/button/Button";
 import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 import {
   PencilFrame,
@@ -15,7 +15,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { listItemMotion } from "@/shared/lib/motion";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, ArrowRight, Camera, MapPin } from "lucide-react";
-import { Dialog } from "@/shared/ui/dialog/Dialog";
+import { ImageViewer } from "@/shared/ui/dialog/ImageViewer";
 import {
   galleryCategories,
   type GalleryPhoto,
@@ -101,30 +101,39 @@ export function GalleryView({ photos }: { photos: GalleryPhoto[] }) {
         <CoastGlyph kind="wind" />
       </p>
       {selected && (
-        <Dialog wide title={selected.title} onClose={() => setSelected(null)}>
-          <div className="photo-lightbox">
-            <img src={selected.src} alt={selected.alt} />
-            <div className="lightbox-caption">
-              <p>{selected.caption}</p>
-              <span>
-                <MapPin size={12} />
-                {selected.place}
-              </span>
-            </div>
-            <div className="lightbox-controls">
-              <Button onClick={() => next(-1)} aria-label={t("previous")}>
-                <ArrowLeft size={18} />
-              </Button>
-              <span>
-                {filtered.findIndex((p) => p.id === selected.id) + 1} /{" "}
-                {filtered.length}
-              </span>
-              <Button onClick={() => next(1)} aria-label={t("next")}>
-                <ArrowRight size={18} />
-              </Button>
-            </div>
-          </div>
-        </Dialog>
+        <ImageViewer
+          title={selected.title}
+          src={selected.src}
+          alt={selected.alt}
+          onClose={() => setSelected(null)}
+          navigation={
+            filtered.length > 1 && (
+              <>
+                <IconButton
+                  onClick={() => next(-1)}
+                  aria-label={t("previous")}
+                  title={t("previous")}
+                >
+                  <ArrowLeft size={18} />
+                </IconButton>
+                <span aria-live="polite">
+                  {filtered.findIndex((p) => p.id === selected.id) + 1} /{" "}
+                  {filtered.length}
+                </span>
+                <IconButton
+                  onClick={() => next(1)}
+                  aria-label={t("next")}
+                  title={t("next")}
+                >
+                  <ArrowRight size={18} />
+                </IconButton>
+              </>
+            )
+          }
+        >
+          <p>{selected.caption}</p>
+          <span>{selected.place}</span>
+        </ImageViewer>
       )}
     </div>
   );

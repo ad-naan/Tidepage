@@ -15,6 +15,10 @@ export function Dialog({
   size = "default",
   placement = "center",
   backdrop = "dim",
+  surface = "paper",
+  headingIcon,
+  descriptionId,
+  dismissible = true,
 }: {
   children: ReactNode;
   title: string;
@@ -24,6 +28,10 @@ export function Dialog({
   size?: "default" | "compact";
   placement?: "center" | "bottom";
   backdrop?: "dim" | "clear";
+  surface?: "paper" | "viewer" | "confirmation";
+  headingIcon?: ReactNode;
+  descriptionId?: string;
+  dismissible?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const [closing, setClosing] = useState(false);
@@ -32,7 +40,7 @@ export function Dialog({
   close.current = onClose;
   const reduced = useReducedMotion();
   function requestClose() {
-    if (timer.current) return;
+    if (!dismissible || timer.current) return;
     if (reduced) {
       close.current();
       return;
@@ -50,6 +58,7 @@ export function Dialog({
     if (!dialog) return;
     const previous = document.activeElement;
     dialog.showModal();
+    dialog.querySelector<HTMLElement>("[data-dialog-initial-focus]")?.focus();
     const before = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
@@ -66,6 +75,7 @@ export function Dialog({
       data-closing={closing}
       data-placement={placement}
       data-backdrop={backdrop}
+      data-surface={surface}
       className={`${styles.dialog} ${wide ? styles.wide : ""} ${layout === "split" ? styles.split : ""} ${size === "compact" ? styles.compact : ""}`}
       onCancel={(event) => {
         event.preventDefault();
@@ -75,23 +85,33 @@ export function Dialog({
         if (e.target === e.currentTarget) requestClose();
       }}
       aria-label={title}
+      aria-describedby={descriptionId}
+      role={surface === "confirmation" ? "alertdialog" : undefined}
     >
       <div className={styles.inner}>
-        <PencilFrame className={styles.paper} />
+        {surface !== "viewer" && (
+          <PencilFrame
+            kind={surface === "confirmation" ? "note" : "paper"}
+            className={styles.paper}
+          />
+        )}
         <div className={styles.heading}>
-          <span>{title}</span>
-          <IconButton
-            className="icon-button"
-            aria-label={t("close")}
-            onClick={requestClose}
-            disabled={closing}
-          >
-            <X size={19} />
-          </IconButton>
+          {headingIcon}
+          <span className={styles.title}>{title}</span>
+          {surface !== "confirmation" && (
+            <IconButton
+              className="icon-button"
+              aria-label={t("close")}
+              onClick={requestClose}
+              disabled={closing || !dismissible}
+            >
+              <X size={19} />
+            </IconButton>
+          )}
         </div>
         <div
           className={styles.content}
-          data-custom-scroll={t("region")}
+          data-custom-scroll={surface === "viewer" ? undefined : t("region")}
           inert={closing}
         >
           {children}

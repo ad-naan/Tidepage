@@ -14,7 +14,7 @@ import { Textarea } from "@/shared/ui/field/Textarea";
 import { Select } from "@/shared/ui/select/Select";
 import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 import { Button } from "@/shared/ui/button/Button";
-import { Dialog } from "@/shared/ui/dialog/Dialog";
+import { ConfirmDialog } from "@/shared/ui/dialog/ConfirmDialog";
 import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import styles from "./FriendsManagerView.module.css";
 type Item = z.infer<typeof schema>;
@@ -317,22 +317,18 @@ export function FriendsManagerView({
         </>
       )}
       {deleting && (
-        <Dialog title={t("crud.deleteTitle")} onClose={() => setDeleting(null)}>
-          <p>
-            {t("crud.deleteHelp", {
-              name: name(deleting),
-            })}
-          </p>
-          <Button
-            variant="primary"
-            busy={busy}
-            onClick={() =>
-              persist({ ...deleting, deletedAt: new Date().toISOString() })
-            }
-          >
-            {t("crud.confirm")}
-          </Button>
-        </Dialog>
+        <ConfirmDialog
+          title={t("crud.deleteTitle")}
+          description={t("crud.deleteHelp", { name: name(deleting) })}
+          cancelLabel={t("crud.cancel")}
+          confirmLabel={t("crud.confirm")}
+          danger
+          busy={busy}
+          onClose={() => setDeleting(null)}
+          onConfirm={() =>
+            void persist({ ...deleting, deletedAt: new Date().toISOString() })
+          }
+        />
       )}
     </>
   );

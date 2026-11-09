@@ -1,0 +1,43 @@
+.mark {
+  --confirm-accent: color-mix(in srgb, var(--accent) 65%, var(--ink));
+  flex: 0 0 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  color: var(--confirm-accent);
+  background: color-mix(in srgb, var(--confirm-accent) 12%, var(--paper));
+  border-radius: 9px 12px 9px 11px;
+}
+.mark[data-danger="true"] {
+  --confirm-accent: color-mix(in srgb, #b8523c 72%, var(--ink));
+}
+.description {
+  color: color-mix(in srgb, var(--muted) 58%, var(--ink));
+  font: 400 var(--text-body)/1.8 var(--font-ui);
+  overflow-wrap: anywhere;
+}
+.description > :first-child {
+  margin-top: 0;
+}
+.description > :last-child {
+  margin-bottom: 0;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.actions > button {
+  min-height: 44px;
+}
+.actions[data-danger="true"] > button:last-child {
+  color: #fff8ef;
+  background: #a44130;
+}
+.actions[data-danger="true"] > button:last-child:hover:not(:disabled) {
+  background: #8b3527;
+}

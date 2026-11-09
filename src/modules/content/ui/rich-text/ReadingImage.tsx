@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Expand } from "lucide-react";
 import { Button } from "@/shared/ui/button/Button";
-import { Dialog } from "@/shared/ui/dialog/Dialog";
+import { ImageViewer } from "@/shared/ui/dialog/ImageViewer";
 import styles from "./ReadingImage.module.css";
 
 export function ReadingImage({
@@ -46,13 +46,12 @@ export function ReadingImage({
         {caption && <figcaption>{caption}</figcaption>}
       </figure>
       {open && (
-        <Dialog
+        <ImageViewer
           title={caption || alt || t("image")}
           onClose={() => setOpen(false)}
-          wide
-        >
-          <img className={styles.full} src={src} alt={alt} />
-        </Dialog>
+          src={src}
+          alt={alt}
+        />
       )}
     </>
   );

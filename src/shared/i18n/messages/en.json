@@ -75,6 +75,16 @@
       "region": "Dialog",
       "close": "Close dialog"
     },
+    "imageViewer": {
+      "canvas": "Image canvas. Use plus and minus to zoom, arrows to pan, R to rotate, and 0 to fit.",
+      "tools": "Image viewer tools",
+      "zoomOut": "Zoom out",
+      "zoomIn": "Zoom in",
+      "rotateLeft": "Rotate 90° left",
+      "rotateRight": "Rotate 90° right",
+      "fit": "Fit to window",
+      "failed": "The image couldn’t load."
+    },
     "upload": {
       "choose": "Choose files"
     },
@@ -1650,6 +1660,9 @@
       "confirm": "Move to trash",
       "moved": "Moved to trash",
       "restored": "Working copy restored",
+      "mediaTitle": "Archive this image?",
+      "mediaArchive": "Archive image",
+      "mediaFailed": "The image couldn’t be archived. Try again.",
       "mediaHelp": "“{name}” will move out of the selectable library. Existing references will continue to load it; the original file is retained for restoration."
     },
     "friend": {

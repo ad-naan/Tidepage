@@ -47,6 +47,7 @@ import { Field } from "@/shared/ui/field/Field";
 import { Select } from "@/shared/ui/select/Select";
 import { Disclosure } from "@/shared/ui/disclosure/Disclosure";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
+import { ConfirmDialog } from "@/shared/ui/dialog/ConfirmDialog";
 import { useNotice, NoticeDock } from "@/shared/ui/feedback/NoticeProvider";
 import { AssetImage } from "@/modules/media/ui/admin/AssetImage";
 import { MediaPicker } from "@/modules/media/ui/admin/MediaPicker";
@@ -868,25 +869,18 @@ export function ArticleEditorView({
         </aside>
       </div>
       {confirmTranslation && (
-        <Dialog
+        <ConfirmDialog
           title={t("ai.translateTo", { language: targetLanguage })}
+          description={t("ai.translationReview", { language: targetLanguage })}
+          cancelLabel={t("editor.keepEditing")}
+          confirmLabel={t("ai.replaceTranslation")}
+          danger
           onClose={() => setConfirmTranslation(false)}
-          size="compact"
-        >
-          <p>{t("ai.translationReview", { language: targetLanguage })}</p>
-          <Button variant="quiet" onClick={() => setConfirmTranslation(false)}>
-            {t("editor.keepEditing")}
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              setConfirmTranslation(false);
-              void generate("translate");
-            }}
-          >
-            {t("ai.replaceTranslation")}
-          </Button>
-        </Dialog>
+          onConfirm={() => {
+            setConfirmTranslation(false);
+            void generate("translate");
+          }}
+        />
       )}
       {cover && (
         <Dialog title={t("editor.cover")} onClose={() => setCover(false)} wide>
@@ -910,25 +904,36 @@ export function ArticleEditorView({
         </Dialog>
       )}
       {checking && (
-        <Dialog
+        <ConfirmDialog
           title={t("editor.checkPublish")}
-          onClose={() => {
-            if (!publishing) setChecking(false);
-          }}
+          description={
+            issues.length ? (
+              <ul>
+                {issues.map((key) => (
+                  <li key={key}>
+                    {t("editor.missingField", {
+                      field: (labels as Record<string, string>)[key] ?? key,
+                    })}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>{t("editor.checkPassed")}</p>
+            )
+          }
+          cancelLabel={t("editor.back")}
+          confirmLabel={t("editor.publish")}
+          busy={publishing}
+          disabled={
+            !!issues.length ||
+            dirty ||
+            draft.revision === 0 ||
+            saving ||
+            uploading
+          }
+          onClose={() => setChecking(false)}
+          onConfirm={() => void publish()}
         >
-          {issues.length ? (
-            <ul>
-              {issues.map((key) => (
-                <li key={key}>
-                  {t("editor.missingField", {
-                    field: (labels as Record<string, string>)[key] ?? key,
-                  })}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>{t("editor.checkPassed")}</p>
-          )}
           {(dirty || draft.revision === 0) && (
             <p>{t("editor.saveBeforePublish")}</p>
           )}
@@ -941,48 +946,21 @@ export function ArticleEditorView({
             }
           />
           {publishError && <p role="alert">{publishError}</p>}
-          <Button
-            variant="quiet"
-            disabled={publishing}
-            onClick={() => setChecking(false)}
-          >
-            {t("editor.back")}
-          </Button>
-          <Button
-            variant="primary"
-            disabled={
-              !!issues.length ||
-              dirty ||
-              draft.revision === 0 ||
-              saving ||
-              uploading
-            }
-            busy={publishing}
-            onClick={() => void publish()}
-          >
-            {t("editor.publish")}
-          </Button>
-        </Dialog>
+        </ConfirmDialog>
       )}
       {pendingLink && (
-        <Dialog
+        <ConfirmDialog
           title={t("editor.leaveTitle")}
+          description={t("editor.leaveHelp")}
+          cancelLabel={t("editor.keepEditing")}
+          confirmLabel={t("editor.leave")}
+          danger
           onClose={() => setPendingLink(null)}
-        >
-          <p>{t("editor.leaveHelp")}</p>
-          <Button variant="quiet" onClick={() => setPendingLink(null)}>
-            {t("editor.keepEditing")}
-          </Button>
-          <Button
-            variant="quiet"
-            onClick={() => {
-              dirtyRef.current = false;
-              window.location.assign(pendingLink);
-            }}
-          >
-            {t("editor.leave")}
-          </Button>
-        </Dialog>
+          onConfirm={() => {
+            dirtyRef.current = false;
+            window.location.assign(pendingLink);
+          }}
+        />
       )}
     </div>
   );

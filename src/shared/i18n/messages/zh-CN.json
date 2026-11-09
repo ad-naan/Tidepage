@@ -75,6 +75,16 @@
       "region": "弹窗",
       "close": "关闭弹窗"
     },
+    "imageViewer": {
+      "canvas": "图片画布，使用加减键缩放、方向键平移、R 键旋转、0 键适应窗口",
+      "tools": "看图工具",
+      "zoomOut": "缩小",
+      "zoomIn": "放大",
+      "rotateLeft": "向左旋转 90°",
+      "rotateRight": "向右旋转 90°",
+      "fit": "适应窗口",
+      "failed": "图片未能加载。"
+    },
     "upload": {
       "choose": "选择文件"
     },
@@ -92,7 +102,7 @@
     },
     "unsaved": {
       "title": "还有未保存的修改",
-      "help": "离开会丢失尚未保存的内容，请先保存或明确放弃修改。",
+      "help": "离开后，本次未保存的修改会丢失。",
       "stay": "继续编辑",
       "leave": "放弃并离开"
     },
@@ -1650,6 +1660,9 @@
       "confirm": "移入回收站",
       "moved": "已移入回收站",
       "restored": "工作副本已恢复",
+      "mediaTitle": "从媒体库归档这张图片？",
+      "mediaArchive": "归档图片",
+      "mediaFailed": "图片归档失败，请重试。",
       "mediaHelp": "“{name}”将移出可选媒体列表。已有内容仍可正常显示这张图片，原文件会保留以便恢复。"
     },
     "friend": {
