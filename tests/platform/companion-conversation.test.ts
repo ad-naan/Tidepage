@@ -9,12 +9,21 @@ import * as THREE from "three";
 import { createHarborTurtle } from "../../src/modules/world/runtime/createHarborTurtle";
 import { answerCompanionConversation } from "../../src/modules/world/server/companion-conversation";
 import { updateHarborSpeechAnchors } from "../../src/modules/world/runtime/harborSpeechAnchors";
+import { createContentTestStore } from "../fixtures/content";
+import type { Database } from "../../src/server/db/client";
 
 test("provider-backed turns preserve role and prior replies through the real SSE adapter", async (t) => {
   process.env.DATABASE_URL = "postgresql://test:test@localhost/test";
   process.env.AI_CHAT_COMPLETIONS_URL =
     "http://127.0.0.1:9000/v1/chat/completions";
   process.env.AI_MODEL = "test-companions";
+  const fixture = await createContentTestStore();
+  t.after(() => fixture.close());
+  const access = {
+    audience: "harbor",
+    accountId: "reader",
+    db: fixture.db as unknown as Database,
+  } as const;
   const inputs: { speaker: string; turns: CompanionTurn[] }[] = [];
   t.mock.method(
     globalThis,
@@ -44,6 +53,7 @@ test("provider-backed turns preserve role and prior replies through the real SSE
     signal: new AbortController().signal,
     next: (turns, signal) =>
       answerCompanionConversation(
+        access,
         { locale: "en", night: true, topic: "Stars over the bay", turns },
         signal,
       ),

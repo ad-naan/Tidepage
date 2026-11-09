@@ -6,3 +6,4 @@ export * from "@/server/workbench/schema";
 export * from "@/modules/engagement/infrastructure/schema";
 export * from "@/modules/world/infrastructure/schema";
 export * from "@/modules/friends/infrastructure/schema";
+export * from "./ai-usage-schema";

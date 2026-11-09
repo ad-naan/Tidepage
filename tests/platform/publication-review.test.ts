@@ -163,6 +163,7 @@ test("publication review reads the saved revision and returns verified evidence 
     ),
     { status: 404 },
   );
+  assert.equal(mock.mock.callCount(), 5);
 });
 
 test("the MCP adapter sends fixed arguments and calls only an advertised read-only tool", async (t) => {
@@ -210,12 +211,13 @@ test("the MCP adapter sends fixed arguments and calls only an advertised read-on
       },
     );
   });
-  const tool = mcpReferenceTool({
+  const binding = {
     endpoint,
     remoteName: "guidance",
     arguments: { locale: "en" },
     label: "Editorial guidance",
-  });
+  };
+  const tool = mcpReferenceTool(binding);
   const signal = new AbortController().signal;
   assert.deepEqual(await tool.invoke({}, signal), {
     source: {
@@ -229,8 +231,10 @@ test("the MCP adapter sends fixed arguments and calls only an advertised read-on
     "tools/call",
     "DELETE",
   ]);
+  assert.ok("source" in (await tool.invoke({}, signal)));
+  assert.deepEqual(methods, []);
   readOnly = false;
-  assert.ok("error" in (await tool.invoke({}, signal)));
+  assert.ok("error" in (await mcpReferenceTool(binding).invoke({}, signal)));
   assert.deepEqual(methods, [
     "initialize",
     "notifications/initialized",

@@ -40,13 +40,14 @@ export function mcpReferenceTool(binding: {
   arguments: Record<string, string>;
   label: string;
 }) {
+  let guidance: Promise<string> | undefined;
   return readTool(
     "publication_reference",
     "Read optional external editorial guidance. This tool receives only server-selected public settings.",
     z.object({}).strict(),
     async (_, signal) => {
       try {
-        const value = await readMcpText(binding, signal);
+        const value = await (guidance ??= readMcpText(binding, signal));
         return { source: { facts: [{ label: binding.label, value }] } };
       } catch {
         signal.throwIfAborted();

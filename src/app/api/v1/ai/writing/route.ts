@@ -30,10 +30,11 @@ export const POST = defineRoute(async (request, { requestId }) => {
       503,
     );
   await enforceAccountRateLimit(owner.id, "editorial-assistant", 12, 60);
+  const access = { audience: "editorial", accountId: owner.id } as const;
   try {
     if (input.task !== "write")
       return jsonData(
-        await generateEditorialSuggestion(input, request.signal),
+        await generateEditorialSuggestion(access, input, request.signal),
         requestId,
       );
     const encoder = new TextEncoder();
@@ -41,7 +42,7 @@ export const POST = defineRoute(async (request, { requestId }) => {
       encoder.encode(`data: ${JSON.stringify(event)}\n\n`);
     const generation = new AbortController();
     const signal = AbortSignal.any([request.signal, generation.signal]);
-    const iterator = generateEditorialText(input, signal);
+    const iterator = generateEditorialText(access, input, signal);
     const first = await iterator.next();
     const body = new ReadableStream<Uint8Array>({
       start(controller) {

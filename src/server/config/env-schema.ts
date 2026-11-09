@@ -39,6 +39,18 @@ export const envSchema = z
     AI_CHAT_COMPLETIONS_URL: optionalUrl,
     AI_API_KEY: optionalText(1, 1024),
     AI_MODEL: optionalText(1, 160),
+    AI_HARBOR_DAILY_UNITS: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .max(1_000_000_000)
+      .default(1_000_000),
+    AI_EDITORIAL_DAILY_UNITS: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .max(1_000_000_000)
+      .default(8_000_000),
     AI_MCP_PUBLICATION_URL: optionalUrl,
     AI_MCP_PUBLICATION_TOOL: optionalText(1, 96),
     AI_MCP_PUBLICATION_TOKEN: optionalText(1, 1024),

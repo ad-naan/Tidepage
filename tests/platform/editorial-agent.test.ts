@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import { generateEditorialSuggestion } from "../../src/modules/ai/server";
 import { writingRequestSchema } from "../../src/modules/ai/domain/writing";
 import { guideAnswerSchema } from "../../src/modules/world/domain/harbor-guide";
+import { createContentTestStore } from "../fixtures/content";
+import type { Database } from "../../src/server/db/client";
 
 test("the harbor guide accepts registered destinations and link indices only", () => {
   const answer = { reply: "Try the dock.", destination: "dock", links: [0] };
@@ -23,6 +25,13 @@ test("editorial generation accepts only complete structured provider output", as
   process.env.AI_CHAT_COMPLETIONS_URL =
     "http://127.0.0.1:9000/v1/chat/completions";
   process.env.AI_MODEL = "test-editorial-model";
+  const fixture = await createContentTestStore();
+  t.after(() => fixture.close());
+  const access = {
+    audience: "editorial",
+    accountId: "author",
+    db: fixture.db as unknown as Database,
+  } as const;
   let translated = ["标题", "正文"];
   let finish = "stop";
   const batches: string[][] = [];
@@ -51,16 +60,20 @@ test("editorial generation accepts only complete structured provider output", as
   const input = { ...request, segments: [...request.segments] };
   assert.equal(writingRequestSchema.safeParse(input).success, true);
   assert.deepEqual(
-    await generateEditorialSuggestion(input, new AbortController().signal),
+    await generateEditorialSuggestion(
+      access,
+      input,
+      new AbortController().signal,
+    ),
     translated,
   );
   translated = ["标题"];
   await assert.rejects(
-    generateEditorialSuggestion(input, new AbortController().signal),
+    generateEditorialSuggestion(access, input, new AbortController().signal),
   );
   finish = "length";
   await assert.rejects(
-    generateEditorialSuggestion(input, new AbortController().signal),
+    generateEditorialSuggestion(access, input, new AbortController().signal),
     /incomplete/,
   );
   finish = "stop";
@@ -75,7 +88,11 @@ test("editorial generation accepts only complete structured provider output", as
   });
   assert.equal(large.task, "translate");
   assert.deepEqual(
-    await generateEditorialSuggestion(large, new AbortController().signal),
+    await generateEditorialSuggestion(
+      access,
+      large,
+      new AbortController().signal,
+    ),
     [
       ...short.map((segment) => segment.replace("字", "文")),
       long.replaceAll("字", "文"),
@@ -92,6 +109,6 @@ test("editorial generation accepts only complete structured provider output", as
   let call = 0;
   respond = (segments) => (++call === 2 ? [] : segments);
   await assert.rejects(
-    generateEditorialSuggestion(large, new AbortController().signal),
+    generateEditorialSuggestion(access, large, new AbortController().signal),
   );
 });

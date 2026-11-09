@@ -1,18 +1,41 @@
 import "server-only";
 import { getEnv } from "@/server/config/env";
 import { AppError, tooManyRequestsError } from "@/server/http/errors";
+import { reserveModelUsage, type ModelAccess } from "./usage";
 
 let active = 0;
-export function acquireModelSlot() {
-  if (active >= 4) throw tooManyRequestsError(5);
+let harborActive = 0;
+const harborAccounts = new Set<string>();
+export function acquireModelSlot(access: ModelAccess) {
+  const harbor = access.audience === "harbor";
+  if (
+    active >= 4 ||
+    (harbor && (harborActive >= 2 || harborAccounts.has(access.accountId)))
+  )
+    throw tooManyRequestsError(5);
   active++;
+  if (harbor) {
+    harborActive++;
+    harborAccounts.add(access.accountId);
+  }
   return () => {
     active--;
+    if (harbor) {
+      harborActive--;
+      harborAccounts.delete(access.accountId);
+    }
   };
 }
 
 export async function requestModel(
-  input: object,
+  access: ModelAccess,
+  input: {
+    messages: unknown[];
+    stream: boolean;
+    max_completion_tokens: number;
+    tools?: unknown[];
+    tool_choice?: "auto";
+  },
   signal: AbortSignal,
   accept: string,
 ) {
@@ -23,6 +46,13 @@ export async function requestModel(
       "The model provider is not configured",
       503,
     );
+  const body = JSON.stringify({ ...input, model: env.AI_MODEL });
+  signal.throwIfAborted();
+  await reserveModelUsage(
+    access,
+    Buffer.byteLength(body, "utf8") + input.max_completion_tokens,
+  );
+  signal.throwIfAborted();
   const response = await fetch(env.AI_CHAT_COMPLETIONS_URL, {
     method: "POST",
     signal,
@@ -33,7 +63,7 @@ export async function requestModel(
       Accept: accept,
       ...(env.AI_API_KEY && { Authorization: `Bearer ${env.AI_API_KEY}` }),
     },
-    body: JSON.stringify({ model: env.AI_MODEL, ...input }),
+    body,
   });
   if (!response.ok || !response.body) {
     await response.body?.cancel();

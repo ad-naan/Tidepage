@@ -1,6 +1,7 @@
 import "server-only";
 import { z } from "zod";
 import { acquireModelSlot, requestModel } from "./provider";
+import type { ModelAccess } from "./usage";
 import { boundedBody } from "@/server/http/body";
 
 export type ToolSource = {
@@ -63,6 +64,7 @@ type Message =
   | { role: "tool"; tool_call_id: string; content: string };
 
 export async function runReadOnlyAgent<T>(
+  access: ModelAccess,
   skill: AgentSkill<T>,
   task: string,
   signal: AbortSignal,
@@ -83,12 +85,13 @@ export async function runReadOnlyAgent<T>(
       parameters: z.toJSONSchema(tool.parameters),
     },
   }));
-  const release = acquireModelSlot();
+  const release = acquireModelSlot(access);
   try {
     for (let round = 0; round < 8; round++) {
       deadline.throwIfAborted();
       if (JSON.stringify(messages).length > 48_000) break;
       const response = await requestModel(
+        access,
         {
           messages,
           tools,

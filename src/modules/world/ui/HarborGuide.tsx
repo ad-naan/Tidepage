@@ -6,7 +6,7 @@ import { useIdentity } from "@/modules/identity/ui/IdentityProvider";
 import { Button, IconButton } from "@/shared/ui/button/Button";
 import { Input } from "@/shared/ui/field/Input";
 import { Disclosure } from "@/shared/ui/disclosure/Disclosure";
-import { apiSend } from "@/shared/http/client";
+import { ApiClientError, apiSend } from "@/shared/http/client";
 import type { GuideAnswer } from "../domain/harbor-guide";
 import type { HarborDestination } from "../domain/coast-harbor";
 import {
@@ -71,6 +71,7 @@ export function HarborGuide({
   const t = useTranslations("world.harbor.companion");
   const s = useTranslations("world.harbor.speech");
   const c = useTranslations("world.harbor.company");
+  const apiError = useTranslations("apiErrors");
   const { principal, openLogin } = useIdentity();
   const [question, setQuestion] = useState("");
   const [turns, setTurns] = useState<
@@ -78,7 +79,7 @@ export function HarborGuide({
   >([]);
   const [busy, setBusy] = useState(false);
   const [listening, setListening] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<"rate" | "unavailable" | null>(null);
   const request = useRef<AbortController | null>(null);
   const latest = useRef({ night, t, speech, onClose });
   latest.current = { night, t, speech, onClose };
@@ -127,7 +128,7 @@ export function HarborGuide({
     const controller = new AbortController();
     request.current = controller;
     setBusy(true);
-    setError(false);
+    setError(null);
     speech.speak("self", text);
     try {
       const answer = await apiSend<GuideAnswer>(
@@ -153,8 +154,13 @@ export function HarborGuide({
         setQuestion("");
         speech.speak("otter", answer.reply, answer);
       }
-    } catch {
-      if (!controller.signal.aborted) setError(true);
+    } catch (error) {
+      if (!controller.signal.aborted)
+        setError(
+          error instanceof ApiClientError && error.status === 429
+            ? "rate"
+            : "unavailable",
+        );
     } finally {
       if (request.current === controller) {
         request.current = null;
@@ -169,7 +175,7 @@ export function HarborGuide({
     setBusy(true);
     setListening(true);
     onListening(true);
-    setError(false);
+    setError(null);
     speech.clear();
     const topic = question.trim() || s(night ? "nightTopic" : "dayTopic");
     try {
@@ -187,8 +193,13 @@ export function HarborGuide({
         },
         wait: waitForSpeech,
       });
-    } catch {
-      if (!controller.signal.aborted) setError(true);
+    } catch (error) {
+      if (!controller.signal.aborted)
+        setError(
+          error instanceof ApiClientError && error.status === 429
+            ? "rate"
+            : "unavailable",
+        );
     } finally {
       if (request.current === controller) {
         request.current = null;
@@ -294,7 +305,7 @@ export function HarborGuide({
       </div>
       {error && (
         <p className={styles.note} role="alert">
-          {t("error")}
+          {error === "rate" ? apiError("RATE_LIMITED") : t("error")}
         </p>
       )}
       {busy && !listening && (
