@@ -138,13 +138,6 @@ body {
 .search-trigger > kbd svg {
   width: 10px;
 }
-.login-trigger {
-  font-size: 13px;
-  color: var(--muted);
-}
-.login-trigger > svg {
-  width: 16px;
-}
 .topbar-divider {
   display: none;
 }
@@ -1565,9 +1558,6 @@ body {
   }
   .topbar-actions .search-trigger {
     padding: 4px;
-  }
-  .login-trigger > svg {
-    width: 16px;
   }
   .theme-toggle {
     width: 24px;

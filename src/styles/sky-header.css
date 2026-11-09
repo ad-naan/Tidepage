@@ -186,8 +186,7 @@
   display: none;
 }
 .sky-header .living-search-trigger .search-text,
-.sky-header .header-music .music-open > span:last-child,
-.sky-header .login-trigger:not(.logged-in) > span {
+.sky-header .header-music .music-open > span:last-child {
   display: block;
 }
 .sky-header .living-search-trigger {
@@ -229,11 +228,6 @@
     padding-inline: 0;
     height: 76px;
   }
-  .sky-header .living-header-row,
-  .sky-header.is-compact .living-header-row {
-    height: 48px;
-    gap: 13px;
-  }
   .sky-header .header-navigation {
     min-width: 0;
   }
@@ -243,9 +237,6 @@
   }
   .sky-header .living-actions {
     gap: 13px;
-  }
-  .sky-header .login-trigger {
-    display: none;
   }
   .sky-header.is-reading .living-context {
     min-width: 32px;
@@ -369,6 +360,7 @@
   .site-shell .sky-header .living-header-row,
   .site-shell .sky-header.is-compact .living-header-row {
     height: 48px;
+    gap: 12px;
   }
 }
 
@@ -445,20 +437,17 @@
   max-width: 84px;
   font-size: 11px;
 }
-.sky-header .living-search-trigger .search-text,
-.sky-header .login-trigger:not(.logged-in) > span {
+.sky-header .living-search-trigger .search-text {
   font-size: 11px;
 }
 .sky-header .living-search-trigger {
   gap: 6px;
 }
-.sky-header .living-search-trigger:hover,
-.sky-header .login-trigger:hover {
+.sky-header .living-search-trigger:hover {
   color: var(--accent);
 }
 @media (max-width: 1050px) {
-  .sky-header .living-search-trigger .search-text,
-  .sky-header .login-trigger:not(.logged-in) > span {
+  .sky-header .living-search-trigger .search-text {
     display: none;
   }
 }
@@ -742,6 +731,16 @@
 @media (max-width: 700px) {
   .site-shell .sky-header.is-compact .living-header-row {
     padding-inline: 16px 22px;
+  }
+}
+@media (max-width: 360px) {
+  .site-shell .sky-header .living-header-row,
+  .site-shell .sky-header.is-compact .living-header-row {
+    gap: 8px;
+  }
+  .site-shell .sky-header .living-actions {
+    gap: 6px;
+    padding-left: 8px;
   }
 }
 @media (pointer: coarse) and (hover: none) and (prefers-reduced-motion: no-preference) {

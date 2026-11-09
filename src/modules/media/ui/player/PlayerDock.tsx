@@ -1,6 +1,6 @@
 "use client";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { Pause, Play } from "lucide-react";
+import { Music2, Pause, Play } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/shared/ui/button/Button";
 import { PlayerRecord, Equalizer } from "./PlayerRecord";
@@ -62,6 +62,7 @@ export function PlayerDock({
         onClick={(event) => onOpen(event.detail === 0)}
         pressEffect={false}
       >
+        <Music2 className={styles.compactIcon} size={17} aria-hidden="true" />
         <span className={styles.caption}>
           <span>
             {track?.title ?? t(loading ? "loadingPlaylist" : "empty")}

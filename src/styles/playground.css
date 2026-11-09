@@ -284,9 +284,6 @@
   .living-header.is-expanded .living-actions {
     gap: 8px;
   }
-  .living-header .living-actions > .login-trigger {
-    display: none;
-  }
   .living-header.is-expanded .header-wordmark {
     min-width: 79px;
   }

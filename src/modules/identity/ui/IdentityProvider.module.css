@@ -1,3 +1,32 @@
+.trigger.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  flex: 0 0 auto;
+  min-height: 28px;
+  color: var(--muted);
+  font: 400 11px/1.5 var(--font-ui);
+}
+.trigger:hover {
+  color: var(--accent);
+}
+@media (max-width: 1050px) {
+  .triggerLabel {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  .trigger.trigger {
+    width: 44px;
+    min-height: 44px;
+    color: var(--ink);
+    border-radius: 50%;
+  }
+  .trigger:hover {
+    color: var(--accent);
+  }
+}
 .content {
   color: var(--ink);
   text-align: start;

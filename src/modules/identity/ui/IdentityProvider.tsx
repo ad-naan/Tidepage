@@ -136,7 +136,7 @@ export function LoginTrigger() {
   const t = useTranslations("identity");
   return (
     <Button
-      className="login-trigger"
+      className={styles.trigger}
       aria-label={principal ? t("title") : t("login")}
       aria-haspopup="dialog"
       onClick={openLogin}
@@ -148,9 +148,9 @@ export function LoginTrigger() {
           size="sm"
         />
       ) : (
-        <UserRound size={15} />
+        <UserRound size={16} aria-hidden="true" />
       )}
-      <span>
+      <span className={styles.triggerLabel}>
         <AuthorNameText text={principal?.displayName ?? t("login")} />
       </span>
     </Button>

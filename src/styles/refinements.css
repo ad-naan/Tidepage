@@ -141,28 +141,6 @@ body {
   margin: 10px 0 0 15px;
   letter-spacing: 0;
 }
-.login-trigger {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 10px;
-  padding: 0;
-  color: var(--muted);
-}
-.login-trigger:hover {
-  color: var(--accent);
-}
-.mini-avatar {
-  height: 25px;
-  width: 25px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: var(--sage);
-  color: var(--ink);
-  font-family: var(--hand);
-  font-size: 12px;
-}
 .garden-dashboard {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1647,9 +1625,6 @@ mark {
   .topbar-actions {
     gap: 12px;
   }
-  .login-trigger > span:not(.mini-avatar) {
-    display: none;
-  }
 }
 @media (max-width: 700px) {
   .hero h1 {
@@ -1673,12 +1648,6 @@ mark {
   }
   .topbar-actions {
     gap: 9px;
-  }
-  .login-trigger {
-    font-size: 10px;
-  }
-  .login-trigger > svg {
-    width: 16px;
   }
   .journey-clean {
     width: 100%;
@@ -1947,9 +1916,6 @@ mark {
   }
   .activity-timeline p {
     font-size: 9px;
-  }
-  .login-trigger > span:not(.mini-avatar) {
-    display: none;
   }
   .page-footer {
     padding-bottom: 90px;

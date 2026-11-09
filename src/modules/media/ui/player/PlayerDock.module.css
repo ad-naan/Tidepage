@@ -52,6 +52,9 @@
   padding: 0;
   min-width: 0;
 }
+.compactIcon {
+  display: none;
+}
 .caption {
   display: flex;
   align-items: center;
@@ -138,9 +141,19 @@
     font-size: 9px;
   }
 }
-@media (max-width: 380px) {
+@media (max-width: 440px) {
   .trigger {
-    width: 76px;
+    width: 28px;
+    place-items: center;
+    color: var(--muted);
+  }
+  .compactIcon {
+    display: block;
+  }
+  .caption,
+  .lineWindow,
+  .ink {
+    display: none;
   }
 }
 @media (hover: none) {

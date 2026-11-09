@@ -609,18 +609,12 @@
   .header-widget-divider {
     display: none;
   }
-  .living-header .living-actions .login-trigger {
-    display: flex;
-  }
   .living-focus-button {
     width: 23px;
     height: 26px;
     padding: 2px;
   }
   .living-header.is-reading .header-wordmark {
-    display: none;
-  }
-  .living-header.is-reading .living-actions .login-trigger {
     display: none;
   }
   .living-header.is-reading .header-music {
