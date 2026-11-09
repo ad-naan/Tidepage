@@ -13,6 +13,10 @@ import {
 import type { GatewayConfig } from "./config";
 import { attachCoastGateway } from "./coast-gateway";
 import {
+  attachReadersGateway,
+  type ReaderClusterEvents,
+} from "./readers-gateway";
+import {
   memoryCoastStore,
   redisCoastStore,
   type CoastStore,
@@ -82,7 +86,7 @@ export async function createGateway(
     res.end(JSON.stringify({ ok: req.url === "/healthz" && healthy }));
   });
   const attempts = new Map<string, { until: number; count: number }>();
-  const io = new Server<ClientEvents, ServerEvents>(http, {
+  const io = new Server<ClientEvents, ServerEvents, ReaderClusterEvents>(http, {
     transports: ["websocket"],
     maxHttpBufferSize: 300_000,
     perMessageDeflate: false,
@@ -225,6 +229,10 @@ export async function createGateway(
       (redis ? redisCoastStore(redis, config.namespace) : memoryCoastStore()),
     config.token,
   );
+  const closeReaders = attachReadersGateway(
+    io,
+    redis ? () => redis.isReady : undefined,
+  );
   return {
     io,
     http,
@@ -237,6 +245,7 @@ export async function createGateway(
       return http.address();
     },
     async close() {
+      closeReaders();
       closeCoast();
       clearInterval(cleanup);
       await new Promise<void>((resolve) => io.close(() => resolve()));

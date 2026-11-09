@@ -1,4 +1,17 @@
 .dialog {
+  --dialog-backdrop: #171c283b;
+  --viewer-backdrop: #1d211e;
+  --viewer-folio-backdrop: #252821dc;
+  --viewer-title: #f4eee0;
+  --viewer-caption: #d2cbbd;
+  --viewer-paper: #f5eee0;
+  --viewer-ink: #30332f;
+  --viewer-muted: #685e50;
+  --viewer-accent: #774631;
+  --viewer-rule: #dfd2bc;
+  --viewer-hover: #eadeca;
+  --folio-paper: #f8f2e7;
+  --folio-stage: #ede5d7;
   border: 0;
   padding: 8px;
   width: min(580px, calc(100vw - 32px));
@@ -8,8 +21,32 @@
   background: none;
   overflow: visible;
 }
+:global([data-theme="dark"]) .dialog {
+  --paper: #242d3c;
+  --ink: #eff2f7;
+  --muted: #bec9d9;
+  --accent: #e9ba8d;
+  --line: #465469;
+  --wash: #354155;
+  --card: #2d3748;
+  --soft: #303c4e;
+  --sand: #303a4b;
+  --dialog-backdrop: #0a111b9c;
+  --viewer-backdrop: #101722;
+  --viewer-folio-backdrop: #0a111bdc;
+  --viewer-title: var(--ink);
+  --viewer-caption: var(--muted);
+  --viewer-paper: var(--paper);
+  --viewer-ink: var(--ink);
+  --viewer-muted: var(--muted);
+  --viewer-accent: var(--accent);
+  --viewer-rule: var(--line);
+  --viewer-hover: var(--wash);
+  --folio-paper: var(--paper);
+  --folio-stage: #151d2a;
+}
 .dialog::backdrop {
-  background: #171c283b;
+  background: var(--dialog-backdrop);
   backdrop-filter: blur(4px);
 }
 .dialog[data-backdrop="clear"]::backdrop {
@@ -131,7 +168,7 @@
   background: transparent;
 }
 .dialog[data-surface="viewer"]::backdrop {
-  background: #1d211e;
+  background: var(--viewer-backdrop);
   backdrop-filter: none;
 }
 .dialog[data-surface="viewer"] .inner {
@@ -141,7 +178,7 @@
   padding: max(12px, env(safe-area-inset-top))
     max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom))
     max(12px, env(safe-area-inset-left));
-  color: #f4eee0;
+  color: var(--viewer-title);
 }
 .dialog[data-surface="viewer"] .heading {
   margin: 0;
@@ -174,16 +211,12 @@
 }
 @media (min-width: 760px) {
   .dialog.folio[data-surface="viewer"] {
-    --folio-paper: #f8f2e7;
-    --folio-ink: #30332f;
-    --folio-line: #ddd3c0;
-    --folio-wash: #ede5d7;
     width: min(1120px, calc(100vw - 60px));
     height: min(810px, calc(100dvh - 54px));
     margin: auto;
   }
   .dialog.folio[data-surface="viewer"]::backdrop {
-    background: #252821dc;
+    background: var(--viewer-folio-backdrop);
   }
   .dialog.folio[data-surface="viewer"]:has([data-portrait]):not(
       :has([data-panel="details"])
@@ -192,10 +225,10 @@
   }
   .dialog.folio[data-surface="viewer"] .inner {
     --paper: var(--folio-paper);
-    --muted: #8b7967;
-    --accent: #a86649;
+    --muted: var(--viewer-muted);
+    --accent: var(--viewer-accent);
     padding: 22px 34px 29px;
-    color: var(--folio-ink);
+    color: var(--viewer-ink);
   }
   .folioPaper {
     display: block;
@@ -208,7 +241,7 @@
     background: transparent;
   }
   .dialog.folio[data-surface="viewer"] .heading button:hover {
-    background: var(--folio-wash);
+    background: var(--viewer-hover);
   }
 }
 @media (max-width: 700px) {

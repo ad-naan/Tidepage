@@ -178,7 +178,9 @@
     "all": "View all",
     "footnote": "Write another page. Keep moving.",
     "count": "{count} entries along the way",
-    "note": "A recent moment",
+    "note": "Latest note",
+    "openNotes": "Open the notebook",
+    "emptyNote": "No notes have been published yet.",
     "next": "For the next page",
     "hero": {
       "greeting": "Hello, glad you found this little coast.",
@@ -364,14 +366,27 @@
     "body": "The otter keeps this letter for me. It's about why I write, and the person I'd like to leave behind in these words.",
     "link": "Read my story"
   },
-  "journey": {
-    "title": "Places along the way",
-    "technology": "Build, experiment, reflect",
-    "product": "From idea to something real",
-    "life": "Moments worth keeping",
-    "end": "One step, then another."
+  "readers": {
+    "title": "Live readership",
+    "count": "{count, plural, one {# reader online} other {# readers online}}",
+    "connected": "Connected",
+    "connecting": "Connecting…",
+    "offline": "Connection unavailable",
+    "unavailable": "Live stats not connected",
+    "pages": "Pages being viewed",
+    "article": "Article",
+    "coast": "Sunset Cove",
+    "empty": "No active tabs right now.",
+    "note": "Each visible public tab counts once. Counts update as readers change pages or leave."
   },
   "footer": {
+    "preferences": {
+      "title": "Appearance",
+      "theme": "Theme",
+      "light": "Light",
+      "system": "System",
+      "dark": "Dark"
+    },
     "coast": "Back to the coast",
     "rss": "Subscribe via RSS",
     "contact": "Contact",

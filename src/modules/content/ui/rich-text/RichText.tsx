@@ -25,7 +25,6 @@ import { ReadingLink } from "./ReadingLink";
 import styles from "./RichText.module.css";
 import { getSticker } from "@/shared/config/stickers";
 import { isFontSize } from "@/shared/contracts/rich-text";
-import { AuthorNameText } from "@/modules/identity/ui/AuthorSignature";
 
 function RenderNode({
   node,
@@ -40,13 +39,7 @@ function RenderNode({
     <RenderNode key={index} node={child} references={references} />
   ));
   if (node.type === "text") {
-    let content: ReactNode = node.marks?.some(
-      (mark) => mark.type === "code",
-    ) ? (
-      node.text
-    ) : (
-      <AuthorNameText text={node.text ?? ""} />
-    );
+    let content: ReactNode = node.text;
     for (const mark of node.marks ?? []) {
       switch (mark.type) {
         case "fontSize":

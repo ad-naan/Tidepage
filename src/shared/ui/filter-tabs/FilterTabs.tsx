@@ -8,6 +8,7 @@ type Option<Value extends string> = {
   value: Value;
   label: string;
   count?: number;
+  lang?: string;
 };
 /** Filters are pressed buttons, not ARIA tabs without matching tabpanels. */
 export function FilterTabs<Value extends string>({
@@ -17,6 +18,7 @@ export function FilterTabs<Value extends string>({
   label,
   className = "",
   busy = false,
+  variant = "filter",
 }: {
   value: Value;
   options: readonly Option<Value>[];
@@ -24,6 +26,7 @@ export function FilterTabs<Value extends string>({
   label: string;
   className?: string;
   busy?: boolean;
+  variant?: "filter" | "inline";
 }) {
   const group = useRef<HTMLDivElement>(null);
   function keyboard(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -41,6 +44,7 @@ export function FilterTabs<Value extends string>({
     <div
       ref={group}
       className={`${styles.tabs} ${className}`}
+      data-variant={variant}
       role="group"
       aria-label={label}
       aria-busy={busy}
@@ -50,6 +54,7 @@ export function FilterTabs<Value extends string>({
           type="button"
           key={option.value}
           className={styles.tab}
+          lang={option.lang}
           aria-pressed={value === option.value}
           onKeyDown={(event) => keyboard(event, index)}
           onClick={() => {

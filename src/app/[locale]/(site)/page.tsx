@@ -1,6 +1,6 @@
 import { getLocale } from "next-intl/server";
 import { HomeView } from "@/modules/home/ui/HomeView";
-import { getLatestNote, getFirstQuote } from "@/modules/content/server";
+import { listNotes, getFirstQuote } from "@/modules/content/server";
 import { getPageMetadata } from "@/server/seo/metadata";
 import {
   getPublicHomeCopy,
@@ -9,9 +9,9 @@ import {
 export const generateMetadata = () => getPageMetadata("/");
 export default async function Page() {
   const locale = await getLocale();
-  const [articles, note, quote, homeCopy] = await Promise.all([
+  const [articles, notes, quote, homeCopy] = await Promise.all([
     getConfiguredFeaturedArticles(locale),
-    getLatestNote(locale),
+    listNotes(locale, 4),
     getFirstQuote(locale),
     getPublicHomeCopy(locale),
   ]);
@@ -19,7 +19,7 @@ export default async function Page() {
     <HomeView
       articles={articles.items}
       total={articles.total}
-      note={note}
+      notes={notes}
       quote={quote}
       homeCopy={homeCopy}
     />

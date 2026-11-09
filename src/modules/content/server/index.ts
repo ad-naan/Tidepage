@@ -100,8 +100,8 @@ export const listArticles = async (input: unknown) =>
 export const getNotes = cache(async (locale: Locale = defaultLocale) =>
   (await service()).notes(locale),
 );
-export const listNotes = cache((locale: Locale) =>
-  postgresContentRepository().listNotes(locale),
+export const listNotes = cache((locale: Locale, limit?: number) =>
+  postgresContentRepository().listNotes(locale, limit),
 );
 export const getNote = (id: string, locale: Locale) =>
   postgresContentRepository().noteById(id, locale);

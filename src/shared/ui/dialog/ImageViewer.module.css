@@ -18,7 +18,7 @@
   border-radius: 5px;
 }
 .stage:focus-visible {
-  outline: 1px dashed #e1a77b;
+  outline: 1px dashed var(--accent);
   outline-offset: -3px;
 }
 .stage[data-zoomed="true"] {
@@ -53,10 +53,10 @@
   align-items: center;
   gap: 2px;
   padding: 3px 5px;
-  border: 1px solid #e5dac6;
+  border: 1px solid var(--viewer-rule);
   border-radius: 7px 11px 7px 10px;
-  background: #f5eee0;
-  color: #30332f;
+  background: var(--viewer-paper);
+  color: var(--viewer-ink);
   font: 400 var(--text-sm)/1.5 var(--font-ui);
 }
 .tool.tool,
@@ -68,7 +68,7 @@
 }
 .tool:hover:not(:disabled),
 .navigation button:hover:not(:disabled) {
-  background: #eadeca;
+  background: var(--viewer-hover);
 }
 .zoom {
   min-width: 4ch;
@@ -79,11 +79,11 @@
   width: 1px;
   height: 22px;
   margin: 0 3px;
-  background: #d8ccb6;
+  background: var(--viewer-rule);
 }
 .caption {
   flex: 0 1 100%;
-  color: #d2cbbd;
+  color: var(--viewer-caption);
   text-align: center;
   font-size: var(--text-sm);
   line-height: 1.5;
@@ -94,9 +94,6 @@
   margin: 0;
 }
 .viewer[data-compact="true"] {
-  --viewer-paper: #f5eee0;
-  --viewer-ink: #30332f;
-  --viewer-rule: #dfd2bc;
   gap: 10px;
 }
 .viewer[data-compact="true"] .stage {
@@ -152,10 +149,10 @@
 }
 .dockAction:hover,
 .dockAction[aria-expanded="true"] {
-  background: #eadeca;
+  background: var(--viewer-hover);
 }
 .dockAction[aria-expanded="true"] {
-  color: #70432e;
+  color: var(--viewer-accent);
 }
 .adjustment,
 .information {
@@ -172,8 +169,8 @@
 .information {
   --paper: var(--viewer-paper);
   --paper-opacity: 1;
-  --accent: #995a3c;
-  --muted: #86725c;
+  --accent: var(--viewer-accent);
+  --muted: var(--viewer-muted);
   position: relative;
   isolation: isolate;
   display: grid;
@@ -197,7 +194,7 @@
     gap: 10px 0;
   }
   .viewer[data-compact="true"] .stage {
-    background: var(--folio-wash);
+    background: var(--folio-stage);
     border-radius: 2px;
   }
   .viewer[data-compact="true"] .stage img {
@@ -213,7 +210,7 @@
     min-height: 45px;
     padding: 0;
     border: 0;
-    border-top: 1px solid var(--folio-line);
+    border-top: 1px solid var(--viewer-rule);
     border-radius: 0;
     background: transparent;
   }
@@ -232,7 +229,7 @@
     margin-inline-start: 18px;
     width: auto;
     padding: 0 0 0 18px;
-    border-inline-start: 1px solid var(--folio-line);
+    border-inline-start: 1px solid var(--viewer-rule);
     filter: none;
   }
   .informationPaper {

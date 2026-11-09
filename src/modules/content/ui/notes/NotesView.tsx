@@ -141,6 +141,7 @@ function NotesContent({ notes }: { notes: NoteListEntry[] }) {
           return (
             <motion.li
               key={note.id}
+              id={`note-${note.id}`}
               {...listItemMotion(index, reduced)}
               className={styles.entry}
               data-side={(months.get(month) ?? 0) % 2 === 0 ? "left" : "right"}

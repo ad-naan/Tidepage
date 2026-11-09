@@ -1,0 +1,33 @@
+.list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.content {
+  min-width: 0;
+}
+.text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  margin: 0;
+  font: 400 14px/1.7 var(--font-ui);
+}
+.list li:first-child .text {
+  font: 500 16px/1.65 var(--font-editorial);
+}
+.tag {
+  display: block;
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font: 400 var(--text-xs)/1.5 var(--font-ui);
+}
+.row:focus-visible {
+  outline: 1px dashed var(--accent);
+  outline-offset: 3px;
+}

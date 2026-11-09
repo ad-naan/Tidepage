@@ -8,7 +8,9 @@ import { Link } from "@/shared/i18n/navigation";
 import { FooterPreferences } from "./FooterPreferences";
 import styles from "./SiteFooter.module.css";
 import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
+import { LiveReaders } from "@/modules/presence/ui/LiveReaders";
 import { feedPath } from "@/shared/config/site";
+import type { ThemePreference } from "@/shared/ui/preferences/useThemePreference";
 
 export function SiteFooter({
   year,
@@ -21,9 +23,9 @@ export function SiteFooter({
 }: {
   year: string;
   caption?: string;
-  theme: "light" | "dark";
+  theme: ThemePreference;
   showCoast?: boolean;
-  onThemeChange: () => void;
+  onThemeChange: (theme: ThemePreference) => void;
   onContact: () => void;
   onHeart: () => void;
 }) {
@@ -79,7 +81,8 @@ export function SiteFooter({
             </Button>
           </div>
         </div>
-        <div className={styles.tools}>
+        <div className={styles.utilities}>
+          <LiveReaders />
           <FooterPreferences theme={theme} onThemeChange={onThemeChange} />
         </div>
       </div>

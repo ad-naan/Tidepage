@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useTransition } from "react";
+import { useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, ArrowUpRight, RotateCcw } from "lucide-react";
 import { Link } from "@/shared/i18n/navigation";
 import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
-import { useLocalState } from "@/shared/hooks/useLocalState";
+import { useThemePreference } from "@/shared/ui/preferences/useThemePreference";
 import { Button } from "@/shared/ui/button/Button";
 import { ThemeToggle } from "@/shared/ui/preferences/ThemeToggle";
 import { Text } from "@/shared/ui/typography/Text";
@@ -20,13 +20,7 @@ export function RouteFallback({
 }) {
   const t = useTranslations(kind === "missing" ? "notFound" : "error");
   const [pending, startTransition] = useTransition();
-  const [theme, setTheme] = useLocalState<"light" | "dark">(
-    "adnaan-theme",
-    "light",
-  );
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-  }, [theme]);
+  const { theme, setPreference } = useThemePreference();
   return (
     <main id="main-content" className={styles.page}>
       <header className={styles.header}>
@@ -39,7 +33,7 @@ export function RouteFallback({
           </Text>
           <ThemeToggle
             theme={theme}
-            onChange={() => setTheme(theme === "light" ? "dark" : "light")}
+            onChange={() => setPreference(theme === "light" ? "dark" : "light")}
           />
         </div>
       </header>

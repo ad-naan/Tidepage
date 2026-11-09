@@ -3,6 +3,7 @@ import type {
   CoastClientEvents,
   CoastServerEvents,
 } from "@/shared/contracts/coast-space";
+import type { ReaderPage, ReaderSnapshot } from "./readers";
 
 export const REALTIME_VERSION = 1;
 export const PRESENCE_TTL_MS = 75_000;
@@ -70,8 +71,10 @@ export type RealtimeAck =
     };
 export interface ServerEvents extends CoastServerEvents {
   "author:snapshot": (snapshot: PresenceSnapshot) => void;
+  "readers:snapshot": (snapshot: ReaderSnapshot | null) => void;
 }
 export interface ClientEvents extends CoastClientEvents {
+  "readers:page": (page: ReaderPage | null) => void;
   "author:read": (ack: (snapshot: PresenceSnapshot) => void) => void;
   "author:update": (
     update: PresenceUpdate,

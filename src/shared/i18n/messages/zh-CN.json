@@ -178,7 +178,9 @@
     "all": "翻阅全部",
     "footnote": "写下这一页，继续往前走。",
     "count": "{count} 份光阴的记录",
-    "note": "最近留下一页",
+    "note": "最近手记",
+    "openNotes": "翻开手记",
+    "emptyNote": "还没有已发布的手记。",
     "next": "留给下一页",
     "hero": {
       "greeting": "你好，很高兴在这里遇见你。",
@@ -364,14 +366,27 @@
     "body": "水獭替我保管着这封信。这里写着我为什么记录，又想把怎样的自己，留在这些文字里。",
     "link": "翻开我的自述"
   },
-  "journey": {
-    "title": "走过的，留在这里",
-    "technology": "构建、踩坑、思考",
-    "product": "从想法到落地",
-    "life": "记录与热爱",
-    "end": "一步一步，成为更好的自己。"
+  "readers": {
+    "title": "实时在读",
+    "count": "{count} 人此刻在读",
+    "connected": "已连接",
+    "connecting": "正在连接…",
+    "offline": "连接暂不可用",
+    "unavailable": "实时统计未连接",
+    "pages": "此刻浏览的页面",
+    "article": "文章详情",
+    "coast": "落日海湾",
+    "empty": "此刻没有正在浏览的标签页。",
+    "note": "每个正在显示的前台标签页计一次。切换页面或离开后，数字会自动更新。"
   },
   "footer": {
+    "preferences": {
+      "title": "版式",
+      "theme": "主题",
+      "light": "浅色",
+      "system": "跟随系统",
+      "dark": "深色"
+    },
     "coast": "回到海岸",
     "rss": "订阅 RSS",
     "contact": "联系与留言",

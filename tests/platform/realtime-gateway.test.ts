@@ -16,6 +16,7 @@ import {
   type PresenceSnapshot,
   type RealtimeAck,
 } from "../../src/shared/realtime/protocol";
+import type { ReaderSnapshot } from "../../src/shared/realtime/readers";
 
 const token = "a-local-integration-test-token-of-at-least-32-chars";
 type SocketArgs = {
@@ -89,6 +90,116 @@ async function fixture(
   assert.ok(address && typeof address !== "string");
   return { gateway, url: `http://127.0.0.1:${address.port}` };
 }
+
+function nextReaderSnapshot(
+  socket: Socket,
+  predicate: (snapshot: ReaderSnapshot) => boolean,
+): Promise<ReaderSnapshot> {
+  return new Promise((resolve, reject) => {
+    const accept = (snapshot: ReaderSnapshot | null) => {
+      if (!snapshot || !predicate(snapshot)) return;
+      clearTimeout(timer);
+      socket.off("readers:snapshot", accept);
+      resolve(snapshot);
+    };
+    const timer = setTimeout(() => {
+      socket.off("readers:snapshot", accept);
+      reject(new Error("Reader snapshot timeout"));
+    }, 8_000);
+    socket.on("readers:snapshot", accept);
+  });
+}
+
+test("reader counts track public tabs, replace routes and discard hidden or disconnected tabs", async () => {
+  const { gateway, url } = await fixture();
+  const reader = await connect(url, "reader");
+  const second = await connect(url, "reader");
+  const author = await connect(url, "author");
+  try {
+    const home = { locale: "zh-CN", path: "/" };
+    const article = { locale: "en", path: "/articles/fixture-article" };
+    const initial = nextReaderSnapshot(
+      reader,
+      (snapshot) => snapshot.total === 1,
+    );
+    reader.emit("readers:page", home);
+    assert.deepEqual((await initial).pages, [{ ...home, count: 1 }]);
+
+    const added = nextReaderSnapshot(
+      reader,
+      (snapshot) => snapshot.total === 2,
+    );
+    second.emit("readers:page", home);
+    author.emit("readers:page", home);
+    assert.deepEqual((await added).pages, [{ ...home, count: 2 }]);
+
+    const moved = nextReaderSnapshot(reader, (snapshot) =>
+      snapshot.pages.some((page) => page.path === article.path),
+    );
+    second.emit("readers:page", article);
+    second.emit("readers:page", { ...article, path: "/admin" });
+    second.emit("readers:page", {
+      ...article,
+      path: "/articles/fixture-article?secret=1",
+    });
+    second.emit("readers:page", { ...article, title: "Injected text" });
+    assert.deepEqual((await moved).pages, [
+      { ...home, count: 1 },
+      { ...article, count: 1 },
+    ]);
+
+    const hidden = nextReaderSnapshot(
+      reader,
+      (snapshot) => snapshot.total === 1,
+    );
+    second.emit("readers:page", null);
+    assert.deepEqual((await hidden).pages, [{ ...home, count: 1 }]);
+
+    const visible = nextReaderSnapshot(
+      reader,
+      (snapshot) => snapshot.total === 2,
+    );
+    second.emit("readers:page", article);
+    await visible;
+    const left = nextReaderSnapshot(reader, (snapshot) => snapshot.total === 1);
+    second.disconnect();
+    assert.deepEqual((await left).pages, [{ ...home, count: 1 }]);
+  } finally {
+    reader.disconnect();
+    second.disconnect();
+    author.disconnect();
+    await gateway.close();
+  }
+});
+
+test(
+  "reader totals aggregate across gateways using Redis Streams",
+  { skip: !process.env.REALTIME_TEST_REDIS_STREAMS_URL },
+  async () => {
+    const namespace = `test:${crypto.randomUUID()}`;
+    const first = await fixture(
+      process.env.REALTIME_TEST_REDIS_STREAMS_URL,
+      namespace,
+    );
+    const second = await fixture(
+      process.env.REALTIME_TEST_REDIS_STREAMS_URL,
+      namespace,
+    );
+    const a = await connect(first.url, "reader");
+    const b = await connect(second.url, "reader");
+    try {
+      const page = { locale: "en", path: "/gallery" };
+      const result = nextReaderSnapshot(a, (snapshot) => snapshot.total === 2);
+      a.emit("readers:page", page);
+      b.emit("readers:page", page);
+      assert.deepEqual((await result).pages, [{ ...page, count: 2 }]);
+    } finally {
+      a.disconnect();
+      b.disconnect();
+      await Promise.all([first.gateway.close(), second.gateway.close()]);
+    }
+  },
+);
 
 test("presence contract rejects private fields, non-PNG icons, duplicate IDs and non-empty pause", () => {
   assert.equal(presenceUpdateSchema.safeParse(online).success, true);

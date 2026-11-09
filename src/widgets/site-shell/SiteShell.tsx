@@ -6,7 +6,7 @@ import { Link } from "@/shared/i18n/navigation";
 import { usePathname } from "@/shared/i18n/navigation";
 import { MotionConfig } from "motion/react";
 import { Mail, ArrowRight } from "lucide-react";
-import { useLocalState } from "@/shared/hooks/useLocalState";
+import { useThemePreference } from "@/shared/ui/preferences/useThemePreference";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { spring } from "@/shared/lib/motion";
 import { SiteHeader } from "@/widgets/site-shell/header/SiteHeader";
@@ -41,17 +41,11 @@ export function SiteShell({
     feedback = useTranslations("feedback"),
     contactT = useTranslations("contact");
   const pathname = usePathname();
-  const [theme, setTheme] = useLocalState<"light" | "dark">(
-    "adnaan-theme",
-    "light",
-  );
+  const { selected: theme, setPreference } = useThemePreference();
   const [immersive, setImmersive] = useState(false);
   const [contact, setContact] = useState(false);
   const { notify } = useNotice();
   const [visitedCoast, setVisitedCoast] = useState(false);
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-  }, [theme]);
   useEffect(() => {
     setImmersive(false);
     try {
@@ -91,7 +85,7 @@ export function SiteShell({
             caption={presentation.footer}
             showCoast={visitedCoast && pathname !== "/"}
             theme={theme}
-            onThemeChange={() => setTheme(theme === "light" ? "dark" : "light")}
+            onThemeChange={setPreference}
             onContact={() => setContact(true)}
             onHeart={() =>
               notify({

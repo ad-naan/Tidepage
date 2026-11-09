@@ -8,31 +8,54 @@
 .home.home :global(.home-middle) {
   grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.4fr);
   gap: 40px;
-  margin-top: 20px;
+  margin-block: 20px 32px;
 }
-.home.home :global(.journey-heading) {
+.sidebar {
+  min-width: 0;
+}
+.quote {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 10px;
+  padding-block: 8px;
+  margin-top: 18px;
+  color: var(--ink);
+}
+.quoteMark {
+  color: var(--accent);
+  font: 400 36px/0.95 var(--font-editorial);
+}
+.quote p {
   margin: 0;
+  font: 400 17px/1.7 var(--font-editorial);
+  overflow-wrap: anywhere;
 }
-.home.home :global(.journey-map) {
-  grid-template-columns: 40% 60%;
-  max-width: 310px;
-  height: 288px;
-  margin-top: 16px;
+.quoteLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 7px;
+  color: color-mix(in srgb, var(--ink) 70%, var(--paper));
+  font: 400 var(--text-sm)/1.6 var(--font-ui);
 }
-.home.home :global(.journey-map > svg) {
-  height: 288px;
+.quoteLink svg {
+  color: var(--accent);
 }
-.home.home :global(.journey-labels h3) {
-  font: 500 20px/1.5 var(--font-editorial);
+.quote:hover .quoteLink {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 4px;
 }
-.home.home :global(.journey-labels p) {
-  font: 400 12px/1.8 var(--font-ui);
+.quote:focus-visible {
+  outline: 1px dashed var(--accent);
+  outline-offset: 3px;
 }
-.home.home :global(.journey-closing) {
-  display: block;
-  margin: 16px 0 0 15px;
-  font: 400 11px/1.8 var(--font-ui);
-  opacity: 0.8;
+.quote .quoteSketch {
+  align-self: center;
+  width: 72px;
+  height: 36px;
+  color: color-mix(in srgb, var(--ink) 65%, var(--paper));
 }
 .home.home :global(.section-heading) {
   margin-bottom: 8px;
@@ -99,59 +122,17 @@
   margin-top: 16px;
   font-size: 11px;
 }
-.home.home :global(.home-bottom) {
-  position: relative;
-  border: 0;
-  margin-top: 24px;
-  padding: 24px 0;
-  gap: 32px;
-}
-.home.home :global(.home-bottom-shore) {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-.home.home :global(.note-preview-heading) {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-.home.home :global(.note-preview-heading > svg) {
-  width: 14px;
-  color: var(--muted);
-}
-.home.home :global(.note-preview > p) {
-  font: 400 13px/1.9 var(--font-ui);
-}
-.home.home :global(.quote-preview) {
-  position: relative;
-  border: 0;
-  padding-left: 24px;
-}
-.home.home :global(.quote-preview-fold) {
-  position: absolute;
-  left: -45px;
-  top: 50%;
-  width: 90px;
-  height: 9px;
-  transform: rotate(90deg);
-}
-.home.home :global(.quote-preview p) {
-  font: 400 17px/1.9 var(--font-editorial);
-}
 @media (max-width: 1050px) {
   .home.home :global(.home-middle) {
     grid-template-columns: minmax(0, 0.65fr) minmax(0, 1.35fr);
     gap: 24px;
   }
-  .home.home :global(.journey-labels p) {
-    font-size: 11px;
-    white-space: normal;
-  }
 }
 @media (max-width: 900px) {
+  .quote .quoteSketch {
+    width: 48px;
+    height: 30px;
+  }
   .home.home :global(.article-row) {
     grid-template-columns: 32px minmax(0, 1fr);
     gap: 12px;
@@ -169,15 +150,5 @@
   }
   .home.home :global(.article-lead .article-info h3) {
     font-size: 15px;
-  }
-  .home.home :global(.home-bottom) {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-  .home.home :global(.quote-preview) {
-    padding: 0;
-  }
-  .home.home :global(.quote-preview-fold) {
-    display: none;
   }
 }

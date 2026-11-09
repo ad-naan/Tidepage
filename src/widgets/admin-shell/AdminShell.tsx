@@ -1,7 +1,6 @@
 "use client";
 import {
   Suspense,
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -10,7 +9,7 @@ import {
 import { useTranslations } from "next-intl";
 import { MotionConfig } from "motion/react";
 import { spring } from "@/shared/lib/motion";
-import { useLocalState } from "@/shared/hooks/useLocalState";
+import { useThemePreference } from "@/shared/ui/preferences/useThemePreference";
 import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import {
   ArrowUpRight,
@@ -56,15 +55,9 @@ export function AdminShell({
   useLayoutEffect(() => {
     if (main.current) main.current.scrollTop = 0;
   }, [pathname]);
-  const [theme, setTheme] = useLocalState<"light" | "dark">(
-    "adnaan-theme",
-    "light",
-  );
+  const { theme, setPreference } = useThemePreference();
   const [signingOut, setSigningOut] = useState(false);
   const { notify } = useNotice();
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-  }, [theme]);
   return (
     <MotionConfig transition={spring} reducedMotion="user">
       <div className={styles.shell}>
@@ -132,10 +125,9 @@ export function AdminShell({
               </Suspense>
               <ThemeToggle
                 theme={theme}
-                onChange={() => {
-                  const next = theme === "light" ? "dark" : "light";
-                  setTheme(next);
-                }}
+                onChange={() =>
+                  setPreference(theme === "light" ? "dark" : "light")
+                }
               />
             </div>
           </aside>

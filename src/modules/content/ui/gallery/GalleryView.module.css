@@ -1,6 +1,5 @@
 /* Scoped to this view; decorative surfaces come from shared/ui. */
 .photoDetails {
-  --detail-secondary: #685e50;
   padding: 10px 14px;
   overflow-wrap: anywhere;
 }
@@ -19,7 +18,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: #774631;
+  color: var(--viewer-accent, var(--accent));
   font: 400 var(--text-sm)/1.5 var(--font-ui);
 }
 .photoPlace svg {
@@ -27,7 +26,7 @@
 }
 .photoCaption {
   margin: 6px 0 0;
-  color: var(--detail-secondary);
+  color: var(--viewer-muted, var(--muted));
   font: 400 var(--text-body)/1.55 var(--font-ui);
 }
 .detailsRule {
@@ -50,7 +49,7 @@
   margin: 0 0 12px;
 }
 .photoDetails dt {
-  color: var(--detail-secondary);
+  color: var(--viewer-muted, var(--muted));
   font: 400 var(--text-xs)/1.55 var(--font-ui);
 }
 .photoDetails dd {
@@ -67,7 +66,7 @@
   gap: 8px;
   margin: 0;
   padding-top: 8px;
-  border-top: 1px solid #685e5033;
+  border-top: 1px solid var(--viewer-rule, var(--line));
   font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
 }

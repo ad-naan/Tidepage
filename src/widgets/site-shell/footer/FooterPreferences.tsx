@@ -1,20 +1,35 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 import { LanguageSwitcher } from "@/shared/ui/preferences/LanguageSwitcher";
-import { ThemeToggle } from "@/shared/ui/preferences/ThemeToggle";
+import {
+  themePreferences,
+  type ThemePreference,
+} from "@/shared/ui/preferences/useThemePreference";
+import styles from "./SiteFooter.module.css";
 
 export function FooterPreferences({
   theme,
   onThemeChange,
 }: {
-  theme: "light" | "dark";
-  onThemeChange: () => void;
+  theme: ThemePreference;
+  onThemeChange: (theme: ThemePreference) => void;
 }) {
+  const t = useTranslations("footer.preferences");
+  const language = useTranslations("language");
   return (
-    <div className="footer-preferences">
-      <LanguageSwitcher />
-      <span aria-hidden="true">·</span>
-      <ThemeToggle theme={theme} onChange={onThemeChange} />
+    <div className={styles.preferences} role="group" aria-label={t("title")}>
+      <span aria-hidden="true">{t("theme")}</span>
+      <FilterTabs
+        variant="inline"
+        value={theme}
+        label={t("theme")}
+        options={themePreferences.map((value) => ({ value, label: t(value) }))}
+        onChange={onThemeChange}
+      />
+      <span aria-hidden="true">{language("label")}</span>
+      <LanguageSwitcher variant="inline" />
     </div>
   );
 }

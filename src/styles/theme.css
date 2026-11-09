@@ -1,3 +1,54 @@
+@property --tide-front {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: -8%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-theme-transition] body {
+    transition: none;
+  }
+
+  html[data-theme-transition]::view-transition {
+    pointer-events: none;
+  }
+
+  html[data-theme-transition]::view-transition-old(root),
+  html[data-theme-transition]::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  html[data-theme-transition]::view-transition-new(root) {
+    --tide-origin: 0%;
+    mask-image: radial-gradient(
+      ellipse 155% 100% at 55% var(--tide-origin),
+      #000 calc(var(--tide-front) - 8%),
+      transparent var(--tide-front)
+    );
+    animation: tide-reveal 640ms cubic-bezier(0.28, 0.6, 0.32, 1) both;
+  }
+
+  html[data-theme-transition="light"]::view-transition-new(root) {
+    --tide-origin: 100%;
+  }
+}
+
+@keyframes tide-reveal {
+  from {
+    --tide-front: -8%;
+  }
+  to {
+    --tide-front: 120%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body {
+    transition: none;
+  }
+}
+
 /* Theme copy is given room to read, without adding another card to the hero. */
 .svg-hand {
   font-family: var(--font-hand), "KaiTi", serif;

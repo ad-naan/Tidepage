@@ -86,7 +86,7 @@ function fullNote(row: typeof n.$inferSelect): Note {
 export function postgresContentRepository(
   db: Database = getDb(),
 ): ContentRepository & {
-  listNotes(locale: Locale): Promise<NoteListEntry[]>;
+  listNotes(locale: Locale, limit?: number): Promise<NoteListEntry[]>;
   noteById(id: string, locale: Locale): Promise<Note | null>;
 } {
   return {
@@ -249,32 +249,33 @@ export function postgresContentRepository(
         pageCount: Math.ceil(total / query.pageSize),
       };
     },
-    listNotes: async (locale) =>
-      (
-        await db
-          .select({
-            locale: n.locale,
-            id: n.id,
-            publishedOn: n.publishedOn,
-            mood: n.mood,
-            text: sql<string>`left(${n.text}, 180)`,
-            truncated: sql<boolean>`length(${n.text}) > 180`,
-            imageCount: sql<number>`jsonb_array_length(${n.images})`,
-            cover: sql<unknown>`case when jsonb_array_length(${n.images}) > 0 then jsonb_build_object('assetId', ${n.images}->0->>'assetId', 'alt', ${n.images}->0->>'alt') end`,
-            tag: n.tag,
-            sketch: n.sketch,
-          })
-          .from(n)
-          .where(and(published(n), eq(n.locale, locale)))
-          .orderBy(desc(n.publishedOn), asc(n.id))
-      ).map((row) => ({
+    listNotes: async (locale, limit) => {
+      const query = db
+        .select({
+          locale: n.locale,
+          id: n.id,
+          publishedOn: n.publishedOn,
+          mood: n.mood,
+          text: sql<string>`left(${n.text}, 180)`,
+          truncated: sql<boolean>`length(${n.text}) > 180`,
+          imageCount: sql<number>`jsonb_array_length(${n.images})`,
+          cover: sql<unknown>`case when jsonb_array_length(${n.images}) > 0 then jsonb_build_object('assetId', ${n.images}->0->>'assetId', 'alt', ${n.images}->0->>'alt') end`,
+          tag: n.tag,
+          sketch: n.sketch,
+        })
+        .from(n)
+        .where(and(published(n), eq(n.locale, locale)))
+        .orderBy(desc(n.publishedOn), asc(n.id));
+      const rows = await (limit === undefined ? query : query.limit(limit));
+      return rows.map((row) => ({
         ...row,
         date: formatDate(row.publishedOn, locale),
         cover: noteImageSchema
           .pick({ assetId: true, alt: true })
           .nullable()
           .parse(row.cover),
-      })),
+      }));
+    },
     noteById: async (id, locale) => {
       const [row] = await db
         .select()
