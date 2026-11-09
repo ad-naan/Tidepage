@@ -1,11 +1,28 @@
 "use client";
-import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useLayoutEffect,
+  useRef,
+  useState,
+  type MouseEvent,
+  type ReactNode,
+} from "react";
 import { useReducedMotion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
 import { IconButton } from "@/shared/ui/button/Button";
 import { PencilFrame } from "@/shared/ui/drawing/CoastalMarks";
 import styles from "./Dialog.module.css";
+
+function isBackdrop(event: MouseEvent<HTMLDialogElement>) {
+  if (event.target !== event.currentTarget) return false;
+  const { left, right, top, bottom } =
+    event.currentTarget.getBoundingClientRect();
+  const { clientX, clientY } = event;
+  return (
+    clientX < left || clientX >= right || clientY < top || clientY >= bottom
+  );
+}
+
 export function Dialog({
   children,
   title,
@@ -34,6 +51,7 @@ export function Dialog({
   dismissible?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const backdropPress = useRef<{ x: number; y: number } | null>(null);
   const [closing, setClosing] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const close = useRef(onClose);
@@ -81,8 +99,26 @@ export function Dialog({
         event.preventDefault();
         requestClose();
       }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) requestClose();
+      onPointerDownCapture={(event) => {
+        backdropPress.current =
+          event.isPrimary && event.button === 0 && isBackdrop(event)
+            ? { x: event.clientX, y: event.clientY }
+            : null;
+      }}
+      onPointerCancelCapture={() => {
+        backdropPress.current = null;
+      }}
+      onClick={(event) => {
+        const press = backdropPress.current;
+        backdropPress.current = null;
+        // A drag from a child can dispatch its click on the dialog itself.
+        if (
+          press &&
+          event.detail > 0 &&
+          isBackdrop(event) &&
+          Math.hypot(event.clientX - press.x, event.clientY - press.y) <= 8
+        )
+          requestClose();
       }}
       aria-label={title}
       aria-describedby={descriptionId}
