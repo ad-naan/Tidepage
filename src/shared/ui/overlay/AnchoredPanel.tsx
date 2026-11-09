@@ -11,6 +11,7 @@ import {
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useOverlayOwner } from "./OverlayScope";
+import { surfaceSpring } from "@/shared/lib/motion";
 import styles from "./AnchoredPanel.module.css";
 
 /** Non-modal surface. Its disclosure owner controls dismissal; this surface restores anchor focus. */
@@ -61,6 +62,7 @@ export function AnchoredPanel({
     if (!open || !anchor) return;
     let frame = 0;
     const measure = () => {
+      frame = 0;
       const bounds = anchor.getBoundingClientRect();
       const viewport = window.visualViewport;
       const viewportWidth = viewport?.width ?? window.innerWidth;
@@ -86,7 +88,7 @@ export function AnchoredPanel({
           offsetTop + 12,
           bounds.top - Math.min(height, above) - 12,
         );
-      setPosition({
+      const next = {
         left: Math.max(
           offsetLeft + 16,
           Math.min(preferredLeft, offsetLeft + viewportWidth - panelWidth - 16),
@@ -97,11 +99,26 @@ export function AnchoredPanel({
           100,
           flip ? above : offsetTop + viewportHeight - top - 16,
         ),
-      });
+      };
+      setPosition((previous) =>
+        previous.left === next.left &&
+        previous.top === next.top &&
+        previous.width === next.width &&
+        previous.maxHeight === next.maxHeight
+          ? previous
+          : next,
+      );
     };
     const schedule = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(measure);
+      if (!frame) frame = requestAnimationFrame(measure);
+    };
+    const scroll = (event: Event) => {
+      const target = event.target;
+      if (
+        target === document ||
+        (target instanceof Element && target.contains(anchor))
+      )
+        schedule();
     };
     measure();
     const observer = new ResizeObserver(schedule);
@@ -111,14 +128,14 @@ export function AnchoredPanel({
     if (boundary?.current && boundary.current !== anchor)
       observer.observe(boundary.current);
     window.addEventListener("resize", schedule);
-    window.addEventListener("scroll", schedule, true);
+    window.addEventListener("scroll", scroll, { capture: true, passive: true });
     window.visualViewport?.addEventListener("resize", schedule);
     window.visualViewport?.addEventListener("scroll", schedule);
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
       window.removeEventListener("resize", schedule);
-      window.removeEventListener("scroll", schedule, true);
+      window.removeEventListener("scroll", scroll, true);
       window.visualViewport?.removeEventListener("resize", schedule);
       window.visualViewport?.removeEventListener("scroll", schedule);
     };
@@ -140,11 +157,17 @@ export function AnchoredPanel({
           initial={{
             opacity: 0,
             y: reduce ? 0 : -5,
-            scale: reduce ? 1 : 0.985,
           }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
+          animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: reduce ? 0 : -3 }}
-          transition={{ duration: reduce ? 0 : 0.18 }}
+          transition={
+            reduce
+              ? { duration: 0 }
+              : {
+                  y: surfaceSpring,
+                  opacity: { duration: 0.14, ease: "easeOut" },
+                }
+          }
         >
           {children}
         </motion.section>

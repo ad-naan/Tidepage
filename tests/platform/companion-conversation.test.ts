@@ -65,9 +65,10 @@ test("speech projection stays within narrow screens and hides absent, distant an
       dataset: { worldSpeaker: "otter", visible: "false" },
       offsetWidth: 260,
       offsetHeight: 90,
-      style: { left: "", top: "", setProperty: () => {} },
+      style: { translate: "", setProperty: () => {} },
     };
     const host = {
+      dataset: {},
       clientWidth: width,
       clientHeight: 844,
       querySelectorAll: () => [node],
@@ -83,11 +84,9 @@ test("speech projection stays within narrow screens and hides absent, distant an
       height: 1.2,
     }));
     assert.equal(node.dataset.visible, "true");
-    assert.ok(
-      parseFloat(node.style.left) >= 12 &&
-        parseFloat(node.style.left) + 260 <= width - 12,
-    );
-    assert.ok(parseFloat(node.style.top) >= 72);
+    const [left, top] = node.style.translate.split(" ").map(parseFloat);
+    assert.ok(left >= 12 && left + 260 <= width - 12);
+    assert.ok(top >= 72);
     updateHarborSpeechAnchors(host, camera, player, () => null);
     assert.equal(node.dataset.visible, "false");
     updateHarborSpeechAnchors(host, camera, player, () => ({

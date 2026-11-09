@@ -1,7 +1,7 @@
 "use client";
 import type { Ref, ReactNode } from "react";
 import { motion, useReducedMotion, type HTMLMotionProps } from "motion/react";
-import { spring } from "@/shared/lib/motion";
+import { pressSpring } from "@/shared/lib/motion";
 import styles from "./Button.module.css";
 
 export type ButtonProps = Omit<HTMLMotionProps<"button">, "children"> & {
@@ -43,7 +43,7 @@ export function Button({
           ? undefined
           : (whileTap ?? (pressEffect ? { scale: 0.97 } : undefined))
       }
-      transition={transition ?? spring}
+      transition={transition ?? pressSpring}
     >
       {children}
       {busy && <span className={styles.spinner} aria-hidden="true" />}

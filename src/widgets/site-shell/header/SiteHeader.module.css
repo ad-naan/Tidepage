@@ -10,6 +10,31 @@
   align-items: center;
   min-width: 0;
 }
+.searchIcon {
+  position: relative;
+  width: 17px;
+  height: 17px;
+}
+.searchIcon > svg {
+  position: absolute;
+  inset: 0;
+}
+.searchIcon > svg + svg,
+button[aria-expanded="true"] .searchIcon > svg:first-child {
+  opacity: 0;
+  scale: 0.85;
+}
+button[aria-expanded="true"] .searchIcon > svg + svg {
+  opacity: 1;
+  scale: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .searchIcon > svg {
+    transition:
+      opacity 120ms ease-out,
+      scale 140ms var(--motion-ease-out);
+  }
+}
 @media (max-width: 700px) {
   .identity {
     gap: 8px;

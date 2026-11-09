@@ -35,4 +35,5 @@
   --radius-control: 6px;
   --motion-quick: 180ms;
   --motion-soft: 380ms;
+  --motion-ease-out: cubic-bezier(0.22, 0.8, 0.24, 1);
 }

@@ -1,14 +1,11 @@
 /* Hidden native rails reserve no gutter, so locking the body cannot shift the page. */
-html,
-body,
-* {
-  scrollbar-width: none !important;
-  -ms-overflow-style: none;
-}
-*::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
+@media not all and (pointer: coarse) and (hover: none) {
+  * {
+    scrollbar-width: none !important;
+  }
+  *::-webkit-scrollbar {
+    display: none !important;
+  }
 }
 html,
 body {
@@ -69,19 +66,6 @@ html:has(dialog[open]) .custom-scrollbar-page {
 [data-theme="dark"] .custom-scrollbar:hover .custom-scrollbar-thumb,
 [data-theme="dark"] .custom-scrollbar.dragging .custom-scrollbar-thumb {
   background: #ffffff80;
-}
-@media (pointer: coarse) {
-  .custom-scrollbar-thumb {
-    opacity: 0.3;
-  }
-  .custom-scrollbar-vertical .custom-scrollbar-thumb {
-    width: 4px;
-    left: 4px;
-  }
-  .custom-scrollbar-horizontal .custom-scrollbar-thumb {
-    height: 4px;
-    top: 4px;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   .custom-scrollbar-thumb {

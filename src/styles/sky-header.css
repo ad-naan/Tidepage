@@ -487,7 +487,7 @@
 .site-shell > .header-slot > .sky-header {
   transition:
     width 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    transform var(--motion-soft) var(--motion-ease-out);
 }
 .site-shell > .header-slot > .sky-header.is-compact {
   width: min(1080px, calc(100% - var(--site-gutter) * 2 - 28px));
@@ -742,5 +742,12 @@
 @media (max-width: 700px) {
   .site-shell .sky-header.is-compact .living-header-row {
     padding-inline: 16px 22px;
+  }
+}
+@media (pointer: coarse) and (hover: none) and (prefers-reduced-motion: no-preference) {
+  .site-shell > .header-slot > .sky-header {
+    transition:
+      width var(--motion-quick) var(--motion-ease-out),
+      transform var(--motion-quick) var(--motion-ease-out);
   }
 }

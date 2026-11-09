@@ -10,6 +10,8 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
+import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
+import { touchMotionQuery } from "@/shared/lib/motion";
 
 type Axis = "vertical" | "horizontal";
 // Internal layout refreshes are not browser resizes. Other overlays may close on resize.
@@ -130,8 +132,19 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
   useEffect(() => {
     let frame = 0;
     const schedule = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(read);
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        read();
+      });
+    };
+    const scroll = (event: Event) => {
+      const target = event.target;
+      if (
+        target === document ||
+        (host && target instanceof Element && target.contains(host))
+      )
+        schedule();
     };
     read();
     const resize = new ResizeObserver(schedule);
@@ -144,7 +157,10 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
       childList: true,
       subtree: true,
     });
-    document.addEventListener("scroll", schedule, true);
+    document.addEventListener("scroll", scroll, {
+      capture: true,
+      passive: true,
+    });
     window.addEventListener("resize", schedule);
     window.addEventListener(SCROLLBARS_REFRESH_EVENT, schedule);
     // Covers the final position after a disclosure's initial transform settles.
@@ -154,7 +170,7 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
       mutation.disconnect();
       cancelAnimationFrame(frame);
       clearTimeout(settled);
-      document.removeEventListener("scroll", schedule, true);
+      document.removeEventListener("scroll", scroll, true);
       window.removeEventListener("resize", schedule);
       window.removeEventListener(SCROLLBARS_REFRESH_EVENT, schedule);
       if (originalSelect.current !== null)
@@ -297,6 +313,11 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
 
 /** Explicit hosts avoid scanning every element or creating layout wrappers around motion components. */
 export function CustomScrollbars() {
+  const native = useMediaQuery(touchMotionQuery, true);
+  return native ? null : <OverlayScrollbars />;
+}
+
+function OverlayScrollbars() {
   const [hosts, setHosts] = useState<HTMLElement[]>([]);
   const [ready, setReady] = useState(false);
   useEffect(() => {

@@ -1,5 +1,6 @@
 "use client";
 import { motion, useReducedMotion } from "motion/react";
+import { softSpring } from "@/shared/lib/motion";
 import { PlayerRecord } from "./PlayerRecord";
 import styles from "./RecordDeck.module.css";
 
@@ -20,7 +21,7 @@ export function RecordDeck({
       <motion.span
         className={styles.arm}
         animate={{ rotate: playing ? 22 : 0 }}
-        transition={{ duration: reduced ? 0 : 0.65, ease: [0.22, 1, 0.36, 1] }}
+        transition={reduced ? { duration: 0 } : softSpring}
       >
         <span className={styles.shaft} />
         <span className={styles.cartridge}>

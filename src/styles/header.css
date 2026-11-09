@@ -539,10 +539,43 @@
   border-radius: 50%;
 }
 .player-equalizer > i {
+  --meter-rest: 0.34;
+  --meter-peak: 0.87;
+  --meter-time: 900ms;
   display: block;
   width: 2px;
+  height: 15px;
+  transform: scaleY(var(--meter-rest));
   background: var(--accent);
   border-radius: 2px;
+}
+.player-equalizer > i:nth-child(2) {
+  --meter-rest: 0.67;
+  --meter-peak: 0.7;
+  --meter-time: 1010ms;
+}
+.player-equalizer > i:nth-child(3) {
+  --meter-rest: 0.87;
+  --meter-peak: 1;
+  --meter-time: 1120ms;
+}
+.player-equalizer > i:nth-child(4) {
+  --meter-rest: 0.47;
+  --meter-peak: 0.78;
+  --meter-time: 1230ms;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .player-equalizer[data-playing="true"] > i {
+    animation: meter var(--meter-time) ease-in-out infinite alternate;
+  }
+}
+@keyframes meter {
+  from {
+    transform: scaleY(0.27);
+  }
+  to {
+    transform: scaleY(var(--meter-peak));
+  }
 }
 .player-is-open .music-dock {
   background: var(--soft);

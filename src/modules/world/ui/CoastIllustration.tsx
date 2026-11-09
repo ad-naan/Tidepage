@@ -1,7 +1,12 @@
 "use client";
 import { Button } from "@/shared/ui/button/Button";
 import { useEffect, useId, useRef, useState, type PointerEvent } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "motion/react";
+import {
+  motion,
+  AnimatePresence,
+  useInView,
+  useReducedMotion,
+} from "motion/react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/shared/i18n/navigation";
 import { softSpring } from "@/shared/lib/motion";
@@ -18,6 +23,8 @@ export function HeroSketch({
   onWish?: () => void;
 }) {
   const t = useTranslations("sketch");
+  const scene = useRef<HTMLDivElement>(null);
+  const inView = useInView(scene);
   const uid = useId().replaceAll(":", "");
   const [greeting, setGreeting] = useState(false);
   const [wish, setWish] = useState(0);
@@ -46,7 +53,7 @@ export function HeroSketch({
     setRipples((current) => [...current.slice(-3), { id, x, y }]);
   }
   return (
-    <div className={`hero-art ${styles.scene}`}>
+    <div className={`hero-art ${styles.scene}`} ref={scene}>
       <svg
         viewBox="0 0 700 390"
         aria-label={t("coast")}
@@ -286,19 +293,6 @@ export function HeroSketch({
               preserveAspectRatio="xMidYMid meet"
             />
           )}
-          <motion.g
-            animate={
-              reduce
-                ? {}
-                : { y: [0, -3, 0], x: wish % 2 === 0 ? [0, 2, 0] : [0, 6, 0] }
-            }
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <path
-              d="M98 61q15-3 23 7 5-16 22-20M117 68l5 1M362 57q9-2 16 5 4-9 14-12M597 31q9-3 17 5 3-9 13-11"
-              strokeWidth="1.6"
-            />
-          </motion.g>
           <path
             d="M21 243C77 246 63 189 114 190S156 228 175 227"
             stroke="var(--accent)"
@@ -341,6 +335,22 @@ export function HeroSketch({
         </text>
         <path d="m90 328 28-8" stroke="var(--accent)" />
       </svg>
+      <div
+        className={styles.birds}
+        data-in-view={inView}
+        data-wish={wish % 2 !== 0}
+        aria-hidden="true"
+      >
+        <svg viewBox="0 0 700 390" fill="none">
+          <path
+            d="M98 61q15-3 23 7 5-16 22-20M117 68l5 1M362 57q9-2 16 5 4-9 14-12M597 31q9-3 17 5 3-9 13-11"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
       <Button
         className={styles.skyHit}
         aria-label={t("skyPlay")}

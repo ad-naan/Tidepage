@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { siteAssets } from "@/shared/config/assets";
+import { touchMotionQuery } from "@/shared/lib/motion";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { coastPlaces, type PlaceId } from "@/modules/world/domain/coast-world";
@@ -38,12 +39,13 @@ type SceneOptions = {
 
 export function createCoastScene(options: SceneOptions) {
   const { host } = options;
+  const touch = window.matchMedia(touchMotionQuery).matches;
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
     alpha: false,
     powerPreference: "high-performance",
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, touch ? 1.25 : 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
@@ -464,7 +466,7 @@ export function createCoastScene(options: SceneOptions) {
   const sunlight = new THREE.DirectionalLight(0xffd2a0, 3.1);
   sunlight.position.set(-25, 14, -45);
   sunlight.castShadow = true;
-  sunlight.shadow.mapSize.set(2048, 2048);
+  sunlight.shadow.mapSize.setScalar(touch ? 1024 : 2048);
   sunlight.shadow.camera.left = -30;
   sunlight.shadow.camera.right = 30;
   sunlight.shadow.camera.top = 30;
@@ -1372,6 +1374,9 @@ export function createCoastScene(options: SceneOptions) {
   const desiredCamera = new THREE.Vector3(),
     desiredTarget = new THREE.Vector3();
   const velocity = new THREE.Vector2();
+  const nightLight = new THREE.Color(0xa1c4f9);
+  const nightHaze = new THREE.Color(0x152739);
+  const duskHaze = [0xa1aca5, 0x91a3a0, 0x7d9696];
   const update = () => {
     if (disposed || lost || hidden) return;
     const now = performance.now(),
@@ -1394,7 +1399,7 @@ export function createCoastScene(options: SceneOptions) {
     ambient.intensity = THREE.MathUtils.lerp(1.25, 0.32, nightBlend);
     sunlight.intensity = THREE.MathUtils.lerp(2.7, 0.28, nightBlend);
     fill.intensity = THREE.MathUtils.lerp(0.35, 0.55, nightBlend);
-    sunlight.color.set(0xffbc77).lerp(new THREE.Color(0xa1c4f9), nightBlend);
+    sunlight.color.set(0xffbc77).lerp(nightLight, nightBlend);
     lamps.forEach((m) => {
       m.emissiveIntensity = 0.45 + nightBlend * 1.8;
     });
@@ -1402,9 +1407,7 @@ export function createCoastScene(options: SceneOptions) {
       ? 0.008 + nightBlend * 0.022
       : 0;
     distantHaze.forEach((m, i) =>
-      m.color
-        .set([0xa1aca5, 0x91a3a0, 0x7d9696][i])
-        .lerp(new THREE.Color(0x152739), nightBlend),
+      m.color.set(duskHaze[i]).lerp(nightHaze, nightBlend),
     );
     birdMat.opacity = 0.7 * (1 - nightBlend);
     (scene.fog as THREE.FogExp2).color
@@ -1485,7 +1488,7 @@ export function createCoastScene(options: SceneOptions) {
       3.8 + distance * 0.13 + Math.max(look.y, 0) * 9,
       player.position.z + Math.cos(look.x) * distance,
     );
-    const damping = reduced ? 1 : 1 - Math.exp(-dt * 3.5);
+    const damping = reduced ? 1 : 1 - Math.exp(-dt * (down ? 24 : 5));
     camera.position.lerp(desiredCamera, damping);
     target.lerp(desiredTarget, damping);
     camera.lookAt(target);

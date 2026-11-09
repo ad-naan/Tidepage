@@ -12,6 +12,33 @@
 .scene > svg {
   color: var(--coast-ink);
 }
+.birds {
+  position: absolute;
+  inset: 0 0 auto;
+  color: var(--coast-ink);
+  pointer-events: none;
+  --bird-drift: 0.286%;
+}
+.birds > svg {
+  display: block;
+  width: 100%;
+}
+.birds[data-wish="true"] {
+  --bird-drift: 0.857%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .birds {
+    animation: birdDrift 2.5s ease-in-out infinite alternate paused;
+  }
+  .birds[data-in-view="true"] {
+    animation-play-state: running;
+  }
+}
+@keyframes birdDrift {
+  to {
+    transform: translate3d(var(--bird-drift), -0.769%, 0);
+  }
+}
 :global([data-theme="dark"]) .scene {
   --coast-ink: #b2c0d1;
   --coast-shore: #263447;

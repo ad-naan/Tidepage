@@ -9,8 +9,8 @@
   visibility: hidden;
   pointer-events: none;
   transition:
-    opacity 280ms ease,
-    visibility 280ms;
+    opacity var(--motion-quick) var(--motion-ease-out),
+    visibility var(--motion-quick);
 }
 .workspaceProgress {
   position: fixed;
@@ -92,8 +92,8 @@
   color: var(--muted, #85877d);
 }
 .sun {
-  stroke-dasharray: 52;
   animation: trace 2.8s ease-in-out infinite;
+  transform-origin: center bottom;
 }
 .horizon {
   opacity: 0.6;
@@ -133,11 +133,11 @@
 @keyframes trace {
   0%,
   100% {
-    stroke-dashoffset: 52;
-    opacity: 0.3;
+    transform: translateY(2px);
+    opacity: 0.4;
   }
   50% {
-    stroke-dashoffset: 0;
+    transform: translateY(0);
     opacity: 1;
   }
 }

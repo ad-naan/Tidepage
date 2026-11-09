@@ -50,7 +50,8 @@ export function NavigationFeedback({
   const [visible, setVisible] = useState(false);
   const [line, setLine] = useState(0);
   const active = useRef(false);
-  const started = useRef(0);
+  const shownAt = useRef<number | null>(null);
+  const reveal = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const holds = useRef(0);
   const exit = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const previous = useRef(-1);
@@ -60,7 +61,9 @@ export function NavigationFeedback({
   useEffect(() => {
     if (!quiet) return;
     clearTimeout(exit.current);
+    clearTimeout(reveal.current);
     active.current = false;
+    shownAt.current = null;
     setVisible(false);
     delete document.documentElement.dataset.navigating;
     document.documentElement.style.removeProperty("--route-content-height");
@@ -70,7 +73,6 @@ export function NavigationFeedback({
     clearTimeout(exit.current);
     if (active.current) return;
     active.current = true;
-    started.current = performance.now();
     if (isQuietNavigationPath(location.pathname)) {
       setVisible(true);
       return;
@@ -87,27 +89,33 @@ export function NavigationFeedback({
         `${main.getBoundingClientRect().height}px`,
       );
     document.documentElement.dataset.navigating = "true";
-    setVisible(true);
+    reveal.current = setTimeout(() => {
+      shownAt.current = performance.now();
+      setVisible(true);
+    }, 120);
   }, []);
 
   const settle = useCallback(() => {
     clearTimeout(exit.current);
     if (!active.current || holds.current > 0) return;
+    clearTimeout(reveal.current);
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
     const minimum =
-      reduced || isQuietNavigationPath(location.pathname) ? 0 : 180;
-    exit.current = setTimeout(
-      () => {
-        if (holds.current > 0) return;
-        active.current = false;
-        setVisible(false);
-        delete document.documentElement.dataset.navigating;
-        document.documentElement.style.removeProperty("--route-content-height");
-      },
-      Math.max(0, minimum - (performance.now() - started.current)),
-    );
+      !reduced && shownAt.current !== null
+        ? Math.max(0, 140 - (performance.now() - shownAt.current))
+        : 0;
+    function finish() {
+      if (holds.current > 0) return;
+      active.current = false;
+      shownAt.current = null;
+      setVisible(false);
+      delete document.documentElement.dataset.navigating;
+      document.documentElement.style.removeProperty("--route-content-height");
+    }
+    if (minimum) exit.current = setTimeout(finish, minimum);
+    else finish();
   }, []);
 
   const hold = useCallback(() => {
@@ -136,6 +144,7 @@ export function NavigationFeedback({
     return () => {
       window.removeEventListener("popstate", back);
       clearTimeout(exit.current);
+      clearTimeout(reveal.current);
       delete document.documentElement.dataset.navigating;
       document.documentElement.style.removeProperty("--route-content-height");
     };

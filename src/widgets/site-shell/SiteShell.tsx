@@ -4,7 +4,7 @@ import { navigationItems } from "@/shared/config/site";
 import { useEffect, useState, type ReactNode } from "react";
 import { Link } from "@/shared/i18n/navigation";
 import { usePathname } from "@/shared/i18n/navigation";
-import { MotionConfig, motion } from "motion/react";
+import { MotionConfig } from "motion/react";
 import { Mail, ArrowRight } from "lucide-react";
 import { useLocalState } from "@/shared/hooks/useLocalState";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
@@ -84,13 +84,7 @@ export function SiteShell({
         />
         <div className="main-wrap">
           <main id="main-content">
-            <motion.div
-              key={pathname}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              {children}
-            </motion.div>
+            <div key={pathname}>{children}</div>
           </main>
           <SiteFooter
             year={year}

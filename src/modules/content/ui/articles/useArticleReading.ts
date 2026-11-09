@@ -18,6 +18,7 @@ function start() {
   let articleHeight = 0;
   let sectionTops: number[] = [];
   let safeGap = 0;
+  let headerBottom = 80;
   const invalidate = () => {
     layoutDirty = true;
     schedule?.();
@@ -39,6 +40,7 @@ function start() {
       const rect = article.getBoundingClientRect();
       articleTop = rect.top + scroll;
       articleHeight = rect.height;
+      headerBottom = header?.getBoundingClientRect().bottom ?? 80;
       safeGap =
         Number.parseFloat(
           getComputedStyle(article).getPropertyValue("--reading-safe-gap"),
@@ -53,7 +55,7 @@ function start() {
           top: articleTop - scroll,
           height: articleHeight,
           viewportHeight: window.innerHeight,
-          safeTop: (header?.getBoundingClientRect().bottom ?? 80) + safeGap,
+          safeTop: headerBottom + safeGap,
           sections: sectionTops.map((top) => top - scroll),
         })
       : initialReadingPosition;

@@ -4,23 +4,24 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import { useReducedMotion } from "motion/react";
 import { CoastGlyph } from "@/shared/ui/drawing/CoastalMarks";
 import { HanddrawnTree } from "@/shared/ui/drawing/HanddrawnTree";
+import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import { useArticleReadingValue } from "./useArticleReading";
 import { ArticleReadingTools } from "./ArticleReadingTools";
 import { useRegisterReadingArticle } from "./ReadingArticleContext";
 import styles from "./ArticleContents.module.css";
 const rowHeight = 44;
-export function ArticleContents({
-  titles,
-  label,
-  slug,
-  title,
-}: {
+type Props = {
   titles: string[];
   label: string;
   slug: string;
   title: string;
-}) {
-  useRegisterReadingArticle(slug, title);
+};
+export function ArticleContents(props: Props) {
+  useRegisterReadingArticle(props.slug, props.title);
+  const visible = useMediaQuery("(width > 960px)", true);
+  return visible ? <ContentsAside {...props} /> : null;
+}
+function ContentsAside({ titles, label, slug, title }: Props) {
   const active = useArticleReadingValue("active");
   const navigation = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();

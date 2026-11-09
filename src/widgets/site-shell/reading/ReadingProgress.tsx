@@ -1,13 +1,5 @@
 "use client";
-import { useEffect } from "react";
 import { useFormatter, useTranslations } from "next-intl";
-import {
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-  useTransform,
-} from "motion/react";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "@/shared/i18n/navigation";
 import styles from "./ReadingProgress.module.css";
@@ -17,14 +9,7 @@ import { useArticleReadingValue } from "@/modules/content/ui/articles/useArticle
 export function ReadingProgress({ title }: { title: string }) {
   const t = useTranslations("header");
   const format = useFormatter();
-  const reduced = useReducedMotion();
-  const value = useMotionValue(0);
-  const smooth = useSpring(value, { stiffness: 110, damping: 28 });
-  const offset = useTransform(reduced ? value : smooth, (v) => 100 - v * 100);
   const percent = useArticleReadingValue("percent");
-  useEffect(() => {
-    value.set(percent / 100);
-  }, [value, percent]);
   return (
     <>
       <Link
@@ -34,14 +19,14 @@ export function ReadingProgress({ title }: { title: string }) {
       >
         <svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
           <circle className={styles.track} cx="18" cy="18" r="15.5" />
-          <motion.circle
+          <circle
             className={styles.arc}
             cx="18"
             cy="18"
             r="15.5"
             pathLength="100"
             strokeDasharray="100 100"
-            style={{ strokeDashoffset: offset }}
+            strokeDashoffset={100 - percent}
           />
         </svg>
         <ArrowLeft size={13} />

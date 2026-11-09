@@ -10,6 +10,7 @@ import { HeroSketch } from "@/modules/world/ui/CoastIllustration";
 import { ProfileLinks } from "./ProfileLinks";
 import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
 import type { HomeCopy } from "@/modules/site-settings/domain/identity";
+import { softSpring, surfaceSpring } from "@/shared/lib/motion";
 import styles from "./HomeHero.module.css";
 
 const modes = ["intro", "theme"] as const;
@@ -24,20 +25,19 @@ export function HomeHero({ copy }: { copy: HomeCopy }) {
   const [mode, setMode] = useState<Mode>("intro");
   const reduce = useReducedMotion();
   const id = useId();
-  const transition = {
-    duration: reduce ? 0 : 0.68,
-    ease: [0.22, 1, 0.36, 1] as const,
-  };
+  const transition = reduce
+    ? { duration: 0 }
+    : {
+        y: softSpring,
+        opacity: { duration: 0.23, ease: "easeOut" as const },
+      };
 
   function appearance(panel: Mode) {
     const active = mode === panel;
-    let y = 0;
-    let filter = "blur(0px)";
-    if (!active && !reduce) {
-      y = panel === "intro" ? -12 : 12;
-      filter = "blur(5px)";
-    }
-    return { opacity: active ? 1 : 0, y, filter };
+    return {
+      opacity: active ? 1 : 0,
+      y: active || reduce ? 0 : panel === "intro" ? -8 : 8,
+    };
   }
 
   return (
@@ -56,7 +56,7 @@ export function HomeHero({ copy }: { copy: HomeCopy }) {
             <motion.span
               aria-hidden="true"
               animate={{ rotate: mode === "theme" ? 180 : 0 }}
-              transition={transition}
+              transition={reduce ? { duration: 0 } : surfaceSpring}
             >
               ✳
             </motion.span>
@@ -98,8 +98,8 @@ export function HomeHero({ copy }: { copy: HomeCopy }) {
                         initial={false}
                         animate={{ pathLength: mode === "theme" ? 1 : 0 }}
                         transition={{
-                          ...transition,
-                          delay: mode === "theme" && !reduce ? 0.18 : 0,
+                          duration: reduce ? 0 : 0.46,
+                          ease: "easeOut",
                         }}
                       />
                     </svg>

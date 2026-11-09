@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { touchMotionQuery } from "@/shared/lib/motion";
 import { createCoastEnvironment } from "./coastEnvironment";
 import { createCoastAvatar } from "./createCoastAvatar";
 import { acquireCoastAvatarAsset } from "./coastAvatarAsset";
@@ -128,11 +129,14 @@ function createLoadedHarborScene(
   options: HarborSceneOptions,
   lease: Awaited<ReturnType<typeof acquireCoastAvatarAsset>>,
 ): HarborControls {
+  const touch = window.matchMedia(touchMotionQuery).matches;
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
     powerPreference: "high-performance",
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+  renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio, touch ? 1.25 : 1.75),
+  );
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.02;
@@ -151,7 +155,10 @@ function createLoadedHarborScene(
   const sun = new THREE.DirectionalLight(0xffd0a0, 3);
   sun.position.set(-12, 18, -18);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.mapSize.setScalar(touch ? 1024 : 2048);
+  const nightSun = new THREE.Color(0x9bb5e2);
+  const nightSky = new THREE.Color(0x0a1628);
+  const noWake = new THREE.Vector3(1000, 0, 1000);
   Object.assign(sun.shadow.camera, {
     left: -16,
     right: 16,
@@ -877,19 +884,15 @@ function createLoadedHarborScene(
       lastLocation = location;
       options.onLocation(location);
     }
-    night = THREE.MathUtils.damp(
-      night,
-      state.night ? 1 : 0,
-      2.5,
-      state.reduced ? 1 : delta,
-    );
+    const nightTarget = state.night ? 1 : 0;
+    night = state.reduced
+      ? nightTarget
+      : THREE.MathUtils.damp(night, nightTarget, 2.5, delta);
     ambient.intensity = THREE.MathUtils.lerp(2.3, 0.65, night);
     sun.intensity = THREE.MathUtils.lerp(3, 0.4, night);
-    sun.color.set(0xffd0a0).lerp(new THREE.Color(0x9bb5e2), night);
+    sun.color.set(0xffd0a0).lerp(nightSun, night);
     fill.intensity = THREE.MathUtils.lerp(1.3, 0.65, night);
-    (scene.background as THREE.Color)
-      .set(0xd8b49b)
-      .lerp(new THREE.Color(0x0a1628), night);
+    (scene.background as THREE.Color).set(0xd8b49b).lerp(nightSky, night);
     avatar.update(elapsed, pose, state.reduced);
     landscape.update(
       elapsed,
@@ -904,7 +907,7 @@ function createLoadedHarborScene(
     environment.update(
       state.reduced ? 0 : elapsed,
       night,
-      sailing ? avatar.root.position : new THREE.Vector3(1000, 0, 1000),
+      sailing ? avatar.root.position : noWake,
       sailing ? Math.hypot(inputDirection.x, inputDirection.z) : 0,
     );
     const p = avatar.root.position;
@@ -957,11 +960,11 @@ function createLoadedHarborScene(
         dialogue.position.z,
       );
     }
-    target.lerp(desiredTarget, state.reduced ? 1 : 1 - Math.exp(-delta * 5));
-    camera.position.lerp(
-      desiredCamera,
-      state.reduced ? 1 : 1 - Math.exp(-delta * 5),
-    );
+    const cameraDamping = state.reduced
+      ? 1
+      : 1 - Math.exp(-delta * (dragging ? 24 : 5));
+    target.lerp(desiredTarget, cameraDamping);
+    camera.position.lerp(desiredCamera, cameraDamping);
     camera.lookAt(target);
     camera.updateMatrixWorld();
     updateHarborSpeechAnchors(options.speechHost, camera, p, (id) => {

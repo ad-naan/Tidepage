@@ -1,5 +1,5 @@
 "use client";
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import { spring } from "@/shared/lib/motion";
 export function PlayerRecord({
   large = false,
@@ -30,27 +30,14 @@ export function PlayerRecord({
   );
 }
 export function Equalizer({ playing }: { playing: boolean }) {
-  const reduce = useReducedMotion();
   return (
-    <span className="player-equalizer" aria-hidden="true">
+    <span
+      className="player-equalizer"
+      data-playing={playing}
+      aria-hidden="true"
+    >
       {[0, 1, 2, 3].map((i) => (
-        <motion.i
-          key={i}
-          animate={
-            playing && !reduce
-              ? { height: [4, 13 - i, 6 + i, 15, 4] }
-              : { height: [5, 10, 13, 7][i] }
-          }
-          transition={
-            playing && !reduce
-              ? {
-                  duration: 0.9 + i * 0.11,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }
-              : spring
-          }
-        />
+        <i key={i} />
       ))}
     </span>
   );

@@ -1176,7 +1176,9 @@ input {
   bottom: 20px;
   opacity: 0;
   transform: translate(-6px, 6px);
-  transition: all 0.25s;
+  transition:
+    opacity var(--motion-quick) ease-out,
+    transform var(--motion-quick) var(--motion-ease-out);
 }
 .project-card:hover .project-arrow {
   opacity: 1;

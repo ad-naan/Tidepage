@@ -9,13 +9,6 @@ import { OverlayScope } from "@/shared/ui/overlay/OverlayScope";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@/shared/i18n/navigation";
 import { usePathname } from "@/shared/i18n/navigation";
-import {
-  AnimatePresence,
-  motion,
-  useMotionValueEvent,
-  useReducedMotion,
-  useScroll,
-} from "motion/react";
 import { ArrowRight, Command, Focus, Search, X } from "lucide-react";
 import type {
   ArticleSummary,
@@ -23,7 +16,6 @@ import type {
 } from "@/modules/content/domain/models";
 import { useArticleSearch } from "@/modules/content/ui/articles/useArticleSearch";
 import { useReadingArticle } from "@/modules/content/ui/articles/ReadingArticleContext";
-import { spring } from "@/shared/lib/motion";
 import { useDisclosure } from "@/shared/hooks/useDisclosure";
 import { LoginTrigger } from "@/modules/identity/ui/IdentityProvider";
 import { AuthorPresence } from "@/modules/presence/ui/AuthorPresence";
@@ -74,8 +66,6 @@ export function SiteHeader({
   const input = useRef<HTMLInputElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const header = useRef<HTMLElement>(null);
-  const reduce = useReducedMotion();
-  const { scrollY } = useScroll();
   const activeArticle = useReadingArticle();
   const article =
     pathname === `/articles/${activeArticle?.slug}` ? activeArticle : null;
@@ -83,13 +73,18 @@ export function SiteHeader({
   const search = useArticleSearch(query, open && panel === "search", articles);
   const results = search.items;
 
-  useMotionValueEvent(scrollY, "change", (value) => {
-    // Hysteresis prevents the header from flickering around a single threshold.
-    if (value > 88) setCompact(true);
-    else if (value < 40) setCompact(false);
-  });
   useEffect(() => {
-    setCompact(window.scrollY > 88);
+    let compact = window.scrollY > 88;
+    setCompact(compact);
+    function update() {
+      // Only notify React on a threshold crossing, never on a scrolling frame.
+      const next = compact ? window.scrollY >= 40 : window.scrollY > 88;
+      if (next === compact) return;
+      compact = next;
+      setCompact(next);
+    }
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
   }, [pathname]);
 
   const show = (next: HeaderPanel) => {
@@ -192,21 +187,10 @@ export function SiteHeader({
                 aria-controls="header-panel"
                 whileTap={{ scale: 0.94 }}
               >
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.span
-                    key={open && panel === "search" ? "close" : "search"}
-                    initial={{ opacity: 0, rotate: -30, scale: 0.7 }}
-                    animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                    exit={{ opacity: 0, rotate: 30, scale: 0.7 }}
-                    transition={{ duration: 0.15 }}
-                  >
-                    {open && panel === "search" ? (
-                      <X size={17} />
-                    ) : (
-                      <Search size={17} />
-                    )}
-                  </motion.span>
-                </AnimatePresence>
+                <span className={styles.searchIcon} aria-hidden="true">
+                  <Search size={17} />
+                  <X size={17} />
+                </span>
                 <span className="search-text">{t("searchLabel")}</span>
                 <kbd>
                   <Command size={10} />K
@@ -287,15 +271,7 @@ export function SiteHeader({
                 </div>
                 <div className="living-search-results">
                   {results.slice(0, 4).map((a, i) => (
-                    <motion.div
-                      key={a.slug}
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        ...spring,
-                        delay: reduce ? 0 : i * 0.025,
-                      }}
-                    >
+                    <div key={a.slug}>
                       <Link
                         href={`/articles/${a.slug}`}
                         onClick={() => setOpen(false)}
@@ -311,7 +287,7 @@ export function SiteHeader({
                         </div>
                         <ArrowRight size={15} />
                       </Link>
-                    </motion.div>
+                    </div>
                   ))}
                   {!results.length && (
                     <p className="header-search-empty">

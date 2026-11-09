@@ -8,14 +8,20 @@ export function updateHarborSpeechAnchors(
   player: THREE.Vector3,
   resolve: (id: string) => { position: THREE.Vector3; height: number } | null,
 ) {
-  if (!host) return;
+  if (!host || host.dataset.hidden === "true") return;
+  const nodes = [...host.querySelectorAll<HTMLElement>("[data-world-speaker]")];
+  if (!nodes.length) return;
   const width = host.clientWidth,
     height = host.clientHeight;
   const composer = host.parentElement?.querySelector<HTMLElement>(
     "[data-world-composer]",
   );
   const bottomInset = Math.max(100, (composer?.offsetHeight ?? 0) + 36);
-  const nodes = [...host.querySelectorAll<HTMLElement>("[data-world-speaker]")];
+  const bubbles = nodes.map((node) => ({
+    node,
+    w: node.offsetWidth,
+    h: node.offsetHeight,
+  }));
   // Protect faces as well as other text. A wide mobile bubble above the otter
   // otherwise covers the taller player's head beside it.
   const faces: { left: number; top: number; right: number; bottom: number }[] =
@@ -66,7 +72,7 @@ export function updateHarborSpeechAnchors(
     right: number;
     bottom: number;
   }[] = [];
-  for (const node of nodes) {
+  for (const { node, w, h } of bubbles) {
     const anchor = resolve(node.dataset.worldSpeaker!);
     if (
       !anchor ||
@@ -88,8 +94,6 @@ export function updateHarborSpeechAnchors(
       node.dataset.visible = "false";
       continue;
     }
-    const w = node.offsetWidth,
-      h = node.offsetHeight;
     const centerX = (point.x * 0.5 + 0.5) * width;
     const left = Math.min(
       Math.max(12, centerX - w / 2),
@@ -112,11 +116,10 @@ export function updateHarborSpeechAnchors(
       node.dataset.visible = "false";
       continue;
     }
-    node.style.left = `${left}px`;
-    node.style.top = `${top}px`;
+    node.style.translate = `${left}px ${top}px`;
     node.style.setProperty(
       "--speech-tail",
-      `${Math.min(w - 20, Math.max(20, centerX - left))}px`,
+      `${Math.round(Math.min(w - 20, Math.max(20, centerX - left)))}px`,
     );
     node.dataset.visible = "true";
     occupied.push({ left, top, right: left + w, bottom: top + h });

@@ -57,27 +57,21 @@
   padding: 2px 12px 4px 2px;
 }
 @media (prefers-reduced-motion: no-preference) {
-  /* Opacity preserves the scroll host's geometry during entry. */
   .dialog[open] .inner,
   .dialog[open]::backdrop {
-    animation: reveal var(--motion-quick) ease-out both;
-  }
-  .dialog[data-closing="true"] .inner,
-  .dialog[data-closing="true"]::backdrop {
-    animation: conceal 160ms ease-in both;
-  }
-}
-@keyframes conceal {
-  from {
     opacity: 1;
+    transition: opacity var(--motion-quick) var(--motion-ease-out);
   }
-  to {
+  .dialog[open][data-closing="true"] .inner,
+  .dialog[open][data-closing="true"]::backdrop {
     opacity: 0;
+    transition-duration: 160ms;
   }
-}
-@keyframes reveal {
-  from {
-    opacity: 0;
+  @starting-style {
+    .dialog[open] .inner,
+    .dialog[open]::backdrop {
+      opacity: 0;
+    }
   }
 }
 .paper {
