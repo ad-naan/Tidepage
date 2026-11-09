@@ -211,15 +211,34 @@
   max-width: 960px;
   padding-bottom: 24px;
 }
-.collectionTop {
-  display: flex;
+.photoInput {
+  display: grid;
+  grid-template-columns: minmax(0, 12rem) minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 14px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
 }
-.collectionTop h2 {
-  font: 500 var(--text-subtitle)/1.6 var(--font-editorial);
+.photoDetails {
+  display: grid;
+  justify-items: start;
+  gap: 5px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.photoDetails:only-child {
+  grid-column: 1 / -1;
+}
+.photoMissing {
+  display: block;
+}
+@media (max-width: 600px) {
+  .photoInput {
+    grid-template-columns: minmax(0, 32%) minmax(0, 1fr);
+    align-items: start;
+    gap: 10px;
+  }
 }
 @media (max-width: 1100px) {
   .editorLayout {

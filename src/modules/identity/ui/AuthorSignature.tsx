@@ -22,7 +22,14 @@ export function AuthorSignature({
       size={size}
       className={`${styles.name} ${mark ? styles.marked : ""} ${className}`}
     >
-      {name}
+      {name.toLowerCase() === profile.name.toLowerCase() ? (
+        <>
+          <span className={styles.wordmark} aria-hidden="true" />
+          <span className={styles.accessibleName}>{name}</span>
+        </>
+      ) : (
+        name
+      )}
       {mark && (
         <svg
           className={styles.arrow}

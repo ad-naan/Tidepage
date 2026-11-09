@@ -77,7 +77,12 @@ test("new photos keep allowlisted camera settings and strip private EXIF from th
           BodySerialNumber: "serial-private",
           DateTimeOriginal: "2026:11:09 13:14:15",
         },
-        IFD3: { GPSLatitude: "31/1 12/1 0/1", GPSLatitudeRef: "N" },
+        IFD3: {
+          GPSLatitude: "31/1 13/1 50/1",
+          GPSLatitudeRef: "N",
+          GPSLongitude: "121/1 28/1 26/1",
+          GPSLongitudeRef: "E",
+        },
       })
       .toBuffer();
     assert.ok(
@@ -93,6 +98,7 @@ test("new photos keep allowlisted camera settings and strip private EXIF from th
       aperture: 1.7,
       exposureSeconds: 0.008,
       iso: 80,
+      locality: { name: "Shanghai", zh: "上海" },
     });
     assert.deepEqual([saved.width, saved.height], [2, 3]);
     const { bytes } = await readImage(path.basename(saved.id), directory);

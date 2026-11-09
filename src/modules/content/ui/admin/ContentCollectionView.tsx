@@ -1,19 +1,31 @@
 "use client";
 import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ArrowUpRight } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useLocale, useMessages, useTranslations } from "next-intl";
 import { z } from "zod";
-import { locales, localeRegistry, type Locale } from "@/shared/i18n/config";
+import {
+  locales,
+  localeRegistry,
+  localizedPath,
+  type Locale,
+} from "@/shared/i18n/config";
 import { updateWorkbenchRecord } from "@/shared/lib/workbench-store";
 import { Field } from "@/shared/ui/field/Field";
 import { Input } from "@/shared/ui/field/Input";
 import { DatePicker } from "@/shared/ui/date-picker/DatePicker";
 import { UnsavedChangesGuard } from "@/shared/ui/navigation/UnsavedChangesGuard";
 import { AssetImage } from "@/modules/media/ui/admin/AssetImage";
+import { readAsset } from "@/modules/media/ui/admin/media-client";
+import type { ImageAsset } from "@/modules/media/domain/assets";
+import { isUploadedAssetId } from "@/modules/media/domain/asset-path";
+import { photoLocationLabel } from "@/modules/media/domain/photo-capture";
 import { Textarea } from "@/shared/ui/field/Textarea";
 import { Select } from "@/shared/ui/select/Select";
 import { Button } from "@/shared/ui/button/Button";
+import { ActionBar } from "@/shared/ui/action-bar/ActionBar";
+import { Anchor } from "@/shared/ui/link/Anchor";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 import { MediaPicker } from "@/modules/media/ui/admin/MediaPicker";
@@ -76,8 +88,26 @@ export function ContentCollectionView({
   const [view, setView] = useState("active");
   const [deleting, setDeleting] = useState<DeleteTarget | null>(null);
   const [opening, setOpening] = useState<string | null>(null);
+  const [photoAsset, setPhotoAsset] = useState<ImageAsset | null>(null);
+  const assetId = kind === "gallery" ? (value?.assetId ?? "") : "";
+  const capture =
+    assetId && photoAsset?.id === assetId ? photoAsset.capture : undefined;
+  const suggestedPlace = photoLocationLabel(capture, locale);
+  useEffect(() => {
+    if (!isUploadedAssetId(assetId) || photoAsset?.id === assetId) return;
+    const task = new AbortController();
+    void readAsset(assetId, task.signal)
+      .then((asset) => {
+        if (!task.signal.aborted) setPhotoAsset(asset);
+      })
+      .catch(() => {});
+    return () => task.abort();
+  }, [assetId, photoAsset?.id]);
   const draftIds = new Set(items.map((item) => item.id));
-  const publishedOnly = published.filter((item) => !draftIds.has(item.id));
+  const publishedOnly =
+    kind === "gallery"
+      ? []
+      : published.filter((item) => !draftIds.has(item.id));
   const publishedById = new Map(
     published.map((item) => [item.id, item.titles]),
   );
@@ -85,6 +115,17 @@ export function ContentCollectionView({
     (item) => !!item.deletedAt === (view === "trash"),
   );
   const titleKey = collectionTitleKey[kind];
+  const translation = value?.translations[locale];
+  const visibleHere =
+    !!value && Object.hasOwn(publishedById.get(value.id) ?? {}, locale);
+  const needsSave = dirty || !value?.revision;
+  const photoMissing = [
+    !assetId && gallery("photo"),
+    !translation?.title?.trim() && t("collection.fields.title"),
+    !translation?.alt?.trim() && t("collection.fields.alt"),
+    !value?.publishedOn && t("collection.fields.publishedOn"),
+  ].filter((label): label is string => !!label);
+  const photoReady = photoMissing.length === 0;
   const titleFor = (item: Item) =>
     item.translations[uiLocale]?.[titleKey] ||
     locales.map((code) => item.translations[code]?.[titleKey]).find(Boolean) ||
@@ -185,7 +226,7 @@ export function ContentCollectionView({
     }
   }
   async function save() {
-    if (!value) return;
+    if (!value || busy || uploading) return;
     setBusy(true);
     try {
       const next = await updateWorkbenchRecord(`collection:${kind}`, (raw) => {
@@ -254,13 +295,29 @@ export function ContentCollectionView({
     }
   }
   async function publishPhoto(visible: boolean) {
-    if (!value || dirty || busy || !value.revision) return;
+    if (!value || dirty || busy || uploading || !value.revision) return;
     setBusy(true);
     try {
-      await apiSend("/api/v1/gallery", visible ? "POST" : "DELETE", {
+      const publication = await apiSend<{
+        id: string;
+        locale: Locale;
+        visible: boolean;
+      }>("/api/v1/gallery", visible ? "POST" : "DELETE", {
         id: value.id,
         locale,
         revision: value.revision,
+      });
+      setPublished((current) => {
+        const existing = current.find(({ id }) => id === publication.id);
+        const titles = { ...existing?.titles };
+        if (publication.visible)
+          titles[publication.locale] =
+            value.translations[publication.locale]?.title ?? "";
+        else delete titles[publication.locale];
+        const rest = current.filter(({ id }) => id !== publication.id);
+        return Object.keys(titles).length
+          ? [{ id: publication.id, titles }, ...rest]
+          : rest;
       });
       notify({
         title: gallery(visible ? "published" : "unpublished"),
@@ -451,30 +508,93 @@ export function ContentCollectionView({
           className={styles.collectionEditor}
           aria-label={t(`nav.${kind}`)}
         >
-          <div className={styles.collectionTop}>
-            <h2>{t("edit")}</h2>
-            <div className={styles.actions}>
+          <ActionBar
+            sticky
+            context={
+              <>
+                <span role="status">
+                  {needsSave
+                    ? t(
+                        canPublish
+                          ? "editor.saveBeforePublish"
+                          : "editor.unsaved",
+                      )
+                    : kind === "gallery" && visibleHere
+                      ? gallery("publishedLanguage", {
+                          language: localeRegistry[locale].name,
+                        })
+                      : t("editor.localState")}
+                </span>
+                {kind === "gallery" && canPublish && !photoReady && (
+                  <span className={styles.photoMissing}>
+                    {gallery("missingFields", {
+                      fields: new Intl.ListFormat(uiLocale).format(
+                        photoMissing,
+                      ),
+                    })}
+                  </span>
+                )}
+                {kind === "gallery" && visibleHere && (
+                  <Anchor
+                    href={localizedPath(locale, "/gallery")}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {gallery("viewPublished")}{" "}
+                    <ArrowUpRight size={13} aria-hidden="true" />
+                  </Anchor>
+                )}
+              </>
+            }
+          >
+            <Button
+              variant="bare"
+              disabled={uploading || busy}
+              onClick={() => {
+                setValue(null);
+                setDirty(false);
+              }}
+            >
+              {t("collection.discard")}
+            </Button>
+            {kind === "gallery" && visibleHere && (
               <Button
-                variant="quiet"
-                disabled={uploading || busy}
-                onClick={() => {
-                  setValue(null);
-                  setDirty(false);
-                }}
+                variant="bare"
+                disabled={needsSave || busy || uploading}
+                onClick={() => void publishPhoto(false)}
               >
-                {t("collection.discard")}
+                {gallery("unpublish")}
               </Button>
+            )}
+            <Button
+              variant={needsSave ? "primary" : "quiet"}
+              disabled={uploading || busy || !needsSave}
+              onClick={save}
+            >
+              {t("editor.save")}
+            </Button>
+            {canPublish && (
               <Button
-                variant="primary"
-                busy={busy}
-                disabled={uploading}
-                onClick={save}
+                variant={needsSave ? "quiet" : "primary"}
+                disabled={
+                  needsSave ||
+                  uploading ||
+                  busy ||
+                  (kind === "gallery" && !photoReady)
+                }
+                onClick={() =>
+                  void (kind === "gallery"
+                    ? publishPhoto(true)
+                    : publishCollection())
+                }
               >
-                {t("editor.save")}
+                {kind === "gallery"
+                  ? gallery("publish")
+                  : t("collection.publish")}
               </Button>
-            </div>
-          </div>
-          <div className={styles.fields}>
+            )}
+          </ActionBar>
+          <div className={styles.fields} inert={busy}>
             <Select
               label={t("editor.contentLocale")}
               value={locale}
@@ -485,6 +605,32 @@ export function ContentCollectionView({
               onValueChange={setLocale}
               disabled={uploading}
             />
+            {kind === "gallery" && (
+              <div className={styles.photoInput}>
+                {value.assetId && (
+                  <AssetImage
+                    id={value.assetId}
+                    alt={translation?.alt ?? ""}
+                    preview
+                  />
+                )}
+                <div className={styles.photoDetails}>
+                  <Button variant="quiet" onClick={() => setMedia(true)}>
+                    {gallery(value.assetId ? "replacePhoto" : "selectPhoto")}
+                  </Button>
+                  {photoAsset && photoAsset.id === assetId && (
+                    <p className={styles.muted}>
+                      {gallery("captureRead", {
+                        width: photoAsset.width,
+                        height: photoAsset.height,
+                      })}
+                      {capture?.camera && ` · ${capture.camera}`}
+                    </p>
+                  )}
+                  <p className={styles.muted}>{gallery("captureHelp")}</p>
+                </div>
+              </div>
+            )}
             {fields[kind]
               .filter(
                 (key) =>
@@ -495,49 +641,78 @@ export function ContentCollectionView({
                   ),
               )
               .map((key) => (
-                <Field
-                  key={`${locale}:${key}`}
-                  id={`collection-${key}`}
-                  label={labels[key]}
-                  description={
-                    kind === "gallery" && key === "location"
-                      ? gallery("locationHelp")
-                      : undefined
-                  }
-                >
-                  {["text", "description"].includes(key) ? (
-                    <Textarea
-                      rows={4}
-                      value={value.translations[locale]?.[key] ?? ""}
-                      onChange={(e) =>
-                        update({
-                          translations: {
-                            ...value.translations,
-                            [locale]: {
-                              ...value.translations[locale],
-                              [key]: e.target.value,
+                <div key={`${locale}:${key}`}>
+                  <Field
+                    id={`collection-${key}`}
+                    label={
+                      kind === "gallery" && key === "description"
+                        ? gallery("captionOptional")
+                        : labels[key]
+                    }
+                    description={
+                      kind === "gallery" && key === "location"
+                        ? gallery("locationHelp")
+                        : kind === "gallery" && key === "alt"
+                          ? gallery("altHelp")
+                          : undefined
+                    }
+                  >
+                    {["text", "description"].includes(key) ? (
+                      <Textarea
+                        rows={4}
+                        value={value.translations[locale]?.[key] ?? ""}
+                        onChange={(e) =>
+                          update({
+                            translations: {
+                              ...value.translations,
+                              [locale]: {
+                                ...value.translations[locale],
+                                [key]: e.target.value,
+                              },
                             },
-                          },
-                        })
-                      }
-                    />
-                  ) : (
-                    <Input
-                      value={value.translations[locale]?.[key] ?? ""}
-                      onChange={(e) =>
-                        update({
-                          translations: {
-                            ...value.translations,
-                            [locale]: {
-                              ...value.translations[locale],
-                              [key]: e.target.value,
+                          })
+                        }
+                      />
+                    ) : (
+                      <Input
+                        value={
+                          value.translations[locale]?.[key] ??
+                          (key === "location" ? suggestedPlace : "")
+                        }
+                        onChange={(e) =>
+                          update({
+                            translations: {
+                              ...value.translations,
+                              [locale]: {
+                                ...value.translations[locale],
+                                [key]: e.target.value,
+                              },
                             },
-                          },
-                        })
-                      }
-                    />
-                  )}
-                </Field>
+                          })
+                        }
+                      />
+                    )}
+                  </Field>
+                  {kind === "gallery" &&
+                    key === "location" &&
+                    suggestedPlace &&
+                    translation?.location === undefined && (
+                      <Button
+                        size="sm"
+                        variant="quiet"
+                        onClick={() =>
+                          update({
+                            translations: {
+                              ...value.translations,
+                              [locale]: { ...translation, location: "" },
+                            },
+                          })
+                        }
+                      >
+                        {gallery("omitLocation")}
+                      </Button>
+                    )}
+                </div>
               ))}
             {value.documents?.[locale] && (
               <CollectionDocumentField
@@ -642,74 +817,7 @@ export function ContentCollectionView({
                 </Field>
               )}
             </div>
-            {kind === "gallery" && (
-              <>
-                <Button variant="quiet" onClick={() => setMedia(true)}>
-                  {t("editor.cover")}
-                </Button>
-                {value.assetId && (
-                  <AssetImage
-                    id={value.assetId}
-                    alt={value.translations[locale]?.alt ?? ""}
-                  />
-                )}
-                <p className={styles.muted}>{gallery("captureHelp")}</p>
-              </>
-            )}
-            <div className={styles.actions}>
-              <Button
-                variant="primary"
-                busy={busy}
-                disabled={uploading}
-                onClick={save}
-              >
-                {t("editor.save")}
-              </Button>
-              <Button
-                variant="quiet"
-                disabled={uploading || busy}
-                onClick={() => {
-                  setValue(null);
-                  setDirty(false);
-                }}
-              >
-                {t("collection.discard")}
-              </Button>
-            </div>
-            {kind !== "gallery" && canPublish ? (
-              <>
-                <Button
-                  variant="primary"
-                  busy={busy}
-                  disabled={dirty || uploading || !value.revision}
-                  onClick={() => void publishCollection()}
-                >
-                  {t("collection.publish")}
-                </Button>
-                <p className={styles.muted}>{t("collection.publishHelp")}</p>
-              </>
-            ) : kind === "gallery" ? (
-              <>
-                <div className={styles.actions}>
-                  <Button
-                    variant="primary"
-                    busy={busy}
-                    disabled={dirty || !value.revision || !value.assetId}
-                    onClick={() => void publishPhoto(true)}
-                  >
-                    {gallery("publish")}
-                  </Button>
-                  <Button
-                    variant="quiet"
-                    disabled={dirty || busy || !value.revision}
-                    onClick={() => void publishPhoto(false)}
-                  >
-                    {gallery("unpublish")}
-                  </Button>
-                </div>
-                <p className={styles.muted}>{gallery("publishHelp")}</p>
-              </>
-            ) : (
+            {!canPublish && (
               <p className={styles.muted}>{t("editor.publishUnavailable")}</p>
             )}
           </div>
@@ -718,12 +826,20 @@ export function ContentCollectionView({
       {media && (
         <Dialog title={t("nav.media")} wide onClose={() => setMedia(false)}>
           <MediaPicker
+            pickOnUpload={kind === "gallery"}
             onSelect={(asset, alt) => {
+              if (kind === "gallery") setPhotoAsset(asset);
               update({
                 assetId: asset.id,
                 translations: {
                   ...value!.translations,
-                  [locale]: { ...value!.translations[locale], alt },
+                  [locale]: {
+                    ...value!.translations[locale],
+                    alt:
+                      asset.id === value!.assetId
+                        ? (value!.translations[locale]?.alt ?? alt)
+                        : alt,
+                  },
                 },
               });
               setMedia(false);

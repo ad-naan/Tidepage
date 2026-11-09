@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { photoCaptureSchema } from "./photo-capture";
+import { assetCaptureSchema } from "./photo-capture";
 export const imageTypes = [
   "image/jpeg",
   "image/png",
@@ -16,7 +16,7 @@ export const assetSchema = z.object({
   width: z.number().int().positive().max(20000),
   height: z.number().int().positive().max(20000),
   createdAt: z.iso.datetime(),
-  capture: photoCaptureSchema.nullish(),
+  capture: assetCaptureSchema.nullish(),
 });
 export type ImageAsset = z.infer<typeof assetSchema>;
 export interface ImageUploader {

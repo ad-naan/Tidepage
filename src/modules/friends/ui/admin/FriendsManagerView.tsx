@@ -14,6 +14,7 @@ import { Textarea } from "@/shared/ui/field/Textarea";
 import { Select } from "@/shared/ui/select/Select";
 import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 import { Button } from "@/shared/ui/button/Button";
+import { ActionBar } from "@/shared/ui/action-bar/ActionBar";
 import { ConfirmDialog } from "@/shared/ui/dialog/ConfirmDialog";
 import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import styles from "./FriendsManagerView.module.css";
@@ -52,7 +53,8 @@ export function FriendsManagerView({
     item.translations[uiLocale]?.name ||
     locales.map((code) => item.translations[code]?.name).find(Boolean) ||
     t("articles.untitled");
-  async function persist(item: Item) {
+  async function persist(item: Item, keepEditing = false) {
+    if (busy) return;
     setBusy(true);
     try {
       const checked = schema.parse(item);
@@ -65,7 +67,7 @@ export function FriendsManagerView({
         return [saved, ...current.filter((v) => v.id !== saved.id)];
       });
       setItems(next);
-      setValue(null);
+      setValue(keepEditing ? next[0] : null);
       setDeleting(null);
       setError("");
       notify({ title: t("editor.savedLocal"), tone: "success" });
@@ -103,7 +105,7 @@ export function FriendsManagerView({
     }
   }
   const update = (patch: Partial<Item>) => {
-    if (value) setValue({ ...value, ...patch });
+    if (value && !busy) setValue({ ...value, ...patch });
   };
   return (
     <>
@@ -139,9 +141,54 @@ export function FriendsManagerView({
           className={styles.form}
           onSubmit={(e) => {
             e.preventDefault();
-            void persist(value);
+            if (editingDirty) void persist(value, true);
           }}
         >
+          <ActionBar
+            sticky
+            context={
+              <span role="status">
+                {t(editingDirty ? "editor.unsaved" : "editor.localState")}
+              </span>
+            }
+          >
+            <Button
+              variant="bare"
+              disabled={busy}
+              onClick={() => setValue(null)}
+            >
+              {t("collection.discard")}
+            </Button>
+            {canPublish && visible && (
+              <Button
+                variant="bare"
+                disabled={editingDirty || busy}
+                onClick={() => void publish(false)}
+              >
+                {t("friend.unpublish")}
+              </Button>
+            )}
+            <Button
+              variant={editingDirty ? "primary" : "quiet"}
+              type="submit"
+              disabled={busy || !editingDirty}
+            >
+              {t("editor.save")}
+            </Button>
+            {canPublish && (
+              <Button
+                variant={editingDirty ? "quiet" : "primary"}
+                disabled={
+                  busy ||
+                  editingDirty ||
+                  !value.translations[locale]?.name.trim()
+                }
+                onClick={() => void publish(true)}
+              >
+                {t("friend.publish")}
+              </Button>
+            )}
+          </ActionBar>
           <Select
             value={locale}
             label={t("editor.contentLocale")}
@@ -150,6 +197,7 @@ export function FriendsManagerView({
               label: localeRegistry[value].name,
             }))}
             onValueChange={setLocale}
+            disabled={busy}
           />
           <Field id="friend-name" label={t("friend.name")}>
             <Input
@@ -208,40 +256,6 @@ export function FriendsManagerView({
               />
             </Field>
           </div>
-          <div className={styles.actions}>
-            <Button variant="primary" type="submit" busy={busy}>
-              {t("editor.save")}
-            </Button>
-            <Button variant="quiet" onClick={() => setValue(null)}>
-              {t("collection.discard")}
-            </Button>
-          </div>
-          {canPublish && (
-            <>
-              <div className={styles.actions}>
-                <Button
-                  variant="quiet"
-                  busy={busy}
-                  disabled={
-                    editingDirty || !value.translations[locale]?.name.trim()
-                  }
-                  onClick={() => void publish(true)}
-                >
-                  {t("friend.publish")}
-                </Button>
-                {visible && (
-                  <Button
-                    variant="quiet"
-                    disabled={editingDirty || busy}
-                    onClick={() => void publish(false)}
-                  >
-                    {t("friend.unpublish")}
-                  </Button>
-                )}
-              </div>
-              <p>{t("friend.publishHelp")}</p>
-            </>
-          )}
         </form>
       ) : (
         <>

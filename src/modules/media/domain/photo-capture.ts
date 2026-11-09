@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { Locale } from "@/shared/i18n/config";
 
 const equipment = z
   .string()
@@ -14,3 +15,21 @@ export const photoCaptureSchema = z.object({
   iso: z.number().int().positive().max(10_000_000).optional(),
 });
 export type PhotoCapture = z.infer<typeof photoCaptureSchema>;
+
+export const assetCaptureSchema = photoCaptureSchema.extend({
+  locality: z
+    .object({
+      name: z.string().min(1).max(100),
+      zh: z.string().min(1).max(100).optional(),
+    })
+    .optional(),
+});
+export type AssetCapture = z.infer<typeof assetCaptureSchema>;
+
+export function photoLocationLabel(
+  capture: AssetCapture | null | undefined,
+  locale: Locale,
+) {
+  const city = capture?.locality;
+  return (locale === "zh-CN" ? city?.zh : undefined) ?? city?.name ?? "";
+}

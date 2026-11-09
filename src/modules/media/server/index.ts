@@ -8,6 +8,10 @@ import {
   readImage,
 } from "@/modules/media/infrastructure/local-storage";
 import { assetSchema } from "@/modules/media/domain/assets";
+import {
+  assetCaptureSchema,
+  photoCaptureSchema,
+} from "@/modules/media/domain/photo-capture";
 
 export async function requireOwnedAssets(
   ownerId: string,
@@ -44,7 +48,7 @@ export async function uploadImage(
       target: [assets.ownerId, assets.id],
       set: {
         archived: false,
-        capture: sql`coalesce(${assets.capture}, excluded.capture)`,
+        capture: sql`coalesce(excluded.capture || ${assets.capture}, ${assets.capture}, excluded.capture)`,
       },
     })
     .returning();
@@ -76,8 +80,21 @@ export async function requireOwnedImageDetails(
   if (!image) throw validationError();
   return {
     ...image,
-    capture: assetSchema.shape.capture.parse(image.capture) ?? null,
+    capture: image.capture ? photoCaptureSchema.parse(image.capture) : null,
+    locality: assetCaptureSchema.safeParse(image.capture).data?.locality,
   };
+}
+export async function readAsset(
+  ownerId: string,
+  id: string,
+  db: Database = getDb(),
+) {
+  const [row] = await db
+    .select()
+    .from(assets)
+    .where(and(eq(assets.ownerId, ownerId), eq(assets.id, id)));
+  if (!row) throw notFoundError();
+  return assetSchema.parse({ ...row, createdAt: row.createdAt.toISOString() });
 }
 export async function listAssets(ownerId: string, includeArchived = false) {
   const rows = await getDb()

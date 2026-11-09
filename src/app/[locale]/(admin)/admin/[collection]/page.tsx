@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getCurrentPrincipal } from "@/modules/identity/server";
 import { listPublishedCollection } from "@/modules/content/server/managed-collections";
+import { listGalleryPublications } from "@/modules/content/server/gallery";
 import { workbenchRecords } from "@/server/workbench/records";
 import { ContentCollectionView } from "@/modules/content/ui/admin/ContentCollectionView";
 import {
@@ -21,7 +22,11 @@ export default async function Page({
   if (kind === "gallery" && !isOwner) notFound();
   const [drafts, published] = await Promise.all([
     workbenchRecords().read(principal.id, `collection:${kind}`),
-    isOwner && kind !== "gallery" ? listPublishedCollection(kind) : [],
+    isOwner
+      ? kind === "gallery"
+        ? listGalleryPublications(principal.id)
+        : listPublishedCollection(kind)
+      : [],
   ]);
   return (
     <ContentCollectionView

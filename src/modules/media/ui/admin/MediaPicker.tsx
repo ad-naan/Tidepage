@@ -17,9 +17,11 @@ import styles from "./MediaPicker.module.css";
 export function MediaPicker({
   onSelect,
   management = false,
+  pickOnUpload = false,
 }: {
   onSelect?: (asset: ImageAsset, alt: string) => void;
   management?: boolean;
+  pickOnUpload?: boolean;
 }) {
   const t = useTranslations("admin.media");
   const [assets, setAssets] = useState<ImageAsset[]>([]);
@@ -75,11 +77,13 @@ export function MediaPicker({
               setProgress(0);
               setError("");
               try {
-                await imageUploader.upload(file, {
+                const asset = await imageUploader.upload(file, {
                   signal: task.signal,
                   onProgress: setProgress,
                 });
-                await refresh(task.signal);
+                if (task.signal.aborted) return;
+                if (pickOnUpload && onSelect) onSelect(asset, "");
+                else await refresh(task.signal);
               } catch {
                 if (!task.signal.aborted) setError(t("uploadError"));
               } finally {
@@ -102,7 +106,7 @@ export function MediaPicker({
             </Button>
           </div>
         )}
-        {onSelect && (
+        {onSelect && !pickOnUpload && (
           <Field id="media-alt" label={t("alt")} description={t("altHelp")}>
             <Input value={alt} onChange={(e) => setAlt(e.target.value)} />
           </Field>
@@ -149,7 +153,7 @@ export function MediaPicker({
                   <Button
                     variant="quiet"
                     size="sm"
-                    disabled={!alt.trim()}
+                    disabled={!pickOnUpload && !alt.trim()}
                     onClick={() => onSelect(asset, alt.trim())}
                   >
                     {t("insert")}

@@ -15,8 +15,6 @@ import {
   Sparkles,
   Languages,
   X,
-  Check,
-  Circle,
   Focus,
 } from "lucide-react";
 import { Link } from "@/shared/i18n/navigation";
@@ -40,6 +38,7 @@ import {
   type EditorNode,
 } from "@/modules/content/domain/editor-document";
 import { Button, IconButton } from "@/shared/ui/button/Button";
+import { ActionBar } from "@/shared/ui/action-bar/ActionBar";
 import { Input } from "@/shared/ui/field/Input";
 import { DatePicker } from "@/shared/ui/date-picker/DatePicker";
 import { Textarea } from "@/shared/ui/field/Textarea";
@@ -496,6 +495,7 @@ export function ArticleEditorView({
     );
   const translation = translationOf(draft, locale);
   const issues = checking ? publicationIssues(draft, locale) : [];
+  const needsSave = dirty || draft.revision === 0;
   return (
     <div
       className={styles.workspace}
@@ -513,18 +513,6 @@ export function ArticleEditorView({
             <ArrowLeft size={17} />
           </Link>
           <h1>{t(preview ? "editor.previewTitle" : "editor.document")}</h1>
-          <span
-            className={styles.saveState}
-            role="status"
-            title={t("editor.revision", { revision: draft.revision })}
-          >
-            {dirty ? <Circle size={8} /> : <Check size={12} />}
-            {t(
-              dirty || draft.revision === 0
-                ? "editor.unsaved"
-                : "editor.localState",
-            )}
-          </span>
         </div>
         <div className={styles.actions}>
           <Button
@@ -605,16 +593,42 @@ export function ArticleEditorView({
               {t("editor.metadata")}
             </Button>
           )}
-          <Button
-            size="sm"
-            variant="primary"
-            busy={saving}
-            disabled={uploading || publishing}
-            title="Ctrl / Cmd S"
-            onClick={save}
+        </div>
+        <div className={styles.publicationBar}>
+          <ActionBar
+            context={
+              <span
+                role="status"
+                title={t("editor.revision", { revision: draft.revision })}
+              >
+                {t(needsSave ? "editor.unsaved" : "editor.localState")}
+              </span>
+            }
           >
-            {t("editor.save")}
-          </Button>
+            <Button
+              size="sm"
+              variant={needsSave ? "primary" : "quiet"}
+              busy={saving}
+              disabled={uploading || publishing}
+              title="Ctrl / Cmd S"
+              onClick={save}
+            >
+              {t("editor.save")}
+            </Button>
+            <Button
+              size="sm"
+              variant={needsSave ? "quiet" : "primary"}
+              disabled={uploading || saving || publishing}
+              onClick={() => {
+                const value = snapshot();
+                if (value) commit(value);
+                setPublishError("");
+                setChecking(true);
+              }}
+            >
+              {t("editor.checkPublish")}
+            </Button>
+          </ActionBar>
         </div>
       </header>
       {error && (
@@ -830,6 +844,7 @@ export function ArticleEditorView({
                 <AssetImage
                   id={draft.coverAssetId}
                   alt={translation.coverAlt}
+                  preview
                 />
               )}
               <Button variant="quiet" onClick={() => setCover(true)}>
@@ -852,18 +867,6 @@ export function ArticleEditorView({
                 }
               />
             </Field>
-            <Button
-              variant="quiet"
-              disabled={uploading}
-              onClick={() => {
-                const value = snapshot();
-                if (value) commit(value);
-                setPublishError("");
-                setChecking(true);
-              }}
-            >
-              {t("editor.checkPublish")}
-            </Button>
             <p className={styles.localeNote}>{t("localDetail")}</p>
           </div>
         </aside>

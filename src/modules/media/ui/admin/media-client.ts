@@ -17,6 +17,14 @@ export async function listAssets(
       await apiGet(`/api/v1/media?archived=${includeArchived}`, { signal }),
     );
 }
+export async function readAsset(
+  id: string,
+  signal?: AbortSignal,
+): Promise<ImageAsset> {
+  return assetSchema.parse(
+    await apiGet(`/api/v1/media?${new URLSearchParams({ id })}`, { signal }),
+  );
+}
 export const imageUploader: ImageUploader = {
   async upload(file, { signal, onProgress }) {
     signal.throwIfAborted();

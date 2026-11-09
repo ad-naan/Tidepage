@@ -1,9 +1,12 @@
 import "server-only";
-import { photoCaptureSchema, type PhotoCapture } from "../domain/photo-capture";
+import { photoCaptureSchema, type AssetCapture } from "../domain/photo-capture";
+import { nearbyPhotoCity } from "./photo-places";
 
-/** Read only IFD0 equipment and a handful of EXIF exposure tags. GPS and MakerNote
- * directories are never traversed, and the original metadata never leaves storage. */
-export function readPhotoCapture(exif?: Buffer): PhotoCapture | null {
+/** Coordinates are used in memory to suggest a city. The returned metadata
+ * contains neither coordinates nor identifying EXIF tags. */
+export async function readPhotoCapture(
+  exif?: Buffer,
+): Promise<AssetCapture | null> {
   if (!exif) return null;
   const data =
     exif.toString("ascii", 0, 6) === "Exif\0\0" ? exif.subarray(6) : exif;
@@ -45,10 +48,41 @@ export function readPhotoCapture(exif?: Buffer): PhotoCapture | null {
     if (type === 3) return short(entry + 8);
     if (type === 4) return long(entry + 8);
     if (type !== 5) return undefined;
-    const at = long(entry + 8);
+    return rational(long(entry + 8));
+  }
+  function rational(at: number) {
     if (at + 8 > data.length) return undefined;
     const denominator = long(at + 4);
     return denominator ? long(at) / denominator : undefined;
+  }
+  function coordinate(
+    entry: number | undefined,
+    ref: string | undefined,
+    positive: string,
+    negative: string,
+    max: number,
+  ) {
+    if (
+      entry === undefined ||
+      short(entry + 2) !== 5 ||
+      long(entry + 4) !== 3 ||
+      (ref !== positive && ref !== negative)
+    )
+      return undefined;
+    const at = long(entry + 8);
+    const degrees = rational(at);
+    const minutes = rational(at + 8);
+    const seconds = rational(at + 16);
+    if (
+      degrees === undefined ||
+      minutes === undefined ||
+      seconds === undefined ||
+      minutes >= 60 ||
+      seconds >= 60
+    )
+      return undefined;
+    const value = degrees + minutes / 60 + seconds / 3600;
+    return value <= max ? (ref === negative ? -value : value) : undefined;
   }
   const equipment = directory(long(4));
   const exposure = directory(number(equipment.get(0x8769)) ?? 0);
@@ -66,11 +100,18 @@ export function readPhotoCapture(exif?: Buffer): PhotoCapture | null {
     exposureSeconds: number(exposure.get(0x829a)),
     iso: number(exposure.get(0x8827)) ?? number(exposure.get(0x8833)),
   };
-  const capture: PhotoCapture = {};
-  for (const key of Object.keys(value) as (keyof PhotoCapture)[]) {
+  const capture: AssetCapture = {};
+  for (const key of Object.keys(value) as (keyof typeof value)[]) {
     const result = photoCaptureSchema.shape[key].safeParse(value[key]);
     if (result.success && result.data !== undefined)
       Object.assign(capture, { [key]: result.data });
+  }
+  const gps = directory(number(equipment.get(0x8825)) ?? 0);
+  const latitude = coordinate(gps.get(2), text(gps.get(1)), "N", "S", 90);
+  const longitude = coordinate(gps.get(4), text(gps.get(3)), "E", "W", 180);
+  if (latitude !== undefined && longitude !== undefined) {
+    const city = await nearbyPhotoCity(latitude, longitude);
+    if (city) capture.locality = city;
   }
   return Object.keys(capture).length ? capture : null;
 }

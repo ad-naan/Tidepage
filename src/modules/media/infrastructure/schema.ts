@@ -10,7 +10,7 @@ import {
   jsonb,
 } from "drizzle-orm/pg-core";
 import type { ImageAsset } from "@/modules/media/domain/assets";
-import type { PhotoCapture } from "@/modules/media/domain/photo-capture";
+import type { AssetCapture } from "@/modules/media/domain/photo-capture";
 
 export const mediaAssetsTable = pgTable(
   "media_assets",
@@ -22,7 +22,7 @@ export const mediaAssetsTable = pgTable(
     size: integer("size").notNull(),
     width: integer("width").notNull(),
     height: integer("height").notNull(),
-    capture: jsonb("capture").$type<PhotoCapture>(),
+    capture: jsonb("capture").$type<AssetCapture>(),
     archived: boolean("archived").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()

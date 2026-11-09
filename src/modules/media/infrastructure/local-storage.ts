@@ -38,7 +38,7 @@ export async function saveImage(
   if (!detected || !width || !height || width > 20000 || height > 20000)
     throw validationError();
   const [extension, mime] = detected;
-  const capture = readPhotoCapture(metadata.exif);
+  const capture = await readPhotoCapture(metadata.exif);
   if (
     metadata.exif ||
     metadata.xmp ||

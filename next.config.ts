@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/api/v1/media": [
       "./node_modules/.pnpm/@img+sharp-*/node_modules/@img/sharp-*/lib/**/*",
+      "./src/modules/media/infrastructure/data/photo-cities.tsv.gz",
     ],
   },
   // Explicit request-config alias supports both bundlers without the optional

@@ -9,7 +9,10 @@ import {
 } from "@/server/http/errors";
 import { workbenchRecordsTable as records } from "@/server/workbench/schema";
 import { requireOwnedImageDetails } from "@/modules/media/server";
-import { photoCaptureSchema } from "@/modules/media/domain/photo-capture";
+import {
+  photoCaptureSchema,
+  photoLocationLabel,
+} from "@/modules/media/domain/photo-capture";
 import { isUploadedAssetId } from "@/shared/contracts/asset-path";
 import type { Locale } from "@/shared/i18n/config";
 import { publicationRequestSchema } from "@/modules/content/domain/publication";
@@ -17,7 +20,10 @@ import {
   galleryCategorySchema,
   type GalleryPhoto,
 } from "@/modules/content/domain/gallery";
-import { managedItemSchema } from "@/modules/content/domain/managed-collections";
+import {
+  managedItemSchema,
+  type PublishedCollectionItem,
+} from "@/modules/content/domain/managed-collections";
 import { galleryPhotosTable as photos } from "@/modules/content/infrastructure/schema";
 
 export async function listGalleryPhotos(
@@ -50,8 +56,25 @@ const photoCopy = z.object({
   title: z.string().trim().min(1).max(200),
   description: z.string().trim().max(2000).default(""),
   alt: z.string().trim().min(1).max(300),
-  location: z.string().trim().max(200).default(""),
+  location: z.string().trim().max(200).optional(),
 });
+
+export async function listGalleryPublications(
+  ownerId: string,
+  db: Database = getDb(),
+): Promise<PublishedCollectionItem[]> {
+  const rows = await db
+    .select({ id: photos.id, locale: photos.locale, title: photos.title })
+    .from(photos)
+    .where(eq(photos.ownerId, ownerId));
+  const titlesById = new Map<string, PublishedCollectionItem["titles"]>();
+  for (const { id, locale, title } of rows) {
+    const titles = titlesById.get(id) ?? {};
+    titles[locale] = title;
+    titlesById.set(id, titles);
+  }
+  return Array.from(titlesById, ([id, titles]) => ({ id, titles }));
+}
 
 export async function setGalleryPublication(
   ownerId: string,
@@ -95,7 +118,7 @@ export async function setGalleryPublication(
     const { title, description, alt, location } = photoCopy.parse(
       item.translations[locale],
     );
-    const asset = await requireOwnedImageDetails(
+    const { locality, ...asset } = await requireOwnedImageDetails(
       ownerId,
       item.assetId,
       tx as unknown as Database,
@@ -109,7 +132,7 @@ export async function setGalleryPublication(
       title,
       caption: description,
       alt,
-      place: location,
+      place: location ?? photoLocationLabel({ locality }, locale),
       category: galleryCategorySchema.parse(item.category),
       sortOrder: z
         .number()

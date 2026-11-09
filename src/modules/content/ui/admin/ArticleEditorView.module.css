@@ -3,6 +3,7 @@
   top: 0;
   z-index: 15;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
@@ -35,14 +36,9 @@
   font: 500 var(--text-sm)/1.5 var(--font-ui);
   white-space: nowrap;
 }
-.saveState {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-left: 8px;
-  color: var(--muted);
-  font-size: var(--text-xs);
-  white-space: nowrap;
+.publicationBar {
+  flex: 0 1 100%;
+  min-width: 0;
 }
 .actions {
   justify-content: flex-end;
@@ -203,20 +199,12 @@
   display: grid;
   gap: 8px;
 }
-.cover img {
-  width: 100%;
-  max-height: 160px;
-  object-fit: contain;
-}
 .error {
   color: var(--accent);
   font-size: var(--text-sm);
   padding: 12px 24px;
 }
 @media (max-width: 1150px) {
-  .saveState {
-    display: none;
-  }
   .sheet {
     padding-inline: 28px;
   }

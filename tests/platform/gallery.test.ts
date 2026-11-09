@@ -4,6 +4,7 @@ import type { Database } from "../../src/server/db/client";
 import { workbenchRecords } from "../../src/server/workbench/records";
 import {
   listGalleryPhotos,
+  listGalleryPublications,
   setGalleryPublication,
 } from "../../src/modules/content/server/gallery";
 import { mediaAssetsTable } from "../../src/modules/media/infrastructure/schema";
@@ -33,6 +34,7 @@ test("gallery publishes a saved, owned photo in one language and supports unpubl
       aperture: 1.7,
       exposureSeconds: 0.008,
       iso: 80,
+      locality: { name: "Shanghai", zh: "上海" },
     },
   });
   const draft = {
@@ -49,8 +51,8 @@ test("gallery publishes a saved, owned photo in one language and supports unpubl
       en: {
         title: "Coast",
         alt: "Waves on the shore",
-        location: "Coastal region",
       },
+      "zh-CN": { title: "海岸", alt: "拍在岸边的浪花", location: "" },
     },
   };
   const records = workbenchRecords(db);
@@ -77,7 +79,7 @@ test("gallery publishes a saved, owned photo in one language and supports unpubl
       src: assetId,
       category: "nature",
       caption: "",
-      place: "Coastal region",
+      place: "Shanghai",
       width: 900,
       height: 600,
       capture: {
@@ -89,6 +91,17 @@ test("gallery publishes a saved, owned photo in one language and supports unpubl
       },
     },
   ]);
+  assert.deepEqual(await listGalleryPublications(owner.id, db), [
+    { id: "photo", titles: { en: "Coast" } },
+  ]);
+  assert.deepEqual(await listGalleryPublications(other.id, db), []);
+  await setGalleryPublication(
+    owner.id,
+    { ...request, locale: "zh-CN" },
+    true,
+    db,
+  );
+  assert.equal((await listGalleryPhotos("zh-CN", db))[0]?.place, "");
   await setGalleryPublication(owner.id, request, false, db);
   assert.deepEqual(await listGalleryPhotos("en", db), []);
   assert.equal(

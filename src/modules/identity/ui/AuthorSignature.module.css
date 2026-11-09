@@ -2,6 +2,24 @@
   position: relative;
   vertical-align: baseline;
 }
+.wordmark {
+  display: inline-block;
+  width: 4.15em;
+  height: 0.8em;
+  vertical-align: -0.08em;
+  background: currentColor;
+  -webkit-mask: url("/assets/brand/adnaan-signature.png") center / contain
+    no-repeat;
+  mask: url("/assets/brand/adnaan-signature.png") center / contain no-repeat;
+}
+.accessibleName {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 .marked {
   margin-right: 0.42em;
   transform: rotate(-5deg);

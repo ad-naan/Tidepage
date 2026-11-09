@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { listAssets, uploadImage, archiveAsset } from "@/modules/media/server";
+import {
+  listAssets,
+  readAsset,
+  uploadImage,
+  archiveAsset,
+} from "@/modules/media/server";
 import { maxImageBytes } from "@/modules/media/domain/assets";
 import { isUploadedAssetId } from "@/modules/media/domain/asset-path";
 import { requirePrincipal } from "@/modules/identity/server";
@@ -11,11 +16,14 @@ import { defineRoute, jsonData } from "@/server/http/route";
 export const runtime = "nodejs";
 export const GET = defineRoute(async (request, { requestId }) => {
   const user = await requirePrincipal(["author", "admin"]);
+  const query = new URL(request.url).searchParams;
+  const id = query.get("id");
+  if (id !== null) {
+    if (!isUploadedAssetId(id)) throw validationError();
+    return jsonData(await readAsset(user.id, id), requestId);
+  }
   return jsonData(
-    await listAssets(
-      user.id,
-      new URL(request.url).searchParams.get("archived") === "true",
-    ),
+    await listAssets(user.id, query.get("archived") === "true"),
     requestId,
   );
 });

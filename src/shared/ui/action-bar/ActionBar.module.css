@@ -1,0 +1,51 @@
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 10px 0;
+  border-block: 1px solid var(--line);
+  background: var(--paper);
+}
+.bar[data-sticky="true"] {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+.context {
+  flex: 1 1 180px;
+  min-width: 0;
+  color: color-mix(in srgb, var(--muted) 65%, var(--ink));
+  font: 400 var(--text-sm)/1.6 var(--font-ui);
+}
+.context a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-inline-start: 10px;
+}
+.actions {
+  display: flex;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-inline-start: auto;
+}
+.actions > button {
+  white-space: nowrap;
+  min-height: 38px;
+}
+@media (max-width: 600px) {
+  .context {
+    flex-basis: 100%;
+  }
+  .actions {
+    gap: 6px;
+  }
+  .actions > button {
+    min-height: 42px;
+  }
+}

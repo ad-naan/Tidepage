@@ -49,7 +49,9 @@ Tiptap 实例独立于外层表单，不在每个输入事务把整篇 JSON 写�
 
 默认目录为 `storage/uploads`，可在根目录 `.env` 中通过 `UPLOAD_DIR` 修改。访问地址统一为 `/uploads/<hash>.<ext>`；正文中的 assetId 就是稳定的资源路径。媒体元信息保存在 PostgreSQL 的 `media_assets`，列表和归档按站主隔离；归档不删除文件，引用仍可显示。图片通过校验过的文件名读取，响应带实际 MIME、nosniff 和不可变缓存头。上传、列表及工作副本接口要求 author/admin 会话；变更接口同时校验来源，限制请求体大小。
 
-应用 `0013_gallery_photo_capture.sql` 后，新上传的照片会提取相机、镜头、焦距、光圈、快门和 ISO。含 EXIF、IPTC、XMP 等元数据的文件在写入公开媒体存储前会清理这些元数据，静态图像会应用 EXIF 方向。发布照片时同步保存拍摄参数，公开地点来自手填字段。已有图片文件不会被改写，要给旧照片补充拍摄参数，可以重新上传原图并替换后发布。
+应用 `0013_gallery_photo_capture.sql` 后，新上传的照片会提取相机、镜头、焦距、光圈、快门和 ISO。含 EXIF、IPTC、XMP 等元数据的文件在写入公开媒体存储前会清理这些元数据，静态图像会应用 EXIF 方向。上传有 GPS 的原图时，服务器在本地查找 25 公里内最近的城市，只保存城市名。编辑时可修改或清空地点。发布照片时同步保存可展示的拍摄参数和所选地点。已有图片文件不会被改写，要给旧照片补充拍摄参数，可以重新上传原图并替换后发布。
+
+`photo-cities.tsv.gz` 由 [GeoNames cities15000](https://download.geonames.org/export/dump/) 数据筛选并压缩而成，包含用于匹配的城市中心坐标及英文、可用的中文名称，按 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) 许可分发。
 
 裁剪使用 [React Easy Crop](https://github.com/ValentinH/react-easy-crop)，生成新 PNG，不覆盖原 Blob。正文保存 originalAssetId，可恢复原图，撤销也保留旧引用。最长输出边 4096 像素，GIF 裁剪为静态图，界面有说明。媒体回收站只取消可选状态，不删除被引用的 Blob。
 
