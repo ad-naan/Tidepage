@@ -24,6 +24,7 @@ import { ReadingImage } from "./ReadingImage";
 import { ReadingLink } from "./ReadingLink";
 import styles from "./RichText.module.css";
 import { getSticker } from "@/shared/config/stickers";
+import { isFontSize } from "@/shared/contracts/rich-text";
 import { AuthorNameText } from "@/modules/identity/ui/AuthorSignature";
 
 function RenderNode({
@@ -48,6 +49,12 @@ function RenderNode({
     );
     for (const mark of node.marks ?? []) {
       switch (mark.type) {
+        case "fontSize":
+          if (isFontSize(mark.attrs?.size))
+            content = (
+              <span style={{ fontSize: mark.attrs.size }}>{content}</span>
+            );
+          break;
         case "bold":
           content = <strong>{content}</strong>;
           break;

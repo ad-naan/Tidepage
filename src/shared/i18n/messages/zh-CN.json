@@ -1280,6 +1280,10 @@
       "titlePlaceholder": "给这一页起个标题",
       "writingHint": "输入 / 插入内容，选中文字调整格式",
       "textStyle": "段落样式",
+      "fontSize": "字号",
+      "defaultFontSize": "默认字号",
+      "mixedFontSizes": "混合字号",
+      "fontSizeOption": "{size} px",
       "textStyles": {
         "paragraph": "正文",
         "h1": "一级标题",

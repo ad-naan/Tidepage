@@ -375,7 +375,8 @@
   gap: 2px;
 }
 .toolGroup + .toolGroup,
-.blockSelect {
+.blockSelect,
+.sizeSelect {
   padding-left: 6px;
   border-left: 1px solid var(--line);
 }
@@ -383,7 +384,12 @@
   width: 118px;
   margin-right: 4px;
 }
-.blockSelect button {
+.sizeSelect {
+  width: 114px;
+  margin-right: 4px;
+}
+.blockSelect button,
+.sizeSelect button {
   border: 0;
   background: transparent;
   min-height: 32px;

@@ -18,6 +18,7 @@ type SelectProps<Value extends string> = {
   value: Value;
   options: readonly SelectOption<Value>[];
   onValueChange: (value: Value) => void;
+  focusAfterSelection?: () => void;
   label: string;
   id?: string;
   name?: string;
@@ -40,6 +41,7 @@ export function Select<Value extends string>({
   value,
   options,
   onValueChange,
+  focusAfterSelection,
   label,
   id,
   name,
@@ -58,6 +60,7 @@ export function Select<Value extends string>({
 }: SelectProps<Value>) {
   const [open, setOpen] = useState(false);
   const trigger = useRef<HTMLButtonElement>(null);
+  const selectedInMenu = useRef(false);
   const [portalContainer, setPortalContainer] = useState<
     HTMLElement | undefined
   >();
@@ -66,6 +69,7 @@ export function Select<Value extends string>({
     <SelectPrimitive.Root
       open={open}
       onOpenChange={(next) => {
+        if (next) selectedInMenu.current = false;
         setPortalContainer(
           trigger.current?.closest<HTMLElement>("dialog[open]") ??
             (document.fullscreenElement instanceof HTMLElement
@@ -79,7 +83,10 @@ export function Select<Value extends string>({
         const option = options.find(
           (item) => item.value === next && !item.disabled,
         );
-        if (option) onValueChange(option.value);
+        if (option) {
+          selectedInMenu.current = open;
+          onValueChange(option.value);
+        }
       }}
       name={name}
       disabled={disabled || busy}
@@ -120,6 +127,12 @@ export function Select<Value extends string>({
           sideOffset={9}
           collisionPadding={12}
           avoidCollisions
+          onCloseAutoFocus={(event) => {
+            if (selectedInMenu.current && focusAfterSelection) {
+              event.preventDefault();
+              focusAfterSelection();
+            }
+          }}
           data-ui-overlay-owner={owner}
         >
           <SelectPrimitive.ScrollUpButton className={styles.scrollButton}>

@@ -1,4 +1,29 @@
 import { Mark } from "@tiptap/core";
+import { fontSizes, isFontSize } from "@/shared/contracts/rich-text";
+
+export const FontSizeMark = Mark.create({
+  name: "fontSize",
+  addAttributes() {
+    return { size: { isRequired: true } };
+  },
+  parseHTML: () => [
+    {
+      style: "font-size",
+      getAttrs: (value) => {
+        const size = fontSizes.find((size) => value === `${size}px`);
+        return size === undefined ? false : { size };
+      },
+    },
+  ],
+  renderHTML: ({ mark }) => {
+    const { size } = mark.attrs;
+    return [
+      "span",
+      isFontSize(size) ? { style: `font-size: ${size}px` } : {},
+      0,
+    ];
+  },
+});
 
 export const HighlightMark = Mark.create({
   name: "highlight",

@@ -12,6 +12,7 @@ import { TableKit } from "@tiptap/extension-table";
 import Typography from "@tiptap/extension-typography";
 import { useMessages, useTranslations } from "next-intl";
 import { StickerNode } from "../../rich-text/StickerNode";
+import { FontSizeMark } from "../../rich-text/RichTextMarks";
 import { Bold, Italic, Link2, Maximize, Minimize } from "lucide-react";
 import { Button, IconButton } from "@/shared/ui/button/Button";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
@@ -206,6 +207,7 @@ export function RichTextEditor({
       }),
       AssetImageNode,
       CalloutNode,
+      FontSizeMark,
       HighlightMark,
       SuperscriptMark,
       SubscriptMark,

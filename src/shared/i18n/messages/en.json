@@ -1279,7 +1279,11 @@
       "closePanel": "Close side panel",
       "titlePlaceholder": "Give this page a title",
       "writingHint": "Type / to insert; select text to format",
-      "textStyle": "Text style",
+      "textStyle": "Paragraph style",
+      "fontSize": "Font size",
+      "defaultFontSize": "Default size",
+      "mixedFontSizes": "Mixed sizes",
+      "fontSizeOption": "{size} px",
       "textStyles": {
         "paragraph": "Paragraph",
         "h1": "Heading 1",

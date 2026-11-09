@@ -1,11 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { Editor } from "@tiptap/core";
+import StarterKit from "@tiptap/starter-kit";
 import {
   documentText,
   isEditorDocument,
   type EditorNode,
 } from "../../src/shared/contracts/rich-text";
 import { documentMarkdown } from "../../src/modules/content/domain/document-presentation";
+import { FontSizeMark } from "../../src/modules/content/ui/rich-text/RichTextMarks";
 import { newCommentSchema } from "../../src/modules/engagement/domain/discussion";
 import { discussionStore } from "../../src/modules/engagement/server";
 import { settingsDraftSchema } from "../../src/modules/site-settings/domain/models";
@@ -47,6 +50,41 @@ const document: EditorNode = {
     },
   ],
 };
+
+test("changing and resetting font size affects only the selected text", () => {
+  const editor = new Editor({
+    element: null,
+    extensions: [StarterKit, FontSizeMark],
+    content: {
+      type: "doc",
+      content: [
+        { type: "paragraph", content: [{ type: "text", text: "甲乙丙" }] },
+        { type: "paragraph", content: [{ type: "text", text: "下一行" }] },
+      ],
+    },
+  });
+  try {
+    const original = editor.getJSON();
+    editor
+      .chain()
+      .setTextSelection({ from: 2, to: 3 })
+      .setMark("fontSize", { size: 24 })
+      .run();
+    const sized = editor.getJSON();
+    assert.equal(isEditorDocument(sized), true);
+    assert.equal(
+      documentMarkdown(sized),
+      '甲<span style="font-size: 24px">乙</span>丙\n\n下一行',
+    );
+    const invalid = structuredClone(sized);
+    invalid.content![0].content![1].marks![0].attrs!.size = 240;
+    assert.equal(isEditorDocument(invalid), false);
+    editor.commands.unsetMark("fontSize");
+    assert.deepEqual(editor.getJSON(), original);
+  } finally {
+    editor.destroy();
+  }
+});
 
 test("page documents preserve rich marks and collapsible blocks in storage and Markdown", () => {
   const rich: EditorNode = {

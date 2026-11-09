@@ -41,6 +41,14 @@ export type EditorNode = {
   marks?: { type: string; attrs?: Record<string, unknown> }[];
   content?: EditorNode[];
 };
+export const fontSizes = [12, 14, 16, 18, 20, 24, 28, 32] as const;
+
+export function isFontSize(
+  value: unknown,
+): value is (typeof fontSizes)[number] {
+  return fontSizes.some((size) => size === value);
+}
+
 const supportedNodes = new Set([
   "doc",
   "paragraph",
@@ -75,6 +83,7 @@ const supportedMarks = new Set([
   "highlight",
   "superscript",
   "subscript",
+  "fontSize",
 ]);
 /** Bound depth/size before walking; reject unsupported nodes rather than dropping content. */
 export function isEditorDocument(value: unknown): value is EditorNode {
@@ -109,7 +118,8 @@ export function isEditorDocument(value: unknown): value is EditorNode {
           (mark) =>
             !supportedMarks.has(mark.type) ||
             (mark.type === "link" &&
-              !safeWebUrl.safeParse(mark.attrs?.href).success),
+              !safeWebUrl.safeParse(mark.attrs?.href).success) ||
+            (mark.type === "fontSize" && !isFontSize(mark.attrs?.size)),
         ))
     )
       return false;

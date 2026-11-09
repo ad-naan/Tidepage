@@ -1,5 +1,6 @@
 import { documentText, type EditorNode } from "./editor-document";
 import { getSticker } from "@/shared/config/stickers";
+import { isFontSize } from "@/shared/contracts/rich-text";
 
 export function documentChapters(document: EditorNode) {
   const chapters: { title?: string; nodes: EditorNode[] }[] = [{ nodes: [] }];
@@ -33,6 +34,8 @@ export function documentMarkdown(node: EditorNode): string {
       } else if (mark.type === "bold") value = `**${value}**`;
       else if (mark.type === "italic") value = `*${value}*`;
       else if (mark.type === "strike") value = `~~${value}~~`;
+      else if (mark.type === "fontSize" && isFontSize(mark.attrs?.size))
+        value = `<span style="font-size: ${mark.attrs.size}px">${value}</span>`;
       else if (
         ["underline", "highlight", "superscript", "subscript"].includes(
           mark.type,

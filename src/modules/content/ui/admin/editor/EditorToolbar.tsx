@@ -24,6 +24,7 @@ import { Input } from "@/shared/ui/field/Input";
 import { AnchoredPanel } from "@/shared/ui/overlay/AnchoredPanel";
 import { OverlayScope } from "@/shared/ui/overlay/OverlayScope";
 import { useDisclosure } from "@/shared/hooks/useDisclosure";
+import { fontSizes, isFontSize } from "@/shared/contracts/rich-text";
 import { blockCommands, type BlockCommand } from "./block-commands";
 import styles from "./editor.module.css";
 import { StickerPicker } from "../../rich-text/StickerPicker";
@@ -59,28 +60,42 @@ export function EditorToolbar({
   }, [menu.open]);
   const state = useEditorState({
     editor,
-    selector: ({ editor: e }) => ({
-      bold: e.isActive("bold"),
-      italic: e.isActive("italic"),
-      strike: e.isActive("strike"),
-      underline: e.isActive("underline"),
-      highlight: e.isActive("highlight"),
-      superscript: e.isActive("superscript"),
-      subscript: e.isActive("subscript"),
-      code: e.isActive("code"),
-      link: e.isActive("link"),
-      block: e.isActive("heading", { level: 1 })
-        ? "h1"
-        : e.isActive("heading", { level: 2 })
-          ? "h2"
-          : e.isActive("heading", { level: 3 })
-            ? "h3"
-            : "paragraph",
-      table: e.isActive("table"),
-      codeBlock: e.isActive("codeBlock"),
-      undo: e.can().undo(),
-      redo: e.can().redo(),
-    }),
+    selector: ({ editor: e }) => {
+      const size = e.getAttributes("fontSize").size;
+      const { doc, selection, schema } = e.state;
+      const hasSize = selection.ranges.some(({ $from, $to }) =>
+        doc.rangeHasMark($from.pos, $to.pos, schema.marks.fontSize),
+      );
+      return {
+        bold: e.isActive("bold"),
+        italic: e.isActive("italic"),
+        strike: e.isActive("strike"),
+        underline: e.isActive("underline"),
+        highlight: e.isActive("highlight"),
+        superscript: e.isActive("superscript"),
+        subscript: e.isActive("subscript"),
+        code: e.isActive("code"),
+        link: e.isActive("link"),
+        block: e.isActive("heading", { level: 1 })
+          ? "h1"
+          : e.isActive("heading", { level: 2 })
+            ? "h2"
+            : e.isActive("heading", { level: 3 })
+              ? "h3"
+              : "paragraph",
+        table: e.isActive("table"),
+        codeBlock: e.isActive("codeBlock"),
+        fontSize:
+          isFontSize(size) && e.isActive("fontSize", { size })
+            ? String(size)
+            : hasSize
+              ? ""
+              : "default",
+        canSetFontSize: e.can().setMark("fontSize"),
+        undo: e.can().undo(),
+        redo: e.can().redo(),
+      };
+    },
   });
   return (
     <>
@@ -108,6 +123,7 @@ export function EditorToolbar({
         <div className={styles.blockSelect}>
           <Select
             label={t("textStyle")}
+            focusAfterSelection={() => editor.commands.focus()}
             value={state.block}
             options={(["paragraph", "h1", "h2", "h3"] as const).map(
               (value) => ({ value, label: t(`textStyles.${value}`) }),
@@ -119,6 +135,27 @@ export function EditorToolbar({
                 chain
                   .setHeading({ level: Number(value.slice(1)) as 1 | 2 | 3 })
                   .run();
+            }}
+          />
+        </div>
+        <div className={styles.sizeSelect}>
+          <Select
+            label={t("fontSize")}
+            focusAfterSelection={() => editor.commands.focus()}
+            placeholder={t("mixedFontSizes")}
+            value={state.fontSize}
+            disabled={!state.canSetFontSize}
+            options={[
+              { value: "default", label: t("defaultFontSize") },
+              ...fontSizes.map((size) => ({
+                value: String(size),
+                label: t("fontSizeOption", { size }),
+              })),
+            ]}
+            onValueChange={(value) => {
+              const chain = editor.chain().focus();
+              if (value === "default") chain.unsetMark("fontSize").run();
+              else chain.setMark("fontSize", { size: Number(value) }).run();
             }}
           />
         </div>

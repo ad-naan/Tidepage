@@ -27,7 +27,12 @@ import {
   safeWebUrl,
   type EditorNode,
 } from "@/modules/content/domain/editor-document";
-import { HighlightMark, SuperscriptMark, SubscriptMark } from "./RichTextMarks";
+import {
+  FontSizeMark,
+  HighlightMark,
+  SuperscriptMark,
+  SubscriptMark,
+} from "./RichTextMarks";
 import styles from "./RichTextComposer.module.css";
 
 export function RichTextComposer({
@@ -64,6 +69,7 @@ export function RichTextComposer({
         },
       }),
       Placeholder.configure({ placeholder }),
+      FontSizeMark,
       HighlightMark,
       SuperscriptMark,
       SubscriptMark,
