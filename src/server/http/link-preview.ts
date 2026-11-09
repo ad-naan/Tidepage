@@ -27,6 +27,56 @@ function clean(value: string, limit: number) {
     .slice(0, limit);
 }
 
+function record(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object"
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
+function first(value: unknown) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function string(value: unknown) {
+  return typeof value === "string" ? value : "";
+}
+
+function structuredMedia(head: string, acceptedTypes: RegExp) {
+  for (const [, json] of head.matchAll(
+    /<script\b[^>]*\btype\s*=\s*["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script\s*>/gi,
+  )) {
+    try {
+      const data: unknown = JSON.parse(json);
+      const items: unknown[] = [data];
+      for (const item of items) {
+        if (Array.isArray(item)) {
+          for (const entry of item) items.push(entry);
+          continue;
+        }
+        const fields = record(item);
+        const type = fields["@type"];
+        const types = Array.isArray(type) ? type : [type];
+        const mediaType = types
+          .map((type) => string(type).replace(/^https?:\/\/schema\.org\//, ""))
+          .find((type) => acceptedTypes.test(type));
+        if (mediaType) return { fields, mediaType };
+        if (fields["@graph"]) items.push(fields["@graph"]);
+        if (fields.mainEntity) items.push(fields.mainEntity);
+      }
+    } catch {
+      /* A malformed block does not prevent Open Graph or other blocks from working. */
+    }
+  }
+  return undefined;
+}
+
+function entityNames(value: unknown) {
+  return (Array.isArray(value) ? value : [value])
+    .map((item) => string(record(item).name) || string(item))
+    .filter((name) => name && !/^https?:\/\//i.test(name))
+    .join(", ");
+}
+
 export function parseLinkPreview(html: string, pageUrl: string): LinkPreview {
   const head = html.split(/<\/head\s*>/i)[0];
   const tags = new Map<string, string>();
@@ -41,9 +91,27 @@ export function parseLinkPreview(html: string, pageUrl: string): LinkPreview {
     if (key && attrs.get("content") && !tags.has(key))
       tags.set(key, attrs.get("content")!);
   }
+  const type = clean(tags.get("og:type") || "", 80).toLowerCase();
+  const media =
+    !type ||
+    type === "website" ||
+    type === "video.movie" ||
+    type.startsWith("music.")
+      ? structuredMedia(
+          head,
+          type === "video.movie"
+            ? /^Movie$/
+            : type.startsWith("music.")
+              ? /^Music(?:Recording|Album|Playlist)$/
+              : /^(?:Movie|MusicRecording|MusicAlbum|MusicPlaylist)$/,
+        )
+      : undefined;
+  const fields = media?.fields;
+  const album = record(first(fields?.inAlbum));
   const result: LinkPreview = {
     title: clean(
-      tags.get("og:title") ||
+      string(fields?.name) ||
+        tags.get("og:title") ||
         tags.get("twitter:title") ||
         head.match(/<title[^>]*>([\s\S]*?)<\/title\s*>/i)?.[1] ||
         "",
@@ -52,21 +120,69 @@ export function parseLinkPreview(html: string, pageUrl: string): LinkPreview {
     description: clean(
       tags.get("og:description") ||
         tags.get("twitter:description") ||
+        string(fields?.description) ||
         tags.get("description") ||
         "",
       400,
     ),
     siteName: clean(tags.get("og:site_name") || new URL(pageUrl).hostname, 80),
   };
-  const image =
-    tags.get("og:image:secure_url") ||
-    tags.get("og:image") ||
-    tags.get("twitter:image");
-  if (image) {
+  if (media?.mediaType === "Movie" || type === "video.movie") {
+    result.kind = "movie";
+    const director = clean(string(record(first(fields?.director)).name), 200);
+    const year = (
+      string(fields?.datePublished) || tags.get("video:release_date")
+    )?.match(/^(\d{4})(?:-|$)/)?.[1];
+    if (director) result.creator = director;
+    if (year) result.year = year;
+  } else if (
+    media?.mediaType.startsWith("Music") ||
+    type.startsWith("music.")
+  ) {
+    result.kind = "music";
+    const artist = clean(
+      entityNames(fields?.byArtist) ||
+        entityNames(album.byArtist) ||
+        tags.get("music:musician_description") ||
+        entityNames(tags.get("music:musician")),
+      200,
+    );
+    const albumName = clean(string(album.name), 200);
+    const year = (
+      string(fields?.datePublished) || tags.get("music:release_date")
+    )?.match(/^(\d{4})(?:-|$)/)?.[1];
+    if (artist) result.creator = artist;
+    if (albumName) result.album = albumName;
+    if (year) result.year = year;
+    if (
+      artist &&
+      result.title &&
+      result.description?.startsWith(`${artist} · ${result.title} · `)
+    )
+      result.description = "";
+  }
+  const artwork = [first(fields?.image), first(album.image)];
+  const images = [
+    ...artwork.map((image) => [
+      string(image) ||
+        string(record(image).contentUrl) ||
+        string(record(image).url),
+      string(record(image).caption),
+    ]),
+    [tags.get("og:image:secure_url"), tags.get("og:image:alt")],
+    [tags.get("og:image"), tags.get("og:image:alt")],
+    [tags.get("twitter:image"), tags.get("twitter:image:alt")],
+  ];
+  for (const [image, alt] of images) {
+    if (!image?.trim()) continue;
     try {
       const url = new URL(clean(image, 2048), pageUrl);
-      if (url.protocol === "https:" && !url.username && !url.password)
+      if (url.protocol === "https:" && !url.username && !url.password) {
         result.artworkUrl = url.href;
+        const artworkAlt = clean(alt || "", 300);
+        if (artworkAlt) result.artworkAlt = artworkAlt;
+        break;
+      }
     } catch {
       /* Metadata can contain malformed URLs. */
     }
@@ -187,6 +303,7 @@ export async function getLinkPreview(value: string): Promise<LinkPreview> {
         );
       } catch {
         delete result.artworkUrl;
+        delete result.artworkAlt;
       }
     }
     if (cache.size >= 256) cache.delete(cache.keys().next().value!);

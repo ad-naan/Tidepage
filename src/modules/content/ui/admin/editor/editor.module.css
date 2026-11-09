@@ -230,38 +230,21 @@
 }
 .reference {
   display: flex;
-  gap: 14px;
+  gap: 8px;
   align-items: start;
-  padding: 18px;
   margin: 18px 0;
-  background: var(--soft);
-  border-radius: 3px;
-  position: relative;
   font-family: var(--font-ui);
 }
 .reference > div {
+  flex: 1;
   min-width: 0;
 }
-.reference small {
-  font-size: var(--text-xs);
-  color: var(--muted);
-}
-.reference a {
-  display: block;
-  font-size: var(--text-body);
-  font-weight: 500;
-  overflow-wrap: anywhere;
-}
-.reference p {
-  font-size: var(--text-sm);
-  margin: 6px 0 !important;
-  white-space: pre-wrap;
-}
-.referenceIcon {
-  color: var(--accent);
-  padding-top: 5px;
+.reference > div > button {
+  margin-top: 6px;
 }
 .grip {
+  padding-top: 12px;
+  color: var(--muted);
   cursor: grab;
   touch-action: none;
 }
@@ -281,11 +264,6 @@
 .imageBlock p {
   font: 400 var(--text-xs)/1.7 var(--font-ui);
   color: var(--muted);
-}
-.referenceIcon img {
-  width: 64px;
-  height: 88px;
-  object-fit: cover;
 }
 .callout {
   padding: 16px;

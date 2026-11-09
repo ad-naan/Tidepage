@@ -7,16 +7,15 @@ import {
   type NodeViewProps,
 } from "@tiptap/react";
 import { useTranslations } from "next-intl";
-import { Film, Music2, Globe2, GripVertical } from "lucide-react";
+import { GripVertical } from "lucide-react";
 import {
   embedSchema,
   type Embed,
 } from "@/modules/content/domain/editor-document";
-import { AssetImage } from "@/modules/media/ui/admin/AssetImage";
 import { Button } from "@/shared/ui/button/Button";
 import { Input } from "@/shared/ui/field/Input";
 import { Select } from "@/shared/ui/select/Select";
-import { ExternalLink } from "@/shared/ui/link/Anchor";
+import { ReferenceCard as ReferencePreview } from "../../rich-text/ReferenceCard";
 import { ImageNodeView } from "./ImageNodeView";
 import styles from "./editor.module.css";
 function ReferenceView({
@@ -28,8 +27,6 @@ function ReferenceView({
 }: NodeViewProps) {
   const t = useTranslations("admin.editor");
   const attrs = node.attrs as Embed;
-  const Icon =
-    attrs.kind === "movie" ? Film : attrs.kind === "music" ? Music2 : Globe2;
   return (
     <NodeViewWrapper
       className={`${styles.reference} ${selected ? styles.selected : ""}`}
@@ -40,32 +37,12 @@ function ReferenceView({
           <GripVertical size={14} />
         </span>
       )}
-      <span className={styles.referenceIcon}>
-        {attrs.artworkAssetId ? (
-          <AssetImage id={attrs.artworkAssetId} alt={attrs.artworkAlt ?? ""} />
-        ) : attrs.artworkUrl ? (
-          <img
-            src={attrs.artworkUrl}
-            alt={attrs.artworkAlt ?? ""}
-            loading="lazy"
-            referrerPolicy="no-referrer"
-          />
-        ) : (
-          <Icon size={24} />
-        )}
-      </span>
       <div>
-        <small>
-          {t(`blocks.${attrs.kind}`)} · {attrs.siteName || attrs.creator}{" "}
-          {attrs.year}
-        </small>
-        <ExternalLink href={attrs.url}>{attrs.title} ↗</ExternalLink>
-        {attrs.originalTitle && <small>{attrs.originalTitle}</small>}
-        {attrs.album && <small>{attrs.album}</small>}
-        <p>{attrs.description}</p>
+        <ReferencePreview value={attrs} compact />
         {editor.isEditable && (
           <Button
             size="sm"
+            variant="quiet"
             onClick={() => {
               const pos = getPos();
               if (typeof pos === "number") extension.options.onEdit(attrs, pos);

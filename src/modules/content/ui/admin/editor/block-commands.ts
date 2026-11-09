@@ -34,7 +34,11 @@ export const blockCommands = [
   { key: "divider", icon: Minus, keywords: "divider hr 分割线" },
   { key: "table", icon: Table, keywords: "table 表格" },
   { key: "image", icon: Image, keywords: "image picture photo 图片" },
-  { key: "web", icon: Globe2, keywords: "web link bookmark 网页" },
+  {
+    key: "web",
+    icon: Globe2,
+    keywords: "web link bookmark url 网页 链接 网址",
+  },
   { key: "movie", icon: Film, keywords: "movie film video 电影" },
   { key: "music", icon: Music2, keywords: "music audio 音乐" },
   { key: "ai", icon: Sparkles, keywords: "ai write assistant 写作 润色 续写" },

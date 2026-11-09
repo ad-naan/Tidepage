@@ -75,6 +75,85 @@ test("metadata parsing respects precedence, entities, relative artwork and text 
   );
 });
 
+test("movie previews use a structured poster and fall back to Open Graph metadata", () => {
+  const page = "https://example.com/film";
+  assert.deepEqual(
+    parseLinkPreview(
+      `<head>
+        <meta property="og:type" content="video.movie">
+        <meta property="og:title" content="Movie listing">
+        <meta property="og:image" content="/wide.jpg">
+        <script type="application/ld+json">{ invalid }</script>
+        <script type="application/ld+json">{"@graph":[{"@type":"Movie","name":"Letters from the Tide","director":[{"name":"Lin"}],"datePublished":"2024-11-06","image":{"url":"/poster.jpg","caption":"Movie poster"}}]}</script>
+      </head>`,
+      page,
+    ),
+    {
+      kind: "movie",
+      title: "Letters from the Tide",
+      description: "",
+      siteName: "example.com",
+      creator: "Lin",
+      year: "2024",
+      artworkUrl: "https://example.com/poster.jpg",
+      artworkAlt: "Movie poster",
+    },
+  );
+  assert.deepEqual(
+    parseLinkPreview(
+      `<meta property="og:type" content="video.movie">
+      <meta property="og:image:secure_url" content="javascript:alert(1)">
+      <meta property="og:image" content="/poster.jpg">
+      <meta property="video:release_date" content="2015-06-13">`,
+      page,
+    ),
+    {
+      kind: "movie",
+      title: "",
+      description: "",
+      siteName: "example.com",
+      year: "2015",
+      artworkUrl: "https://example.com/poster.jpg",
+    },
+  );
+});
+
+test("music previews extract artists and album artwork without showing metadata URLs as names", () => {
+  const page = "https://example.com/track";
+  assert.deepEqual(
+    parseLinkPreview(
+      `<head>
+        <meta property="og:type" content="music.song">
+        <meta property="og:image" content="/wide.jpg">
+        <script type="application/ld+json">{"@type":["CreativeWork","MusicRecording"],"name":"Low tide","byArtist":[{"name":"Lin"},{"name":"Mei"}],"inAlbum":{"name":"Shore songs","image":"/cover.jpg"},"datePublished":"2025-11-09"}</script>
+      </head>`,
+      page,
+    ),
+    {
+      kind: "music",
+      title: "Low tide",
+      description: "",
+      siteName: "example.com",
+      creator: "Lin, Mei",
+      album: "Shore songs",
+      year: "2025",
+      artworkUrl: "https://example.com/cover.jpg",
+    },
+  );
+  const openGraph = parseLinkPreview(
+    `<meta property="og:type" content="music.song">
+     <meta property="og:title" content="Low tide">
+     <meta property="og:description" content="Lin · Low tide · Song · 2025">
+     <meta name="music:musician" content="https://example.com/artist">
+     <meta name="music:musician_description" content="Lin">
+     <meta name="music:album" content="https://example.com/album">`,
+    page,
+  );
+  assert.equal(openGraph.creator, "Lin");
+  assert.equal(openGraph.album, undefined);
+  assert.equal(openGraph.description, "");
+});
+
 test("public DNS resolution rejects mixed answers and pins the selected public answer", async () => {
   await assert.rejects(
     publicTarget("https://example.com", async () => [

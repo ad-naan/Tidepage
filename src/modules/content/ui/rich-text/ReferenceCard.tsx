@@ -6,8 +6,15 @@ import {
   type Embed,
 } from "@/modules/content/domain/editor-document";
 import styles from "./ReferenceCard.module.css";
+import { ReferenceArtwork } from "./ReferenceArtwork";
 
-export function ReferenceCard({ value }: { value: Embed }) {
+export function ReferenceCard({
+  value,
+  compact = false,
+}: {
+  value: Embed;
+  compact?: boolean;
+}) {
   const t = useTranslations("articleBlocks");
   const result = embedSchema.safeParse(value);
   if (!result.success) return null;
@@ -17,29 +24,36 @@ export function ReferenceCard({ value }: { value: Embed }) {
   const artwork = /^\/(?!\/)[^\\]*$/.test(card.artworkAssetId)
     ? card.artworkAssetId
     : card.artworkUrl;
+  const url = new URL(card.url);
+  const source = card.siteName || url.hostname;
+  const address =
+    card.kind !== "web" && source !== url.hostname
+      ? `${source} · ${url.hostname}`
+      : url.hostname +
+        (card.title === url.hostname && url.pathname !== "/"
+          ? url.pathname
+          : "");
   return (
     <ExternalLink
       href={card.url}
-      preview={{ ...card, artworkUrl: artwork }}
+      preview={false}
       className={styles.card}
       data-kind={card.kind}
+      data-compact={compact}
     >
       <span className={styles.artwork}>
-        {artwork ? (
-          <img
-            src={artwork}
-            alt={card.artworkAlt || ""}
-            loading="lazy"
-            referrerPolicy="no-referrer"
-          />
-        ) : (
-          <Icon size={24} strokeWidth={1.2} />
-        )}
+        <ReferenceArtwork
+          src={artwork}
+          alt={card.artworkAlt || ""}
+          fallback={<Icon size={24} strokeWidth={1.2} aria-hidden />}
+        />
       </span>
       <span className={styles.body}>
         <small className={styles.meta}>
           <Icon size={12} aria-hidden="true" />
-          {card.siteName || t(card.kind)}
+          {card.kind === "web" && source !== url.hostname
+            ? source
+            : t(card.kind)}
           {card.year && <span>· {card.year}</span>}
         </small>
         <strong>{card.title}</strong>
@@ -52,7 +66,9 @@ export function ReferenceCard({ value }: { value: Embed }) {
         {card.description && (
           <span className={styles.description}>{card.description}</span>
         )}
-        <small className={styles.host}>{new URL(card.url).hostname}</small>
+        {address !== card.title && (
+          <small className={styles.host}>{address}</small>
+        )}
       </span>
       <ArrowUpRight size={15} className={styles.arrow} aria-hidden="true" />
     </ExternalLink>

@@ -1,19 +1,23 @@
 .card.card {
+  --reference-muted: color-mix(in srgb, var(--muted) 68%, var(--ink));
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   position: relative;
   margin: 28px 0;
-  padding: 20px;
+  padding: 12px 16px 12px 12px;
   border: 1px solid var(--line);
-  border-radius: 9px;
+  border-radius: 5px 10px 7px 8px;
   color: var(--ink);
   text-decoration: none;
-  background: color-mix(in srgb, var(--paper) 88%, var(--soft));
+  background: color-mix(in srgb, var(--paper) 75%, var(--soft));
   font-family: var(--font-ui);
   transition:
-    border-color 180ms,
-    background 180ms;
+    border-color var(--motion-quick),
+    background-color var(--motion-quick);
+}
+.card[data-compact="true"] {
+  margin: 0;
 }
 .card:hover {
   border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
@@ -22,12 +26,11 @@
 .artwork {
   display: grid;
   place-items: center;
-  flex: 0 0 88px;
-  width: 88px;
-  height: 88px;
-  color: var(--muted);
+  flex: 0 0 clamp(64px, 22%, 128px);
+  aspect-ratio: 4 / 3;
+  color: var(--reference-muted);
   overflow: hidden;
-  background: var(--soft);
+  background: color-mix(in srgb, var(--soft) 78%, var(--sand));
   border-radius: 5px;
 }
 .artwork img {
@@ -37,10 +40,16 @@
   object-fit: cover;
 }
 .card[data-kind="movie"] .artwork {
-  height: 126px;
+  flex-basis: clamp(62px, 20%, 96px);
+  aspect-ratio: 2 / 3;
+}
+.card[data-kind="movie"] .artwork img {
+  object-fit: contain;
 }
 .card[data-kind="music"] .artwork {
-  border-radius: 50%;
+  flex-basis: clamp(66px, 22%, 104px);
+  aspect-ratio: 1;
+  border-radius: 5px 7px 4px 6px;
 }
 .body {
   display: flex;
@@ -48,40 +57,47 @@
   min-width: 0;
   flex-direction: column;
   gap: 5px;
+  overflow-wrap: anywhere;
 }
 .meta {
   display: flex;
   align-items: center;
   gap: 7px;
-  color: var(--muted);
-  font-size: 10px;
+  color: var(--reference-muted);
+  font-size: var(--text-xs);
   line-height: 1.5;
 }
 .body strong {
-  font: 500 16px/1.65 var(--font-ui);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font: 500 var(--text-subtitle)/1.45 var(--font-editorial);
   text-wrap: pretty;
 }
 .body em {
-  color: var(--muted);
+  color: var(--reference-muted);
   font: italic 12px/1.6 var(--font-editorial);
 }
 .creator {
   font-size: 11px;
-  color: var(--muted);
+  color: var(--reference-muted);
 }
 .description {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  color: var(--muted);
+  color: var(--reference-muted);
   font-size: 12px;
   line-height: 1.85;
   margin-top: 3px;
 }
 .host {
-  margin-top: 5px;
-  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--reference-muted);
   font: 400 10px/1.6 var(--font-code);
 }
 .arrow {
@@ -93,21 +109,23 @@
 @media (max-width: 600px) {
   .card.card {
     gap: 13px;
-    padding: 15px;
-  }
-  .artwork {
-    flex-basis: 60px;
-    width: 60px;
-    height: 60px;
-  }
-  .card[data-kind="movie"] .artwork {
-    height: 87px;
+    padding: 10px;
   }
   .body strong {
-    font-size: 14px;
+    font-size: 15px;
+  }
+  .description {
+    -webkit-line-clamp: 2;
+  }
+  .meta {
+    padding-inline-end: 18px;
   }
   .arrow {
-    display: none;
+    position: absolute;
+    inset-block-start: 9px;
+    inset-inline-end: 9px;
+    width: 13px;
+    height: 13px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

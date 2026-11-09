@@ -45,6 +45,7 @@ import {
 } from "@/modules/content/domain/editor-document";
 import { ReferenceCard, AssetImageNode, CalloutNode } from "./ReferenceNode";
 import { ReferenceDialog } from "./ReferenceDialog";
+import { referenceUrl } from "@/modules/content/domain/reference-url";
 import { editCurrentBlock } from "./document-blocks";
 import styles from "./editor.module.css";
 import {
@@ -82,6 +83,7 @@ export function RichTextEditor({
   const [imageOpen, setImageOpen] = useState(false);
   const [reference, setReference] = useState<{
     value: Embed;
+    target: WritingTarget;
     pos?: number;
   } | null>(null);
   const [link, setLink] = useState<string | null>(null);
@@ -125,6 +127,22 @@ export function RichTextEditor({
   }
   const [slashPosition, setSlashPosition] = useState({ left: 0, top: 0 });
   const editorRef = useRef<Editor | null>(null);
+  function openReference(kind: Embed["kind"], url = "") {
+    const editor = editorRef.current;
+    if (!editor?.isEditable) return;
+    setReference({
+      value: {
+        kind,
+        title: "",
+        url,
+        description: "",
+        creator: "",
+        year: "",
+        artworkAssetId: "",
+      },
+      target: { doc: editor.state.doc, selection: editor.state.selection },
+    });
+  }
   const uploads = useRef(new Set<AbortController>());
   const dirtyCallback = useRef(onDirty);
   dirtyCallback.current = onDirty;
@@ -229,7 +247,18 @@ export function RichTextEditor({
       TableKit.configure({ table: { resizable: false } }),
       Typography,
       ReferenceCard.configure({
-        onEdit: (value: Embed, pos: number) => setReference({ value, pos }),
+        onEdit: (value: Embed, pos: number) => {
+          const editor = editorRef.current;
+          if (!editor?.isEditable) return;
+          setReference({
+            value,
+            pos,
+            target: {
+              doc: editor.state.doc,
+              selection: editor.state.selection,
+            },
+          });
+        },
       }),
       AssetImageNode,
       CalloutNode,
@@ -315,10 +344,25 @@ export function RichTextEditor({
         }
         return false;
       },
-      handlePaste: (_view, event) => {
+      handlePaste: (view, event) => {
+        if (!view.editable) return false;
         const files = Array.from(event.clipboardData?.files ?? []);
-        if (!files.length || readOnly) return false;
-        void insertFiles(files);
+        if (files.length) {
+          void insertFiles(files);
+          return true;
+        }
+        const { empty, $from } = view.state.selection;
+        if (
+          !empty ||
+          $from.parent.type.name !== "paragraph" ||
+          $from.parent.content.size
+        )
+          return false;
+        const text = event.clipboardData?.getData("text/plain").trim() ?? "";
+        if (!/^https?:\/\/\S+$/i.test(text)) return false;
+        const url = referenceUrl(text);
+        if (!url) return false;
+        openReference("web", url);
         return true;
       },
       handleDrop: (view, event, moved) => {
@@ -429,18 +473,7 @@ export function RichTextEditor({
     else if (key === "table")
       chain.insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
     else if (key === "image") setImageOpen(true);
-    else
-      setReference({
-        value: {
-          kind: key,
-          title: "",
-          url: "",
-          description: "",
-          creator: "",
-          year: "",
-          artworkAssetId: "",
-        },
-      });
+    else openReference(key);
   };
   useEffect(() => {
     slashList.current
@@ -719,20 +752,28 @@ export function RichTextEditor({
           initial={reference.value}
           onClose={() => setReference(null)}
           onSave={(value) => {
+            if (
+              !editor.isEditable ||
+              !editor.state.doc.eq(reference.target.doc)
+            )
+              return false;
+            const { from, to } = reference.target.selection;
+            const chain = editor.chain().focus();
+            let saved: boolean;
             if (reference.pos !== undefined)
-              editor
-                .chain()
-                .focus()
+              saved = chain
                 .setNodeSelection(reference.pos)
                 .updateAttributes("referenceCard", value)
                 .run();
             else
-              editor
-                .chain()
-                .focus()
-                .insertContent({ type: "referenceCard", attrs: value })
+              saved = chain
+                .insertContentAt(
+                  { from, to },
+                  { type: "referenceCard", attrs: value },
+                )
                 .run();
-            setReference(null);
+            if (saved) setReference(null);
+            return saved;
           }}
         />
       )}
@@ -768,7 +809,7 @@ export function RichTextEditor({
               value={link}
               onChange={(e) => setLink(e.target.value)}
             />
-            {linkError && <p role="alert">{t("referenceError")}</p>}
+            {linkError && <p role="alert">{t("linkUrlError")}</p>}
             <Button type="submit" variant="primary">
               {t("insert")}
             </Button>
