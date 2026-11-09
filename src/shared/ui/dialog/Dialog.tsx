@@ -41,7 +41,7 @@ export function Dialog({
   title: string;
   onClose: () => void;
   wide?: boolean;
-  layout?: "default" | "split";
+  layout?: "default" | "split" | "folio";
   size?: "default" | "compact";
   placement?: "center" | "bottom";
   backdrop?: "dim" | "clear";
@@ -94,7 +94,7 @@ export function Dialog({
       data-placement={placement}
       data-backdrop={backdrop}
       data-surface={surface}
-      className={`${styles.dialog} ${wide ? styles.wide : ""} ${layout === "split" ? styles.split : ""} ${size === "compact" ? styles.compact : ""}`}
+      className={`${styles.dialog} ${wide ? styles.wide : ""} ${layout === "split" ? styles.split : ""} ${layout === "folio" ? styles.folio : ""} ${size === "compact" ? styles.compact : ""}`}
       onCancel={(event) => {
         event.preventDefault();
         requestClose();
@@ -125,10 +125,10 @@ export function Dialog({
       role={surface === "confirmation" ? "alertdialog" : undefined}
     >
       <div className={styles.inner}>
-        {surface !== "viewer" && (
+        {(surface !== "viewer" || layout === "folio") && (
           <PencilFrame
             kind={surface === "confirmation" ? "note" : "paper"}
-            className={styles.paper}
+            className={`${styles.paper} ${surface === "viewer" ? styles.folioPaper : ""}`}
           />
         )}
         <div className={styles.heading}>

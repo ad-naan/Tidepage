@@ -9,12 +9,13 @@ import {
 } from "@/shared/ui/drawing/CoastalMarks";
 import { ContentHeading } from "@/modules/content/ui/layout/ContentHeading";
 import styles from "./GalleryView.module.css";
+import { GalleryPhotoDetails } from "./GalleryPhotoDetails";
 
 import { useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { listItemMotion } from "@/shared/lib/motion";
 import { useTranslations } from "next-intl";
-import { ArrowLeft, ArrowRight, Camera, MapPin } from "lucide-react";
+import { ChevronLeft, ChevronRight, Camera, MapPin } from "lucide-react";
 import { ImageViewer } from "@/shared/ui/dialog/ImageViewer";
 import {
   galleryCategories,
@@ -105,7 +106,12 @@ export function GalleryView({ photos }: { photos: GalleryPhoto[] }) {
           title={selected.title}
           src={selected.src}
           alt={selected.alt}
+          aspectRatio={selected.width / selected.height}
           onClose={() => setSelected(null)}
+          details={{
+            label: t("capture.title"),
+            content: <GalleryPhotoDetails photo={selected} />,
+          }}
           navigation={
             filtered.length > 1 && (
               <>
@@ -114,7 +120,7 @@ export function GalleryView({ photos }: { photos: GalleryPhoto[] }) {
                   aria-label={t("previous")}
                   title={t("previous")}
                 >
-                  <ArrowLeft size={18} />
+                  <ChevronLeft size={18} />
                 </IconButton>
                 <span aria-live="polite">
                   {filtered.findIndex((p) => p.id === selected.id) + 1} /{" "}
@@ -125,15 +131,12 @@ export function GalleryView({ photos }: { photos: GalleryPhoto[] }) {
                   aria-label={t("next")}
                   title={t("next")}
                 >
-                  <ArrowRight size={18} />
+                  <ChevronRight size={18} />
                 </IconButton>
               </>
             )
           }
-        >
-          <p>{selected.caption}</p>
-          <span>{selected.place}</span>
-        </ImageViewer>
+        />
       )}
     </div>
   );

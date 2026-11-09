@@ -78,6 +78,8 @@
     "imageViewer": {
       "canvas": "图片画布，使用加减键缩放、方向键平移、R 键旋转、0 键适应窗口",
       "tools": "看图工具",
+      "adjust": "缩放与旋转",
+      "adjustLabel": "调整",
       "zoomOut": "缩小",
       "zoomIn": "放大",
       "rotateLeft": "向左旋转 90°",
@@ -558,7 +560,22 @@
     "published": "照片已发布到当前语言的照片廊",
     "unpublished": "照片已从当前语言的照片廊下架",
     "publishError": "无法更新照片廊。请保存最新草稿，并检查标题、日期、图片和替代文字。",
-    "publishHelp": "发布和下架作用于当前内容语言。将草稿移入回收站会保留已发布版本。"
+    "publishHelp": "发布和下架作用于当前内容语言。将草稿移入回收站会保留已发布版本。",
+    "locationHelp": "会显示在公开照片廊。建议填写城市或地区，避免填写详细地址。",
+    "captureHelp": "照片如有拍摄参数，发布后会在看图页显示。地点以你填写的内容为准。",
+    "capture": {
+      "title": "拍摄信息",
+      "camera": "相机",
+      "lens": "镜头",
+      "focalLength": "焦距",
+      "aperture": "光圈",
+      "exposure": "快门",
+      "iso": "ISO",
+      "dimensions": "尺寸",
+      "millimeters": "{value} mm",
+      "seconds": "{value} 秒",
+      "fractionSeconds": "1/{denominator} 秒"
+    }
   },
   "identity": {
     "welcome": "让好想法相遇",

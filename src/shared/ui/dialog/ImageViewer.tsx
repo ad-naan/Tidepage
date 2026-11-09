@@ -2,14 +2,24 @@
 
 import {
   useLayoutEffect,
+  useId,
   useRef,
   useState,
   type PointerEvent,
   type ReactNode,
 } from "react";
-import { Maximize, Minus, Plus, RotateCcw, RotateCw } from "lucide-react";
+import {
+  Info,
+  Maximize,
+  Minus,
+  Plus,
+  RotateCcw,
+  RotateCw,
+  SlidersHorizontal,
+} from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
-import { IconButton } from "@/shared/ui/button/Button";
+import { Button, IconButton } from "@/shared/ui/button/Button";
+import { PencilFrame } from "@/shared/ui/drawing/CoastalMarks";
 import { Dialog } from "./Dialog";
 import styles from "./ImageViewer.module.css";
 
@@ -68,6 +78,8 @@ const midpoint = (a: Point, b: Point) => ({
 });
 const distance = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 
+type ViewerDetails = { label: string; content: ReactNode };
+
 export function ImageViewer({
   src,
   alt,
@@ -75,6 +87,8 @@ export function ImageViewer({
   onClose,
   children,
   navigation,
+  details,
+  aspectRatio,
 }: {
   src: string;
   alt: string;
@@ -82,10 +96,23 @@ export function ImageViewer({
   onClose: () => void;
   children?: ReactNode;
   navigation?: ReactNode;
+  details?: ViewerDetails;
+  aspectRatio?: number;
 }) {
   return (
-    <Dialog title={title} onClose={onClose} surface="viewer">
-      <ViewerCanvas src={src} alt={alt} navigation={navigation}>
+    <Dialog
+      title={title}
+      onClose={onClose}
+      surface="viewer"
+      layout={details ? "folio" : "default"}
+    >
+      <ViewerCanvas
+        src={src}
+        alt={alt}
+        navigation={navigation}
+        details={details}
+        aspectRatio={aspectRatio}
+      >
         {children}
       </ViewerCanvas>
     </Dialog>
@@ -97,11 +124,15 @@ function ViewerCanvas({
   alt,
   children,
   navigation,
+  details,
+  aspectRatio,
 }: {
   src: string;
   alt: string;
   children?: ReactNode;
   navigation?: ReactNode;
+  details?: ViewerDetails;
+  aspectRatio?: number;
 }) {
   const t = useTranslations("ui.imageViewer");
   const format = useFormatter();
@@ -112,6 +143,9 @@ function ViewerCanvas({
   const [view, setView] = useState(initialView);
   const [failed, setFailed] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [panel, setPanel] = useState<"details" | "adjust" | null>(null);
+  const detailsId = useId();
+  const toolsId = useId();
   const fitted = fitSize(image, stage, view.rotation);
   const displayed = constrain(view, image, stage);
 
@@ -220,8 +254,73 @@ function ViewerCanvas({
   const reset = () =>
     update((view) => ({ ...initialView, rotation: view.rotation }));
   const toolProps = { size: "sm" as const, className: styles.tool };
+  const tools = (
+    <div
+      id={toolsId}
+      className={styles.tools}
+      role="group"
+      aria-label={t("tools")}
+    >
+      <IconButton
+        {...toolProps}
+        aria-label={t("zoomOut")}
+        title={t("zoomOut")}
+        disabled={!ready || view.zoom <= 1}
+        onClick={() => zoom(1 / step)}
+      >
+        <Minus size={17} />
+      </IconButton>
+      <span className={styles.zoom} aria-live="polite">
+        {format.number(view.zoom, { style: "percent" })}
+      </span>
+      <IconButton
+        {...toolProps}
+        aria-label={t("zoomIn")}
+        title={t("zoomIn")}
+        disabled={!ready || view.zoom >= maxZoom}
+        onClick={() => zoom(step)}
+      >
+        <Plus size={17} />
+      </IconButton>
+      <span className={styles.divider} aria-hidden="true" />
+      <IconButton
+        {...toolProps}
+        aria-label={t("rotateLeft")}
+        title={t("rotateLeft")}
+        disabled={!ready}
+        onClick={() => rotate(-90)}
+      >
+        <RotateCcw size={17} />
+      </IconButton>
+      <IconButton
+        {...toolProps}
+        aria-label={t("rotateRight")}
+        title={t("rotateRight")}
+        disabled={!ready}
+        onClick={() => rotate(90)}
+      >
+        <RotateCw size={17} />
+      </IconButton>
+      <IconButton
+        {...toolProps}
+        aria-label={t("fit")}
+        title={t("fit")}
+        disabled={!ready}
+        onClick={reset}
+      >
+        <Maximize size={16} />
+      </IconButton>
+    </div>
+  );
   return (
-    <div className={styles.viewer}>
+    <div
+      className={styles.viewer}
+      data-compact={!!details}
+      data-panel={panel}
+      data-portrait={
+        aspectRatio !== undefined && aspectRatio < 1 ? "" : undefined
+      }
+    >
       <div
         ref={stageRef}
         className={styles.stage}
@@ -298,61 +397,56 @@ function ViewerCanvas({
           />
         )}
       </div>
-      <div className={styles.dock}>
-        {navigation && <div className={styles.navigation}>{navigation}</div>}
-        <div className={styles.tools} role="group" aria-label={t("tools")}>
-          <IconButton
-            {...toolProps}
-            aria-label={t("zoomOut")}
-            title={t("zoomOut")}
-            disabled={!ready || view.zoom <= 1}
-            onClick={() => zoom(1 / step)}
-          >
-            <Minus size={17} />
-          </IconButton>
-          <span className={styles.zoom} aria-live="polite">
-            {format.number(view.zoom, { style: "percent" })}
-          </span>
-          <IconButton
-            {...toolProps}
-            aria-label={t("zoomIn")}
-            title={t("zoomIn")}
-            disabled={!ready || view.zoom >= maxZoom}
-            onClick={() => zoom(step)}
-          >
-            <Plus size={17} />
-          </IconButton>
-          <span className={styles.divider} aria-hidden="true" />
-          <IconButton
-            {...toolProps}
-            aria-label={t("rotateLeft")}
-            title={t("rotateLeft")}
-            disabled={!ready}
-            onClick={() => rotate(-90)}
-          >
-            <RotateCcw size={17} />
-          </IconButton>
-          <IconButton
-            {...toolProps}
-            aria-label={t("rotateRight")}
-            title={t("rotateRight")}
-            disabled={!ready}
-            onClick={() => rotate(90)}
-          >
-            <RotateCw size={17} />
-          </IconButton>
-          <IconButton
-            {...toolProps}
-            aria-label={t("fit")}
-            title={t("fit")}
-            disabled={!ready}
-            onClick={reset}
-          >
-            <Maximize size={16} />
-          </IconButton>
+      {details ? (
+        <>
+          <div className={styles.compactDock} data-navigation={!!navigation}>
+            {navigation && (
+              <div className={styles.navigation}>{navigation}</div>
+            )}
+            <div className={styles.dockActions}>
+              <Button
+                className={styles.dockAction}
+                aria-label={t("adjust")}
+                title={t("adjust")}
+                aria-expanded={panel === "adjust"}
+                aria-controls={panel === "adjust" ? toolsId : undefined}
+                onClick={() => setPanel(panel === "adjust" ? null : "adjust")}
+              >
+                <SlidersHorizontal size={17} aria-hidden="true" />
+                <span className={styles.adjustLabel}>{t("adjustLabel")}</span>
+              </Button>
+              <Button
+                className={styles.dockAction}
+                aria-expanded={panel === "details"}
+                aria-controls={panel === "details" ? detailsId : undefined}
+                onClick={() => setPanel(panel === "details" ? null : "details")}
+              >
+                <Info size={16} aria-hidden="true" />
+                {details.label}
+              </Button>
+            </div>
+          </div>
+          {panel === "adjust" && (
+            <div className={styles.adjustment}>{tools}</div>
+          )}
+          {panel === "details" && (
+            <section
+              id={detailsId}
+              aria-label={details.label}
+              className={styles.information}
+            >
+              <PencilFrame kind="note" className={styles.informationPaper} />
+              <div className={styles.informationBody}>{details.content}</div>
+            </section>
+          )}
+        </>
+      ) : (
+        <div className={styles.dock}>
+          {navigation && <div className={styles.navigation}>{navigation}</div>}
+          {tools}
+          {children && <div className={styles.caption}>{children}</div>}
         </div>
-        {children && <div className={styles.caption}>{children}</div>}
-      </div>
+      )}
     </div>
   );
 }

@@ -27,6 +27,13 @@ test("gallery publishes a saved, owned photo in one language and supports unpubl
     size: 20,
     width: 900,
     height: 600,
+    capture: {
+      camera: "Example One",
+      focalLength: 24,
+      aperture: 1.7,
+      exposureSeconds: 0.008,
+      iso: 80,
+    },
   });
   const draft = {
     id: "photo",
@@ -38,7 +45,13 @@ test("gallery publishes a saved, owned photo in one language and supports unpubl
     sketch: "",
     color: "",
     assetId,
-    translations: { en: { title: "Coast", alt: "Waves on the shore" } },
+    translations: {
+      en: {
+        title: "Coast",
+        alt: "Waves on the shore",
+        location: "Coastal region",
+      },
+    },
   };
   const records = workbenchRecords(db);
   await records.write(owner.id, "collection:gallery", 0, [draft]);
@@ -64,9 +77,16 @@ test("gallery publishes a saved, owned photo in one language and supports unpubl
       src: assetId,
       category: "nature",
       caption: "",
-      place: "",
+      place: "Coastal region",
       width: 900,
       height: 600,
+      capture: {
+        camera: "Example One",
+        focalLength: 24,
+        aperture: 1.7,
+        exposureSeconds: 0.008,
+        iso: 80,
+      },
     },
   ]);
   await setGalleryPublication(owner.id, request, false, db);

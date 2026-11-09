@@ -165,6 +165,7 @@ export const galleryPhotosTable = pgTable(
     category: text("category").$type<GalleryPhoto["category"]>().notNull(),
     width: integer("width").notNull(),
     height: integer("height").notNull(),
+    capture: jsonb("capture").$type<NonNullable<GalleryPhoto["capture"]>>(),
     sortOrder: integer("sort_order").notNull(),
     publishedOn: date("published_on").notNull(),
   },

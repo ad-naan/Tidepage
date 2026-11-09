@@ -9,6 +9,7 @@ import {
   uploadFilenamePattern,
   uploadedAssetId,
 } from "@/modules/media/domain/asset-path";
+import { readPhotoCapture } from "./photo-capture";
 
 export function uploadRoot() {
   return path.resolve(getEnv().UPLOAD_DIR);
@@ -20,16 +21,13 @@ export async function saveImage(
 ): Promise<ImageAsset> {
   if (!bytes.length || bytes.length > maxImageBytes) throw validationError();
   const { default: sharp } = await import("sharp");
-  let width: number | undefined,
-    height: number | undefined,
-    format: string | undefined;
-  try {
-    ({ width, height, format } = await sharp(bytes, {
-      limitInputPixels: 40_000_000,
-    }).metadata());
-  } catch {
+  const image = sharp(bytes, { animated: true, limitInputPixels: 40_000_000 });
+  const metadata = await image.metadata().catch(() => {
     throw validationError();
-  }
+  });
+  const { format } = metadata;
+  let { width, height } = metadata;
+  height = metadata.pageHeight ?? height;
   const formats = {
     jpeg: ["jpg", "image/jpeg"],
     png: ["png", "image/png"],
@@ -40,6 +38,30 @@ export async function saveImage(
   if (!detected || !width || !height || width > 20000 || height > 20000)
     throw validationError();
   const [extension, mime] = detected;
+  const capture = readPhotoCapture(metadata.exif);
+  if (
+    metadata.exif ||
+    metadata.xmp ||
+    metadata.iptc ||
+    metadata.tifftagPhotoshop ||
+    metadata.comments?.length
+  ) {
+    // The public file contains decoded image data only. Bake orientation into
+    // still images before Sharp drops the original EXIF and other metadata.
+    if ((metadata.pages ?? 1) === 1) image.autoOrient();
+    if (format === "jpeg")
+      image.jpeg({ quality: 95, chromaSubsampling: "4:4:4" });
+    if (format === "webp") image.webp({ quality: 95 });
+    const result = await image
+      .toBuffer({ resolveWithObject: true })
+      .catch(() => {
+        throw validationError();
+      });
+    bytes = result.data;
+    width = result.info.width;
+    height = result.info.pageHeight ?? result.info.height;
+    if (bytes.length > maxImageBytes) throw validationError();
+  }
   const filename = `${createHash("sha256").update(bytes).digest("hex")}.${extension}`;
   await fs.mkdir(root, { recursive: true });
   try {
@@ -61,6 +83,7 @@ export async function saveImage(
     height,
     createdAt: new Date().toISOString(),
     archived: false,
+    capture,
   };
 }
 export async function readImage(filename: string, root = uploadRoot()) {

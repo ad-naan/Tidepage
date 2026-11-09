@@ -169,6 +169,48 @@
   overflow: hidden;
   padding: 0;
 }
+.folioPaper {
+  display: none;
+}
+@media (min-width: 760px) {
+  .dialog.folio[data-surface="viewer"] {
+    --folio-paper: #f8f2e7;
+    --folio-ink: #30332f;
+    --folio-line: #ddd3c0;
+    --folio-wash: #ede5d7;
+    width: min(1120px, calc(100vw - 60px));
+    height: min(810px, calc(100dvh - 54px));
+    margin: auto;
+  }
+  .dialog.folio[data-surface="viewer"]::backdrop {
+    background: #252821dc;
+  }
+  .dialog.folio[data-surface="viewer"]:has([data-portrait]):not(
+      :has([data-panel="details"])
+    ) {
+    width: min(760px, calc(100vw - 60px));
+  }
+  .dialog.folio[data-surface="viewer"] .inner {
+    --paper: var(--folio-paper);
+    --muted: #8b7967;
+    --accent: #a86649;
+    padding: 22px 34px 29px;
+    color: var(--folio-ink);
+  }
+  .folioPaper {
+    display: block;
+  }
+  .dialog.folio[data-surface="viewer"] .heading {
+    padding: 0 0 8px;
+    font: 500 clamp(18px, 2vw, 26px)/1.4 var(--font-editorial);
+  }
+  .dialog.folio[data-surface="viewer"] .heading button {
+    background: transparent;
+  }
+  .dialog.folio[data-surface="viewer"] .heading button:hover {
+    background: var(--folio-wash);
+  }
+}
 @media (max-width: 700px) {
   .inner {
     padding: 18px;

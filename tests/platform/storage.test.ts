@@ -56,6 +56,54 @@ test("local image storage verifies bytes, deduplicates and rejects traversal and
   }
 });
 
+test("new photos keep allowlisted camera settings and strip private EXIF from the stored file", async () => {
+  const parent = path.resolve(".cache/storage-tests");
+  await fs.mkdir(parent, { recursive: true });
+  const directory = await fs.mkdtemp(path.join(parent, "capture-"));
+  try {
+    const source = await sharp({
+      create: { width: 3, height: 2, channels: 3, background: "#e99136" },
+    })
+      .jpeg()
+      .withMetadata({ orientation: 6 })
+      .withExifMerge({
+        IFD0: { Make: "Example", Model: "Example One" },
+        IFD2: {
+          FNumber: "17/10",
+          ExposureTime: "1/125",
+          ISOSpeedRatings: "80",
+          FocalLength: "24/1",
+          LensModel: "Prime 24mm",
+          BodySerialNumber: "serial-private",
+          DateTimeOriginal: "2026:11:09 13:14:15",
+        },
+        IFD3: { GPSLatitude: "31/1 12/1 0/1", GPSLatitudeRef: "N" },
+      })
+      .toBuffer();
+    assert.ok(
+      (await sharp(source).metadata()).exif?.includes(
+        Buffer.from("serial-private"),
+      ),
+    );
+    const saved = await saveImage(source, "photo.jpg", directory);
+    assert.deepEqual(saved.capture, {
+      camera: "Example One",
+      lens: "Prime 24mm",
+      focalLength: 24,
+      aperture: 1.7,
+      exposureSeconds: 0.008,
+      iso: 80,
+    });
+    assert.deepEqual([saved.width, saved.height], [2, 3]);
+    const { bytes } = await readImage(path.basename(saved.id), directory);
+    assert.equal((await sharp(bytes).metadata()).exif, undefined);
+    assert.equal(bytes.includes(Buffer.from("serial-private")), false);
+  } finally {
+    assert.ok(directory.startsWith(parent + path.sep));
+    await fs.rm(directory, { recursive: true, force: true });
+  }
+});
+
 test("server working copies isolate authors and reject concurrent or stale writes", async () => {
   const store = await createContentTestStore();
   try {

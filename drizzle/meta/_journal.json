@@ -92,6 +92,13 @@
       "when": 1794218599095,
       "tag": "0012_ai_usage_budget",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1794221262628,
+      "tag": "0013_gallery_photo_capture",
+      "breakpoints": true
     }
   ]
 }

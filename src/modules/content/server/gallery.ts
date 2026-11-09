@@ -8,7 +8,8 @@ import {
   validationError,
 } from "@/server/http/errors";
 import { workbenchRecordsTable as records } from "@/server/workbench/schema";
-import { requireOwnedImageDimensions } from "@/modules/media/server";
+import { requireOwnedImageDetails } from "@/modules/media/server";
+import { photoCaptureSchema } from "@/modules/media/domain/photo-capture";
 import { isUploadedAssetId } from "@/shared/contracts/asset-path";
 import type { Locale } from "@/shared/i18n/config";
 import { publicationRequestSchema } from "@/modules/content/domain/publication";
@@ -19,11 +20,11 @@ import {
 import { managedItemSchema } from "@/modules/content/domain/managed-collections";
 import { galleryPhotosTable as photos } from "@/modules/content/infrastructure/schema";
 
-export function listGalleryPhotos(
+export async function listGalleryPhotos(
   locale: Locale,
   db: Database = getDb(),
 ): Promise<GalleryPhoto[]> {
-  return db
+  const rows = await db
     .select({
       id: photos.id,
       src: photos.assetId,
@@ -34,10 +35,15 @@ export function listGalleryPhotos(
       category: photos.category,
       width: photos.width,
       height: photos.height,
+      capture: photos.capture,
     })
     .from(photos)
     .where(eq(photos.locale, locale))
     .orderBy(asc(photos.sortOrder), desc(photos.publishedOn), asc(photos.id));
+  return rows.map((row) => ({
+    ...row,
+    capture: photoCaptureSchema.safeParse(row.capture).data ?? null,
+  }));
 }
 
 const photoCopy = z.object({
@@ -89,7 +95,7 @@ export async function setGalleryPublication(
     const { title, description, alt, location } = photoCopy.parse(
       item.translations[locale],
     );
-    const asset = await requireOwnedImageDimensions(
+    const asset = await requireOwnedImageDetails(
       ownerId,
       item.assetId,
       tx as unknown as Database,

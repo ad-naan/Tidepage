@@ -499,6 +499,11 @@ export function ContentCollectionView({
                   key={`${locale}:${key}`}
                   id={`collection-${key}`}
                   label={labels[key]}
+                  description={
+                    kind === "gallery" && key === "location"
+                      ? gallery("locationHelp")
+                      : undefined
+                  }
                 >
                   {["text", "description"].includes(key) ? (
                     <Textarea
@@ -648,6 +653,7 @@ export function ContentCollectionView({
                     alt={value.translations[locale]?.alt ?? ""}
                   />
                 )}
+                <p className={styles.muted}>{gallery("captureHelp")}</p>
               </>
             )}
             <div className={styles.actions}>

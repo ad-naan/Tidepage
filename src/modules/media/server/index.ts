@@ -1,5 +1,5 @@
 import "server-only";
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { getDb, type Database } from "@/server/db/client";
 import { notFoundError, validationError } from "@/server/http/errors";
 import { mediaAssetsTable as assets } from "@/modules/media/infrastructure/schema";
@@ -42,7 +42,10 @@ export async function uploadImage(
     .values({ ...value, ownerId, createdAt: new Date(value.createdAt) })
     .onConflictDoUpdate({
       target: [assets.ownerId, assets.id],
-      set: { archived: false },
+      set: {
+        archived: false,
+        capture: sql`coalesce(${assets.capture}, excluded.capture)`,
+      },
     })
     .returning();
   return assetSchema.parse({
@@ -51,13 +54,17 @@ export async function uploadImage(
   });
 }
 
-export async function requireOwnedImageDimensions(
+export async function requireOwnedImageDetails(
   ownerId: string,
   id: string,
   db: Database = getDb(),
 ) {
   const [image] = await db
-    .select({ width: assets.width, height: assets.height })
+    .select({
+      width: assets.width,
+      height: assets.height,
+      capture: assets.capture,
+    })
     .from(assets)
     .where(
       and(
@@ -67,7 +74,10 @@ export async function requireOwnedImageDimensions(
       ),
     );
   if (!image) throw validationError();
-  return image;
+  return {
+    ...image,
+    capture: assetSchema.shape.capture.parse(image.capture) ?? null,
+  };
 }
 export async function listAssets(ownerId: string, includeArchived = false) {
   const rows = await getDb()

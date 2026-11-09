@@ -78,6 +78,8 @@
     "imageViewer": {
       "canvas": "Image canvas. Use plus and minus to zoom, arrows to pan, R to rotate, and 0 to fit.",
       "tools": "Image viewer tools",
+      "adjust": "Zoom and rotate",
+      "adjustLabel": "Adjust",
       "zoomOut": "Zoom out",
       "zoomIn": "Zoom in",
       "rotateLeft": "Rotate 90° left",
@@ -558,7 +560,22 @@
     "published": "Photo published in this language",
     "unpublished": "Photo removed from this language's gallery",
     "publishError": "Could not update the gallery. Save the latest revision and check its title, date, image and alt text.",
-    "publishHelp": "Publish or unpublish the selected language. Moving a draft to the trash keeps its published version."
+    "publishHelp": "Publish or unpublish the selected language. Moving a draft to the trash keeps its published version.",
+    "locationHelp": "Shown in the public gallery. A city or region is enough.",
+    "captureHelp": "Available camera settings appear in the photo viewer after publishing. The location comes from the place you enter.",
+    "capture": {
+      "title": "Capture details",
+      "camera": "Camera",
+      "lens": "Lens",
+      "focalLength": "Focal length",
+      "aperture": "Aperture",
+      "exposure": "Shutter",
+      "iso": "ISO",
+      "dimensions": "Dimensions",
+      "millimeters": "{value} mm",
+      "seconds": "{value} s",
+      "fractionSeconds": "1/{denominator} s"
+    }
   },
   "identity": {
     "welcome": "A place for good ideas",

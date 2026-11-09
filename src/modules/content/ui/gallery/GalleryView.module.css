@@ -1,4 +1,102 @@
 /* Scoped to this view; decorative surfaces come from shared/ui. */
+.photoDetails {
+  --detail-secondary: #685e50;
+  padding: 10px 14px;
+  overflow-wrap: anywhere;
+}
+.detailsHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+.detailsHeader h2 {
+  margin: 0;
+  font: 600 18px/1.4 var(--font-editorial);
+}
+.photoPlace {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #774631;
+  font: 400 var(--text-sm)/1.5 var(--font-ui);
+}
+.photoPlace svg {
+  flex-shrink: 0;
+}
+.photoCaption {
+  margin: 6px 0 0;
+  color: var(--detail-secondary);
+  font: 400 var(--text-body)/1.55 var(--font-ui);
+}
+.detailsRule {
+  margin-block: 7px 5px;
+}
+.equipment {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 20px;
+  margin: 0 0 12px;
+}
+.equipment dd {
+  font: 600 15px/1.45 var(--font-ui);
+}
+.capture {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 59px), 1fr));
+  gap: 10px 7px;
+  margin: 0 0 12px;
+}
+.photoDetails dt {
+  color: var(--detail-secondary);
+  font: 400 var(--text-xs)/1.55 var(--font-ui);
+}
+.photoDetails dd {
+  margin: 0;
+}
+.capture dd {
+  font: 500 14px/1.6 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+.dimensions {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  padding-top: 8px;
+  border-top: 1px solid #685e5033;
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 760px) {
+  .photoDetails {
+    padding: 6px 2px 12px;
+  }
+  .detailsHeader {
+    display: grid;
+    justify-content: start;
+    gap: 6px;
+  }
+  .photoCaption {
+    margin-top: 12px;
+  }
+  .detailsRule {
+    margin-block: 12px 8px;
+  }
+  .equipment {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .capture {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px 14px;
+    margin-bottom: 16px;
+  }
+}
 .gallery.gallery {
   max-width: none;
   margin: 10px auto 40px;
