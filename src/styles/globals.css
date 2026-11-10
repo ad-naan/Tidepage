@@ -641,13 +641,13 @@ input {
   opacity: 0.85;
   transform: rotate(-2deg);
   transition:
-    transform 0.4s,
-    opacity 0.3s;
+    transform var(--motion-soft) var(--motion-ease-out),
+    opacity var(--motion-quick) ease-out;
 }
-.article-row:hover h3 {
+.article-row:is(:hover, :focus-visible) h3 {
   color: var(--accent);
 }
-.article-row:hover > .mini-sketch {
+.article-row:is(:hover, :focus-visible) > .mini-sketch {
   transform: rotate(3deg) translateY(-3px);
   opacity: 1;
 }
@@ -2547,7 +2547,7 @@ input {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  .article-row:hover > .mini-sketch {
+  .article-row:is(:hover, :focus-visible) > .mini-sketch {
     transform: none;
   }
 }

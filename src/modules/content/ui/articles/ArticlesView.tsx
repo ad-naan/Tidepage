@@ -102,7 +102,11 @@ export function ArticlesView({
         <SketchLabel kind="tide">{t("archive")}</SketchLabel>
         <span>{t("count", { count: result.total })}</span>
       </div>
-      <ArticleList items={result.items} lead />
+      <ArticleList
+        key={result.items.map(({ slug }) => slug).join("/")}
+        items={result.items}
+        lead
+      />
       {result.pageCount > 1 && (
         <nav className="archive-pagination" aria-label={t("pagination")}>
           {result.page > 1 ? (

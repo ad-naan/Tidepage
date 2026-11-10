@@ -52,6 +52,7 @@
   color: var(--accent);
   opacity: 0;
   pointer-events: none;
+  transition: opacity var(--motion-quick) ease-out;
 }
 .mark path {
   stroke-dasharray: 100;
@@ -112,6 +113,7 @@
 @media (prefers-reduced-motion: reduce) {
   .tab,
   .wash,
+  .mark,
   .mark path {
     transition: none;
   }

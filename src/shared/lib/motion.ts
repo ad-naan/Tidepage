@@ -29,17 +29,16 @@ export const surfaceSpring = {
   restSpeed: 0.2,
 };
 
-/** One brief reveal for the first rows, with no stagger on later batches. */
+/** A short entrance for the first batch. Appended rows appear immediately. */
 export function listItemMotion(index: number, reduced: boolean | null) {
-  return reduced || index >= 4
-    ? { initial: false as const }
-    : {
-        initial: { opacity: 0.75 },
-        animate: { opacity: 1 },
-        transition: {
-          duration: 0.16,
-          delay: index * 0.018,
-          ease: "easeOut" as const,
-        },
-      };
+  if (reduced || index >= 12) return { initial: false as const };
+  const delay = Math.min(index, 6) * 0.035;
+  return {
+    initial: { opacity: 0.55, y: 8 },
+    animate: { opacity: 1, y: 0 },
+    transition: {
+      y: { ...spring, delay },
+      opacity: { duration: 0.28, delay, ease: "easeOut" as const },
+    },
+  };
 }

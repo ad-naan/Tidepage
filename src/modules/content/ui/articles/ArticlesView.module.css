@@ -88,9 +88,6 @@
 .archive.archive :global(.article-row > .mini-sketch) {
   width: 64px;
   opacity: 0.7;
-  transition:
-    transform 0.45s,
-    opacity 0.45s;
 }
 .archive.archive :global(.article-row:hover > .mini-sketch),
 .archive.archive :global(.article-row:focus-visible > .mini-sketch) {
