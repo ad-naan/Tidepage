@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { eq } from "drizzle-orm";
+import { ZodError } from "zod";
 import { noteImagesSchema } from "../../src/modules/content/domain/note-images";
 import { managedItemSchema } from "../../src/modules/content/domain/managed-collections";
 import { notesTable } from "../../src/modules/content/infrastructure/schema";
@@ -111,7 +112,16 @@ test("note publication retains separate ordered images and checks saved revision
       images: { "zh-CN": [second, first] },
     });
     const records = workbenchRecords(db);
-    await records.write(owner.id, "collection:notes", 0, [draft]);
+    await records.write(owner.id, "collection:notes", 0, [
+      { ...draft, publishedOn: "" },
+    ]);
+    await assert.rejects(
+      publishNote(owner.id, { id: draft.id, locale: "zh-CN", revision: 1 }, db),
+      (error) =>
+        error instanceof ZodError &&
+        error.issues.some((issue) => issue.path.join(".") === "publishedOn"),
+    );
+    await records.write(owner.id, "collection:notes", 1, [draft]);
     assert.deepEqual(
       managedItemSchema
         .array()
@@ -159,7 +169,7 @@ test("note publication retains separate ordered images and checks saved revision
       revision: 2,
       images: { "zh-CN": [{ ...second, alt: "" }] },
     };
-    await records.write(owner.id, "collection:notes", 1, [draft]);
+    await records.write(owner.id, "collection:notes", 2, [draft]);
     await assert.rejects(
       publishNote(owner.id, { id: draft.id, locale: "zh-CN", revision: 2 }, db),
     );

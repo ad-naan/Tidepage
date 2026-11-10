@@ -89,6 +89,7 @@ export function NoteImagesEditor({
         <UploadField
           label={t("upload")}
           multiple
+          pasteImages
           accept="image/png,image/jpeg,image/webp,image/gif"
           disabled={uploading || images.length >= 20}
           onFiles={(files) => void upload(files)}

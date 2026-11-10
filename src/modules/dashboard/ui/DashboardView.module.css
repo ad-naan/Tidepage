@@ -66,3 +66,95 @@
   padding: 32px 0;
   font-size: var(--text-sm);
 }
+.overview {
+  margin-bottom: 32px;
+}
+.sectionHeading h2,
+.sectionHeading h3 {
+  font: 500 var(--text-subtitle)/1.5 var(--font-editorial);
+}
+.sectionHeading p,
+.emptyActivity {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 144px), 1fr));
+  gap: 12px;
+  margin: 12px 0 24px;
+}
+.metrics > div {
+  position: relative;
+  isolation: isolate;
+  padding: 12px 16px;
+}
+.metrics dt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-sm);
+}
+.metrics dd {
+  margin: 0;
+  font: 500 30px/1.35 var(--font-editorial);
+  font-variant-numeric: tabular-nums;
+}
+.metrics .recentCount {
+  color: var(--muted);
+  font: 400 var(--text-sm)/1.5 var(--font-ui);
+}
+.activity {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+}
+.activity li {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 4px 12px;
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0;
+}
+.activityIcon {
+  margin-top: 2px;
+  color: var(--accent);
+}
+.activityContent {
+  font-size: var(--text-body);
+  overflow-wrap: anywhere;
+}
+.activityContent a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.activityMeta,
+.activityTime,
+.preview {
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+.preview {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+@media (max-width: 560px) {
+  .metrics {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 104px), 1fr));
+    gap: 8px;
+  }
+  .metrics > div {
+    padding-inline: 10px;
+  }
+  .activity li {
+    grid-template-columns: 16px minmax(0, 1fr);
+  }
+  .activityTime {
+    grid-column: 2;
+  }
+}

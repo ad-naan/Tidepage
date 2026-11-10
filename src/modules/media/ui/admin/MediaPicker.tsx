@@ -67,6 +67,7 @@ export function MediaPicker({
         <Field id="media-file" label={t("upload")} description={t("help")}>
           <UploadField
             label={t("upload")}
+            pasteImages
             accept="image/png,image/jpeg,image/webp,image/gif"
             disabled={progress !== null}
             onFiles={async (files) => {

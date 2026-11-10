@@ -21,6 +21,7 @@ import {
   type GalleryPhoto,
 } from "@/modules/content/domain/gallery";
 import {
+  collectionPublicationDateSchema,
   managedItemSchema,
   type PublishedCollectionItem,
 } from "@/modules/content/domain/managed-collections";
@@ -114,6 +115,7 @@ export async function setGalleryPublication(
         );
       return { id, locale, visible };
     }
+    const { publishedOn } = collectionPublicationDateSchema.parse(item);
     if (!isUploadedAssetId(item.assetId)) throw validationError();
     const { title, description, alt, location } = photoCopy.parse(
       item.translations[locale],
@@ -140,7 +142,7 @@ export async function setGalleryPublication(
         .min(-2147483648)
         .max(2147483647)
         .parse(item.sortOrder),
-      publishedOn: z.iso.date().parse(item.publishedOn),
+      publishedOn,
     };
     const [published] = await tx
       .insert(photos)

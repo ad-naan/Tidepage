@@ -88,7 +88,11 @@
       "failed": "图片未能加载。"
     },
     "upload": {
-      "choose": "选择文件"
+      "choose": "选择文件",
+      "paste": "粘贴图片",
+      "pasteHint": "聚焦上传按钮后，也可按 Ctrl+V 或 ⌘V",
+      "empty": "剪贴板里没有图片。复制图片或截屏后再试。",
+      "unavailable": "无法读取剪贴板，请在此按钮上按 Ctrl+V 或 ⌘V。"
     },
     "datePicker": {
       "placeholder": "选择日期",
@@ -1173,7 +1177,33 @@
       "description": "照看内容，也照看那些还没有写完的念头。",
       "drafts": "本地文章草稿",
       "translations": "已填写标题的语言版本",
-      "continue": "接着写，别让念头走远"
+      "continue": "接着写，别让念头走远",
+      "engagement": {
+        "title": "互动概览",
+        "siteScope": "全站已发布内容 · 汇总所有语言版本",
+        "authorScope": "你已发布的内容 · 汇总所有语言版本",
+        "lastSevenDays": "近 7 天 +{count, number}",
+        "activity": "最近互动",
+        "empty": "收到评论、点赞或收藏后，会在这里显示。",
+        "failed": "暂时无法读取互动数据，请刷新页面重试。",
+        "commentBy": "{author} 发表了评论",
+        "metric": {
+          "comment": "评论",
+          "like": "点赞",
+          "save": "收藏"
+        },
+        "event": {
+          "comment": "收到评论",
+          "like": "收到点赞",
+          "save": "收到收藏"
+        },
+        "target": {
+          "article": "文章",
+          "note": "手记",
+          "project": "项目",
+          "page": "页面"
+        }
+      }
     },
     "articles": {
       "description": "写下、整理，再把值得留下的内容公开。",
@@ -1535,6 +1565,7 @@
       "published": "已发布当前语言",
       "publishHelp": "先保存工作副本。发布后，当前语言的内容会更新到前台。",
       "publishFailed": "发布失败。请检查必填字段，并保存最新工作副本。",
+      "dateRequired": "请选择有效的内容日期，保存后再发布。",
       "new": "新建",
       "empty": "还没有工作副本。",
       "saveFirst": "请先保存，或使用“放弃修改”关闭。",

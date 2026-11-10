@@ -33,6 +33,7 @@ import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import styles from "./admin.module.css";
 import type { Collection } from "@/modules/content/domain/managed-collections";
 import {
+  collectionPublicationDateSchema,
   collectionTitleKey,
   managedItemSchema as itemSchema,
   type PublishedCollectionItem,
@@ -40,7 +41,7 @@ import {
 import { documentText } from "@/shared/contracts/rich-text";
 import { NoteImagesEditor } from "./NoteImagesEditor";
 import { EditorialDeleteDialog } from "./EditorialDeleteDialog";
-import { apiGet, apiSend } from "@/shared/http/client";
+import { ApiClientError, apiGet, apiSend } from "@/shared/http/client";
 import {
   galleryCategories,
   galleryCategorySchema,
@@ -54,6 +55,15 @@ const fields = {
 } as const;
 type Item = z.infer<typeof itemSchema>;
 type DeleteTarget = { id: string; revision: number; title: string };
+const dateFieldId = "collection-date";
+function isPublicationDateError(error: unknown) {
+  return (
+    error instanceof ApiClientError &&
+    error.code === "VALIDATION_ERROR" &&
+    Array.isArray(error.details) &&
+    error.details.some((issue) => issue?.path === "publishedOn")
+  );
+}
 const CollectionDocumentField = dynamic(
   () => import("./CollectionDocumentField"),
   {
@@ -82,6 +92,7 @@ export function ContentCollectionView({
   const [locale, setLocale] = useState<Locale>(uiLocale);
   const [dirty, setDirty] = useState(false);
   const [error, setError] = useState("");
+  const [dateError, setDateError] = useState(false);
   const [busy, setBusy] = useState(false);
   const [media, setMedia] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -89,6 +100,9 @@ export function ContentCollectionView({
   const [deleting, setDeleting] = useState<DeleteTarget | null>(null);
   const [opening, setOpening] = useState<string | null>(null);
   const [photoAsset, setPhotoAsset] = useState<ImageAsset | null>(null);
+  useEffect(() => {
+    if (dateError && !busy) document.getElementById(dateFieldId)?.focus();
+  }, [dateError, busy]);
   const assetId = kind === "gallery" ? (value?.assetId ?? "") : "";
   const capture =
     assetId && photoAsset?.id === assetId ? photoAsset.capture : undefined;
@@ -119,11 +133,12 @@ export function ContentCollectionView({
   const visibleHere =
     !!value && Object.hasOwn(publishedById.get(value.id) ?? {}, locale);
   const needsSave = dirty || !value?.revision;
+  const validDate = collectionPublicationDateSchema.safeParse(value).success;
   const photoMissing = [
     !assetId && gallery("photo"),
     !translation?.title?.trim() && t("collection.fields.title"),
     !translation?.alt?.trim() && t("collection.fields.alt"),
-    !value?.publishedOn && t("collection.fields.publishedOn"),
+    !validDate && t("collection.fields.publishedOn"),
   ].filter((label): label is string => !!label);
   const photoReady = photoMissing.length === 0;
   const titleFor = (item: Item) =>
@@ -136,6 +151,8 @@ export function ContentCollectionView({
       .map((code) => localeRegistry[code].name)
       .join(" / ");
   function edit(item: Item) {
+    setError("");
+    setDateError(false);
     setLocale(
       item.translations[uiLocale]?.[titleKey]
         ? uiLocale
@@ -267,6 +284,12 @@ export function ContentCollectionView({
       kind === "gallery"
     )
       return;
+    setError("");
+    if (kind === "notes" && !validDate) {
+      if (dateError) document.getElementById(dateFieldId)?.focus();
+      setDateError(true);
+      return;
+    }
     setBusy(true);
     try {
       await apiSend(
@@ -288,14 +311,23 @@ export function ContentCollectionView({
       ]);
       notify({ title: t("collection.published"), tone: "success" });
       setError("");
-    } catch {
-      setError(t("collection.publishFailed"));
+    } catch (failure) {
+      if (isPublicationDateError(failure)) setDateError(true);
+      else
+        setError(
+          t(
+            kind === "notes"
+              ? "noteImages.publishFailed"
+              : "collection.publishFailed",
+          ),
+        );
     } finally {
       setBusy(false);
     }
   }
   async function publishPhoto(visible: boolean) {
     if (!value || dirty || busy || uploading || !value.revision) return;
+    setError("");
     setBusy(true);
     try {
       const publication = await apiSend<{
@@ -324,8 +356,9 @@ export function ContentCollectionView({
         tone: "success",
       });
       setError("");
-    } catch {
-      setError(gallery("publishError"));
+    } catch (failure) {
+      if (isPublicationDateError(failure)) setDateError(true);
+      else setError(gallery("publishError"));
     } finally {
       setBusy(false);
     }
@@ -355,6 +388,8 @@ export function ContentCollectionView({
           disabled={!!value || !!opening}
           variant="quiet"
           onClick={() => {
+            setError("");
+            setDateError(false);
             setLocale(uiLocale);
             setValue({
               id: crypto.randomUUID(),
@@ -377,7 +412,7 @@ export function ContentCollectionView({
           {t("collection.new")}
         </Button>
       </header>
-      {error && <p role="alert">{error}</p>}
+      {!value && error && <p role="alert">{error}</p>}
       {!value && (
         <FilterTabs
           label={t("crud.filter")}
@@ -525,6 +560,11 @@ export function ContentCollectionView({
                         })
                       : t("editor.localState")}
                 </span>
+                {error && (
+                  <p role="alert" className={styles.error}>
+                    {error}
+                  </p>
+                )}
                 {kind === "gallery" && canPublish && !photoReady && (
                   <span className={styles.photoMissing}>
                     {gallery("missingFields", {
@@ -553,6 +593,8 @@ export function ContentCollectionView({
               onClick={() => {
                 setValue(null);
                 setDirty(false);
+                setError("");
+                setDateError(false);
               }}
             >
               {t("collection.discard")}
@@ -747,11 +789,18 @@ export function ContentCollectionView({
               />
             )}
             <div className={styles.row}>
-              <Field id="collection-date" label={labels.publishedOn}>
+              <Field
+                id={dateFieldId}
+                label={labels.publishedOn}
+                error={dateError ? t("collection.dateRequired") : undefined}
+              >
                 <DatePicker
                   label={labels.publishedOn}
                   value={value.publishedOn}
-                  onValueChange={(publishedOn) => update({ publishedOn })}
+                  onValueChange={(publishedOn) => {
+                    setDateError(false);
+                    update({ publishedOn });
+                  }}
                 />
               </Field>
               <Field id="collection-sort" label={labels.sortOrder}>

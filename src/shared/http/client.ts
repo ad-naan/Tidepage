@@ -5,6 +5,7 @@ export class ApiClientError extends Error {
     message: string,
     public readonly status: number,
     public readonly requestId?: string,
+    public readonly details?: unknown,
   ) {
     super(message);
   }
@@ -30,6 +31,7 @@ async function apiRequest<T>(
       failure.error?.message ?? "请求失败",
       response.status,
       failure.meta?.requestId,
+      failure.error?.details,
     );
   }
   return (body as ApiResponse<T>).data;

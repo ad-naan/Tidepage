@@ -64,7 +64,7 @@ function summary(
     updatedAt: row.updatedAt.toISOString(),
   });
 }
-const published = (table: {
+export const published = (table: {
   visibility: AnyPgColumn;
   publishedAt: AnyPgColumn;
 }) =>

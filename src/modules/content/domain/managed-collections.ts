@@ -10,6 +10,9 @@ export const editorialCollectionSchema = z.enum([
   "quotes",
 ]);
 export type EditorialCollection = z.infer<typeof editorialCollectionSchema>;
+export const collectionPublicationDateSchema = z.object({
+  publishedOn: z.iso.date(),
+});
 export const collectionItemId = z
   .string()
   .min(1)

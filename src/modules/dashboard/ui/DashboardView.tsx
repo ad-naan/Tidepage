@@ -1,13 +1,13 @@
 "use client";
 import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/shared/i18n/navigation";
 import { PencilFrame } from "@/shared/ui/drawing/CoastalMarks";
 import type { ArticleDraft } from "@/modules/content/domain/editor-document";
 import { loadArticleDrafts } from "@/modules/content/ui/admin/draft-store";
 import styles from "./DashboardView.module.css";
-export function DashboardView() {
+export function DashboardView({ children }: { children: ReactNode }) {
   const t = useTranslations("admin");
   const locale = useLocale();
   const [items, setItems] = useState<ArticleDraft[] | null>(null);
@@ -28,6 +28,7 @@ export function DashboardView() {
           <Link href="/admin/articles/new">{t("articles.new")} ↗</Link>
         </div>
       </header>
+      {children}
       {error ? (
         <p role="alert">{t("storageError")}</p>
       ) : items ? (

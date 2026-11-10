@@ -88,7 +88,11 @@
       "failed": "The image couldn’t load."
     },
     "upload": {
-      "choose": "Choose files"
+      "choose": "Choose files",
+      "paste": "Paste image",
+      "pasteHint": "With an upload button focused, press Ctrl+V or ⌘V",
+      "empty": "No image on the clipboard. Copy an image or take a screenshot and try again.",
+      "unavailable": "Couldn’t read the clipboard. Press Ctrl+V or ⌘V on this button."
     },
     "datePicker": {
       "placeholder": "Choose a date",
@@ -1173,7 +1177,33 @@
       "description": "Care for your writing, and the thoughts still taking shape.",
       "drafts": "Local article drafts",
       "translations": "Translations with titles",
-      "continue": "Pick up where you left off"
+      "continue": "Pick up where you left off",
+      "engagement": {
+        "title": "Engagement overview",
+        "siteScope": "Published content across the site and all languages",
+        "authorScope": "Your published content across all languages",
+        "lastSevenDays": "+{count, number} in the last 7 days",
+        "activity": "Recent activity",
+        "empty": "Comments, likes, and saves will appear here as they come in.",
+        "failed": "Couldn’t load engagement data. Refresh the page to try again.",
+        "commentBy": "{author} left a comment",
+        "metric": {
+          "comment": "Comments",
+          "like": "Likes",
+          "save": "Saves"
+        },
+        "event": {
+          "comment": "New comment",
+          "like": "New like",
+          "save": "New save"
+        },
+        "target": {
+          "article": "Article",
+          "note": "Note",
+          "project": "Project",
+          "page": "Page"
+        }
+      }
     },
     "articles": {
       "description": "Write, organize, then share what deserves to stay.",
@@ -1535,6 +1565,7 @@
       "published": "Published in the selected language",
       "publishHelp": "Save your working copy first. Publishing updates the selected language on the public site.",
       "publishFailed": "Could not publish. Check the required fields and save the latest working copy.",
+      "dateRequired": "Choose a valid content date, then save before publishing.",
       "new": "New",
       "empty": "No working copies yet.",
       "saveFirst": "Save first, or choose Discard to close.",

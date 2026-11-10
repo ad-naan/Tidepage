@@ -3,7 +3,10 @@ import { eq, isNull, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb, type Database } from "@/server/db/client";
 import { conflictError } from "@/server/http/errors";
-import { collectionPublicationSchema } from "@/modules/content/domain/managed-collections";
+import {
+  collectionPublicationDateSchema,
+  collectionPublicationSchema,
+} from "@/modules/content/domain/managed-collections";
 import {
   noteImagesSchema,
   noteImageSchema,
@@ -30,6 +33,7 @@ export async function publishNote(
       "notes",
       request,
     );
+    const { publishedOn } = collectionPublicationDateSchema.parse(item);
     const text = z
       .string()
       .trim()
@@ -54,7 +58,7 @@ export async function publishNote(
       id: item.id,
       sourceOwner: ownerId,
       locale: request.locale,
-      publishedOn: z.iso.date().parse(item.publishedOn),
+      publishedOn,
       text,
       mood: z
         .string()
