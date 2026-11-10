@@ -17,6 +17,7 @@ import { Button } from "@/shared/ui/button/Button";
 import { ActionBar } from "@/shared/ui/action-bar/ActionBar";
 import { ConfirmDialog } from "@/shared/ui/dialog/ConfirmDialog";
 import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
+import { PublicListOrderButton } from "@/modules/content/ui/admin/PublicListOrderButton";
 import styles from "./FriendsManagerView.module.css";
 type Item = z.infer<typeof schema>;
 type Publication = { id: string; locale: Locale };
@@ -114,25 +115,33 @@ export function FriendsManagerView({
         title={t("nav.friends")}
         description={t("friend.description")}
         actions={
-          <Button
-            variant="quiet"
-            disabled={!!value}
-            onClick={() => {
-              setLocale(uiLocale);
-              setValue({
-                id: crypto.randomUUID(),
-                revision: 0,
-                url: "",
-                category: "technology",
-                sortOrder: 0,
-                translations: Object.fromEntries(
-                  locales.map((code) => [code, { name: "", description: "" }]),
-                ),
-              });
-            }}
-          >
-            {t("collection.new")}
-          </Button>
+          <>
+            {canPublish && !value && (
+              <PublicListOrderButton kind="friends" disabled={busy} />
+            )}
+            <Button
+              variant="quiet"
+              disabled={!!value}
+              onClick={() => {
+                setLocale(uiLocale);
+                setValue({
+                  id: crypto.randomUUID(),
+                  revision: 0,
+                  url: "",
+                  category: "technology",
+                  sortOrder: 0,
+                  translations: Object.fromEntries(
+                    locales.map((code) => [
+                      code,
+                      { name: "", description: "" },
+                    ]),
+                  ),
+                });
+              }}
+            >
+              {t("collection.new")}
+            </Button>
+          </>
         }
       />
       {error && <p role="alert">{error}</p>}
@@ -248,13 +257,6 @@ export function FriendsManagerView({
               )}
               onValueChange={(category) => update({ category })}
             />
-            <Field id="friend-sort" label={t("collection.fields.sortOrder")}>
-              <Input
-                type="number"
-                value={value.sortOrder}
-                onChange={(e) => update({ sortOrder: Number(e.target.value) })}
-              />
-            </Field>
           </div>
         </form>
       ) : (

@@ -7,6 +7,7 @@ import type { Note } from "@/modules/content/domain/models";
 import type { NoteImage } from "@/modules/content/domain/note-images";
 import { Button, IconButton } from "@/shared/ui/button/Button";
 import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
+import { ImageFrame, MediaImage } from "@/shared/ui/image/MediaImage";
 import styles from "./NoteGallery.module.css";
 
 export function NoteGallery({
@@ -87,14 +88,16 @@ export function NoteGallery({
               </Button>
             </div>
           ) : (
-            <img
+            <ImageFrame
               className={styles.photo}
+              fit="contain"
+              sizes="(max-width: 700px) 90vw, (max-width: 1200px) 52vw, 610px"
               src={image.assetId}
               alt={
                 image.alt ||
                 t("photoPosition", { index: index + 1, total: images.length })
               }
-              onError={() =>
+              onUnavailable={() =>
                 setFailed((previous) => ({
                   ...previous,
                   [image.assetId]: true,
@@ -151,7 +154,12 @@ export function NoteGallery({
               onClick={() => setIndex(i)}
               pressEffect={false}
             >
-              <img src={photo.assetId} alt="" loading="lazy" />
+              <MediaImage
+                src={photo.assetId}
+                alt=""
+                loading="lazy"
+                sizes="44px"
+              />
             </Button>
           ))}
         </div>

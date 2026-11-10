@@ -25,18 +25,26 @@ import { ReadingLink } from "./ReadingLink";
 import styles from "./RichText.module.css";
 import { getSticker } from "@/shared/config/stickers";
 import { isFontSize } from "@/shared/contracts/rich-text";
+import type { ImageDimensionsBySource } from "@/shared/contracts/image-dimensions";
 
 function RenderNode({
   node,
   references,
+  imageDimensions,
 }: {
   node: EditorNode;
   references: Record<string, Embed>;
+  imageDimensions?: ImageDimensionsBySource;
 }) {
   const t = useTranslations("articleBlocks");
   const stickerLabels = useMessages().stickers.items as Record<string, string>;
   const children = node.content?.map((child, index) => (
-    <RenderNode key={index} node={child} references={references} />
+    <RenderNode
+      key={index}
+      node={child}
+      references={references}
+      imageDimensions={imageDimensions}
+    />
   ));
   if (node.type === "text") {
     let content: ReactNode = node.text;
@@ -240,6 +248,7 @@ function RenderNode({
           caption={String(node.attrs?.caption || "")}
           width={Number(node.attrs?.width ?? 100)}
           align={String(node.attrs?.align || "center")}
+          dimensions={imageDimensions?.[src]}
         />
       );
     }
@@ -253,10 +262,12 @@ export function RichText({
   document,
   chapters = false,
   compact = false,
+  imageDimensions,
 }: {
   document: EditorNode;
   chapters?: boolean;
   compact?: boolean;
+  imageDimensions?: ImageDimensionsBySource;
 }) {
   let index = 0;
   const references: Record<string, Embed> = {};
@@ -274,13 +285,23 @@ export function RichText({
         chapters && chapter.title ? (
           <section key={i} id={`section-${index++}`}>
             {chapter.nodes.map((node, j) => (
-              <RenderNode key={j} node={node} references={references} />
+              <RenderNode
+                key={j}
+                node={node}
+                references={references}
+                imageDimensions={imageDimensions}
+              />
             ))}
           </section>
         ) : (
           <div key={i}>
             {chapter.nodes.map((node, j) => (
-              <RenderNode key={j} node={node} references={references} />
+              <RenderNode
+                key={j}
+                node={node}
+                references={references}
+                imageDimensions={imageDimensions}
+              />
             ))}
           </div>
         ),

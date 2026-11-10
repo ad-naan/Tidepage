@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "motion/react";
 import { spring } from "@/shared/lib/motion";
+import { MediaImage } from "@/shared/ui/image/MediaImage";
 export function PlayerRecord({
   large = false,
   playing,
@@ -21,10 +22,11 @@ export function PlayerRecord({
         className="record-disc"
         style={{ animationPlayState: playing ? "running" : "paused" }}
       >
-        <span
-          className="record-label"
-          style={cover ? { backgroundImage: `url(${cover})` } : undefined}
-        />
+        <span className="record-label">
+          {cover && (
+            <MediaImage src={cover} alt="" sizes={large ? "100px" : "28px"} />
+          )}
+        </span>
       </span>
     </motion.span>
   );

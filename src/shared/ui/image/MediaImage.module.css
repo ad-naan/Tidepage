@@ -1,0 +1,82 @@
+.frame {
+  position: relative;
+  display: block;
+  isolation: isolate;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--soft) 80%, var(--paper));
+}
+.frame > .image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.frame[data-fit="natural"] > .image {
+  aspect-ratio: auto var(--media-ratio, 3 / 2);
+}
+.frame[data-fit="cover"],
+.frame[data-fit="contain"],
+.frame:is([data-fit="cover"], [data-fit="contain"]) > .image {
+  width: 100%;
+  height: 100%;
+}
+.frame[data-fit="cover"] > .image {
+  object-fit: cover;
+}
+.frame[data-fit="contain"] > .image {
+  object-fit: contain;
+}
+.frame > .image:is([data-media-state="pending"], [data-media-state="error"]) {
+  opacity: 0;
+}
+.image[alt=""][data-media-state="error"] {
+  opacity: 0;
+}
+.frame::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 26% 24%,
+    color-mix(in srgb, var(--accent) 15%, transparent),
+    transparent 70%
+  );
+  content: "";
+}
+.unavailable {
+  position: absolute;
+  inset: 0;
+  display: none;
+  place-items: center;
+  color: var(--muted);
+  pointer-events: none;
+}
+.frame:has(> .image[data-media-state="error"]) > .unavailable {
+  display: grid;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .image[data-media-state="reveal"] {
+    animation: media-develop 280ms var(--motion-ease-out, ease-out) both;
+  }
+  .frame:has(> .image[data-media-state="pending"])::before {
+    animation: paper-wash 700ms 180ms var(--motion-ease-out, ease-out) both;
+  }
+}
+@keyframes media-develop {
+  from {
+    opacity: 0.12;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes paper-wash {
+  from {
+    opacity: 0.3;
+  }
+  to {
+    opacity: 1;
+  }
+}

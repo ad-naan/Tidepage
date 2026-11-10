@@ -8,6 +8,8 @@ import {
   readImage,
 } from "@/modules/media/infrastructure/local-storage";
 import { assetSchema } from "@/modules/media/domain/assets";
+import { isUploadedAssetId } from "@/shared/contracts/asset-path";
+import type { ImageDimensionsBySource } from "@/shared/contracts/image-dimensions";
 import {
   assetCaptureSchema,
   photoCaptureSchema,
@@ -32,6 +34,26 @@ export async function requireOwnedAssets(
     );
   if (new Set(rows.map((row) => row.id)).size !== new Set(ids).size)
     throw validationError();
+}
+
+/** Only intrinsic dimensions for already referenced, public content-addressed files. */
+export async function getImageDimensions(
+  sources: string[],
+  database?: Database,
+): Promise<ImageDimensionsBySource> {
+  const ids = [...new Set(sources.filter(isUploadedAssetId))];
+  if (!ids.length) return {};
+  const rows = await (database ?? getDb())
+    .selectDistinct({
+      id: assets.id,
+      width: assets.width,
+      height: assets.height,
+    })
+    .from(assets)
+    .where(inArray(assets.id, ids));
+  return Object.fromEntries(
+    rows.map(({ id, width, height }) => [id, { width, height }]),
+  );
 }
 
 export async function uploadImage(

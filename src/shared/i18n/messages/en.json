@@ -235,6 +235,7 @@
     "back": "Back to articles",
     "minutes": "{count} min read",
     "toc": "On this page",
+    "tocShort": "Contents",
     "continue": "Continue with the next story",
     "save": "Save this article",
     "saved": "Saved",
@@ -1584,7 +1585,6 @@
         "alt": "Alternative text",
         "location": "Location",
         "publishedOn": "Content date",
-        "sortOrder": "Sort order",
         "category": "Category",
         "color": "Paper tone"
       },
@@ -1720,6 +1720,21 @@
       "deleteTitle": "Delete this entry?",
       "deleteHelp": "“{name}” will move to the trash. Published versions will be hidden until you restore the entry.",
       "actionFailed": "Could not update this entry. Refresh the list and try again."
+    },
+    "publicOrder": {
+      "title": "Reorder public list",
+      "description": "Drag entries or use the arrow buttons. Saving updates the public list for the selected language.",
+      "language": "Public language",
+      "up": "Move up: {title}",
+      "down": "Move down: {title}",
+      "save": "Save order",
+      "saved": "Public order updated",
+      "cancel": "Cancel",
+      "empty": "There are no published entries in this language.",
+      "loadFailed": "Could not load the public order.",
+      "saveFailed": "Could not save the order. Try again.",
+      "conflict": "The public list changed. Reload it before reordering.",
+      "reload": "Reload"
     },
     "crud": {
       "filter": "Record status",

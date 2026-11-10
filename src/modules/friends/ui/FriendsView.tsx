@@ -17,6 +17,7 @@ import { ContentHeading } from "@/modules/content/ui/layout/ContentHeading";
 import { ExternalLink } from "@/shared/ui/link/Anchor";
 import { CoastGlyph, PencilLine } from "@/shared/ui/drawing/CoastalMarks";
 import { profile } from "@/shared/config/profile";
+import { MediaImage } from "@/shared/ui/image/MediaImage";
 import styles from "./FriendsView.module.css";
 
 export function FriendsView({
@@ -114,12 +115,13 @@ export function FriendsView({
             <ArrowUpRight size={13} aria-hidden="true" />
           </Button>
           <div className={styles.station}>
-            <img
+            <MediaImage
               src={siteInfo.avatar}
               alt=""
               width={34}
               height={34}
               loading="lazy"
+              sizes="34px"
             />
             <div>
               <strong>{siteInfo.name}</strong>

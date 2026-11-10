@@ -22,8 +22,15 @@ import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { RichText } from "@/modules/content/ui/rich-text/RichText";
 import { Discussion } from "@/modules/engagement/ui/Discussion";
 import { ContentEngagementActions } from "@/modules/engagement/ui/EngagementActions";
+import type { ImageDimensionsBySource } from "@/shared/contracts/image-dimensions";
 
-export function ProjectsView({ projects }: { projects: Project[] }) {
+export function ProjectsView({
+  projects,
+  imageDimensions,
+}: {
+  projects: Project[];
+  imageDimensions?: ImageDimensionsBySource;
+}) {
   const reduced = useReducedMotion();
   const t = useTranslations("projects");
   const [category, setCategory] = useState("all");
@@ -134,7 +141,12 @@ export function ProjectsView({ projects }: { projects: Project[] }) {
               <p className={styles.subtitle}>{selected.subtitle}</p>
             )}
             <p>{selected.description}</p>
-            {selected.body && <RichText document={selected.body} />}
+            {selected.body && (
+              <RichText
+                document={selected.body}
+                imageDimensions={imageDimensions}
+              />
+            )}
             <ul className={styles.stack}>
               {[...new Set(selected.stack)].map((s) => (
                 <li key={s}>{s}</li>

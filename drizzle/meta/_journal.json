@@ -99,6 +99,13 @@
       "when": 1794221262628,
       "tag": "0013_gallery_photo_capture",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1794309936198,
+      "tag": "0014_public_list_order",
+      "breakpoints": true
     }
   ]
 }

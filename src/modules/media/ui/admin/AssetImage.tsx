@@ -1,72 +1,69 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Expand } from "lucide-react";
 import { Button } from "@/shared/ui/button/Button";
 import { ImageViewer } from "@/shared/ui/dialog/ImageViewer";
-import { resolveAsset } from "./media-client";
+import { isUploadedAssetId } from "@/shared/contracts/asset-path";
+import { MediaImage } from "@/shared/ui/image/MediaImage";
 import styles from "./AssetImage.module.css";
 export function AssetImage({
   id,
   alt,
   className,
   preview = false,
+  sizes,
 }: {
   id: string;
   alt: string;
   className?: string;
   preview?: boolean;
+  sizes?: string;
 }) {
   const t = useTranslations("admin.media");
   const viewer = useTranslations("articleBlocks");
-  const [open, setOpen] = useState(false);
-  const [url, setUrl] = useState("");
-  const [failed, setFailed] = useState(false);
-  useEffect(() => {
-    let live = true;
-    let objectUrl = "";
-    setUrl("");
-    setFailed(false);
-    setOpen(false);
-    resolveAsset(id)
-      .then((blob) => {
-        if (live) {
-          objectUrl = URL.createObjectURL(blob);
-          setUrl(objectUrl);
-        }
-      })
-      .catch(() => {
-        if (live) setFailed(true);
-      });
-    return () => {
-      live = false;
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-    };
-  }, [id]);
-  if (!url)
-    return <span role="status">{t(failed ? "missing" : "loading")}</span>;
+  const [openId, setOpenId] = useState<string>();
+  const [failedId, setFailedId] = useState<string>();
+  if (!isUploadedAssetId(id) || id === failedId)
+    return <span role="status">{t("missing")}</span>;
   if (!preview)
-    return <img className={className} src={url} alt={alt} loading="lazy" />;
+    return (
+      <MediaImage
+        className={className}
+        src={id}
+        alt={alt}
+        sizes={sizes}
+        loading="lazy"
+        onUnavailable={() => setFailedId(id)}
+      />
+    );
   return (
     <>
       <Button
         variant="bare"
         className={styles.preview}
         aria-label={viewer("enlargeImage", { alt: alt || viewer("image") })}
-        onClick={() => setOpen(true)}
+        onClick={() => setOpenId(id)}
         pressEffect={false}
       >
-        <img src={url} alt={alt} loading="lazy" />
+        <MediaImage
+          src={id}
+          alt={alt}
+          sizes="192px"
+          loading="lazy"
+          onUnavailable={() => setFailedId(id)}
+        />
         <span className={styles.expand}>
           <Expand size={15} aria-hidden="true" />
         </span>
       </Button>
-      {open && (
+      {openId === id && (
         <ImageViewer
           title={alt || viewer("image")}
-          src={url}
+          src={id}
+          previewSizes="192px"
           alt={alt}
-          onClose={() => setOpen(false)}
+          onClose={() => setOpenId(undefined)}
         />
       )}
     </>

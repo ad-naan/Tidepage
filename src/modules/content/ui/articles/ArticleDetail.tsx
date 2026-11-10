@@ -22,6 +22,7 @@ import type { Article, ArticleSummary } from "@/modules/content/domain/models";
 import styles from "./ArticleDetail.module.css";
 import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
 import { EngagementProvider } from "@/modules/engagement/ui/EngagementProvider";
+import { getReadingImageDimensions } from "@/modules/content/server/reading-image-dimensions";
 export async function ArticleDetail({
   article,
   next,
@@ -30,8 +31,12 @@ export async function ArticleDetail({
   next?: Pick<ArticleSummary, "slug" | "title">;
 }) {
   const body = articleDocument(article);
-  const t = await getTranslations("articles");
-  const categories = await getTranslations("categories");
+  const cover = article.publication?.cover;
+  const [t, categories, imageDimensions] = await Promise.all([
+    getTranslations("articles"),
+    getTranslations("categories"),
+    getReadingImageDimensions([body], cover ? [cover.assetId] : []),
+  ]);
   return (
     <div className={`reading-page ${styles.reading}`}>
       <ReadingQuoteSelection />
@@ -59,16 +64,30 @@ export async function ArticleDetail({
         <CoastalVignette kind={article.sketch} />
         <PencilLine className="reading-header-shore" />
       </header>
-      {article.publication?.cover && (
+      {cover && (
         <ReadingImage
-          src={article.publication.cover.assetId}
-          alt={article.publication.cover.alt}
+          src={cover.assetId}
+          alt={cover.alt}
+          dimensions={imageDimensions[cover.assetId]}
+          priority
         />
       )}
       <EngagementProvider targets={[{ type: "article", id: article.slug }]}>
         <div className="reading-layout">
+          <ArticleContents
+            titles={documentChapters(body).flatMap((chapter) =>
+              chapter.title ? [chapter.title] : [],
+            )}
+            label={t("toc")}
+            slug={article.slug}
+            title={article.title}
+          />
           <div className="prose">
-            <RichText document={body} chapters />
+            <RichText
+              document={body}
+              chapters
+              imageDimensions={imageDimensions}
+            />
             <div className="article-end">
               <CoastGlyph kind="shell" />
             </div>
@@ -84,14 +103,6 @@ export async function ArticleDetail({
             </div>
             <ArticleActions slug={article.slug} title={article.title} />
           </div>
-          <ArticleContents
-            titles={documentChapters(body).flatMap((chapter) =>
-              chapter.title ? [chapter.title] : [],
-            )}
-            label={t("toc")}
-            slug={article.slug}
-            title={article.title}
-          />
         </div>
       </EngagementProvider>
       <div id="article-comments" className={styles.comments}>

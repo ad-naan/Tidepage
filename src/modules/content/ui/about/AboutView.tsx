@@ -13,6 +13,8 @@ import styles from "./AboutView.module.css";
 import { siteAssets } from "@/shared/config/assets";
 
 import { RichText } from "../rich-text/RichText";
+import { MediaImage } from "@/shared/ui/image/MediaImage";
+import { getReadingImageDimensions } from "@/modules/content/server/reading-image-dimensions";
 
 export async function AboutView() {
   const locale = await getLocale();
@@ -20,6 +22,7 @@ export async function AboutView() {
     getPersonalPage(locale),
     getTranslations("about"),
   ]);
+  const imageDimensions = await getReadingImageDimensions([page.body]);
   return (
     <div className={styles.about}>
       <header className={styles.hero}>
@@ -47,10 +50,11 @@ export async function AboutView() {
           </div>
         </div>
         <figure className={styles.portrait}>
-          <img
+          <MediaImage
             src={profile.avatar}
             width={108}
             height={108}
+            sizes="108px"
             alt={t("avatar")}
           />
           <figcaption>{t("portraitNote")}</figcaption>
@@ -82,7 +86,9 @@ export async function AboutView() {
       </section>
       <div className={styles.body}>
         <article className={styles.story}>
-          {page.body && <RichText document={page.body} />}
+          {page.body && (
+            <RichText document={page.body} imageDimensions={imageDimensions} />
+          )}
           <div className={styles.signoff}>
             <p>
               <AuthorNameText text={page.signature} />
@@ -91,7 +97,7 @@ export async function AboutView() {
           </div>
         </article>
         <aside className={styles.margin}>
-          <img
+          <MediaImage
             src={siteAssets.siteIcon}
             width={112}
             height={112}

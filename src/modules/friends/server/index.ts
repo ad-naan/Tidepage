@@ -2,6 +2,7 @@ import "server-only";
 import { and, asc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { getDb, type Database } from "@/server/db/client";
+import { publicListRank } from "@/server/db/public-list-rank";
 import { workbenchRecordsTable as records } from "@/server/workbench/schema";
 import { conflictError, notFoundError } from "@/server/http/errors";
 import type { Locale } from "@/shared/i18n/config";
@@ -26,7 +27,11 @@ export function listPublicFriends(
     })
     .from(friends)
     .where(eq(friends.locale, locale))
-    .orderBy(asc(friends.sortOrder), asc(friends.id));
+    .orderBy(
+      publicListRank("friends", locale, friends.id),
+      asc(friends.sortOrder),
+      asc(friends.id),
+    );
 }
 
 export function listFriendPublications(

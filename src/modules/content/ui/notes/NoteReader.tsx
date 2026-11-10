@@ -50,7 +50,10 @@ export function NoteReader({
             </header>
             <article className={styles.body}>
               {body?.content?.length ? (
-                <RichText document={body} />
+                <RichText
+                  document={body}
+                  imageDimensions={note.imageDimensions}
+                />
               ) : note.text ? (
                 <RichText document={plainTextDocument(note.text)} />
               ) : null}

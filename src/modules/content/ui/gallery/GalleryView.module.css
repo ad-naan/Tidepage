@@ -122,14 +122,18 @@
   margin: 0 0 18px;
   font: 400 10px/1.7 var(--font-ui);
 }
-.gallery.gallery :global(.masonry-gallery) {
+.gallery .masonry {
+  --gallery-columns: 4;
+  --gallery-column-gap: 18px;
+  --gallery-row-gap: 18px;
+  position: relative;
   columns: unset;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(var(--gallery-columns), minmax(0, 1fr));
+  gap: var(--gallery-row-gap) var(--gallery-column-gap);
   align-items: start;
 }
-.gallery.gallery :global(.masonry-gallery > figure) {
+.gallery .masonry > figure {
   position: relative;
   isolation: isolate;
   grid-column: auto;
@@ -138,8 +142,18 @@
   border: 0;
   background: none;
 }
-.gallery.gallery :global(.masonry-gallery > figure:nth-child(3n + 2)) {
-  margin-top: 12px;
+.gallery .masonry[data-packed] {
+  display: block;
+  height: var(--gallery-height);
+}
+.gallery .masonry[data-packed] > figure {
+  position: absolute;
+  inset-block-start: var(--gallery-y, 0px);
+  inset-inline-start: var(--gallery-x, 0px);
+  width: calc(
+    (100% - (var(--gallery-columns) - 1) * var(--gallery-column-gap)) /
+      var(--gallery-columns)
+  );
 }
 .gallery.gallery :global(.photo-button) {
   border-radius: 0;
@@ -155,6 +169,7 @@
 }
 .gallery.gallery :global(.masonry-gallery figcaption h3) {
   font: 500 14px/1.7 var(--font-editorial);
+  overflow-wrap: anywhere;
 }
 .gallery.gallery :global(.masonry-gallery figcaption p) {
   font: 400 10px/1.7 var(--font-ui);
@@ -168,15 +183,10 @@
   margin-top: 28px;
   font-size: 11px;
 }
-@media (min-width: 1250px) {
-  .gallery.gallery :global(.masonry-gallery) {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-}
 @media (max-width: 1050px) {
-  .gallery.gallery :global(.masonry-gallery) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 18px 14px;
+  .gallery .masonry {
+    --gallery-columns: 3;
+    --gallery-column-gap: 14px;
   }
 }
 @media (max-width: 700px) {
@@ -187,12 +197,9 @@
     flex-wrap: wrap;
     gap: 6px 12px;
   }
-  .gallery.gallery :global(.masonry-gallery) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px 12px;
-  }
-  .gallery.gallery :global(.masonry-gallery > figure:nth-child(3n + 2)) {
-    margin-top: 0;
+  .gallery .masonry {
+    --gallery-columns: 2;
+    --gallery-column-gap: 12px;
   }
   .gallery.gallery :global(.masonry-gallery figcaption h3) {
     font-size: 13px;

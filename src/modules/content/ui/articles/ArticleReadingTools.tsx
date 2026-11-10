@@ -1,4 +1,5 @@
 "use client";
+import type { CSSProperties, ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { useReducedMotion } from "motion/react";
 import { ArrowUpCircle, MessageCircle } from "lucide-react";
@@ -16,36 +17,38 @@ import { useArticleReadingValue } from "./useArticleReading";
 export function ArticleReadingTools({
   slug,
   title,
+  contents,
 }: {
   slug: string;
   title: string;
+  contents?: ReactNode;
 }) {
   const t = useTranslations("articles");
   const reduced = useReducedMotion();
   const target = { type: "article", id: slug } as const;
   return (
-    <div className={styles.tools}>
+    <div className={styles.tools} role="group" aria-label={t("readingTools")}>
       <PencilLine className={styles.rule} />
-      <ReadingPercent />
+      <div className={styles.overview}>
+        {contents}
+        <ReadingPercent />
+      </div>
       <Button
         className={styles.top}
+        aria-label={t("backToTop")}
+        title={t("backToTop")}
         onClick={() =>
           window.scrollTo({ top: 0, behavior: reduced ? "instant" : "smooth" })
         }
       >
         <ArrowUpCircle size={13} />
-        {t("backToTop")}
+        <span>{t("backToTop")}</span>
       </Button>
-      <div
-        className={styles.actions}
-        role="group"
-        aria-label={t("readingTools")}
-      >
+      <div className={styles.actions}>
         <InteractionButton target={target} kind="like" iconOnly showCount />
         <InteractionButton target={target} kind="save" iconOnly />
-        <ArticleShareButton title={title} iconOnly className={styles.action} />
+        <ArticleShareButton title={title} iconOnly />
         <Button
-          className={styles.action}
           aria-label={t("jumpComments")}
           title={t("jumpComments")}
           onClick={() => {
@@ -63,7 +66,9 @@ export function ArticleReadingTools({
           <MessageCircle size={18} />
         </Button>
       </div>
-      <EngagementStatus />
+      <div className={styles.status}>
+        <EngagementStatus />
+      </div>
     </div>
   );
 }
@@ -74,6 +79,7 @@ function ReadingPercent() {
   return (
     <div
       className={styles.progress}
+      style={{ "--reading-progress": percent / 100 } as CSSProperties}
       role="progressbar"
       aria-label={t("readingProgress")}
       aria-valuenow={percent}

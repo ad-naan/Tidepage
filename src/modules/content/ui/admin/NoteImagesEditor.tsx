@@ -123,7 +123,7 @@ export function NoteImagesEditor({
         {images.map((image, index) => (
           <li key={image.assetId} className={styles.item}>
             <div className={styles.preview}>
-              <AssetImage id={image.assetId} alt={image.alt} />
+              <AssetImage id={image.assetId} alt={image.alt} sizes="120px" />
               <span>
                 {t(index === 0 ? "cover" : "position", { index: index + 1 })}
               </span>

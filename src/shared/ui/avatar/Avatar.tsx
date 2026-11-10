@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { MediaImage } from "@/shared/ui/image/MediaImage";
 import styles from "./Avatar.module.css";
 
 /** Adjacent names provide the accessible label; a failed image keeps its footprint. */
@@ -22,12 +23,12 @@ export function Avatar({
     >
       <span>{Array.from(name.trim())[0]?.toUpperCase() || "·"}</span>
       {src && src !== failed && (
-        <img
+        <MediaImage
           src={src}
           alt=""
-          decoding="async"
+          sizes={size === "lg" ? "48px" : size === "sm" ? "22px" : "32px"}
           referrerPolicy="no-referrer"
-          onError={() => setFailed(src)}
+          onUnavailable={() => setFailed(src)}
         />
       )}
     </span>

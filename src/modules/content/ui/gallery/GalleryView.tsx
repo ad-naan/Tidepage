@@ -1,5 +1,4 @@
 "use client";
-import { ProgressiveList } from "@/shared/ui/loading/ProgressiveList";
 import { Button, IconButton } from "@/shared/ui/button/Button";
 import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 import {
@@ -10,6 +9,7 @@ import {
 import { ContentHeading } from "@/modules/content/ui/layout/ContentHeading";
 import styles from "./GalleryView.module.css";
 import { GalleryPhotoDetails } from "./GalleryPhotoDetails";
+import { GalleryMasonry } from "./GalleryMasonry";
 
 import { useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
@@ -17,11 +17,14 @@ import { listItemMotion } from "@/shared/lib/motion";
 import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight, Camera, MapPin } from "lucide-react";
 import { ImageViewer } from "@/shared/ui/dialog/ImageViewer";
+import { ImageFrame } from "@/shared/ui/image/MediaImage";
 import {
   galleryCategories,
   type GalleryPhoto,
 } from "@/modules/content/domain/gallery";
 const galleryTabs = ["all", ...galleryCategories] as const;
+const tileSizes =
+  "(max-width: 700px) 45vw, (max-width: 1050px) 30vw, (max-width: 1460px) 23vw, 310px";
 type GalleryTab = (typeof galleryTabs)[number];
 export function GalleryView({ photos }: { photos: GalleryPhoto[] }) {
   const t = useTranslations("gallery");
@@ -62,11 +65,7 @@ export function GalleryView({ photos }: { photos: GalleryPhoto[] }) {
         </span>
       </div>
       {!filtered.length && <p className="empty-state">{t("empty")}</p>}
-      <ProgressiveList
-        key={filter}
-        items={filtered}
-        className="masonry-gallery"
-      >
+      <GalleryMasonry key={filter} photos={filtered}>
         {(photo, i) => (
           <motion.figure key={photo.id} {...listItemMotion(i, reduced)}>
             <PencilFrame />
@@ -75,11 +74,14 @@ export function GalleryView({ photos }: { photos: GalleryPhoto[] }) {
               onClick={() => setSelected(photo)}
               style={{ aspectRatio: photo.width / photo.height }}
             >
-              <img
+              <ImageFrame
                 src={photo.src}
                 alt={photo.alt}
-                loading={i < 3 ? "eager" : "lazy"}
-                decoding="async"
+                fit="cover"
+                sizes={tileSizes}
+                width={photo.width}
+                height={photo.height}
+                loading={i === 0 ? "eager" : "lazy"}
               />
               <span className="photo-overlay">
                 <MapPin size={12} />
@@ -96,7 +98,7 @@ export function GalleryView({ photos }: { photos: GalleryPhoto[] }) {
             </figcaption>
           </motion.figure>
         )}
-      </ProgressiveList>
+      </GalleryMasonry>
       <p className="gallery-ending">
         {t("ending")}
         <CoastGlyph kind="wind" />
@@ -107,6 +109,7 @@ export function GalleryView({ photos }: { photos: GalleryPhoto[] }) {
           src={selected.src}
           alt={selected.alt}
           aspectRatio={selected.width / selected.height}
+          previewSizes={tileSizes}
           onClose={() => setSelected(null)}
           details={{
             label: t("capture.title"),

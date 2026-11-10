@@ -144,7 +144,7 @@ export function MediaPicker({
             {visibleAssets.map((asset) => (
               <div key={asset.id} className={styles.mediaItem}>
                 <PencilFrame />
-                <AssetImage id={asset.id} alt={asset.name} />
+                <AssetImage id={asset.id} alt={asset.name} sizes="200px" />
                 <p>{asset.name}</p>
                 <small>
                   {asset.width} × {asset.height} ·{" "}

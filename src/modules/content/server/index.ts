@@ -112,11 +112,16 @@ export const getQuotes = cache(async (locale: Locale = defaultLocale) =>
   (await service()).quotes(locale),
 );
 export async function invalidateContentCache(slug: string, locale: Locale) {
+  await Promise.all([
+    invalidateArticleLists(locale),
+    getCacheStore().delete(key(locale, `article:${slug}`)),
+  ]);
+}
+export async function invalidateArticleLists(locale: Locale) {
   const store = getCacheStore();
   await Promise.all([
     store.delete(key(locale, "articles")),
     store.delete(key(locale, "featured-articles")),
-    store.delete(key(locale, `article:${slug}`)),
   ]);
 }
 export function invalidateNotePreview(locale: Locale) {

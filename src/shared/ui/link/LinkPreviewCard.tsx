@@ -1,4 +1,5 @@
 "use client";
+import { MediaImage } from "@/shared/ui/image/MediaImage";
 import { useEffect, useId, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowUpRight, Globe } from "lucide-react";
@@ -125,13 +126,13 @@ export function LinkPreviewCard({
           onBlur={onLeave}
         >
           {data.artworkUrl && !failedImage && (
-            <img
+            <MediaImage
               className={styles.artwork}
               src={data.artworkUrl}
               alt={data.artworkAlt || ""}
               referrerPolicy="no-referrer"
-              decoding="async"
-              onError={() => setFailedImage(true)}
+              sizes="360px"
+              onUnavailable={() => setFailedImage(true)}
             />
           )}
           <span className={styles.details}>

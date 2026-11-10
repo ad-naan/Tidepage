@@ -9,6 +9,8 @@ import { Link } from "@/shared/i18n/navigation";
 import styles from "./SiteAboutView.module.css";
 import { siteAssets } from "@/shared/config/assets";
 import { RichText } from "../rich-text/RichText";
+import { MediaImage } from "@/shared/ui/image/MediaImage";
+import { getReadingImageDimensions } from "@/modules/content/server/reading-image-dimensions";
 
 export async function SiteAboutView() {
   const locale = await getLocale();
@@ -16,6 +18,7 @@ export async function SiteAboutView() {
     getSitePage(locale),
     getTranslations("siteAbout"),
   ]);
+  const imageDimensions = await getReadingImageDimensions([page.body]);
   const stops = ["articles", "notes", "projects", "gallery"] as const;
   return (
     <div className={styles.page}>
@@ -28,7 +31,9 @@ export async function SiteAboutView() {
       </header>
       <div className={styles.layout}>
         <article className={styles.story}>
-          {page.body && <RichText document={page.body} />}
+          {page.body && (
+            <RichText document={page.body} imageDimensions={imageDimensions} />
+          )}
           <div className={styles.signature}>
             <AuthorSignature size="md" />
             <Link href="/about">
@@ -38,7 +43,7 @@ export async function SiteAboutView() {
           </div>
         </article>
         <aside className={styles.guide}>
-          <img
+          <MediaImage
             src={siteAssets.siteIcon}
             width={88}
             height={88}

@@ -13,6 +13,7 @@ export default async function Page() {
     <ArticleManagerView
       initialItems={drafts.value ?? []}
       published={published}
+      canReorder={principal.role === "admin"}
     />
   );
 }

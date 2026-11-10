@@ -15,6 +15,7 @@ import {
 } from "drizzle-orm";
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import { getDb, type Database } from "@/server/db/client";
+import { publicListRank } from "@/server/db/public-list-rank";
 import { dateKey, formatDate } from "@/shared/lib/date-time";
 import {
   noteImageSchema,
@@ -100,7 +101,11 @@ export function postgresContentRepository(
         })
         .from(n)
         .where(and(published(n), eq(n.locale, locale)))
-        .orderBy(desc(n.publishedOn), asc(n.id))
+        .orderBy(
+          publicListRank("notes", locale, n.id),
+          desc(n.publishedOn),
+          asc(n.id),
+        )
         .limit(1);
       return row
         ? {
@@ -116,14 +121,22 @@ export function postgresContentRepository(
         .select({ id: p.id, name: p.name, subtitle: p.subtitle })
         .from(p)
         .where(and(published(p), eq(p.locale, locale)))
-        .orderBy(asc(p.sortOrder), asc(p.id))
+        .orderBy(
+          publicListRank("projects", locale, p.id),
+          asc(p.sortOrder),
+          asc(p.id),
+        )
         .limit(3),
     firstQuote: async (locale) => {
       const [row] = await db
         .select({ text: q.text })
         .from(q)
         .where(and(published(q), eq(q.locale, locale)))
-        .orderBy(asc(q.sortOrder), asc(q.id))
+        .orderBy(
+          publicListRank("quotes", locale, q.id),
+          asc(q.sortOrder),
+          asc(q.id),
+        )
         .limit(1);
       return row ?? null;
     },
@@ -145,7 +158,11 @@ export function postgresContentRepository(
           .select(summaryColumns)
           .from(a)
           .where(and(published(a), eq(a.locale, locale)))
-          .orderBy(desc(a.publishedAt), asc(a.slug))
+          .orderBy(
+            publicListRank("articles", locale, a.slug),
+            desc(a.publishedAt),
+            asc(a.slug),
+          )
       ).map(summary),
     articleBySlug: async (slug, locale) => {
       const [row] = await db
@@ -170,8 +187,9 @@ export function postgresContentRepository(
           .where(and(published(a), eq(a.slug, slug)))
       ).map((row) => row.locale),
     nextArticle: async (slug, locale) => {
+      const rank = publicListRank("articles", locale, a.slug);
       const cursor = db
-        .select({ publishedAt: a.publishedAt })
+        .select({ publishedAt: a.publishedAt, rank: rank.as("rank") })
         .from(a)
         .where(and(eq(a.slug, slug), eq(a.locale, locale)))
         .as("cursor");
@@ -184,12 +202,18 @@ export function postgresContentRepository(
             published(a),
             eq(a.locale, locale),
             or(
-              lt(a.publishedAt, cursor.publishedAt),
-              and(eq(a.publishedAt, cursor.publishedAt), gt(a.slug, slug)),
+              gt(rank, cursor.rank),
+              and(
+                eq(rank, cursor.rank),
+                or(
+                  lt(a.publishedAt, cursor.publishedAt),
+                  and(eq(a.publishedAt, cursor.publishedAt), gt(a.slug, slug)),
+                ),
+              ),
             ),
           ),
         )
-        .orderBy(desc(a.publishedAt), asc(a.slug))
+        .orderBy(rank, desc(a.publishedAt), asc(a.slug))
         .limit(1);
       return next;
     },
@@ -207,11 +231,12 @@ export function postgresContentRepository(
             )
           : undefined,
       );
+      const rank = publicListRank("articles", query.locale, a.slug);
       const page = db
-        .select(summaryColumns)
+        .select({ ...summaryColumns, rank: rank.as("rank") })
         .from(a)
         .where(where)
-        .orderBy(desc(a.publishedAt), asc(a.slug))
+        .orderBy(rank, desc(a.publishedAt), asc(a.slug))
         .limit(query.pageSize)
         .offset((query.page - 1) * query.pageSize)
         .as("page");
@@ -239,7 +264,7 @@ export function postgresContentRepository(
         })
         .from(totals)
         .leftJoin(page, sql`true`)
-        .orderBy(desc(page.publishedAt), asc(page.slug));
+        .orderBy(page.rank, desc(page.publishedAt), asc(page.slug));
       const total = rows[0].total;
       return {
         items: rows.flatMap(({ item }) => (item ? [summary(item)] : [])),
@@ -265,7 +290,11 @@ export function postgresContentRepository(
         })
         .from(n)
         .where(and(published(n), eq(n.locale, locale)))
-        .orderBy(desc(n.publishedOn), asc(n.id));
+        .orderBy(
+          publicListRank("notes", locale, n.id),
+          desc(n.publishedOn),
+          asc(n.id),
+        );
       const rows = await (limit === undefined ? query : query.limit(limit));
       return rows.map((row) => ({
         ...row,
@@ -290,7 +319,11 @@ export function postgresContentRepository(
           .select()
           .from(n)
           .where(and(published(n), eq(n.locale, locale)))
-          .orderBy(desc(n.publishedOn), asc(n.id))
+          .orderBy(
+            publicListRank("notes", locale, n.id),
+            desc(n.publishedOn),
+            asc(n.id),
+          )
       ).map(fullNote),
     projects: async (locale) =>
       (
@@ -298,7 +331,11 @@ export function postgresContentRepository(
           .select()
           .from(p)
           .where(and(published(p), eq(p.locale, locale)))
-          .orderBy(asc(p.sortOrder), asc(p.id))
+          .orderBy(
+            publicListRank("projects", locale, p.id),
+            asc(p.sortOrder),
+            asc(p.id),
+          )
       ).map(
         ({
           locale,
@@ -332,7 +369,11 @@ export function postgresContentRepository(
           .select()
           .from(q)
           .where(and(published(q), eq(q.locale, locale)))
-          .orderBy(asc(q.sortOrder), asc(q.id))
+          .orderBy(
+            publicListRank("quotes", locale, q.id),
+            asc(q.sortOrder),
+            asc(q.id),
+          )
       ).map(({ id, locale, text, author }) => ({ id, locale, text, author })),
   };
 }

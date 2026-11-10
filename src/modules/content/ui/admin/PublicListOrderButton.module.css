@@ -1,0 +1,79 @@
+.header,
+.error,
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+.header p,
+.error p,
+.empty {
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+.header p {
+  flex: 1 1 220px;
+}
+.list {
+  padding: 0;
+  margin: 12px 0;
+  list-style: none;
+}
+.list li {
+  display: grid;
+  grid-template-columns: 24px 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  min-height: 48px;
+  border-bottom: 1px solid var(--line);
+}
+.list li[data-drop] {
+  background: var(--wash);
+  box-shadow: inset 0 2px var(--accent);
+}
+.grip {
+  display: grid;
+  place-items: center;
+  align-self: stretch;
+  cursor: grab;
+  color: var(--muted);
+}
+.grip:active {
+  cursor: grabbing;
+}
+.position {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+.title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.moves {
+  display: flex;
+}
+.moves button {
+  min-width: 44px;
+  min-height: 44px;
+}
+.moves button:hover:not(:disabled) {
+  color: var(--accent);
+}
+.footer {
+  position: sticky;
+  bottom: 0;
+  justify-content: flex-end;
+  padding-block: 8px;
+  background: var(--paper);
+}
+@media (pointer: coarse) {
+  .list li {
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+  }
+  .grip {
+    display: none;
+  }
+}

@@ -1,7 +1,10 @@
 "use client";
 import { Anchor } from "@/shared/ui/link/Anchor";
-import { useEffect, useRef, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useReducedMotion } from "motion/react";
+import { useTranslations } from "next-intl";
+import { Button } from "@/shared/ui/button/Button";
+import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { CoastGlyph } from "@/shared/ui/drawing/CoastalMarks";
 import { HanddrawnTree } from "@/shared/ui/drawing/HanddrawnTree";
 import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
@@ -16,19 +19,21 @@ type Props = {
   slug: string;
   title: string;
 };
-export function ArticleContents(props: Props) {
-  useRegisterReadingArticle(props.slug, props.title);
-  const visible = useMediaQuery("(width > 960px)", true);
-  return visible ? <ContentsAside {...props} /> : null;
-}
-function ContentsAside({ titles, label, slug, title }: Props) {
+export function ArticleContents({ titles, label, slug, title }: Props) {
+  useRegisterReadingArticle(slug, title);
+  const t = useTranslations("articles");
+  const mobile = useMediaQuery("(max-width: 960px)");
+  const [open, setOpen] = useState(false);
   const active = useArticleReadingValue("active");
-  const navigation = useRef<HTMLElement>(null);
+  const navigation = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
+  useEffect(() => {
+    if (!mobile) setOpen(false);
+  }, [mobile]);
   useEffect(() => {
     const nav = navigation.current;
     const link = nav?.querySelector<HTMLElement>('[aria-current="location"]');
-    if (!nav || !link || nav.contains(document.activeElement)) return;
+    if (!nav || !link || mobile || nav.contains(document.activeElement)) return;
     if (
       link.offsetTop < nav.scrollTop ||
       link.offsetTop + rowHeight > nav.scrollTop + nav.clientHeight
@@ -37,7 +42,7 @@ function ContentsAside({ titles, label, slug, title }: Props) {
         top: Math.max(0, link.offsetTop - nav.clientHeight / 2),
         behavior: reduced ? "instant" : "smooth",
       });
-  }, [active, reduced]);
+  }, [active, mobile, reduced]);
   return (
     <aside className={styles.contents} aria-label={label}>
       {titles.length > 0 && (
@@ -46,10 +51,9 @@ function ContentsAside({ titles, label, slug, title }: Props) {
             <CoastGlyph kind="tide" />
             {label}
           </span>
-          <nav
+          <div
             ref={navigation}
             className={styles.navigation}
-            aria-label={label}
             style={{ "--toc-row-height": `${rowHeight}px` } as CSSProperties}
           >
             <ContentsTree
@@ -59,28 +63,77 @@ function ContentsAside({ titles, label, slug, title }: Props) {
               expanded
               rowHeight={rowHeight}
             />
-            <ol className={styles.items}>
-              {titles.map((chapter, index) => (
-                <li key={`${index}-${chapter}`}>
-                  <Anchor
-                    className={styles.row}
-                    href={`#section-${index}`}
-                    aria-label={`${String(index + 1).padStart(2, "0")} ${chapter}`}
-                    aria-current={active === index ? "location" : undefined}
-                  >
-                    <span className={styles.number} aria-hidden="true">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <span className={styles.title}>{chapter}</span>
-                  </Anchor>
-                </li>
-              ))}
-            </ol>
-          </nav>
+            <ContentsLinks titles={titles} label={label} active={active} />
+          </div>
         </>
       )}
-      <ArticleReadingTools slug={slug} title={title} />
+      <ArticleReadingTools
+        slug={slug}
+        title={title}
+        contents={
+          titles.length > 0 ? (
+            <Button
+              className={styles.trigger}
+              aria-haspopup="dialog"
+              aria-expanded={mobile && open}
+              onClick={() => setOpen(true)}
+            >
+              {t("tocShort")}
+            </Button>
+          ) : undefined
+        }
+      />
+      {mobile && open && (
+        <Dialog title={label} placement="bottom" onClose={() => setOpen(false)}>
+          <ContentsLinks
+            titles={titles}
+            label={label}
+            active={active}
+            onNavigate={() => setOpen(false)}
+          />
+        </Dialog>
+      )}
     </aside>
+  );
+}
+
+function ContentsLinks({
+  titles,
+  label,
+  active,
+  onNavigate,
+}: Pick<Props, "titles" | "label"> & {
+  active: number;
+  onNavigate?: () => void;
+}) {
+  return (
+    <nav className={onNavigate ? styles.sheet : undefined} aria-label={label}>
+      <ol className={styles.items}>
+        {titles.map((chapter, index) => {
+          const number = String(index + 1).padStart(2, "0");
+          const current = active === index;
+          return (
+            <li key={`${index}-${chapter}`}>
+              <Anchor
+                className={styles.row}
+                href={`#section-${index}`}
+                aria-label={`${number} ${chapter}`}
+                aria-current={current ? "location" : undefined}
+                data-dialog-initial-focus={
+                  onNavigate && current ? "" : undefined
+                }
+                onClick={onNavigate}
+              >
+                <span className={styles.number} aria-hidden="true">
+                  {number}
+                </span>
+                <span className={styles.title}>{chapter}</span>
+              </Anchor>
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
   );
 }
 

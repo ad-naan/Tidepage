@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { MediaImage } from "@/shared/ui/image/MediaImage";
 
 export function ReferenceArtwork({
   src,
@@ -13,13 +14,13 @@ export function ReferenceArtwork({
 }) {
   const [failedSource, setFailedSource] = useState("");
   return src && src !== failedSource ? (
-    <img
+    <MediaImage
       src={src}
       alt={alt}
       loading="lazy"
-      decoding="async"
+      sizes="120px"
       referrerPolicy="no-referrer"
-      onError={() => setFailedSource(src)}
+      onUnavailable={() => setFailedSource(src)}
     />
   ) : (
     fallback

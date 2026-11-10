@@ -8,6 +8,7 @@ import { collectionItemId } from "@/modules/content/domain/managed-collections";
 import { notFoundError } from "@/server/http/errors";
 import { defineRoute, jsonData } from "@/server/http/route";
 import { publishNote } from "@/modules/content/server/publish-note";
+import { getReadingImageDimensions } from "@/modules/content/server/reading-image-dimensions";
 import { requirePrincipal } from "@/modules/identity/server";
 import { requireSameOrigin } from "@/server/http/origin";
 import { boundedJson } from "@/server/http/body";
@@ -20,7 +21,8 @@ export const GET = defineRoute(async (request, { requestId }) => {
   if (id === null) return jsonData(await getNotes(locale), requestId);
   const note = await getNote(collectionItemId.parse(id), locale);
   if (!note) throw notFoundError();
-  return jsonData(note, requestId);
+  const imageDimensions = await getReadingImageDimensions([note.body]);
+  return jsonData({ ...note, imageDimensions }, requestId);
 });
 export const POST = defineRoute(async (request, { requestId }) => {
   requireSameOrigin(request);

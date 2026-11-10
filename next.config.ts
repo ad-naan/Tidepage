@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   // Docker 部署使用 .next/standalone 独立产物；本地 dev / next start 不受影响。
   output: "standalone",
   poweredByHeader: false,
+  images: { localPatterns: [{ pathname: "/uploads/**", search: "" }] },
   outputFileTracingExcludes: {
     "/*": [
       "./storage/**/*",

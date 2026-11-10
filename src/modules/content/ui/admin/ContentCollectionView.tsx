@@ -41,6 +41,7 @@ import {
 import { documentText } from "@/shared/contracts/rich-text";
 import { NoteImagesEditor } from "./NoteImagesEditor";
 import { EditorialDeleteDialog } from "./EditorialDeleteDialog";
+import { PublicListOrderButton } from "./PublicListOrderButton";
 import { ApiClientError, apiGet, apiSend } from "@/shared/http/client";
 import {
   galleryCategories,
@@ -75,11 +76,13 @@ export function ContentCollectionView({
   initialItems,
   initialPublished,
   canPublish,
+  canReorder,
 }: {
   kind: Collection;
   initialItems: Item[];
   initialPublished: PublishedCollectionItem[];
   canPublish: boolean;
+  canReorder: boolean;
 }) {
   const t = useTranslations("admin");
   const gallery = useTranslations("gallery");
@@ -384,33 +387,38 @@ export function ContentCollectionView({
             )}
           </p>
         </div>
-        <Button
-          disabled={!!value || !!opening}
-          variant="quiet"
-          onClick={() => {
-            setError("");
-            setDateError(false);
-            setLocale(uiLocale);
-            setValue({
-              id: crypto.randomUUID(),
-              revision: 0,
-              updatedAt: new Date().toISOString(),
-              sortOrder: 0,
-              publishedOn: kind === "gallery" ? dateKey(new Date()) : "",
-              category: kind === "gallery" ? galleryCategories[0] : "",
-              sketch: "boat",
-              color: "sand",
-              assetId: "",
-              images: {},
-              translations: Object.fromEntries(
-                locales.map((locale) => [locale, {}]),
-              ),
-            });
-            setDirty(false);
-          }}
-        >
-          {t("collection.new")}
-        </Button>
+        <div className={styles.actions}>
+          {canReorder && !value && (
+            <PublicListOrderButton kind={kind} disabled={busy || !!opening} />
+          )}
+          <Button
+            disabled={!!value || !!opening}
+            variant="quiet"
+            onClick={() => {
+              setError("");
+              setDateError(false);
+              setLocale(uiLocale);
+              setValue({
+                id: crypto.randomUUID(),
+                revision: 0,
+                updatedAt: new Date().toISOString(),
+                sortOrder: 0,
+                publishedOn: kind === "gallery" ? dateKey(new Date()) : "",
+                category: kind === "gallery" ? galleryCategories[0] : "",
+                sketch: "boat",
+                color: "sand",
+                assetId: "",
+                images: {},
+                translations: Object.fromEntries(
+                  locales.map((locale) => [locale, {}]),
+                ),
+              });
+              setDirty(false);
+            }}
+          >
+            {t("collection.new")}
+          </Button>
+        </div>
       </header>
       {!value && error && <p role="alert">{error}</p>}
       {!value && (
@@ -801,15 +809,6 @@ export function ContentCollectionView({
                     setDateError(false);
                     update({ publishedOn });
                   }}
-                />
-              </Field>
-              <Field id="collection-sort" label={labels.sortOrder}>
-                <Input
-                  type="number"
-                  value={value.sortOrder}
-                  onChange={(e) =>
-                    update({ sortOrder: Number(e.target.value) })
-                  }
                 />
               </Field>
               {kind === "gallery" ? (

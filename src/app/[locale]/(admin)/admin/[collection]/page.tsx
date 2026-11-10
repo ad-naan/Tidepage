@@ -35,6 +35,7 @@ export default async function Page({
       initialItems={drafts.value ?? []}
       initialPublished={published}
       canPublish={isOwner || kind === "notes"}
+      canReorder={isOwner}
     />
   );
 }

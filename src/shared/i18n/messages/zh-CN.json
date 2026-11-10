@@ -235,6 +235,7 @@
     "back": "回到文章",
     "minutes": "{count} 分钟阅读",
     "toc": "这篇文章里",
+    "tocShort": "目录",
     "continue": "下一篇，接着逛逛",
     "save": "收藏这篇文章",
     "saved": "已收藏",
@@ -1584,7 +1585,6 @@
         "alt": "替代文字",
         "location": "地点",
         "publishedOn": "内容日期",
-        "sortOrder": "排序值",
         "category": "分类",
         "color": "纸面色调"
       },
@@ -1720,6 +1720,21 @@
       "deleteTitle": "删除这条内容？",
       "deleteHelp": "“{name}”会移入回收站。已发布的版本会从前台隐藏，恢复后重新显示。",
       "actionFailed": "操作失败，请刷新列表后重试。"
+    },
+    "publicOrder": {
+      "title": "调整前台顺序",
+      "description": "拖动条目或使用上下箭头。保存后更新所选语言的公开列表。",
+      "language": "前台语言",
+      "up": "上移：{title}",
+      "down": "下移：{title}",
+      "save": "保存顺序",
+      "saved": "前台顺序已更新",
+      "cancel": "取消",
+      "empty": "该语言还没有已发布的内容。",
+      "loadFailed": "无法读取前台顺序。",
+      "saveFailed": "未能保存顺序，请重试。",
+      "conflict": "公开列表已变化，请重新加载后再排序。",
+      "reload": "重新加载"
     },
     "crud": {
       "filter": "内容状态",

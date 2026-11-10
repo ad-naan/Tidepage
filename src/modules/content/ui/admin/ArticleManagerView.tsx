@@ -11,6 +11,7 @@ import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import { apiSend } from "@/shared/http/client";
 import type { ArticleDraft } from "@/modules/content/domain/editor-document";
 import { EditorialDeleteDialog } from "./EditorialDeleteDialog";
+import { PublicListOrderButton } from "./PublicListOrderButton";
 import styles from "./admin.module.css";
 
 type Publication = { id: string; slug: string; locale: Locale; title: string };
@@ -24,9 +25,11 @@ type Row = {
 export function ArticleManagerView({
   initialItems,
   published,
+  canReorder,
 }: {
   initialItems: ArticleDraft[];
   published: Publication[];
+  canReorder: boolean;
 }) {
   const t = useTranslations("admin");
   const locale = useLocale();
@@ -112,6 +115,7 @@ export function ArticleManagerView({
           <p>{t("editorialList.description")}</p>
         </div>
         <div className={styles.actions}>
+          {canReorder && <PublicListOrderButton kind="articles" />}
           <Link href="/admin/articles/new">{t("articles.new")} ↗</Link>
         </div>
       </header>

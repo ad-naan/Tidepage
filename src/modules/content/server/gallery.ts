@@ -2,6 +2,7 @@ import "server-only";
 import { and, asc, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { getDb, type Database } from "@/server/db/client";
+import { publicListRank } from "@/server/db/public-list-rank";
 import {
   conflictError,
   notFoundError,
@@ -46,7 +47,12 @@ export async function listGalleryPhotos(
     })
     .from(photos)
     .where(eq(photos.locale, locale))
-    .orderBy(asc(photos.sortOrder), desc(photos.publishedOn), asc(photos.id));
+    .orderBy(
+      publicListRank("gallery", locale, photos.id),
+      asc(photos.sortOrder),
+      desc(photos.publishedOn),
+      asc(photos.id),
+    );
   return rows.map((row) => ({
     ...row,
     capture: photoCaptureSchema.safeParse(row.capture).data ?? null,

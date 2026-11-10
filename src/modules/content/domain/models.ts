@@ -6,6 +6,7 @@ import { editorDocumentSchema } from "./editor-document";
 import { categorySchema, sketchSchema } from "./taxonomy";
 import type { NoteImage } from "./note-images";
 import { isUploadedAssetId } from "@/shared/contracts/asset-path";
+import type { ImageDimensionsBySource } from "@/shared/contracts/image-dimensions";
 
 export { categorySchema, sketchSchema } from "./taxonomy";
 export const slugSchema = z
@@ -56,6 +57,7 @@ export const articleSummarySchema = articleSchema.omit({
 export type ArticleSummary = z.infer<typeof articleSummarySchema>;
 export type Note = {
   images: NoteImage[];
+  imageDimensions?: ImageDimensionsBySource;
   body?: Article["body"];
   locale: Locale;
   id: string;
@@ -66,7 +68,10 @@ export type Note = {
   tag: string;
   sketch: z.infer<typeof sketchSchema>;
 };
-export type NoteListEntry = Omit<Note, "body" | "images"> & {
+export type NoteListEntry = Omit<
+  Note,
+  "body" | "images" | "imageDimensions"
+> & {
   cover: Pick<NoteImage, "assetId" | "alt"> | null;
   imageCount: number;
   truncated: boolean;

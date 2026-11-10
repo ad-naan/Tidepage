@@ -19,6 +19,7 @@ import { Button } from "@/shared/ui/button/Button";
 import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
 import { ProgressiveList } from "@/shared/ui/loading/ProgressiveList";
+import { ImageFrame } from "@/shared/ui/image/MediaImage";
 const NoteReader = dynamic(
   () => import("./NoteReader").then((module) => module.NoteReader),
   { loading: () => <LoadingSkeleton variant="document" /> },
@@ -207,11 +208,12 @@ function NotesContent({ notes }: { notes: NoteListEntry[] }) {
                   <PencilFrame kind="note" />
                   {note.cover ? (
                     <>
-                      <img
+                      <ImageFrame
                         src={note.cover.assetId}
                         alt={note.cover.alt}
                         loading="lazy"
-                        decoding="async"
+                        fit="cover"
+                        sizes="(max-width: 420px) 88vw, 360px"
                       />
                       <span className={styles.imageCount} aria-hidden="true">
                         <Images size={13} />

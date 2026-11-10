@@ -57,6 +57,8 @@
 }
 .reading.reading :global(.prose) {
   min-width: 0;
+  grid-column: 1;
+  grid-row: 1;
 }
 .reading.reading :global(.prose section) {
   scroll-margin-top: var(--reading-safe-gap);
@@ -91,10 +93,20 @@
   }
 }
 @media (max-width: 960px) {
+  .reading.reading {
+    --article-toolbar-height: 48px;
+    --article-toolbar-top: calc(
+      var(--site-header-height) + env(safe-area-inset-top, 0px)
+    );
+    /* The reading observer reads this value in pixels: 48px toolbar + 12px. */
+    --reading-safe-gap: 60px;
+  }
   .reading.reading :global(.reading-layout) {
     grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
   }
   .reading.reading :global(.prose) {
+    grid-row: 2;
     width: min(100%, 800px);
     margin-inline: auto;
   }

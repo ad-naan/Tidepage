@@ -20,6 +20,7 @@ import {
 import { useFormatter, useTranslations } from "next-intl";
 import { Button, IconButton } from "@/shared/ui/button/Button";
 import { PencilFrame } from "@/shared/ui/drawing/CoastalMarks";
+import { MediaImage } from "@/shared/ui/image/MediaImage";
 import { Dialog } from "./Dialog";
 import styles from "./ImageViewer.module.css";
 
@@ -89,6 +90,7 @@ export function ImageViewer({
   navigation,
   details,
   aspectRatio,
+  previewSizes,
 }: {
   src: string;
   alt: string;
@@ -98,6 +100,7 @@ export function ImageViewer({
   navigation?: ReactNode;
   details?: ViewerDetails;
   aspectRatio?: number;
+  previewSizes?: string;
 }) {
   return (
     <Dialog
@@ -112,6 +115,7 @@ export function ImageViewer({
         navigation={navigation}
         details={details}
         aspectRatio={aspectRatio}
+        previewSizes={previewSizes}
       >
         {children}
       </ViewerCanvas>
@@ -126,6 +130,7 @@ function ViewerCanvas({
   navigation,
   details,
   aspectRatio,
+  previewSizes,
 }: {
   src: string;
   alt: string;
@@ -133,15 +138,18 @@ function ViewerCanvas({
   navigation?: ReactNode;
   details?: ViewerDetails;
   aspectRatio?: number;
+  previewSizes?: string;
 }) {
   const t = useTranslations("ui.imageViewer");
   const format = useFormatter();
   const stageRef = useRef<HTMLDivElement>(null);
   const pointers = useRef(new Map<number, Point>());
-  const [image, setImage] = useState(emptySize);
+  const [decoded, setDecoded] = useState<{ src: string; size: Size }>();
+  const image = decoded?.src === src ? decoded.size : emptySize;
   const [stage, setStage] = useState(emptySize);
   const [view, setView] = useState(initialView);
-  const [failed, setFailed] = useState(false);
+  const [failedSource, setFailedSource] = useState<string>();
+  const failed = failedSource === src;
   const [dragging, setDragging] = useState(false);
   const [panel, setPanel] = useState<"details" | "adjust" | null>(null);
   const detailsId = useId();
@@ -151,9 +159,7 @@ function ViewerCanvas({
 
   useLayoutEffect(() => {
     pointers.current.clear();
-    setImage(emptySize);
     setView(initialView);
-    setFailed(false);
     setDragging(false);
   }, [src]);
 
@@ -326,6 +332,7 @@ function ViewerCanvas({
         className={styles.stage}
         data-zoomed={view.zoom > 1}
         data-dragging={dragging}
+        data-loading={!ready && !failed}
         tabIndex={0}
         role="region"
         aria-label={t("canvas")}
@@ -376,25 +383,41 @@ function ViewerCanvas({
         {failed ? (
           <p role="status">{t("failed")}</p>
         ) : (
-          <img
-            key={src}
-            src={src}
-            alt={alt}
-            draggable={false}
-            onLoad={({ currentTarget }) =>
-              setImage({
-                width: currentTarget.naturalWidth,
-                height: currentTarget.naturalHeight,
-              })
-            }
-            onError={() => setFailed(true)}
-            style={{
-              visibility: fitted.width ? undefined : "hidden",
-              width: fitted.width,
-              height: fitted.height,
-              transform: `translate3d(${displayed.x}px, ${displayed.y}px, 0) rotate(${view.rotation}deg) scale(${view.zoom})`,
-            }}
-          />
+          <>
+            <MediaImage
+              className={styles.original}
+              src={src}
+              alt={alt}
+              draggable={false}
+              onReady={(element) => {
+                setFailedSource(undefined);
+                setDecoded({
+                  src,
+                  size: {
+                    width: element.naturalWidth,
+                    height: element.naturalHeight,
+                  },
+                });
+              }}
+              onUnavailable={() => setFailedSource(src)}
+              style={{
+                visibility: fitted.width ? undefined : "hidden",
+                width: fitted.width,
+                height: fitted.height,
+                transform: `translate3d(${displayed.x}px, ${displayed.y}px, 0) rotate(${view.rotation}deg) scale(${view.zoom})`,
+              }}
+            />
+            {previewSizes && (
+              <MediaImage
+                className={styles.preview}
+                src={src}
+                alt=""
+                sizes={previewSizes}
+                aria-hidden="true"
+                draggable={false}
+              />
+            )}
+          </>
         )}
       </div>
       {details ? (
