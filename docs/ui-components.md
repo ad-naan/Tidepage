@@ -58,9 +58,9 @@
 
 ## 导航与全局 Loading
 
-`shared/ui/navigation/NavigationFeedback` 挂在 locale 布局上方，语言切换不会重置过场。统一的 `shared/i18n/navigation` 出口为 Link 和程序式路由提供生命周期反馈。路由的 `loading.tsx` 通过 `RouteLoading` 持有加载状态；完成后保留短暂淡出，减弱动态模式不加最短展示时间。
+`shared/ui/navigation/NavigationFeedback` 提供公开页面的正文区占位和工作台的进度细线。公开路由的 `loading.tsx` 在站点布局内渲染原有的手绘日出和词典短句。减弱动态模式下提示保持静止。锚点跳转不属于整页导航。
 
-Loading 开始前保留正文高度，加载时隐藏页脚，避免正文被 fallback 替换后页脚跳到首屏。随机短句来自各语言的 `navigationLoading` 词典，同一会话不连续选择同一句。锚点跳转不属于整页导航。
+公开页面只在正文区切换占位与正文，页头、页脚和站点底色由共享布局持有。后台的内容区骨架可以在工作台布局内显示，并在挂载期间维持顶部进度提示。根布局的主题脚本在 HTML 解析时应用已保存的主题或系统配色。
 
 阅读页头的 `ReadingProgress` 根据 `.prose` 范围测量阅读进度，评论区和页脚不延长进度。返回圆钮承载细圆环，辅助文字使用本地化百分比。
 

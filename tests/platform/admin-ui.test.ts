@@ -21,7 +21,7 @@ test("calendar navigation respects leap years and crosses month boundaries", () 
     minute: "35",
   });
 });
-test("workspace transitions do not opt public editorial routes out of their feedback", () => {
+test("workspace links use their own scroll container", () => {
   for (const path of [
     "/admin",
     "/zh-CN/admin/projects",

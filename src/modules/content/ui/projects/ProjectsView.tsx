@@ -27,14 +27,18 @@ import type { ImageDimensionsBySource } from "@/shared/contracts/image-dimension
 export function ProjectsView({
   projects,
   imageDimensions,
+  initialId,
 }: {
   projects: Project[];
   imageDimensions?: ImageDimensionsBySource;
+  initialId?: string;
 }) {
   const reduced = useReducedMotion();
   const t = useTranslations("projects");
   const [category, setCategory] = useState("all");
-  const [selected, setSelected] = useState<Project | null>(null);
+  const [selected, setSelected] = useState<Project | null>(
+    () => projects.find((project) => project.id === initialId) ?? null,
+  );
   const visible = projects.filter(
     (p) => category === "all" || p.category === category,
   );

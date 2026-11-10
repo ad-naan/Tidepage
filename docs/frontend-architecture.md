@@ -55,7 +55,7 @@ src/
 | 操作提醒      | `shared/ui/feedback/NoticeProvider`                     | notify、页面信息、读屏播报、消失/暂停/替换规则                                                    |
 | 文字与数值    | `shared/ui/typography`                                  | Text 的语义字号；AnimatedNumber 的数字过渡                                                        |
 | 手绘材料      | `shared/ui/drawing`、`illustration`                     | 铅笔滤镜、选中笔迹、纸边、潮痕、贝壳等符号与海岸小稿                                              |
-| 全局导航反馈  | `shared/ui/navigation/NavigationFeedback`               | 路由加载、随机文案、页面高度和页脚稳定                                                            |
+| 全局导航反馈  | `shared/ui/navigation/NavigationFeedback`               | 公开页面正文占位、工作台顶部进度提示                                                              |
 | 内容加载占位  | `shared/ui/loading/LoadingSkeleton`                     | 页面 / 列表 / 正文 / 卡片骨架；延迟显现、降低动态效果、延迟读屏播报，避免短请求闪字               |
 | 站点偏好      | `shared/ui/preferences`                                 | 语言与主题控件；状态仍由路由 / SiteShell 持有                                                     |
 | 滚动条        | `shared/ui/scroll-area/CustomScrollbars`                | 公共滚动区域与刷新通知                                                                            |

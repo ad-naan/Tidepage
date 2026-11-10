@@ -44,23 +44,35 @@ function noteSketch(id: string) {
   return sketches[hash % sketches.length];
 }
 
-export function NotesView({ notes }: { notes: NoteListEntry[] }) {
+export function NotesView({
+  notes,
+  initialNote = null,
+}: {
+  notes: NoteListEntry[];
+  initialNote?: Note | null;
+}) {
   return (
     <EngagementProvider
       targets={notes.map((note) => ({ type: "note", id: note.id }))}
     >
-      <NotesContent notes={notes} />
+      <NotesContent notes={notes} initialNote={initialNote} />
     </EngagementProvider>
   );
 }
-function NotesContent({ notes }: { notes: NoteListEntry[] }) {
+function NotesContent({
+  notes,
+  initialNote,
+}: {
+  notes: NoteListEntry[];
+  initialNote: Note | null;
+}) {
   const reduced = useReducedMotion();
   const t = useTranslations("notes");
   const format = useFormatter();
   const { states, loading, error } = useEngagement();
   const { principal, openLogin } = useIdentity();
   const [onlySaved, setOnlySaved] = useState(false);
-  const [selected, setSelected] = useState<Note | null>(null);
+  const [selected, setSelected] = useState(initialNote);
   const [opening, setOpening] = useState<string | null>(null);
   const [readError, setReadError] = useState(false);
   async function open(note: NoteListEntry) {

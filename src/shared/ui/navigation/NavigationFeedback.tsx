@@ -11,20 +11,18 @@ import {
   type ReactNode,
 } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { defaultLocale, isLocale, type Locale } from "@/shared/i18n/config";
-import styles from "./navigation.module.css";
 import { isQuietNavigationPath } from "@/shared/config/navigation";
+import styles from "./navigation.module.css";
 
-type Copy = { label: string; lines: string[] };
-type Feedback = {
-  begin: () => void;
-  settle: () => void;
-  hold: () => () => void;
-};
-const Context = createContext<Feedback | null>(null);
+const Context = createContext<(() => () => void) | null>(null);
 
-export function useNavigationFeedback() {
-  return useContext(Context);
+export function useNavigationPending(pending: boolean) {
+  const hold = useContext(Context);
+  useEffect(() => {
+    if (pending) return hold?.();
+  }, [hold, pending]);
 }
 
 function RouteCommit({ commit }: { commit: (route: string) => void }) {
@@ -34,188 +32,139 @@ function RouteCommit({ commit }: { commit: (route: string) => void }) {
   return null;
 }
 
-/** Persists above locale layouts, so a language change cannot reset the exit animation. */
+let previousLine = -1;
+
+/** Replaces only the public route's content while its shared layout stays mounted. */
+export function RouteLoading() {
+  const t = useTranslations("navigationLoading");
+  const lines = t.raw("lines") as string[];
+  const length = lines.length;
+  const [line, setLine] = useState(0);
+  useEffect(() => {
+    let next = Math.floor(Math.random() * length);
+    if (length > 1 && next === previousLine) next = (next + 1) % length;
+    previousLine = next;
+    setLine(next);
+  }, [length]);
+  return (
+    <div
+      className={styles.route}
+      data-route-loading
+      role="status"
+      aria-label={t("label")}
+    >
+      <div className={styles.sketch} aria-hidden="true">
+        <svg viewBox="0 0 200 90" fill="none" aria-hidden="true">
+          <defs>
+            <radialGradient id="navigation-glow">
+              <stop stopColor="currentColor" stopOpacity=".18" />
+              <stop offset="1" stopColor="currentColor" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          <circle
+            className={styles.glow}
+            cx="100"
+            cy="43"
+            r="39"
+            fill="url(#navigation-glow)"
+          />
+          <path className={styles.sun} d="M84 47a16 16 0 0 1 32 0" />
+          <path
+            className={styles.horizon}
+            d="M29 49c24-2 46 1 71 0s49-2 71 0"
+          />
+          <path className={styles.water} d="M80 59h40M88 66h24M95 73h10" />
+          <circle
+            className={styles.spark}
+            cx="100"
+            cy="28"
+            r="1.4"
+            fill="currentColor"
+          />
+        </svg>
+        <p>{lines[line]}</p>
+      </div>
+    </div>
+  );
+}
+
+/** Shows a delayed progress line above the persistent route layouts. */
 export function NavigationFeedback({
   children,
-  copy,
+  labels,
 }: {
   children: ReactNode;
-  copy: Record<Locale, Copy>;
+  labels: Record<Locale, string>;
 }) {
   const path = usePathname();
   const segment = path.split("/")[1];
   const locale = isLocale(segment) ? segment : defaultLocale;
-  const words = copy[locale];
-  const quiet = isQuietNavigationPath(path);
   const [visible, setVisible] = useState(false);
-  const [line, setLine] = useState(0);
-  const active = useRef(false);
-  const shownAt = useRef<number | null>(null);
   const reveal = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const holds = useRef(0);
-  const exit = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const previous = useRef(-1);
   const committed = useRef("");
-  const count = useRef(words.lines.length);
-  count.current = words.lines.length;
-  useEffect(() => {
-    if (!quiet) return;
-    clearTimeout(exit.current);
-    clearTimeout(reveal.current);
-    active.current = false;
-    shownAt.current = null;
-    setVisible(false);
-    delete document.documentElement.dataset.navigating;
-    document.documentElement.style.removeProperty("--route-content-height");
-  }, [quiet]);
+  const historyPending = useRef(false);
 
-  const begin = useCallback(() => {
-    clearTimeout(exit.current);
-    if (active.current) return;
-    active.current = true;
-    if (isQuietNavigationPath(location.pathname)) {
-      setVisible(true);
-      return;
-    }
-    const length = count.current;
-    let next = Math.floor(Math.random() * length);
-    if (length > 1 && next === previous.current) next = (next + 1) % length;
-    previous.current = next;
-    setLine(next);
-    const main = document.getElementById("main-content");
-    if (main)
-      document.documentElement.style.setProperty(
-        "--route-content-height",
-        `${main.getBoundingClientRect().height}px`,
-      );
-    document.documentElement.dataset.navigating = "true";
-    reveal.current = setTimeout(() => {
-      shownAt.current = performance.now();
-      setVisible(true);
-    }, 120);
+  const show = useCallback(() => {
+    reveal.current ??= setTimeout(() => setVisible(true), 160);
   }, []);
 
   const settle = useCallback(() => {
-    clearTimeout(exit.current);
-    if (!active.current || holds.current > 0) return;
+    if (holds.current || historyPending.current) return;
     clearTimeout(reveal.current);
-    const reduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    const minimum =
-      !reduced && shownAt.current !== null
-        ? Math.max(0, 140 - (performance.now() - shownAt.current))
-        : 0;
-    function finish() {
-      if (holds.current > 0) return;
-      active.current = false;
-      shownAt.current = null;
-      setVisible(false);
-      delete document.documentElement.dataset.navigating;
-      document.documentElement.style.removeProperty("--route-content-height");
-    }
-    if (minimum) exit.current = setTimeout(finish, minimum);
-    else finish();
+    reveal.current = undefined;
+    setVisible(false);
   }, []);
 
   const hold = useCallback(() => {
     holds.current++;
-    begin();
+    show();
     return () => {
-      holds.current = Math.max(0, holds.current - 1);
+      holds.current--;
       settle();
     };
-  }, [begin, settle]);
+  }, [show, settle]);
+
   const commit = useCallback(
     (route: string) => {
       committed.current = route;
+      historyPending.current = false;
       settle();
     },
     [settle],
   );
 
   useEffect(() => {
-    function back() {
-      const current = `${location.pathname}?${location.search.slice(1)}`;
-      if (current !== committed.current) begin();
+    function backOrForward() {
+      const current = `${location.pathname}?${new URLSearchParams(location.search)}`;
+      historyPending.current = current !== committed.current;
+      if (historyPending.current) show();
       else settle();
     }
-    window.addEventListener("popstate", back);
+    window.addEventListener("popstate", backOrForward);
     return () => {
-      window.removeEventListener("popstate", back);
-      clearTimeout(exit.current);
+      window.removeEventListener("popstate", backOrForward);
       clearTimeout(reveal.current);
-      delete document.documentElement.dataset.navigating;
-      document.documentElement.style.removeProperty("--route-content-height");
+      reveal.current = undefined;
     };
-  }, [begin, settle]);
+  }, [show, settle]);
 
   return (
-    <Context.Provider value={{ begin, settle, hold }}>
+    <Context.Provider value={hold}>
       {children}
       <Suspense fallback={null}>
         <RouteCommit commit={commit} />
       </Suspense>
-      {quiet && visible && (
-        <div
-          className={styles.workspaceProgress}
-          role="status"
-          aria-label={words.label}
-        >
-          <span aria-hidden="true" />
+      {isQuietNavigationPath(path) && (
+        <div className={styles.progress} role="status">
+          {visible && (
+            <>
+              <span className={styles.track} aria-hidden="true" />
+              <span className={styles.label}>{labels[locale]}</span>
+            </>
+          )}
         </div>
       )}
-      <div
-        className={styles.veil}
-        data-visible={visible && !quiet}
-        aria-hidden={!visible || quiet}
-      >
-        <div
-          className={styles.composition}
-          role="status"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          <svg viewBox="0 0 200 90" fill="none" aria-hidden="true">
-            <defs>
-              <radialGradient id="navigation-glow">
-                <stop stopColor="currentColor" stopOpacity=".18" />
-                <stop offset="1" stopColor="currentColor" stopOpacity="0" />
-              </radialGradient>
-            </defs>
-            <circle
-              className={styles.glow}
-              cx="100"
-              cy="43"
-              r="39"
-              fill="url(#navigation-glow)"
-            />
-            <path className={styles.sun} d="M84 47a16 16 0 0 1 32 0" />
-            <path
-              className={styles.horizon}
-              d="M29 49c24-2 46 1 71 0s49-2 71 0"
-            />
-            <path className={styles.water} d="M80 59h40M88 66h24M95 73h10" />
-            <circle
-              className={styles.spark}
-              cx="100"
-              cy="28"
-              r="1.4"
-              fill="currentColor"
-            />
-          </svg>
-          <span className={styles.label}>{words.label}</span>
-          <p>{words.lines[line % words.lines.length]}</p>
-        </div>
-      </div>
     </Context.Provider>
   );
-}
-
-/** Reserve the content slot while Next streams any route, including immersive routes. */
-export function RouteLoading() {
-  const feedback = useNavigationFeedback();
-  const hold = feedback?.hold;
-  useEffect(() => hold?.(), [hold]);
-  return <div className={styles.placeholder} aria-hidden="true" />;
 }

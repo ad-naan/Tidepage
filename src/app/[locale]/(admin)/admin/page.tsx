@@ -12,7 +12,7 @@ export default async function Page() {
     return null;
   });
   return (
-    <DashboardView>
+    <DashboardView siteWide={principal.role === "admin"}>
       <EngagementOverviewView
         overview={overview}
         siteWide={principal.role === "admin"}

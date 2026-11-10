@@ -2,12 +2,11 @@
 
 import { useLayoutEffect, useSyncExternalStore } from "react";
 import { flushSync } from "react-dom";
+import { darkSchemeQuery, themeStorageKey } from "@/shared/config/theme";
 
 export const themePreferences = ["light", "system", "dark"] as const;
 export type ThemePreference = (typeof themePreferences)[number];
 
-const storageKey = "adnaan-theme";
-const colorScheme = "(prefers-color-scheme: dark)";
 const listeners = new Set<() => void>();
 let preference: ThemePreference | undefined;
 let activeTransition: ViewTransition | undefined;
@@ -15,7 +14,7 @@ let activeTransition: ViewTransition | undefined;
 function readPreference(): ThemePreference {
   if (preference) return preference;
   try {
-    const saved = JSON.parse(localStorage.getItem(storageKey) ?? "null");
+    const saved = JSON.parse(localStorage.getItem(themeStorageKey) ?? "null");
     if (saved === "light" || saved === "dark" || saved === "system")
       return saved;
   } catch {
@@ -27,7 +26,7 @@ function readPreference(): ThemePreference {
 function subscribe(listener: () => void) {
   listeners.add(listener);
   function onStorage(event: StorageEvent) {
-    if (event.key !== storageKey && event.key !== null) return;
+    if (event.key !== themeStorageKey && event.key !== null) return;
     preference = undefined;
     listener();
   }
@@ -39,14 +38,14 @@ function subscribe(listener: () => void) {
 }
 
 function subscribeSystem(listener: () => void) {
-  const media = matchMedia(colorScheme);
+  const media = matchMedia(darkSchemeQuery);
   media.addEventListener("change", listener);
   return () => media.removeEventListener("change", listener);
 }
 
 function resolveTheme(value: ThemePreference) {
   if (value !== "system") return value;
-  return matchMedia(colorScheme).matches ? "dark" : "light";
+  return matchMedia(darkSchemeQuery).matches ? "dark" : "light";
 }
 
 function getTheme() {
@@ -67,7 +66,7 @@ function setPreference(next: ThemePreference) {
   delete root.dataset.themeTransition;
   preference = next;
   try {
-    localStorage.setItem(storageKey, JSON.stringify(next));
+    localStorage.setItem(themeStorageKey, JSON.stringify(next));
   } catch {
     // Keep the in-memory choice for this visit.
   }

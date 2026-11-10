@@ -21,6 +21,7 @@ import {
   Blocks,
   Quote,
   Shell,
+  UsersRound,
 } from "lucide-react";
 import { Link, usePathname } from "@/shared/i18n/navigation";
 import { NoticeDock } from "@/shared/ui/feedback/NoticeProvider";
@@ -39,15 +40,16 @@ const entries = [
   ["quotes", "/admin/quotes", Quote],
   ["gallery", "/admin/gallery", Image],
   ["media", "/admin/media", Image],
+  ["readers", "/admin/readers", UsersRound],
   ["friends", "/admin/friends", Shell],
   ["site", "/admin/site", Settings],
 ] as const;
 export function AdminShell({
   children,
-  canManageGallery,
+  isAdmin,
 }: {
   children: ReactNode;
-  canManageGallery: boolean;
+  isAdmin: boolean;
 }) {
   const t = useTranslations("admin");
   const pathname = usePathname();
@@ -97,7 +99,10 @@ export function AdminShell({
           >
             <nav aria-label={t("navigation")}>
               {entries
-                .filter(([key]) => key !== "gallery" || canManageGallery)
+                .filter(
+                  ([key]) =>
+                    isAdmin || (key !== "gallery" && key !== "readers"),
+                )
                 .map(([key, href, Icon]) => (
                   <Link
                     key={key}
@@ -140,9 +145,9 @@ export function AdminShell({
             className={styles.main}
             data-custom-scroll={t("workspace")}
           >
-            {pathname !== "/admin/site" && (
-              <div className={styles.mode}>{t("localDetail")}</div>
-            )}
+            {!["/admin", "/admin/readers", "/admin/site"].includes(
+              pathname,
+            ) && <div className={styles.mode}>{t("localDetail")}</div>}
             <div className={styles.page} key={pathname}>
               {children}
             </div>

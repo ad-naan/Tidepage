@@ -22,9 +22,19 @@ body {
   padding-top: var(--site-header-height);
 }
 .site-shell .main-wrap {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100svh - var(--site-header-height));
   width: var(--site-content-width);
   margin-inline: auto;
   padding-inline: 0;
+}
+.site-shell .main-wrap > main {
+  flex: 1 0 auto;
+  min-height: 60svh;
+}
+.site-shell .main-wrap > .page-footer {
+  flex-shrink: 0;
 }
 .site-shell[data-page="inner"] > .header-slot {
   height: 86px;

@@ -1048,7 +1048,7 @@
     "label": "语言"
   },
   "navigationLoading": {
-    "label": "正沿着微光，前往下一页",
+    "label": "正在加载页面",
     "lines": [
       "让海风，先翻过这一页。",
       "下一处风景，正在靠岸。",
@@ -1171,32 +1171,47 @@
       "gallery": "照片廊",
       "media": "媒体库",
       "friends": "友联",
+      "readers": "读者管理",
       "site": "站点设置"
     },
     "dashboard": {
-      "title": "今天，也慢慢写。",
-      "description": "照看内容，也照看那些还没有写完的念头。",
-      "drafts": "本地文章草稿",
-      "translations": "已填写标题的语言版本",
+      "label": "工作台手账",
+      "title": "今天的写作桌",
+      "description": "看看读者留下了什么，再接着写还没写完的篇章。",
+      "shortcuts": "工作台快捷入口",
+      "drafts": "{count, number} 篇文章草稿",
+      "translations": "{count, number} 个语言版本已填写标题",
       "continue": "接着写，别让念头走远",
       "engagement": {
         "title": "互动概览",
         "siteScope": "全站已发布内容 · 汇总所有语言版本",
         "authorScope": "你已发布的内容 · 汇总所有语言版本",
         "lastSevenDays": "近 7 天 +{count, number}",
-        "activity": "最近互动",
-        "empty": "收到评论、点赞或收藏后，会在这里显示。",
+        "activity": "互动消息",
+        "activityDescription": "谁来了、在哪一篇互动、留下了什么。",
+        "readerActivityDescription": "这位读者在已发布内容下的近期评论和点赞。",
+        "trend": "近 7 天互动趋势",
+        "trendDescription": "按天统计评论、点赞和收藏，包含今天。",
+        "chartData": "查看每日数据",
+        "date": "日期",
+        "filter": "筛选互动消息",
+        "all": "全部",
+        "more": "查看更多消息",
+        "less": "收起消息",
+        "readComment": "展开评论全文",
+        "closeComment": "收起评论",
+        "empty": "暂无互动消息。",
+        "emptyFilter": "近期没有这类互动。",
         "failed": "暂时无法读取互动数据，请刷新页面重试。",
-        "commentBy": "{author} 发表了评论",
         "metric": {
           "comment": "评论",
           "like": "点赞",
           "save": "收藏"
         },
         "event": {
-          "comment": "收到评论",
-          "like": "收到点赞",
-          "save": "收到收藏"
+          "comment": "发表了评论",
+          "like": "点了赞",
+          "save": "匿名收藏"
         },
         "target": {
           "article": "文章",
@@ -1205,6 +1220,26 @@
           "page": "页面"
         }
       }
+    },
+    "readers": {
+      "label": "读者手账",
+      "title": "读者管理",
+      "description": "查找注册读者，查看他们留下的评论和点赞。",
+      "list": "读者名录",
+      "count": "{count, number} 位读者",
+      "search": "搜索",
+      "searchPlaceholder": "按昵称或邮箱查找",
+      "clear": "清除搜索",
+      "joined": "注册于",
+      "empty": "目前还没有注册读者。",
+      "noMatches": "没有找到符合条件的读者。",
+      "unavailable": "这位读者已不可查看。",
+      "failed": "暂时无法读取读者名录，请刷新页面重试。",
+      "pages": "读者名录分页",
+      "page": "第 {page, number} 页，共 {total, number} 页",
+      "previous": "上一页",
+      "next": "下一页",
+      "close": "收起读者详情"
     },
     "articles": {
       "description": "写下、整理，再把值得留下的内容公开。",

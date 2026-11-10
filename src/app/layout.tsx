@@ -10,6 +10,7 @@ import { localeRegistry } from "@/shared/i18n/config";
 import { locales, type Locale } from "@/shared/i18n/config";
 import { catalogs } from "@/i18n/catalogs";
 import { NavigationFeedback } from "@/shared/ui/navigation/NavigationFeedback";
+import { themeBootstrap } from "@/shared/config/theme";
 import { PencilDefinitions } from "@/shared/ui/drawing/PencilDefinitions";
 import "@/styles/globals.css";
 import "@/styles/refinements.css";
@@ -56,21 +57,39 @@ export default async function RootLayout({
   const locale = await getLocale();
   const messages = await getMessages();
   const t = await getTranslations("site");
-  const loadingCopy = Object.fromEntries(
+  const loadingLabels = Object.fromEntries(
     await Promise.all(
       locales.map(async (language) => [
         language,
-        (await catalogs[language]()).default.navigationLoading,
+        (await catalogs[language]()).default.navigationLoading.label,
       ]),
     ),
-  ) as Record<Locale, { label: string; lines: string[] }>;
+  ) as Record<Locale, string>;
   return (
     <html
       lang={locale}
       dir={localeRegistry[locale].direction}
       className={gardenHand.variable}
       data-scroll-behavior="smooth"
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
+        <style>{`
+          :root {
+            color-scheme: light dark;
+            background-color: var(--paper, #faf9f5);
+          }
+          :root[data-theme="light"] { color-scheme: light; }
+          :root[data-theme="dark"] {
+            color-scheme: dark;
+            background-color: var(--paper, #171c26);
+          }
+          @media (prefers-color-scheme: dark) {
+            :root:not([data-theme]) { background-color: var(--paper, #171c26); }
+          }
+        `}</style>
+      </head>
       <body>
         <PencilDefinitions />
         <Anchor href="#main-content" className="skip-link">
@@ -87,7 +106,9 @@ export default async function RootLayout({
             },
           }}
         >
-          <NavigationFeedback copy={loadingCopy}>{children}</NavigationFeedback>
+          <NavigationFeedback labels={loadingLabels}>
+            {children}
+          </NavigationFeedback>
         </NextIntlClientProvider>
       </body>
     </html>

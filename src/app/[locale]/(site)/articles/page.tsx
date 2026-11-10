@@ -1,5 +1,4 @@
-import { getLocale, getTranslations } from "next-intl/server";
-import { Suspense } from "react";
+import { getLocale } from "next-intl/server";
 import { ArticlesView } from "@/modules/content/ui/articles/ArticlesView";
 import { listArticles } from "@/modules/content/server";
 import { getPageMetadata } from "@/server/seo/metadata";
@@ -21,16 +20,5 @@ export default async function Page({
   });
   if (!parsed.success) return redirect({ href: "/articles", locale });
   const result = await listArticles({ ...parsed.data, locale });
-  const t = await getTranslations("common");
-  return (
-    <Suspense
-      fallback={
-        <p className="loading" role="status">
-          {t("loading")}
-        </p>
-      }
-    >
-      <ArticlesView result={result} category={parsed.data.category} />
-    </Suspense>
-  );
+  return <ArticlesView result={result} category={parsed.data.category} />;
 }

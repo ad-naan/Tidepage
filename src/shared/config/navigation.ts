@@ -1,4 +1,4 @@
-/** Workspace routes keep their shell visible instead of using the editorial page transition. */
+/** Workspace routes manage scrolling in their own container. */
 export function isQuietNavigationPath(path: string) {
   return /^\/(?:[^/]+\/)?admin(?:\/|$)/.test(path);
 }

@@ -111,7 +111,7 @@ export async function AboutView() {
           </Link>
         </aside>
       </div>
-      <div className={styles.conversation}>
+      <div id="about-comments" className={styles.conversation}>
         <p>{t("conversation")}</p>
         <Discussion target={{ type: "page", id: "about" }} />
       </div>

@@ -1048,7 +1048,7 @@
     "label": "Language"
   },
   "navigationLoading": {
-    "label": "Following the light to the next page",
+    "label": "Loading page",
     "lines": [
       "Let the sea breeze turn the page.",
       "Another shore is coming into view.",
@@ -1171,32 +1171,47 @@
       "gallery": "Gallery",
       "media": "Media",
       "friends": "Friends",
+      "readers": "Readers",
       "site": "Site settings"
     },
     "dashboard": {
-      "title": "Take your time. Keep writing.",
-      "description": "Care for your writing, and the thoughts still taking shape.",
-      "drafts": "Local article drafts",
-      "translations": "Translations with titles",
+      "label": "Studio notebook",
+      "title": "Writing desk",
+      "description": "See how readers are responding and pick up the drafts still taking shape.",
+      "shortcuts": "Studio shortcuts",
+      "drafts": "{count, plural, one {# draft} other {# drafts}}",
+      "translations": "{count, plural, one {# titled translation} other {# titled translations}}",
       "continue": "Pick up where you left off",
       "engagement": {
         "title": "Engagement overview",
         "siteScope": "Published content across the site and all languages",
         "authorScope": "Your published content across all languages",
-        "lastSevenDays": "+{count, number} in the last 7 days",
-        "activity": "Recent activity",
-        "empty": "Comments, likes, and saves will appear here as they come in.",
+        "lastSevenDays": "+{count, number} over 7 days",
+        "activity": "Activity inbox",
+        "activityDescription": "Who responded, where, and what they said.",
+        "readerActivityDescription": "This reader’s recent comments and likes on published content.",
+        "trend": "Engagement over 7 days",
+        "trendDescription": "Daily comments, likes, and saves, including today.",
+        "chartData": "View daily totals",
+        "date": "Date",
+        "filter": "Filter activity",
+        "all": "All",
+        "more": "Show more activity",
+        "less": "Show less activity",
+        "readComment": "Read full comment",
+        "closeComment": "Collapse comment",
+        "empty": "No recent activity to show.",
+        "emptyFilter": "No recent activity of this type.",
         "failed": "Couldn’t load engagement data. Refresh the page to try again.",
-        "commentBy": "{author} left a comment",
         "metric": {
           "comment": "Comments",
           "like": "Likes",
           "save": "Saves"
         },
         "event": {
-          "comment": "New comment",
-          "like": "New like",
-          "save": "New save"
+          "comment": "commented",
+          "like": "liked",
+          "save": "Anonymous save"
         },
         "target": {
           "article": "Article",
@@ -1205,6 +1220,26 @@
           "page": "Page"
         }
       }
+    },
+    "readers": {
+      "label": "Reader notebook",
+      "title": "Reader management",
+      "description": "Find registered readers and review their comments and likes.",
+      "list": "Reader directory",
+      "count": "{count, plural, one {# reader} other {# readers}}",
+      "search": "Search",
+      "searchPlaceholder": "Search by name or email",
+      "clear": "Clear search",
+      "joined": "Joined",
+      "empty": "There are no registered readers yet.",
+      "noMatches": "No readers match your search.",
+      "unavailable": "This reader is unavailable.",
+      "failed": "Couldn’t load the reader directory. Refresh the page to try again.",
+      "pages": "Reader directory pages",
+      "page": "Page {page, number} of {total, number}",
+      "previous": "Previous",
+      "next": "Next",
+      "close": "Close reader profile"
     },
     "articles": {
       "description": "Write, organize, then share what deserves to stay.",
