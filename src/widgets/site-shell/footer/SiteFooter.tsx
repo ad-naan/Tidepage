@@ -2,6 +2,7 @@
 
 import { Button } from "@/shared/ui/button/Button";
 import { Anchor } from "@/shared/ui/link/Anchor";
+import type { CSSProperties } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Heart, Mail, Rss, ArrowUpRight } from "lucide-react";
 import { Link } from "@/shared/i18n/navigation";
@@ -9,8 +10,16 @@ import { FooterPreferences } from "./FooterPreferences";
 import styles from "./SiteFooter.module.css";
 import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
 import { LiveReaders } from "@/modules/presence/ui/LiveReaders";
+import { siteAssets } from "@/shared/config/assets";
 import { feedPath } from "@/shared/config/site";
 import type { ThemePreference } from "@/shared/ui/preferences/useThemePreference";
+
+const otterAssets = {
+  "--otter-light": `url("${siteAssets.footerOtterLight}")`,
+  "--otter-dark": `url("${siteAssets.footerOtterDark}")`,
+  "--otter-still-light": `url("${siteAssets.footerOtterStillLight}")`,
+  "--otter-still-dark": `url("${siteAssets.footerOtterStillDark}")`,
+} as CSSProperties;
 
 export function SiteFooter({
   year,
@@ -80,6 +89,9 @@ export function SiteFooter({
               <Mail size={13} />
             </Button>
           </div>
+        </div>
+        <div className={styles.illustration} aria-hidden="true">
+          <div className={styles.otter} style={otterAssets} />
         </div>
         <div className={styles.utilities}>
           <LiveReaders />
