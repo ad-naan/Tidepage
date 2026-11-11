@@ -10,6 +10,7 @@ export const writingRequestSchema = z.discriminatedUnion("task", [
   z
     .object({
       task: z.literal("write"),
+      draft: z.string().max(articleContextLimit).optional(),
       locale: localeSchema,
       prompt: text(2000),
       context: z.string().max(articleContextLimit),
@@ -72,6 +73,7 @@ export type MetadataSuggestion = z.infer<typeof metadataSuggestionSchema>;
 export type SiteSuggestion = z.infer<typeof siteSuggestionSchema>;
 export type EditorialRequest = z.infer<typeof writingRequestSchema>;
 export type WritingRequest = {
+  draft?: string;
   prompt: string;
   locale: z.infer<typeof localeSchema>;
   context: string;

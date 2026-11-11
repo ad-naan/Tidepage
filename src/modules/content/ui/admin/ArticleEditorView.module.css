@@ -36,9 +36,10 @@
   font: 500 var(--text-sm)/1.5 var(--font-ui);
   white-space: nowrap;
 }
-.publicationBar {
-  flex: 0 1 100%;
-  min-width: 0;
+.saveState {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  white-space: nowrap;
 }
 .actions {
   justify-content: flex-end;
@@ -79,13 +80,13 @@
 }
 .sheet {
   width: 100%;
-  max-width: 1040px;
   min-width: 0;
   margin: 0 auto;
-  padding: 28px clamp(20px, 3vw, 40px) 48px;
+  padding: 24px 0 32px;
 }
 .documentHeading {
   margin-bottom: 28px;
+  padding-inline: 20px;
 }
 .documentHeading h2 {
   font: 500 30px/1.5 var(--font-editorial);
@@ -206,7 +207,7 @@
 }
 @media (max-width: 1150px) {
   .sheet {
-    padding-inline: 28px;
+    padding-inline: 0;
   }
   .layout[data-panel="true"] {
     grid-template-columns: minmax(0, 1fr) 280px;
@@ -249,7 +250,7 @@
     width: 100%;
   }
   .sheet {
-    padding: 28px 16px 60px;
+    padding: 24px 0 40px;
   }
   .titleField,
   .documentHeading h2 {

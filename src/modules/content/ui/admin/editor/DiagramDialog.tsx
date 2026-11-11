@@ -18,7 +18,7 @@ import { Disclosure } from "@/shared/ui/disclosure/Disclosure";
 import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 import { Anchor } from "@/shared/ui/link/Anchor";
 import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
-import { apiSend } from "@/shared/http/client";
+import { streamDiagram } from "@/modules/ai/ui/diagram-stream";
 import { isLocale, defaultLocale, type Locale } from "@/shared/i18n/config";
 import { catalogs } from "@/i18n/catalogs";
 import styles from "./DiagramDialog.module.css";
@@ -90,9 +90,8 @@ function DiagramEditor({
   onClose,
   onSave,
   templateCopy,
-}: DiagramDialogProps & { templateCopy: TemplateCopy }) {
+}: DiagramDialogProps & { templateCopy: TemplateCopy; contentLocale: Locale }) {
   const t = useTranslations("diagrams");
-  const locale = useLocale();
   const id = useId();
   function template(kind: "flow" | "branch" | "cycle"): Diagram {
     const labels =
@@ -141,6 +140,10 @@ function DiagramEditor({
   );
   const [prompt, setPrompt] = useState("");
   const [busy, setBusy] = useState(false);
+  const [live, setLive] = useState<Diagram | null>(null);
+  const [phase, setPhase] = useState<
+    "idle" | "generating" | "done" | "stopped" | "error"
+  >("idle");
   const [error, setError] = useState<string | null>(null);
   const request = useRef<AbortController | null>(null);
   const preview = useRef<HTMLDivElement>(null);
@@ -164,20 +167,29 @@ function DiagramEditor({
     const controller = new AbortController();
     request.current = controller;
     setBusy(true);
+    setLive(null);
+    setPhase("generating");
     setError(null);
     try {
-      const result = await apiSend<unknown>(
-        "/api/v1/ai/diagram",
-        "POST",
-        { prompt, locale: contentLocale ?? locale, context, diagram: value },
-        { signal: controller.signal, timeoutMs: 65000 },
-      );
-      if (!controller.signal.aborted) {
-        setValue(diagramSchema.parse(result));
-        setPrompt("");
+      for await (const event of streamDiagram(
+        { prompt, locale: contentLocale, context, diagram: value },
+        controller.signal,
+      )) {
+        if (controller.signal.aborted) break;
+        if (event.type === "progress") setLive(event.diagram);
+        if (event.type === "done") {
+          setValue(event.diagram);
+          setLive(null);
+          setPrompt("");
+          setPhase("done");
+        }
       }
     } catch {
-      if (!controller.signal.aborted) setError(t("generationFailed"));
+      if (!controller.signal.aborted) {
+        setError(t("generationFailed"));
+        setLive(null);
+        setPhase("error");
+      }
     } finally {
       if (request.current === controller) {
         request.current = null;
@@ -189,6 +201,8 @@ function DiagramEditor({
     request.current?.abort();
     request.current = null;
     setBusy(false);
+    setLive(null);
+    setPhase("stopped");
   }
   function exportSvg() {
     const original = preview.current?.querySelector("svg");
@@ -220,8 +234,32 @@ function DiagramEditor({
     <Dialog
       title={t("title")}
       wide
+      layout="workspace"
       onClose={onClose}
       headingIcon={<Sparkles size={18} />}
+      footer={
+        <>
+          {(!valid.success || error) && (
+            <p className={styles.error} role="alert">
+              {error ?? t("invalid")}
+            </p>
+          )}
+          <div className={styles.footer}>
+            <span>{t("editable")}</span>
+            <Button
+              variant="primary"
+              size="sm"
+              disabled={busy || !valid.success}
+              onClick={() => {
+                if (valid.success && !onSave(valid.data))
+                  setError(t("documentChanged"));
+              }}
+            >
+              {t(initial ? "update" : "insert")}
+            </Button>
+          </div>
+        </>
+      }
     >
       <div className={styles.layout}>
         <div className={styles.stage}>
@@ -258,7 +296,7 @@ function DiagramEditor({
             className={styles.preview}
             data-custom-scroll={t("preview")}
           >
-            <MiniDiagram value={value} />
+            <MiniDiagram value={live ?? value} />
           </div>
           {aiEnabled ? (
             <div className={styles.assistant}>
@@ -274,6 +312,16 @@ function DiagramEditor({
                   disabled={busy}
                   placeholder={t("promptPlaceholder")}
                   onChange={(event) => setPrompt(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (
+                      event.key === "Enter" &&
+                      !event.shiftKey &&
+                      !event.nativeEvent.isComposing
+                    ) {
+                      event.preventDefault();
+                      void generate();
+                    }
+                  }}
                 />
               </Field>
               <div className={styles.aiActions}>
@@ -292,14 +340,23 @@ function DiagramEditor({
                     {t("generate")}
                   </Button>
                 )}
-                <span role="status">{busy ? t("generating") : ""}</span>
+                <span role="status">
+                  {live
+                    ? t("progress", {
+                        nodes: live.nodes.length,
+                        edges: live.edges.length,
+                      })
+                    : phase !== "idle"
+                      ? t(`phases.${phase}`)
+                      : t("sendHint")}
+                </span>
               </div>
             </div>
           ) : (
             <p className={styles.help}>{t("aiUnavailable")}</p>
           )}
         </div>
-        <div className={styles.settings}>
+        <div className={styles.settings} data-custom-scroll={t("settings")}>
           {!initial && (
             <div
               className={styles.templates}
@@ -521,25 +578,6 @@ function DiagramEditor({
             />
           </Field>
         </div>
-      </div>
-      {(!valid.success || error) && (
-        <p className={styles.error} role="alert">
-          {error ?? t("invalid")}
-        </p>
-      )}
-      <div className={styles.footer}>
-        <span>{t("editable")}</span>
-        <Button
-          variant="primary"
-          size="sm"
-          disabled={busy || !valid.success}
-          onClick={() => {
-            if (valid.success && !onSave(valid.data))
-              setError(t("documentChanged"));
-          }}
-        >
-          {t(initial ? "update" : "insert")}
-        </Button>
       </div>
     </Dialog>
   );

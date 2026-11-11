@@ -93,6 +93,29 @@
   overscroll-behavior: contain;
   padding: 2px 12px 4px 2px;
 }
+.footer {
+  flex-shrink: 0;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  margin-top: 12px;
+}
+.workspace {
+  width: min(1160px, calc(100vw - 32px));
+}
+.workspace .inner {
+  height: min(88dvh, 860px);
+  min-height: 0;
+}
+.workspace .content {
+  flex: 1;
+  overflow: hidden;
+  padding: 0;
+}
+@media (max-width: 700px) {
+  .workspace .content {
+    overflow: auto;
+  }
+}
 @media (prefers-reduced-motion: no-preference) {
   .dialog[open] .inner,
   .dialog[open]::backdrop {

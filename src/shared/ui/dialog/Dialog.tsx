@@ -25,6 +25,7 @@ function isBackdrop(event: MouseEvent<HTMLDialogElement>) {
 
 export function Dialog({
   children,
+  footer,
   title,
   onClose,
   wide = false,
@@ -38,10 +39,11 @@ export function Dialog({
   dismissible = true,
 }: {
   children: ReactNode;
+  footer?: ReactNode;
   title: string;
   onClose: () => void;
   wide?: boolean;
-  layout?: "default" | "split" | "folio";
+  layout?: "default" | "split" | "folio" | "workspace";
   size?: "default" | "compact";
   placement?: "center" | "bottom";
   backdrop?: "dim" | "clear";
@@ -94,7 +96,7 @@ export function Dialog({
       data-placement={placement}
       data-backdrop={backdrop}
       data-surface={surface}
-      className={`${styles.dialog} ${wide ? styles.wide : ""} ${layout === "split" ? styles.split : ""} ${layout === "folio" ? styles.folio : ""} ${size === "compact" ? styles.compact : ""}`}
+      className={`${styles.dialog} ${wide ? styles.wide : ""} ${layout === "split" ? styles.split : ""} ${layout === "folio" ? styles.folio : ""} ${layout === "workspace" ? styles.workspace : ""} ${size === "compact" ? styles.compact : ""}`}
       onCancel={(event) => {
         event.preventDefault();
         requestClose();
@@ -152,6 +154,11 @@ export function Dialog({
         >
           {children}
         </div>
+        {footer && (
+          <div className={styles.footer} inert={closing}>
+            {footer}
+          </div>
+        )}
       </div>
     </dialog>
   );

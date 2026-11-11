@@ -1,4 +1,6 @@
 .layout {
+  height: 100%;
+  min-height: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 284px;
   gap: 24px;
@@ -6,8 +8,10 @@
 }
 .stage {
   min-width: 0;
-  position: sticky;
-  top: 0;
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
 }
 .export {
   display: inline-flex;
@@ -33,11 +37,15 @@
   padding-bottom: 8px;
 }
 .preview {
-  max-height: 360px;
-  min-height: 220px;
+  min-height: 0;
   overflow: auto;
   padding-block: 12px;
   scrollbar-width: thin;
+}
+.preview svg {
+  max-height: min(44dvh, 420px);
+  width: 100%;
+  height: auto;
 }
 .preview figure {
   margin: 8px 0;
@@ -47,6 +55,11 @@
   display: grid;
   gap: 12px;
   min-width: 0;
+}
+.settings {
+  max-height: 100%;
+  overflow: auto;
+  padding-right: 12px;
 }
 .items {
   margin-top: 12px;
@@ -111,9 +124,8 @@
 }
 .footer {
   justify-content: space-between;
-  padding-top: 16px;
-  margin-top: 16px;
-  border-top: 1px solid var(--line);
+  padding-top: 0;
+  margin-top: 0;
 }
 .error {
   color: var(--accent);
@@ -137,14 +149,21 @@
 }
 @media (max-width: 700px) {
   .layout {
+    height: auto;
     grid-template-columns: minmax(0, 1fr);
     gap: 20px;
   }
   .stage {
     position: static;
+    height: auto;
   }
   .preview {
-    max-height: 300px;
+    max-height: none;
+  }
+  .settings {
+    max-height: none;
+    overflow: visible;
+    padding: 0;
   }
   .footer {
     align-items: flex-start;

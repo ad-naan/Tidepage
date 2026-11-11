@@ -1,35 +1,106 @@
 .assistant {
-  display: grid;
-  gap: 8px;
-  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  max-height: inherit;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
   font: 400 var(--text-sm)/1.65 var(--font-ui);
 }
-.assistant form {
-  display: grid;
-  gap: 6px;
-}
 .heading,
-.actions {
+.actions,
+.review,
+.composerFooter,
+.progress {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 4px;
+  gap: 6px;
+  flex-shrink: 0;
 }
-.heading {
+.heading,
+.composerFooter {
   justify-content: space-between;
 }
-.selection,
+.heading strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+.actions,
+.review {
+  flex-wrap: wrap;
+}
+.context {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+.selection {
+  margin: 8px 0 0;
+  max-height: 96px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
 .result {
-  padding: 8px;
-  border-left: 2px solid var(--line);
+  min-height: 0;
+  max-height: min(38dvh, 320px);
+  padding: 12px;
   background: var(--soft);
+  border-radius: 8px;
+  overflow: auto;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
-  max-height: 10rem;
-  overflow: auto;
+  overscroll-behavior: contain;
 }
-.selection,
-.status {
-  font-size: var(--text-xs);
+.review {
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+.composer {
+  display: grid;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.composer textarea {
+  field-sizing: content;
+  min-height: 60px;
+  max-height: 112px;
+  resize: none;
+}
+.composerFooter > span,
+.progress {
   color: var(--muted);
+  font-size: var(--text-xs);
+}
+.count {
+  margin-left: auto;
+  white-space: nowrap;
+}
+.progress > span:first-child {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.pulse {
+  animation: breathe 1.2s ease-in-out infinite;
+}
+.error {
+  margin: 0;
+  color: var(--accent);
+  font-size: var(--text-xs);
+}
+@keyframes breathe {
+  50% {
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    animation: none;
+  }
 }

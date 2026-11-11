@@ -6,6 +6,7 @@ import {
   type NodeViewProps,
 } from "@tiptap/react";
 import { useTranslations } from "next-intl";
+import { useMemo } from "react";
 import { GripVertical, Pencil } from "lucide-react";
 import {
   diagramSchema,
@@ -23,7 +24,10 @@ function DiagramView({
   selected,
 }: NodeViewProps) {
   const t = useTranslations("diagrams");
-  const result = diagramSchema.safeParse(node.attrs.diagram);
+  const result = useMemo(
+    () => diagramSchema.safeParse(node.attrs.diagram),
+    [node.attrs.diagram],
+  );
   if (!result.success) return null;
   return (
     <NodeViewWrapper
@@ -33,7 +37,13 @@ function DiagramView({
     >
       {editor.isEditable && (
         <div className={styles.tools}>
-          <span draggable="true" data-drag-handle className={styles.grip}>
+          <span
+            draggable="true"
+            data-drag-handle
+            className={styles.grip}
+            title={t("dragBlock")}
+            aria-label={t("dragBlock")}
+          >
             <GripVertical size={14} />
           </span>
           <Button
@@ -50,7 +60,12 @@ function DiagramView({
           </Button>
         </div>
       )}
-      <MiniDiagram value={result.data} />
+      <div
+        data-drag-handle={editor.isEditable ? "" : undefined}
+        draggable={editor.isEditable}
+      >
+        <MiniDiagram value={result.data} />
+      </div>
     </NodeViewWrapper>
   );
 }

@@ -7,7 +7,9 @@ import {
   type DiagramStroke,
 } from "@/shared/lib/diagram-strokes";
 import styles from "./MiniDiagram.module.css";
+import { DiagramSurface } from "./DiagramSurface";
 import "@fontsource/lxgw-wenkai-tc/400.css";
+import { memo } from "react";
 
 function Strokes({ paths }: { paths: DiagramStroke[] }) {
   return paths.map((path, index) => (
@@ -25,17 +27,16 @@ function Strokes({ paths }: { paths: DiagramStroke[] }) {
 }
 
 /** One deterministic SVG renderer for reading, editing, SSR and export. */
-export function MiniDiagram({ value }: { value: Diagram }) {
+export const MiniDiagram = memo(function MiniDiagram({
+  value,
+}: {
+  value: Diagram;
+}) {
   const layout = layoutDiagram(value);
   return (
     <figure className={styles.figure}>
       <figcaption className={styles.title}>{value.title}</figcaption>
-      <div
-        className={styles.scroll}
-        tabIndex={0}
-        role="region"
-        aria-label={value.title}
-      >
+      <DiagramSurface title={value.title}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width={layout.width}
@@ -151,8 +152,8 @@ export function MiniDiagram({ value }: { value: Diagram }) {
             );
           })}
         </svg>
-      </div>
+      </DiagramSurface>
       {value.caption && <div className={styles.caption}>{value.caption}</div>}
     </figure>
   );
-}
+});

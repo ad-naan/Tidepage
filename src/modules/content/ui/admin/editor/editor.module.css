@@ -43,7 +43,7 @@
   height: 100dvh;
   border: 0;
   border-radius: 0;
-  padding: 16px max(16px, calc((100vw - 1040px) / 2));
+  padding: 12px;
   background: var(--paper);
 }
 .root:fullscreen .scrollHost {
@@ -51,8 +51,15 @@
   height: auto;
 }
 .root:fullscreen .document {
-  max-width: 800px;
-  margin-inline: auto;
+  width: 100%;
+}
+.writingPanel.writingPanel {
+  padding: 0;
+  overflow: hidden;
+}
+.aiTarget {
+  background: var(--wash);
+  box-shadow: 0 1px 0 var(--accent);
 }
 .toolbar {
   position: relative;

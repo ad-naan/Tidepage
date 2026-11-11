@@ -23,6 +23,9 @@
   color: var(--muted);
   cursor: grab;
 }
+.root > div[draggable="true"] {
+  cursor: grab;
+}
 @media (prefers-reduced-motion: reduce) {
   .root {
     transition: none;

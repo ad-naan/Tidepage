@@ -9,6 +9,9 @@ export const diagramNodeSchema = z
     tone: z.enum(["ink", "warm", "sea"]),
   })
   .strict();
+export const diagramEdgeSchema = z
+  .object({ from: id, to: id, label: z.string().trim().max(24) })
+  .strict();
 export const diagramSchema = z
   .object({
     version: z.literal(1),
@@ -16,17 +19,7 @@ export const diagramSchema = z
     caption: z.string().max(300),
     direction: z.enum(["vertical", "horizontal"]),
     nodes: z.array(diagramNodeSchema).min(1).max(12),
-    edges: z
-      .array(
-        z
-          .object({
-            from: id,
-            to: id,
-            label: z.string().trim().max(24),
-          })
-          .strict(),
-      )
-      .max(18),
+    edges: z.array(diagramEdgeSchema).max(18),
   })
   .strict()
   .superRefine((value, ctx) => {

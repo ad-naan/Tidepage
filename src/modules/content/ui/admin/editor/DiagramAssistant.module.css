@@ -1,0 +1,74 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  max-height: inherit;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  font: 400 var(--text-sm)/1.65 var(--font-ui);
+}
+.heading,
+.heading strong,
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.heading,
+.footer {
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.heading strong {
+  font-weight: 600;
+}
+.context,
+.status,
+.hint {
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+.context,
+.status,
+.composer {
+  flex-shrink: 0;
+}
+.context p {
+  white-space: pre-wrap;
+  max-height: 96px;
+  overflow: auto;
+  margin: 8px 0 0;
+}
+.status {
+  margin: 0;
+}
+.preview {
+  overflow: auto;
+  min-height: 0;
+  max-height: 36dvh;
+  overscroll-behavior: contain;
+}
+.preview figure {
+  margin: 0;
+}
+.preview svg {
+  width: 100%;
+  max-height: 28dvh;
+}
+.composer {
+  display: grid;
+  gap: 6px;
+}
+.composer textarea {
+  min-height: 60px;
+  max-height: 112px;
+  resize: none;
+  field-sizing: content;
+}
+.error {
+  color: var(--accent);
+  margin: 0;
+  font-size: var(--text-xs);
+}

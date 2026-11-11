@@ -23,7 +23,7 @@ export function isSiteGuideEnabled() {
 
 const tasks: Record<EditorialRequest["task"], string> = {
   write:
-    "Follow the author's prompt using the supplied article and selected text. Return only the proposed prose as plain text, without preambles or Markdown fences.",
+    "Follow the author's prompt using the supplied article and selected text. If a draft is supplied, revise that proposed text according to the follow-up instruction. Return only the proposed prose as plain text, without preambles or Markdown fences.",
   metadata:
     "Return one JSON object with title, excerpt, seoTitle, seoDescription (strings), tags (up to 8 short strings), and review (up to 4 short strings). Make title and excerpt useful as an RSS item. Write an accurate search snippet. Use review for article-specific GEO improvements such as a direct answer, a missing source, or a definition. Do not invent facts, citations or links.",
   translate:
@@ -46,7 +46,7 @@ export function generateEditorialText(
   );
 }
 
-async function* generateModelText(
+export async function* generateModelText(
   access: ModelAccess,
   instruction: string,
   input: unknown,

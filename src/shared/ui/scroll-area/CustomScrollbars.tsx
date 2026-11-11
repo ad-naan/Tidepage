@@ -3,6 +3,7 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type PointerEvent,
@@ -16,6 +17,21 @@ import { touchMotionQuery } from "@/shared/lib/motion";
 type Axis = "vertical" | "horizontal";
 // Internal layout refreshes are not browser resizes. Other overlays may close on resize.
 const SCROLLBARS_REFRESH_EVENT = "tidepage:scrollbars-refresh";
+const hides = new Map<HTMLElement, Set<() => void>>();
+const hostIds = new WeakMap<HTMLElement, number>();
+let nextHostId = 0;
+function hostId(host: HTMLElement) {
+  if (!hostIds.has(host)) hostIds.set(host, ++nextHostId);
+  return hostIds.get(host)!;
+}
+function unavailable(host: HTMLElement) {
+  return (
+    !host.isConnected ||
+    !!host.closest(
+      '[hidden], [inert], [data-closing="true"], dialog:not([open])',
+    )
+  );
+}
 type Geometry = {
   top: number;
   left: number;
@@ -60,7 +76,11 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
   const isPage = host === null;
   const read = useCallback(() => {
     const target = host || document.documentElement;
-    if (host && !host.isConnected) return;
+    if (host && unavailable(host)) {
+      if (rail.current) rail.current.hidden = true;
+      setGeometry(empty);
+      return;
+    }
     const bounds = host?.getBoundingClientRect();
     const viewport = vertical
       ? (host?.clientHeight ?? window.innerHeight)
@@ -129,6 +149,21 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
     );
   }, [host, vertical]);
 
+  useLayoutEffect(() => {
+    if (!host) return;
+    const hide = () => {
+      if (rail.current) rail.current.hidden = true;
+      setGeometry(empty);
+    };
+    const entries = hides.get(host) ?? new Set();
+    entries.add(hide);
+    hides.set(host, entries);
+    return () => {
+      entries.delete(hide);
+      if (!entries.size) hides.delete(host);
+    };
+  }, [host]);
+
   useEffect(() => {
     let frame = 0;
     const schedule = () => {
@@ -149,13 +184,26 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
     read();
     const resize = new ResizeObserver(schedule);
     resize.observe(host || document.documentElement);
-    resize.observe(host?.firstElementChild || document.body);
+    let content: Element[] = [];
+    const observeContent = () => {
+      const next = host ? Array.from(host.children) : [document.body];
+      for (const child of content)
+        if (!next.includes(child as HTMLElement)) resize.unobserve(child);
+      for (const child of next)
+        if (!content.includes(child)) resize.observe(child);
+      content = next;
+    };
+    observeContent();
     const clip = host?.closest<HTMLElement>("[data-scroll-clip]");
     if (clip) resize.observe(clip);
-    const mutation = new MutationObserver(schedule);
+    // Content size changes belong to ResizeObserver. Watching every descendant
+    // mutation here used to remeasure all rails for every editor / AI text update.
+    const mutation = new MutationObserver(() => {
+      observeContent();
+      schedule();
+    });
     mutation.observe(host || document.body, {
       childList: true,
-      subtree: true,
     });
     document.addEventListener("scroll", scroll, {
       capture: true,
@@ -248,7 +296,7 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
       scrollTo(geometry.offset + deltas[event.key]);
     }
   };
-  if (!geometry.visible) return null;
+  if (!geometry.visible || (host && unavailable(host))) return null;
   const container =
     host?.closest("dialog[open]") ||
     document.fullscreenElement ||
@@ -323,6 +371,7 @@ function OverlayScrollbars() {
   useEffect(() => {
     setReady(true);
     let frame = 0;
+    let pendingMembership = false;
     const collect = () => {
       const next = Array.from(
         document.querySelectorAll<HTMLElement>("[data-custom-scroll]"),
@@ -338,26 +387,67 @@ function OverlayScrollbars() {
     };
     collect();
     const observer = new MutationObserver((records) => {
-      if (
-        !records.some(
-          (record) =>
-            record.type === "attributes" ||
-            [...record.addedNodes, ...record.removedNodes].some(
-              (node) =>
-                node instanceof Element &&
-                !node.classList.contains("custom-scrollbar"),
-            ),
-        )
-      )
+      const relevant = records.filter(
+        (record) =>
+          !(
+            record.target instanceof Element &&
+            record.target.closest(".custom-scrollbar")
+          ),
+      );
+      const membership = relevant.some(
+        (record) =>
+          (record.type === "attributes" &&
+            record.attributeName === "data-custom-scroll") ||
+          [...record.addedNodes, ...record.removedNodes].some(
+            (node) =>
+              node instanceof Element &&
+              (node.matches("[data-custom-scroll]") ||
+                node.querySelector("[data-custom-scroll]")),
+          ),
+      );
+      const removed = relevant.some((record) =>
+        [...record.removedNodes].some((node) => node instanceof Element),
+      );
+      const attributes = relevant.some(
+        (record) =>
+          record.type === "attributes" &&
+          record.target instanceof Element &&
+          [...hides.keys()].some((host) =>
+            (record.target as Element).contains(host),
+          ),
+      );
+      if (!membership && !removed && !attributes) return;
+      // Hide detached / closing hosts in the mutation microtask, before paint.
+      for (const [host, callbacks] of hides)
+        if (unavailable(host)) callbacks.forEach((hide) => hide());
+      if (membership && removed) {
+        pendingMembership = false;
+        collect();
         return;
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(collect);
+      }
+      if (!membership && !attributes) return;
+      pendingMembership ||= membership;
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        if (pendingMembership) {
+          pendingMembership = false;
+          collect();
+        } else window.dispatchEvent(new Event(SCROLLBARS_REFRESH_EVENT));
+      });
     });
     observer.observe(document.body, {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ["data-custom-scroll", "class", "open"],
+      attributeFilter: [
+        "data-custom-scroll",
+        "class",
+        "open",
+        "hidden",
+        "inert",
+        "data-closing",
+      ],
     });
     return () => {
       observer.disconnect();
@@ -369,8 +459,8 @@ function OverlayScrollbars() {
     <>
       <Scrollbar host={null} axis="vertical" />
       <Scrollbar host={null} axis="horizontal" />
-      {hosts.map((host, index) => (
-        <ScrollHost key={index} host={host} />
+      {hosts.map((host) => (
+        <ScrollHost key={hostId(host)} host={host} />
       ))}
     </>
   );

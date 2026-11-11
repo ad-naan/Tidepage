@@ -28,6 +28,7 @@ export function AnchoredPanel({
   onPointerEnter,
   onPointerLeave,
   placement = "bottom",
+  getAnchorRect,
 }: {
   open: boolean;
   anchor: HTMLElement | null;
@@ -41,10 +42,19 @@ export function AnchoredPanel({
   onPointerEnter?: () => void;
   onPointerLeave?: () => void;
   placement?: "bottom" | "auto";
+  getAnchorRect?: () => {
+    top: number;
+    bottom: number;
+    left: number;
+    right: number;
+    width: number;
+    height: number;
+  };
 }) {
   const owner = useOverlayOwner();
   const reduce = useReducedMotion();
   const surface = useRef<HTMLElement>(null);
+  const lockedSide = useRef<boolean | null>(null);
   const [mounted, setMounted] = useState(false);
   const [position, setPosition] = useState({
     left: 16,
@@ -59,11 +69,14 @@ export function AnchoredPanel({
     }
   }, [open, anchor]);
   useLayoutEffect(() => {
-    if (!open || !anchor) return;
+    if (!open || !anchor) {
+      lockedSide.current = null;
+      return;
+    }
     let frame = 0;
     const measure = () => {
       frame = 0;
-      const bounds = anchor.getBoundingClientRect();
+      const bounds = getAnchorRect?.() ?? anchor.getBoundingClientRect();
       const viewport = window.visualViewport;
       const viewportWidth = viewport?.width ?? window.innerWidth;
       const viewportHeight = viewport?.height ?? window.innerHeight;
@@ -82,11 +95,28 @@ export function AnchoredPanel({
       const below = offsetTop + viewportHeight - top - 16;
       const above = bounds.top - offsetTop - 24;
       const height = surface.current?.scrollHeight || 320;
-      const flip = placement === "auto" && below < height && above > below;
+      const preferredFlip =
+        placement === "auto" && below < height && above > below;
+      if (getAnchorRect && lockedSide.current === null)
+        lockedSide.current = preferredFlip;
+      const flip = getAnchorRect ? lockedSide.current : preferredFlip;
       if (flip)
         top = Math.max(
           offsetTop + 12,
           bounds.top - Math.min(height, above) - 12,
+        );
+      // Selection composers may grow while streaming. Keep the chosen side,
+      // then slide within the viewport so their input and review controls stay usable.
+      const availableHeight = getAnchorRect
+        ? Math.max(100, viewportHeight - 32)
+        : Math.max(100, flip ? above : offsetTop + viewportHeight - top - 16);
+      if (getAnchorRect)
+        top = Math.max(
+          offsetTop + 12,
+          Math.min(
+            top,
+            offsetTop + viewportHeight - Math.min(height, availableHeight) - 16,
+          ),
         );
       const next = {
         left: Math.max(
@@ -95,10 +125,7 @@ export function AnchoredPanel({
         ),
         top,
         width: panelWidth,
-        maxHeight: Math.max(
-          100,
-          flip ? above : offsetTop + viewportHeight - top - 16,
-        ),
+        maxHeight: availableHeight,
       };
       setPosition((previous) =>
         previous.left === next.left &&
@@ -116,6 +143,8 @@ export function AnchoredPanel({
       const target = event.target;
       if (
         target === document ||
+        (getAnchorRect &&
+          !(target instanceof Node && surface.current?.contains(target))) ||
         (target instanceof Element && target.contains(anchor))
       )
         schedule();
@@ -139,7 +168,7 @@ export function AnchoredPanel({
       window.visualViewport?.removeEventListener("resize", schedule);
       window.visualViewport?.removeEventListener("scroll", schedule);
     };
-  }, [open, anchor, boundary, width, align, placement, mounted]);
+  }, [open, anchor, boundary, width, align, placement, mounted, getAnchorRect]);
   if (!mounted) return null;
   return createPortal(
     <AnimatePresence>

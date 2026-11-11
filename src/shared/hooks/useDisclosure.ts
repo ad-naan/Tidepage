@@ -1,13 +1,17 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "@/shared/i18n/navigation";
-export function useDisclosure(name: string) {
+export function useDisclosure(
+  name: string,
+  { dismissOnOutside = true }: { dismissOnOutside?: boolean } = {},
+) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const path = usePathname();
   useEffect(() => setOpen(false), [path]);
   useEffect(() => {
     const outside = (e: PointerEvent) => {
+      if (!dismissOnOutside) return;
       const target = e.target;
       if (
         target instanceof Element &&
@@ -38,7 +42,7 @@ export function useDisclosure(name: string) {
       document.removeEventListener("keydown", escape);
       window.removeEventListener("garden-disclosure", exclusive);
     };
-  }, [name]);
+  }, [name, dismissOnOutside]);
   function toggle() {
     if (!open)
       window.dispatchEvent(

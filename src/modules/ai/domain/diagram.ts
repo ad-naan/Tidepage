@@ -11,3 +11,10 @@ export const diagramRequestSchema = z
   })
   .strict();
 export type DiagramRequest = z.infer<typeof diagramRequestSchema>;
+export const diagramEventSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("status"), phase: z.literal("generating") }),
+  z.object({ type: z.literal("progress"), diagram: diagramSchema }),
+  z.object({ type: z.literal("done"), diagram: diagramSchema }),
+  z.object({ type: z.literal("error") }),
+]);
+export type DiagramEvent = z.infer<typeof diagramEventSchema>;

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { Editor } from "@tiptap/core";
 import {
   Fragment,
@@ -8,9 +8,11 @@ import {
 } from "@tiptap/pm/model";
 import { Selection, TextSelection } from "@tiptap/pm/state";
 import { useLocale, useTranslations } from "next-intl";
-import { X } from "lucide-react";
+import { ArrowDown, ArrowUp, Sparkles, Square, X } from "lucide-react";
 import { Button, IconButton } from "@/shared/ui/button/Button";
 import { Textarea } from "@/shared/ui/field/Textarea";
+import { Disclosure } from "@/shared/ui/disclosure/Disclosure";
+import { useStreamText } from "./use-stream-text";
 import {
   articleContextLimit,
   type WritingAgent,
@@ -38,7 +40,10 @@ export function WritingAssistant({
   const t = useTranslations("admin.ai");
   const uiLocale = useLocale();
   const [prompt, setPrompt] = useState("");
-  const [text, setText] = useState("");
+  const { text, append, flush, reset } = useStreamText();
+  const [streaming, setStreaming] = useState(false);
+  const [follow, setFollow] = useState(true);
+  const output = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<
     "idle" | "running" | "done" | "stopped" | "error"
   >("idle");
@@ -47,21 +52,34 @@ export function WritingAssistant({
   const input = useRef<HTMLTextAreaElement>(null);
   const { doc, selection } = target;
   const { from, to, $from, $to } = selection;
-  const selectedText = doc.textBetween(from, to, "\n");
-  const sameBlock = $from.sameParent($to);
-  let plainTextRange = true;
-  if (selectedText.length <= articleContextLimit)
-    doc.slice(from, to).content.descendants((node) => {
-      if (!node.isText && !["paragraph", "hardBreak"].includes(node.type.name))
-        plainTextRange = false;
-      return plainTextRange;
-    });
-  const canReplace =
-    selection instanceof TextSelection &&
-    !$from.parent.type.spec.code &&
-    !!selectedText.trim() &&
-    selectedText.length <= articleContextLimit &&
-    plainTextRange;
+  const { selectedText, sameBlock, canReplace } = useMemo(() => {
+    const selectedText = doc.textBetween(from, to, "\n");
+    let plainTextRange = true;
+    if (selectedText.length <= articleContextLimit)
+      doc.slice(from, to).content.descendants((node) => {
+        if (
+          !node.isText &&
+          !["paragraph", "hardBreak"].includes(node.type.name)
+        )
+          plainTextRange = false;
+        return plainTextRange;
+      });
+    return {
+      selectedText,
+      sameBlock: $from.sameParent($to),
+      canReplace:
+        selection instanceof TextSelection &&
+        !$from.parent.type.spec.code &&
+        !!selectedText.trim() &&
+        selectedText.length <= articleContextLimit &&
+        plainTextRange,
+    };
+  }, [doc, selection, from, to, $from, $to]);
+
+  useLayoutEffect(() => {
+    if (follow && output.current)
+      output.current.scrollTop = output.current.scrollHeight;
+  }, [text, follow]);
 
   useEffect(() => {
     if (!active) return;
@@ -77,13 +95,19 @@ export function WritingAssistant({
     if (controller.current || !instruction.trim()) return;
     const task = new AbortController();
     controller.current = task;
-    setText("");
+    const draft = text;
+    reset();
+    setStreaming(false);
+    setFollow(true);
     setError("");
     setStatus("running");
     try {
       for await (const event of agent.stream(
         {
           prompt: instruction,
+          ...(draft.trim()
+            ? { draft: draft.slice(0, articleContextLimit) }
+            : {}),
           locale: contentLocale ?? uiLocale,
           selection: selectedText.slice(0, articleContextLimit),
           context: doc
@@ -97,14 +121,22 @@ export function WritingAssistant({
         task.signal,
       )) {
         if (controller.current !== task) return;
-        if (event.type === "delta") setText((current) => current + event.text);
-        else setStatus("done");
+        if (event.type === "delta") {
+          append(event.text);
+          setStreaming(true);
+        } else {
+          flush();
+          setStatus("done");
+        }
       }
     } catch {
       if (controller.current === task)
         setStatus(task.signal.aborted ? "stopped" : "error");
     } finally {
-      if (controller.current === task) controller.current = null;
+      if (controller.current === task) {
+        flush();
+        controller.current = null;
+      }
     }
   }
 
@@ -119,10 +151,11 @@ export function WritingAssistant({
     if (
       !replace &&
       !$to.parent.type.spec.code &&
-      (contentLocale ?? uiLocale) === "en" &&
       $to.parentOffset > 0 &&
-      /[\w.!?]$/.test($to.parent.textBetween(0, $to.parentOffset, "\n")) &&
-      /^\w/.test(value)
+      /[\p{Script=Latin}\d.!?]$/u.test(
+        $to.parent.textBetween(0, $to.parentOffset, "\n"),
+      ) &&
+      /^[\p{Script=Latin}\d]/u.test(value)
     )
       value = ` ${value}`;
     const lines = value.split(/\r?\n/);
@@ -171,23 +204,36 @@ export function WritingAssistant({
   return (
     <div
       className={styles.assistant}
+      data-custom-scroll={t("title")}
       onKeyDown={(event) => {
         if (event.key === "Escape") {
           event.preventDefault();
           event.stopPropagation();
-          onClose();
+          if (status === "running") controller.current?.abort();
+          else onClose();
         }
       }}
     >
       <div className={styles.heading}>
-        <strong>{t("title")}</strong>
+        <strong>
+          <Sparkles size={15} />
+          {t("title")}
+        </strong>
         <IconButton aria-label={t("closeWriting")} onClick={onClose}>
           <X size={16} />
         </IconButton>
       </div>
-      {selectedText.trim() && (
-        <p className={styles.selection}>{selectedText.slice(0, 240)}</p>
-      )}
+      <div className={styles.context}>
+        {selectedText.trim() ? (
+          <Disclosure
+            summary={t("scopeSelection", { count: selectedText.length })}
+          >
+            <p className={styles.selection}>{selectedText.slice(0, 1000)}</p>
+          </Disclosure>
+        ) : (
+          <span>{t("scopeCursor")}</span>
+        )}
+      </div>
       <div className={styles.actions}>
         {(selectedText.trim()
           ? (["polish", "shorten", "continue"] as const)
@@ -204,7 +250,63 @@ export function WritingAssistant({
           </Button>
         ))}
       </div>
+      {status !== "idle" && (
+        <div className={styles.progress} role="status">
+          <span className={status === "running" ? styles.pulse : undefined} />
+          {status === "running"
+            ? t(streaming ? "streaming" : "requesting")
+            : t(`status.${status}`)}
+          {!!text && (
+            <span className={styles.count}>
+              {t("outputCount", { count: text.length })}
+            </span>
+          )}
+        </div>
+      )}
+      {!!text && (
+        <div
+          ref={output}
+          className={styles.result}
+          data-custom-scroll={t("resultRegion")}
+          role="region"
+          aria-label={t("resultRegion")}
+          tabIndex={0}
+          aria-busy={status === "running"}
+          onScroll={(event) => {
+            const node = event.currentTarget;
+            setFollow(
+              node.scrollHeight - node.scrollTop - node.clientHeight < 32,
+            );
+          }}
+        >
+          <div>{text}</div>
+        </div>
+      )}
+      {!!text && !follow && (
+        <Button size="sm" variant="quiet" onClick={() => setFollow(true)}>
+          <ArrowDown size={14} />
+          {t("followOutput")}
+        </Button>
+      )}
+      {(error || status === "error") && (
+        <p className={styles.error} role="alert">
+          {error || t("failed")}
+        </p>
+      )}
+      {!!text.trim() && status !== "running" && (
+        <div className={styles.review}>
+          {canReplace && (
+            <Button size="sm" variant="primary" onClick={() => apply(true)}>
+              {t("replace")}
+            </Button>
+          )}
+          <Button size="sm" variant="quiet" onClick={() => apply(false)}>
+            {t(selection.empty ? "insertAtCursor" : "insert")}
+          </Button>
+        </div>
+      )}
       <form
+        className={styles.composer}
         onSubmit={(event) => {
           event.preventDefault();
           void start(prompt);
@@ -218,51 +320,40 @@ export function WritingAssistant({
           onChange={(event) => setPrompt(event.target.value)}
           rows={2}
           maxLength={2000}
+          disabled={status === "running"}
+          onKeyDown={(event) => {
+            if (
+              event.key === "Enter" &&
+              !event.shiftKey &&
+              !event.nativeEvent.isComposing
+            ) {
+              event.preventDefault();
+              void start(prompt);
+            }
+          }}
         />
-        <div className={styles.actions}>
-          <Button
-            type="submit"
-            size="sm"
-            disabled={!prompt.trim() || status === "running"}
-          >
-            {t("start")}
-          </Button>
-          {status === "running" && (
+        <div className={styles.composerFooter}>
+          <span>{t(text ? "refineHint" : "sendHint")}</span>
+          {status === "running" ? (
             <Button
               variant="quiet"
               size="sm"
               onClick={() => controller.current?.abort()}
             >
+              <Square size={12} />
               {t("stop")}
             </Button>
+          ) : (
+            <IconButton
+              type="submit"
+              aria-label={t("start")}
+              disabled={!prompt.trim()}
+            >
+              <ArrowUp size={16} />
+            </IconButton>
           )}
         </div>
       </form>
-      {status !== "idle" && (
-        <p className={styles.status} role="status">
-          {t(`status.${status}`)}
-        </p>
-      )}
-      {(error || status === "error") && (
-        <p role="alert">{error || t("failed")}</p>
-      )}
-      {!!text && (
-        <div className={styles.result} aria-busy={status === "running"}>
-          {text}
-        </div>
-      )}
-      {!!text.trim() && status !== "running" && (
-        <div className={styles.actions}>
-          {canReplace && (
-            <Button size="sm" variant="primary" onClick={() => apply(true)}>
-              {t("replace")}
-            </Button>
-          )}
-          <Button size="sm" variant="quiet" onClick={() => apply(false)}>
-            {t(selection.empty ? "insertAtCursor" : "insert")}
-          </Button>
-        </div>
-      )}
     </div>
   );
 }

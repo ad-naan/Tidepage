@@ -6,6 +6,20 @@
   padding: 8px 0;
   font-family: var(--font-ui);
 }
+.grip {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 6px;
+  cursor: grab;
+  color: var(--muted);
+}
+.grip:active,
+.figure[draggable="true"]:active {
+  cursor: grabbing;
+}
+.figure[draggable="true"] {
+  cursor: grab;
+}
 .figure {
   order: 2;
   margin-block: 0;

@@ -1569,7 +1569,16 @@
         "done": "建议已生成，请审阅后采纳",
         "stopped": "已停止，可审阅已生成的片段",
         "error": "生成中断"
-      }
+      },
+      "scopeSelection": "选中内容 · {count} 字符",
+      "scopeCursor": "在当前光标位置创作",
+      "streaming": "正在创作…",
+      "requesting": "正在等待首段内容…",
+      "outputCount": "{count} 字符",
+      "resultRegion": "AI 创作预览",
+      "followOutput": "跟随最新输出",
+      "refineHint": "继续输入要求，修改这份草稿",
+      "sendHint": "Enter 发送 · Shift + Enter 换行"
     },
     "noteImages": {
       "title": "手记图片",
@@ -1743,7 +1752,8 @@
       "dimensions": "裁剪范围：{width} × {height} 像素",
       "failed": "裁剪失败，原图未修改。",
       "cancel": "取消",
-      "apply": "保存裁剪"
+      "apply": "保存裁剪",
+      "dragBlock": "拖动以移动图片"
     },
     "workspace": "工作区内容",
     "editorialList": {
@@ -2014,6 +2024,18 @@
       "flow": "从灵感到文章",
       "branch": "一个选择，两条路径",
       "cycle": "不断完善的过程"
-    }
+    },
+    "enlarge": "查看完整大图",
+    "dragBlock": "拖动以移动图表",
+    "settings": "图表设置",
+    "sendHint": "Enter 发送 · Shift + Enter 换行",
+    "progress": "正在绘制 · {nodes} 个节点 · {edges} 条连线",
+    "phases": {
+      "generating": "正在生成图表…",
+      "done": "图表已生成，请确认后插入",
+      "stopped": "已停止生成",
+      "error": "本次生成未完成"
+    },
+    "adjust": "详细调整"
   }
 }

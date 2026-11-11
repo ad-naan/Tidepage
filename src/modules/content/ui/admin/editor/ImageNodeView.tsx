@@ -2,7 +2,7 @@
 import { useId, useRef, useState } from "react";
 import { NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
 import { useTranslations } from "next-intl";
-import { MoveDiagonal2 } from "lucide-react";
+import { GripVertical, MoveDiagonal2 } from "lucide-react";
 import { Button, IconButton } from "@/shared/ui/button/Button";
 import { Input, RangeSlider } from "@/shared/ui/field/Input";
 import { Field } from "@/shared/ui/field/Field";
@@ -42,8 +42,23 @@ export function ImageNodeView({
       contentEditable={false}
       data-active={selected || editing}
     >
+      {editor.isEditable && !node.attrs.uploading && (
+        <span
+          className={styles.grip}
+          draggable="true"
+          data-drag-handle
+          title={t("dragBlock")}
+          aria-label={t("dragBlock")}
+        >
+          <GripVertical size={16} />
+        </span>
+      )}
       <figure
         className={styles.figure}
+        data-drag-handle={
+          editor.isEditable && !node.attrs.uploading ? "" : undefined
+        }
+        draggable={editor.isEditable && !node.attrs.uploading}
         data-align={align}
         style={{
           width: `${width}%`,

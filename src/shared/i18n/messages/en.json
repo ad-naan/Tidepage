@@ -1569,7 +1569,16 @@
         "done": "Suggestion ready for review",
         "stopped": "Stopped. Review the partial suggestion.",
         "error": "Generation interrupted"
-      }
+      },
+      "scopeSelection": "Selected text · {count} characters",
+      "scopeCursor": "At the current cursor",
+      "streaming": "Writing…",
+      "requesting": "Waiting for the first response…",
+      "outputCount": "{count} characters",
+      "resultRegion": "AI draft",
+      "followOutput": "Follow output",
+      "refineHint": "Describe changes to refine this draft",
+      "sendHint": "Enter to send · Shift + Enter for a new line"
     },
     "noteImages": {
       "title": "Note photos",
@@ -1743,7 +1752,8 @@
       "dimensions": "Crop: {width} × {height} px",
       "failed": "Could not crop the image. The original is unchanged.",
       "cancel": "Cancel",
-      "apply": "Save crop"
+      "apply": "Save crop",
+      "dragBlock": "Drag to move image"
     },
     "workspace": "Workspace content",
     "editorialList": {
@@ -2014,6 +2024,18 @@
       "flow": "From idea to article",
       "branch": "One choice, two paths",
       "cycle": "A process of refinement"
-    }
+    },
+    "enlarge": "View full size",
+    "dragBlock": "Drag to move diagram",
+    "settings": "Diagram settings",
+    "sendHint": "Enter to send · Shift + Enter for a new line",
+    "progress": "Drawing · {nodes} nodes · {edges} connections",
+    "phases": {
+      "generating": "Generating diagram…",
+      "done": "Diagram ready for review",
+      "stopped": "Generation stopped",
+      "error": "Generation did not finish"
+    },
+    "adjust": "Adjust structure"
   }
 }

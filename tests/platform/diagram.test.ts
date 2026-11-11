@@ -20,7 +20,10 @@ import {
 } from "../../src/modules/content/domain/translation";
 import { commentDocumentSchema } from "../../src/modules/engagement/domain/comment-document";
 import { diagramRequestSchema } from "../../src/modules/ai/domain/diagram";
-import { generateDiagram } from "../../src/modules/ai/server/diagram";
+import {
+  generateDiagram,
+  streamDiagram,
+} from "../../src/modules/ai/server/diagram";
 import { createContentTestStore } from "../fixtures/content";
 import type { Database } from "../../src/server/db/client";
 import { usersTable } from "../../src/modules/identity/infrastructure/schema";
@@ -273,8 +276,15 @@ test("AI diagrams use the editorial provider and reject malformed or incomplete 
         JSON.parse(payload.messages[1].content).diagram,
         diagram,
       );
+      const chunks = JSON.stringify(result).match(/[\s\S]{1,25}/g)!;
       return new Response(
-        `data: ${JSON.stringify({ choices: [{ delta: { content: JSON.stringify(result) } }] })}\n\ndata: ${JSON.stringify({ choices: [{ finish_reason: finish }] })}\n\ndata: [DONE]\n\n`,
+        chunks
+          .map(
+            (content) =>
+              `data: ${JSON.stringify({ choices: [{ delta: { content } }] })}\n\n`,
+          )
+          .join("") +
+          `data: ${JSON.stringify({ choices: [{ finish_reason: finish }] })}\n\ndata: [DONE]\n\n`,
       );
     },
   );
@@ -288,14 +298,33 @@ test("AI diagrams use the editorial provider and reject malformed or incomplete 
     await generateDiagram(access, input, new AbortController().signal),
     diagram,
   );
+  const events = await Array.fromAsync(
+    streamDiagram(access, input, new AbortController().signal),
+  );
+  assert.equal(events[0].type, "status");
+  assert.deepEqual(events.at(-1), { type: "done", diagram });
+  assert.ok(
+    events.some(
+      (event) =>
+        event.type === "progress" &&
+        event.diagram.nodes.length < diagram.nodes.length,
+    ),
+  );
   result = { ...diagram, edges: [{ from: "idea", to: "unknown", label: "" }] };
   await assert.rejects(
     generateDiagram(access, input, new AbortController().signal),
+  );
+  await assert.rejects(
+    Array.fromAsync(streamDiagram(access, input, new AbortController().signal)),
   );
   result = diagram;
   finish = "length";
   await assert.rejects(
     generateDiagram(access, input, new AbortController().signal),
+    /incomplete/,
+  );
+  await assert.rejects(
+    Array.fromAsync(streamDiagram(access, input, new AbortController().signal)),
     /incomplete/,
   );
   const controller = new AbortController();

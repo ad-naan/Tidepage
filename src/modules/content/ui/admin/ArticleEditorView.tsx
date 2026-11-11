@@ -38,7 +38,6 @@ import {
   type EditorNode,
 } from "@/modules/content/domain/editor-document";
 import { Button, IconButton } from "@/shared/ui/button/Button";
-import { ActionBar } from "@/shared/ui/action-bar/ActionBar";
 import { Input } from "@/shared/ui/field/Input";
 import { DatePicker } from "@/shared/ui/date-picker/DatePicker";
 import { Textarea } from "@/shared/ui/field/Textarea";
@@ -593,42 +592,36 @@ export function ArticleEditorView({
               {t("editor.metadata")}
             </Button>
           )}
-        </div>
-        <div className={styles.publicationBar}>
-          <ActionBar
-            context={
-              <span
-                role="status"
-                title={t("editor.revision", { revision: draft.revision })}
-              >
-                {t(needsSave ? "editor.unsaved" : "editor.localState")}
-              </span>
-            }
+          <span
+            className={styles.saveState}
+            role="status"
+            title={t("editor.revision", { revision: draft.revision })}
           >
-            <Button
-              size="sm"
-              variant={needsSave ? "primary" : "quiet"}
-              busy={saving}
-              disabled={uploading || publishing}
-              title="Ctrl / Cmd S"
-              onClick={save}
-            >
-              {t("editor.save")}
-            </Button>
-            <Button
-              size="sm"
-              variant={needsSave ? "quiet" : "primary"}
-              disabled={uploading || saving || publishing}
-              onClick={() => {
-                const value = snapshot();
-                if (value) commit(value);
-                setPublishError("");
-                setChecking(true);
-              }}
-            >
-              {t("editor.checkPublish")}
-            </Button>
-          </ActionBar>
+            {t(needsSave ? "editor.unsaved" : "editor.localState")}
+          </span>
+          <Button
+            size="sm"
+            variant={needsSave ? "primary" : "quiet"}
+            busy={saving}
+            disabled={uploading || publishing}
+            title="Ctrl / Cmd S"
+            onClick={save}
+          >
+            {t("editor.save")}
+          </Button>
+          <Button
+            size="sm"
+            variant={needsSave ? "quiet" : "primary"}
+            disabled={uploading || saving || publishing}
+            onClick={() => {
+              const value = snapshot();
+              if (value) commit(value);
+              setPublishError("");
+              setChecking(true);
+            }}
+          >
+            {t("editor.checkPublish")}
+          </Button>
         </div>
       </header>
       {error && (
