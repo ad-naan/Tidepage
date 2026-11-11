@@ -42,7 +42,7 @@
   padding-block: 12px;
   scrollbar-width: thin;
 }
-.preview svg {
+.preview :global([data-diagram-fit]) > svg {
   max-height: min(44dvh, 420px);
   width: 100%;
   height: auto;

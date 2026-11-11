@@ -16,6 +16,20 @@ export const blockActions = [
 ] as const;
 export type BlockAction = (typeof blockActions)[number];
 
+export function editBlockAt(
+  state: EditorState,
+  pos: number,
+  action: "up" | "down",
+) {
+  if (pos < 0 || pos >= state.doc.content.size) return null;
+  const block = state.doc.childAfter(pos);
+  if (!block.node || block.offset !== pos) return null;
+  const selected = state.apply(
+    state.tr.setSelection(NodeSelection.create(state.doc, pos)),
+  );
+  return editCurrentBlock(selected, action);
+}
+
 export function currentBlock(state: EditorState) {
   const { from, to } = state.selection;
   const block = state.doc.childAfter(from);

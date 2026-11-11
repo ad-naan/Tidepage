@@ -11,7 +11,6 @@ import { useLocale, useTranslations } from "next-intl";
 import { ArrowDown, ArrowUp, Sparkles, Square, X } from "lucide-react";
 import { Button, IconButton } from "@/shared/ui/button/Button";
 import { Textarea } from "@/shared/ui/field/Textarea";
-import { Disclosure } from "@/shared/ui/disclosure/Disclosure";
 import { useStreamText } from "./use-stream-text";
 import {
   articleContextLimit,
@@ -29,6 +28,7 @@ export function WritingAssistant({
   contentLocale,
   agent,
   onClose,
+  initialInstruction,
 }: {
   editor: Editor;
   target: WritingTarget;
@@ -36,6 +36,7 @@ export function WritingAssistant({
   contentLocale?: Locale;
   agent: WritingAgent;
   onClose: () => void;
+  initialInstruction?: string;
 }) {
   const t = useTranslations("admin.ai");
   const uiLocale = useLocale();
@@ -46,7 +47,7 @@ export function WritingAssistant({
   const output = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<
     "idle" | "running" | "done" | "stopped" | "error"
-  >("idle");
+  >(initialInstruction ? "running" : "idle");
   const [error, setError] = useState("");
   const controller = useRef<AbortController | null>(null);
   const input = useRef<HTMLTextAreaElement>(null);
@@ -90,6 +91,12 @@ export function WritingAssistant({
       task?.abort();
     };
   }, [active]);
+
+  useEffect(() => {
+    if (!initialInstruction) return;
+    const timer = setTimeout(() => void start(initialInstruction), 0);
+    return () => clearTimeout(timer);
+  }, [initialInstruction]);
 
   async function start(instruction: string) {
     if (controller.current || !instruction.trim()) return;
@@ -204,7 +211,8 @@ export function WritingAssistant({
   return (
     <div
       className={styles.assistant}
-      data-custom-scroll={t("title")}
+      data-review={status !== "idle"}
+      data-busy={status === "running"}
       onKeyDown={(event) => {
         if (event.key === "Escape") {
           event.preventDefault();
@@ -217,22 +225,27 @@ export function WritingAssistant({
       <div className={styles.heading}>
         <strong>
           <Sparkles size={15} />
-          {t("title")}
+          {t("inlineTitle")}
         </strong>
+        <span className={styles.context}>
+          {selectedText.trim()
+            ? t("scopeSelection", { count: selectedText.length })
+            : t("scopeCursor")}
+        </span>
+        {status === "running" && (
+          <Button
+            size="sm"
+            variant="quiet"
+            className={styles.stop}
+            onClick={() => controller.current?.abort()}
+          >
+            <Square size={12} />
+            {t("stop")}
+          </Button>
+        )}
         <IconButton aria-label={t("closeWriting")} onClick={onClose}>
           <X size={16} />
         </IconButton>
-      </div>
-      <div className={styles.context}>
-        {selectedText.trim() ? (
-          <Disclosure
-            summary={t("scopeSelection", { count: selectedText.length })}
-          >
-            <p className={styles.selection}>{selectedText.slice(0, 1000)}</p>
-          </Disclosure>
-        ) : (
-          <span>{t("scopeCursor")}</span>
-        )}
       </div>
       <div className={styles.actions}>
         {(selectedText.trim()
@@ -241,8 +254,9 @@ export function WritingAssistant({
         ).map((action) => (
           <Button
             key={action}
-            variant="quiet"
+            variant="bare"
             size="sm"
+            className={styles.quickAction}
             disabled={status === "running"}
             onClick={() => void start(t(`instructions.${action}`))}
           >
@@ -303,6 +317,9 @@ export function WritingAssistant({
           <Button size="sm" variant="quiet" onClick={() => apply(false)}>
             {t(selection.empty ? "insertAtCursor" : "insert")}
           </Button>
+          <Button size="sm" className={styles.discard} onClick={onClose}>
+            {t("discard")}
+          </Button>
         </div>
       )}
       <form
@@ -314,11 +331,12 @@ export function WritingAssistant({
       >
         <Textarea
           ref={input}
+          appearance="bare"
           aria-label={t("prompt")}
-          placeholder={t("prompt")}
+          placeholder={t(text ? "refinePrompt" : "inlinePrompt")}
           value={prompt}
           onChange={(event) => setPrompt(event.target.value)}
-          rows={2}
+          rows={1}
           maxLength={2000}
           disabled={status === "running"}
           onKeyDown={(event) => {
@@ -346,6 +364,8 @@ export function WritingAssistant({
           ) : (
             <IconButton
               type="submit"
+              variant="primary"
+              className={styles.send}
               aria-label={t("start")}
               disabled={!prompt.trim()}
             >

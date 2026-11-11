@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useId, useRef, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale, useMessages, useTranslations } from "next-intl";
 import { Download, Plus, Sparkles, X } from "lucide-react";
 import {
   diagramSchema,
@@ -40,13 +40,16 @@ export function DiagramDialog(props: DiagramDialogProps) {
   const language =
     props.contentLocale ?? (isLocale(uiLocale) ? uiLocale : defaultLocale);
   const t = useTranslations("diagrams");
+  const templateCopy = useMessages().diagrams.template;
   const [copy, setCopy] = useState<{
     locale: Locale;
     value: TemplateCopy;
   } | null>(null);
   const [loadFailed, setLoadFailed] = useState(false);
   useEffect(() => {
+    if (language === uiLocale) return;
     let active = true;
+    setLoadFailed(false);
     void catalogs[language]()
       .then((catalog) => {
         if (active)
@@ -61,10 +64,21 @@ export function DiagramDialog(props: DiagramDialogProps) {
     return () => {
       active = false;
     };
-  }, [language]);
-  if (!copy || copy.locale !== language)
+  }, [language, uiLocale]);
+  const resolvedCopy =
+    language === uiLocale
+      ? templateCopy
+      : copy?.locale === language
+        ? copy.value
+        : null;
+  if (!resolvedCopy)
     return (
-      <Dialog title={t("title")} wide onClose={props.onClose}>
+      <Dialog
+        title={t("title")}
+        wide
+        layout="workspace"
+        onClose={props.onClose}
+      >
         {loadFailed ? (
           <p role="alert">{t("loadFailed")}</p>
         ) : (
@@ -77,7 +91,7 @@ export function DiagramDialog(props: DiagramDialogProps) {
       key={language}
       {...props}
       contentLocale={language}
-      templateCopy={copy.value}
+      templateCopy={resolvedCopy}
     />
   );
 }

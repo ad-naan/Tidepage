@@ -1,13 +1,24 @@
 .assistant {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 14px;
-  max-height: inherit;
-  min-height: 0;
-  overflow: auto;
-  overscroll-behavior: contain;
+  gap: 12px;
+  min-width: 0;
   font: 400 var(--text-sm)/1.65 var(--font-ui);
+}
+.assistant[data-review="true"] .composer {
+  order: 7;
+}
+.assistant[data-review="true"] .actions {
+  display: none;
+}
+.assistant[data-busy="true"] .composer {
+  display: none;
+}
+.heading > .stop {
+  margin-left: auto;
+}
+.heading > .stop + button {
+  margin-left: 0;
 }
 .heading,
 .actions,
@@ -16,65 +27,93 @@
 .progress {
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
+  gap: 8px;
 }
-.heading,
-.composerFooter {
-  justify-content: space-between;
+.heading {
+  order: 0;
+  min-height: 28px;
 }
 .heading strong {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-weight: 600;
+  gap: 6px;
+  color: var(--accent);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  white-space: nowrap;
 }
-.actions,
-.review {
-  flex-wrap: wrap;
+.heading > button {
+  margin-left: auto;
+  flex-shrink: 0;
 }
 .context {
-  flex-shrink: 0;
   color: var(--muted);
   font-size: var(--text-xs);
 }
-.selection {
-  margin: 8px 0 0;
-  max-height: 96px;
-  overflow: auto;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
+.actions {
+  order: 2;
+  flex-wrap: wrap;
+  gap: 4px;
 }
-.result {
-  min-height: 0;
-  max-height: min(38dvh, 320px);
-  padding: 12px;
-  background: var(--soft);
-  border-radius: 8px;
-  overflow: auto;
-  overflow-wrap: anywhere;
-  white-space: pre-wrap;
-  overscroll-behavior: contain;
+.quickAction {
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  color: var(--muted);
+  font: 400 var(--text-xs)/1.6 var(--font-ui);
 }
-.review {
-  padding-top: 8px;
-  border-top: 1px solid var(--line);
+.quickAction:hover:not(:disabled) {
+  color: var(--ink);
+  background: var(--wash);
+  border-color: var(--accent);
 }
 .composer {
+  order: 1;
   display: grid;
-  gap: 6px;
-  flex-shrink: 0;
+  gap: 8px;
+  padding: 10px 12px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: color-mix(in srgb, var(--paper) 94%, var(--sand));
+}
+.composer:focus-within {
+  border-color: var(--accent);
 }
 .composer textarea {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  box-shadow: none;
   field-sizing: content;
-  min-height: 60px;
-  max-height: 112px;
+  min-height: 26px;
+  max-height: 140px;
   resize: none;
+  font: 400 var(--text-body)/1.8 var(--font-ui);
+}
+.composer textarea:focus-visible {
+  outline: none;
+}
+.composerFooter {
+  justify-content: space-between;
+  min-height: 28px;
 }
 .composerFooter > span,
 .progress {
   color: var(--muted);
   font-size: var(--text-xs);
+}
+.send {
+  width: 28px;
+  height: 28px;
+  padding: 5px;
+  flex-shrink: 0;
+}
+.progress {
+  order: 3;
+  flex-wrap: wrap;
 }
 .count {
   margin-left: auto;
@@ -86,13 +125,39 @@
   border-radius: 50%;
   background: var(--accent);
 }
-.pulse {
-  animation: breathe 1.2s ease-in-out infinite;
+.result {
+  order: 4;
+  min-height: 0;
+  max-height: min(42dvh, 400px);
+  padding: 12px 0;
+  border-block: 1px solid var(--line);
+  font: 400 16px/1.85 var(--font-reading);
+  overflow: auto;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  overscroll-behavior: contain;
+}
+.assistant > button {
+  order: 5;
+  align-self: flex-start;
+}
+.review {
+  order: 6;
+  flex-wrap: wrap;
+}
+.discard {
+  padding: 6px 8px;
+  color: var(--muted);
+  font-size: var(--text-sm);
 }
 .error {
+  order: 5;
   margin: 0;
   color: var(--accent);
   font-size: var(--text-xs);
+}
+.pulse {
+  animation: breathe 1.2s ease-in-out infinite;
 }
 @keyframes breathe {
   50% {
@@ -102,5 +167,17 @@
 @media (prefers-reduced-motion: reduce) {
   .pulse {
     animation: none;
+  }
+}
+@media (max-width: 600px) {
+  .heading {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .context {
+    font-size: var(--text-xs);
+  }
+  .composerFooter > span {
+    max-width: 70%;
   }
 }

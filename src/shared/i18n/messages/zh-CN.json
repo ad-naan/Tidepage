@@ -1578,7 +1578,10 @@
       "resultRegion": "AI 创作预览",
       "followOutput": "跟随最新输出",
       "refineHint": "继续输入要求，修改这份草稿",
-      "sendHint": "Enter 发送 · Shift + Enter 换行"
+      "sendHint": "Enter 发送 · Shift + Enter 换行",
+      "inlineTitle": "AI 编辑",
+      "inlinePrompt": "告诉 AI 你想写什么、怎么改…",
+      "refinePrompt": "继续调整，例如：再简短一点、语气自然一些…"
     },
     "noteImages": {
       "title": "手记图片",
@@ -2036,6 +2039,23 @@
       "stopped": "已停止生成",
       "error": "本次生成未完成"
     },
-    "adjust": "详细调整"
+    "adjust": "详细调整",
+    "inlineTitle": "AI 画图",
+    "inlinePrompt": "把想法画出来，例如：整理成三步流程…",
+    "refinePrompt": "继续调整图表，例如：合并前两步、突出结论…",
+    "suggestions": {
+      "flow": {
+        "label": "梳理流程",
+        "prompt": "将选中内容整理为简洁的步骤流程图，保留关键步骤和顺序。没有选中内容时，请先生成一个三步流程示例。"
+      },
+      "compare": {
+        "label": "对比观点",
+        "prompt": "将选中内容中的观点或方案整理成便于比较的图，突出共同点和差异。没有选中内容时，请先生成一个两种方案对比示例。"
+      },
+      "relations": {
+        "label": "整理关系",
+        "prompt": "将选中内容的核心概念及其联系画成关系图，节点文字简短清楚。没有选中内容时，请先生成一个简单的概念关系示例。"
+      }
+    }
   }
 }

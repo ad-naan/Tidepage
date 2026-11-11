@@ -7,7 +7,7 @@ import {
 } from "@tiptap/react";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
-import { GripVertical, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
 import {
   diagramSchema,
   type MiniDiagram as Diagram,
@@ -15,6 +15,7 @@ import {
 import { MiniDiagram } from "@/shared/ui/drawing/MiniDiagram";
 import { Button } from "@/shared/ui/button/Button";
 import styles from "./DiagramNode.module.css";
+import { BlockMoveControls } from "./BlockMoveControls";
 
 function DiagramView({
   node,
@@ -37,15 +38,11 @@ function DiagramView({
     >
       {editor.isEditable && (
         <div className={styles.tools}>
-          <span
-            draggable="true"
-            data-drag-handle
-            className={styles.grip}
-            title={t("dragBlock")}
-            aria-label={t("dragBlock")}
-          >
-            <GripVertical size={14} />
-          </span>
+          <BlockMoveControls
+            editor={editor}
+            getPos={getPos}
+            label={t("dragBlock")}
+          />
           <Button
             variant="quiet"
             size="sm"
@@ -60,10 +57,7 @@ function DiagramView({
           </Button>
         </div>
       )}
-      <div
-        data-drag-handle={editor.isEditable ? "" : undefined}
-        draggable={editor.isEditable}
-      >
+      <div>
         <MiniDiagram value={result.data} />
       </div>
     </NodeViewWrapper>

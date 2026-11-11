@@ -2,7 +2,7 @@
 import { useId, useRef, useState } from "react";
 import { NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
 import { useTranslations } from "next-intl";
-import { GripVertical, MoveDiagonal2 } from "lucide-react";
+import { MoveDiagonal2 } from "lucide-react";
 import { Button, IconButton } from "@/shared/ui/button/Button";
 import { Input, RangeSlider } from "@/shared/ui/field/Input";
 import { Field } from "@/shared/ui/field/Field";
@@ -12,29 +12,40 @@ import { AssetImage } from "@/modules/media/ui/admin/AssetImage";
 import { ImageCropDialog } from "@/modules/media/ui/admin/ImageCropDialog";
 import { MediaPicker } from "@/modules/media/ui/admin/MediaPicker";
 import styles from "./ImageNodeView.module.css";
+import { BlockMoveControls } from "./BlockMoveControls";
 export function ImageNodeView({
   node,
   editor,
   selected,
   updateAttributes,
   deleteNode,
+  getPos,
 }: NodeViewProps) {
   const t = useTranslations("admin.image");
   const fieldId = useId();
   const [editing, setEditing] = useState(false);
   const [crop, setCrop] = useState(false);
   const [replace, setReplace] = useState(false);
+  const [resizeWidth, setResizeWidth] = useState<number | null>(null);
   const outer = useRef<HTMLDivElement>(null);
   const drag = useRef<{
     x: number;
     width: number;
     parent: number;
     factor: number;
+    next: number;
   } | null>(null);
   const width = Number(node.attrs.width) || 100;
   const align = String(node.attrs.align || "center");
   const setWidth = (value: number) =>
     updateAttributes({ width: Math.min(100, Math.max(20, Math.round(value))) });
+  function finishResize(commit: boolean) {
+    const current = drag.current;
+    drag.current = null;
+    setResizeWidth(null);
+    if (commit && current && current.next !== current.width)
+      setWidth(current.next);
+  }
   return (
     <NodeViewWrapper
       ref={outer}
@@ -43,25 +54,19 @@ export function ImageNodeView({
       data-active={selected || editing}
     >
       {editor.isEditable && !node.attrs.uploading && (
-        <span
-          className={styles.grip}
-          draggable="true"
-          data-drag-handle
-          title={t("dragBlock")}
-          aria-label={t("dragBlock")}
-        >
-          <GripVertical size={16} />
-        </span>
+        <BlockMoveControls
+          editor={editor}
+          getPos={getPos}
+          label={t("dragBlock")}
+        />
       )}
       <figure
         className={styles.figure}
-        data-drag-handle={
-          editor.isEditable && !node.attrs.uploading ? "" : undefined
-        }
-        draggable={editor.isEditable && !node.attrs.uploading}
+        draggable={false}
+        onDragStart={(event) => event.preventDefault()}
         data-align={align}
         style={{
-          width: `${width}%`,
+          width: `${resizeWidth ?? width}%`,
           marginLeft: align === "left" ? 0 : "auto",
           marginRight: align === "right" ? 0 : "auto",
         }}
@@ -83,7 +88,7 @@ export function ImageNodeView({
             role="slider"
             aria-valuemin={20}
             aria-valuemax={100}
-            aria-valuenow={width}
+            aria-valuenow={resizeWidth ?? width}
             className={styles.handle}
             style={{
               right: align === "right" ? "auto" : -8,
@@ -91,33 +96,45 @@ export function ImageNodeView({
             }}
             pressEffect={false}
             onPointerDown={(e) => {
+              if (e.button !== 0) return;
               e.preventDefault();
               e.stopPropagation();
               drag.current = {
                 factor: align === "center" ? 2 : align === "right" ? -1 : 1,
                 x: e.clientX,
                 width,
+                next: width,
                 parent: outer.current?.clientWidth ?? 1,
               };
               e.currentTarget.setPointerCapture(e.pointerId);
             }}
             onPointerMove={(e) => {
-              if (drag.current)
-                setWidth(
-                  drag.current.width +
-                    ((e.clientX - drag.current.x) / drag.current.parent) *
-                      100 *
-                      drag.current.factor,
+              if (drag.current) {
+                const next = Math.min(
+                  100,
+                  Math.max(
+                    20,
+                    Math.round(
+                      drag.current.width +
+                        ((e.clientX - drag.current.x) / drag.current.parent) *
+                          100 *
+                          drag.current.factor,
+                    ),
+                  ),
                 );
+                drag.current.next = next;
+                setResizeWidth(next);
+              }
             }}
-            onPointerUp={() => {
-              drag.current = null;
+            onPointerUp={(event) => {
+              finishResize(true);
+              event.currentTarget.releasePointerCapture(event.pointerId);
             }}
             onLostPointerCapture={() => {
-              drag.current = null;
+              finishResize(false);
             }}
             onPointerCancel={() => {
-              drag.current = null;
+              finishResize(false);
             }}
             onKeyDown={(e) => {
               if (["ArrowLeft", "ArrowRight"].includes(e.key)) {

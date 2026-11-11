@@ -6,20 +6,6 @@
   padding: 8px 0;
   font-family: var(--font-ui);
 }
-.grip {
-  display: inline-flex;
-  align-self: flex-start;
-  padding: 6px;
-  cursor: grab;
-  color: var(--muted);
-}
-.grip:active,
-.figure[draggable="true"]:active {
-  cursor: grabbing;
-}
-.figure[draggable="true"] {
-  cursor: grab;
-}
 .figure {
   order: 2;
   margin-block: 0;
@@ -91,6 +77,8 @@
   width: 100%;
 }
 
+.block:hover .toolbar,
+.block:focus-within .toolbar,
 .block[data-active="true"] .toolbar {
   display: flex;
 }
@@ -112,4 +100,17 @@
 .figure[data-align="right"] .toolbar {
   left: auto;
   right: 8px;
+}
+@media (hover: none) {
+  .toolbar {
+    display: flex;
+    position: static;
+    width: auto;
+    max-width: 100%;
+    margin-top: 12px;
+  }
+  .handle {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }

@@ -1,0 +1,22 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+}
+.grip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  cursor: grab;
+  border-radius: var(--radius-control);
+}
+.grip:hover {
+  background: var(--wash);
+  color: var(--ink);
+}
+.grip:active {
+  cursor: grabbing;
+}

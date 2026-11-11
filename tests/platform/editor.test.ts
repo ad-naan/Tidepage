@@ -12,9 +12,12 @@ import { legacyArticlesToDraft } from "../../src/modules/content/domain/legacy-d
 import type { Article } from "../../src/modules/content/domain/models";
 import { readEventStream } from "../../src/shared/http/event-stream";
 import { Schema } from "@tiptap/pm/model";
-import { EditorState, TextSelection } from "@tiptap/pm/state";
+import { EditorState, NodeSelection, TextSelection } from "@tiptap/pm/state";
 import { history, undo } from "@tiptap/pm/history";
-import { editCurrentBlock } from "../../src/modules/content/ui/admin/editor/document-blocks";
+import {
+  editBlockAt,
+  editCurrentBlock,
+} from "../../src/modules/content/ui/admin/editor/document-blocks";
 import {
   translationSegments,
   applyTranslationSegments,
@@ -57,6 +60,42 @@ test("moving a block preserves the selection and undoes as one operation", () =>
     before.apply(editCurrentBlock(before, "duplicate")!).doc.textContent,
     "FirstFirstSecond",
   );
+});
+
+test("media movement targets the clicked block, retains its attributes and supports undo", () => {
+  const schema = new Schema({
+    nodes: {
+      doc: { content: "block+" },
+      paragraph: { group: "block", content: "text*" },
+      assetImage: {
+        group: "block",
+        atom: true,
+        attrs: { assetId: {}, width: { default: 100 } },
+      },
+      text: {},
+    },
+  });
+  const paragraph = schema.node("paragraph", null, schema.text("Text"));
+  const image = schema.node("assetImage", {
+    assetId: "/uploads/test.png",
+    width: 45,
+  });
+  const doc = schema.node("doc", null, [paragraph, image, paragraph]);
+  const before = EditorState.create({
+    doc,
+    selection: TextSelection.create(doc, 2),
+    plugins: [history()],
+  });
+  const moved = before.apply(editBlockAt(before, paragraph.nodeSize, "up")!);
+  assert.ok(moved.doc.firstChild?.eq(image));
+  assert.ok(moved.selection instanceof NodeSelection);
+  assert.equal(moved.selection.from, 0);
+  assert.equal(editBlockAt(moved, 0, "up"), null);
+  assert.equal(editBlockAt(before, 2, "down"), null);
+  assert.equal(editBlockAt(before, doc.content.size, "down"), null);
+  assert.ok(undo(moved, (tr) => assert.ok(tr.doc.eq(doc))));
+  const down = before.apply(editBlockAt(before, paragraph.nodeSize, "down")!);
+  assert.ok(down.doc.lastChild?.eq(image));
 });
 
 test("translation changes text while retaining links, code and media references", () => {

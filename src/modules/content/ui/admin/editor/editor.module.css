@@ -8,6 +8,7 @@
   isolation: isolate;
 }
 .viewportTools {
+  min-height: 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -53,15 +54,12 @@
 .root:fullscreen .document {
   width: 100%;
 }
-.writingPanel.writingPanel {
-  padding: 0;
-  overflow: hidden;
-}
 .aiTarget {
   background: var(--wash);
   box-shadow: 0 1px 0 var(--accent);
 }
 .toolbar {
+  min-height: 46px;
   position: relative;
   top: 0;
   z-index: 5;
@@ -109,8 +107,21 @@
   outline: 1px dashed var(--line);
   outline-offset: -4px;
 }
-.document :global(.tiptap:not(:focus-within)) :global([data-image-tools]) {
-  display: none;
+.dragPreview {
+  position: fixed;
+  top: -10000px;
+  left: -10000px;
+  max-width: 280px;
+  padding: 10px 16px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-control);
+  color: var(--ink);
+  background: var(--paper);
+  font: 400 var(--text-sm)/1.6 var(--font-ui);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
 }
 .document :global(p) {
   margin: 0 0 12px;
@@ -453,6 +464,9 @@
   box-shadow: 0 8px 24px color-mix(in srgb, var(--ink) 8%, transparent);
   z-index: 100;
   font-family: var(--font-ui);
+}
+.bubble[data-command="true"] {
+  display: block;
 }
 .slash h3 {
   width: 100%;

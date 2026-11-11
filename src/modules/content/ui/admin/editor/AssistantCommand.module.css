@@ -1,0 +1,60 @@
+.command {
+  width: min(520px, calc(100vw - 40px));
+  padding: 4px;
+}
+.inputRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.icon {
+  color: var(--accent);
+  padding-left: 6px;
+}
+.inputRow textarea {
+  flex: 1;
+  min-width: 0;
+  min-height: 30px;
+  max-height: 88px;
+  padding: 4px 0;
+  border: 0;
+  outline: none;
+  resize: none;
+  field-sizing: content;
+  background: transparent;
+  font: 400 var(--text-body)/1.6 var(--font-ui);
+}
+.inputRow:focus-within {
+  box-shadow: 0 1px 0 var(--accent);
+}
+.inputRow textarea:focus-visible {
+  outline: none;
+}
+.inputRow > button {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  padding: 4px;
+}
+.shortcuts {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 6px 4px 0 28px;
+  flex-wrap: wrap;
+}
+.shortcuts button {
+  padding: 3px 8px;
+  color: var(--muted);
+  font: 400 var(--text-xs)/1.6 var(--font-ui);
+  border-radius: var(--radius-control);
+}
+.shortcuts button:hover {
+  color: var(--ink);
+  background: var(--wash);
+}
+.shortcuts kbd {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}

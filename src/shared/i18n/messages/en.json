@@ -1578,7 +1578,10 @@
       "resultRegion": "AI draft",
       "followOutput": "Follow output",
       "refineHint": "Describe changes to refine this draft",
-      "sendHint": "Enter to send · Shift + Enter for a new line"
+      "sendHint": "Enter to send · Shift + Enter for a new line",
+      "inlineTitle": "AI edit",
+      "inlinePrompt": "Tell AI what to write or change…",
+      "refinePrompt": "Refine this suggestion, for example: shorter, more conversational…"
     },
     "noteImages": {
       "title": "Note photos",
@@ -2036,6 +2039,23 @@
       "stopped": "Generation stopped",
       "error": "Generation did not finish"
     },
-    "adjust": "Adjust structure"
+    "adjust": "Adjust structure",
+    "inlineTitle": "AI diagram",
+    "inlinePrompt": "Describe a diagram, for example: a three-step flow…",
+    "refinePrompt": "Refine the diagram, for example: merge the first two steps…",
+    "suggestions": {
+      "flow": {
+        "label": "Map a process",
+        "prompt": "Turn the selection into a concise process diagram, preserving the key steps and order. If nothing is selected, create a simple three-step example."
+      },
+      "compare": {
+        "label": "Compare ideas",
+        "prompt": "Diagram the ideas or approaches in the selection to highlight similarities and differences. If nothing is selected, create a simple comparison of two approaches."
+      },
+      "relations": {
+        "label": "Connect concepts",
+        "prompt": "Diagram the core concepts in the selection and their relationships using short, clear labels. If nothing is selected, create a simple concept map example."
+      }
+    }
   }
 }

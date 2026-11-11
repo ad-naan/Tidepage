@@ -1,10 +1,9 @@
 "use client";
 import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
-import dynamic from "next/dynamic";
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
-import { Extension, type Editor } from "@tiptap/core";
+import { Extension, posToDOMRect, type Editor } from "@tiptap/core";
 import { TextSelection } from "@tiptap/pm/state";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -28,9 +27,6 @@ import { Button, IconButton } from "@/shared/ui/button/Button";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { Input } from "@/shared/ui/field/Input";
 import { useNotice, NoticeDock } from "@/shared/ui/feedback/NoticeProvider";
-import { useDisclosure } from "@/shared/hooks/useDisclosure";
-import { AnchoredPanel } from "@/shared/ui/overlay/AnchoredPanel";
-import { OverlayScope } from "@/shared/ui/overlay/OverlayScope";
 import type { Locale } from "@/shared/i18n/config";
 import type { WritingAgent } from "@/modules/ai/domain/writing";
 import {
@@ -49,8 +45,12 @@ import {
 import { ReferenceCard, AssetImageNode, CalloutNode } from "./ReferenceNode";
 import { ReferenceDialog } from "./ReferenceDialog";
 import { MiniDiagramNode } from "./DiagramNode";
+import { DiagramDialog } from "./DiagramDialog";
 import { DiagramAssistant } from "./DiagramAssistant";
 import { AssistantTarget, assistantTargetKey } from "./AssistantTarget";
+import { AssistantWorkspace } from "./AssistantWorkspace";
+import { InlineAssistant } from "./InlineAssistant";
+import { AssistantCommand } from "./AssistantCommand";
 import type { MiniDiagram as Diagram } from "@/shared/contracts/diagram";
 import { referenceUrl } from "@/modules/content/domain/reference-url";
 import { editCurrentBlock } from "./document-blocks";
@@ -61,10 +61,6 @@ import {
   SubscriptMark,
   DetailsNode,
 } from "./ReadingExtensions";
-
-const DiagramDialog = dynamic(() =>
-  import("./DiagramDialog").then((module) => module.DiagramDialog),
-);
 
 export function RichTextEditor({
   initial,
@@ -115,9 +111,9 @@ export function RichTextEditor({
   const linkAction = useRef<() => void>(() => {});
   const writingAction = useRef<() => void>(() => {});
   const writingId = useId();
-  const writingMenu = useDisclosure(writingId, { dismissOnOutside: false });
-  const writingTrigger = useRef<HTMLButtonElement>(null);
-  const diagramTrigger = useRef<HTMLButtonElement>(null);
+  const [assistantOpen, setAssistantOpen] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [assistantInstruction, setAssistantInstruction] = useState<string>();
   const [assistantSession, setAssistantSession] = useState(0);
   const [assistantMode, setAssistantMode] = useState<"write" | "diagram">(
     "write",
@@ -127,6 +123,7 @@ export function RichTextEditor({
   );
   const [slashIndex, setSlashIndex] = useState(0);
   const root = useRef<HTMLDivElement>(null);
+  const bubble = useRef<HTMLDivElement>(null);
   const scrollHost = useRef<HTMLDivElement>(null);
   const [expanded, setExpanded] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
@@ -149,31 +146,6 @@ export function RichTextEditor({
   }
   const [slashPosition, setSlashPosition] = useState({ left: 0, top: 0 });
   const editorRef = useRef<Editor | null>(null);
-  const targetRef = useRef(writingTarget);
-  targetRef.current = writingTarget;
-  const writingAnchorRect = useCallback(() => {
-    const e = editorRef.current;
-    const target = targetRef.current;
-    const rect = root.current?.getBoundingClientRect();
-    if (!e || !target || !rect)
-      return (writingTrigger.current ??
-        diagramTrigger.current)!.getBoundingClientRect();
-    const caret = e.view.coordsAtPos(
-      Math.min(target.selection.to, e.state.doc.content.size),
-    );
-    const top = Math.max(
-      80,
-      Math.min(caret.top, Math.min(rect.bottom, innerHeight) - 32),
-    );
-    return {
-      top,
-      bottom: top + 22,
-      left: caret.left,
-      right: caret.left + 1,
-      width: 1,
-      height: 22,
-    };
-  }, []);
   function openDiagram() {
     const e = editorRef.current;
     if (!e?.isEditable) return;
@@ -189,7 +161,9 @@ export function RichTextEditor({
     setAssistantSession((session) => session + 1);
     setWritingTarget({ doc: e.state.doc, selection: e.state.selection });
     setAssistantMode("diagram");
-    writingMenu.setOpen(true);
+    setAssistantInstruction(undefined);
+    setCommandOpen(!e.state.selection.empty);
+    setAssistantOpen(e.state.selection.empty);
   }
   function openReference(kind: Embed["kind"], url = "") {
     const editor = editorRef.current;
@@ -307,6 +281,7 @@ export function RichTextEditor({
       }),
       Placeholder.configure({ placeholder: t("placeholder") }),
       AssistantTarget.configure({ className: styles.aiTarget }),
+      AssistantWorkspace,
       TaskList,
       TaskItem.configure({ nested: true }),
       TableKit.configure({ table: { resizable: false } }),
@@ -355,10 +330,19 @@ export function RichTextEditor({
       }),
     ],
     onUpdate: ({ editor: e }) => {
+      if (commandOpen) setCommandOpen(false);
       dirtyCallback.current?.();
       syncSlash.current(e);
     },
-    onSelectionUpdate: ({ editor: e }) => syncSlash.current(e),
+    onSelectionUpdate: ({ editor: e }) => {
+      if (
+        commandOpen &&
+        writingTarget &&
+        !e.state.selection.eq(writingTarget.selection)
+      )
+        setCommandOpen(false);
+      syncSlash.current(e);
+    },
     editorProps: {
       attributes: {
         "aria-label": t("bodyLabel"),
@@ -457,17 +441,38 @@ export function RichTextEditor({
   });
   editorRef.current = editor;
   useEffect(() => {
+    const element = bubble.current;
+    if (!editor || !element || assistantOpen || !active || readOnly) return;
+    let frame = 0;
+    const measure = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        if (!editor.isDestroyed)
+          editor.view.dispatch(
+            editor.state.tr.setMeta("inlineEditorMenu", "updatePosition"),
+          );
+      });
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    measure();
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, [editor, assistantOpen, commandOpen, active, readOnly]);
+  useEffect(() => {
     if (!editor || editor.isDestroyed) return;
     const selection = writingTarget?.selection;
     const range =
-      writingMenu.open &&
+      (assistantOpen || commandOpen) &&
       writingTarget &&
       selection instanceof TextSelection &&
       editor.state.doc.eq(writingTarget.doc)
         ? { from: selection.from, to: selection.to }
         : null;
     editor.view.dispatch(editor.state.tr.setMeta(assistantTargetKey, range));
-  }, [editor, writingMenu.open, writingTarget]);
+  }, [editor, assistantOpen, commandOpen, writingTarget]);
   useEffect(() => {
     onReady?.(editor);
     return () => onReady?.(null);
@@ -477,10 +482,11 @@ export function RichTextEditor({
   }, [editor, readOnly, active]);
   useEffect(() => {
     if (!active || readOnly) {
-      writingMenu.setOpen(false);
+      setAssistantOpen(false);
+      setCommandOpen(false);
       setDiagram(null);
     }
-  }, [active, readOnly, writingMenu.setOpen]);
+  }, [active, readOnly]);
   useEffect(
     () => () => {
       for (const task of uploads.current) task.abort();
@@ -524,14 +530,16 @@ export function RichTextEditor({
     setLinkError(false);
   };
   writingAction.current = () => {
-    if (!editor?.isEditable || !writingAgent || writingMenu.open) return;
+    if (!editor?.isEditable || !writingAgent || assistantOpen) return;
     setAssistantSession((session) => session + 1);
     setWritingTarget({
       doc: editor.state.doc,
       selection: editor.state.selection,
     });
     setAssistantMode("write");
-    writingMenu.toggle();
+    setAssistantInstruction(undefined);
+    setCommandOpen(!editor.state.selection.empty);
+    setAssistantOpen(editor.state.selection.empty);
   };
   actionRef.current = (key) => {
     if (!editor) return;
@@ -585,36 +593,75 @@ export function RichTextEditor({
     document.addEventListener("pointerdown", outside);
     return () => document.removeEventListener("pointerdown", outside);
   }, []);
-  if (!editor) return <LoadingSkeleton variant="document" />;
+  if (!editor)
+    return (
+      <div className={styles.root} aria-busy="true">
+        {!readOnly && (
+          <div className={styles.viewportTools}>
+            <span>{t("bodyLabel")}</span>
+          </div>
+        )}
+        {!readOnly && <div className={styles.toolbar} aria-hidden="true" />}
+        <div className={styles.scrollHost}>
+          <LoadingSkeleton variant="document" />
+        </div>
+      </div>
+    );
   return (
-    <div className={styles.root} ref={root} data-expanded={expanded}>
+    <div
+      className={styles.root}
+      ref={root}
+      data-expanded={expanded}
+      onDragStart={(event) => {
+        const target = event.target as HTMLElement;
+        if (!target.closest("[data-drag-handle]") || !event.dataTransfer)
+          return;
+        // A full-height image/diagram ghost obscures both the text and drop cursor.
+        const preview = document.createElement("div");
+        preview.className = styles.dragPreview;
+        const node = editor.state.doc.nodeAt(editor.state.selection.from);
+        preview.textContent =
+          node?.type.name === "miniDiagram"
+            ? String(node.attrs.diagram?.title || t("blocks.diagram"))
+            : node?.type.name === "assetImage"
+              ? String(node.attrs.alt || t("blocks.image"))
+              : t("documentTools.blocks");
+        document.body.appendChild(preview);
+        event.dataTransfer.setDragImage(preview, 16, 16);
+        setTimeout(() => preview.remove(), 0);
+      }}
+    >
       {fullscreen && <NoticeDock />}
       {!readOnly && (
         <div className={styles.viewportTools}>
           <span>{t("bodyLabel")}</span>
           <div>
             <Button
-              ref={diagramTrigger}
               size="sm"
               variant="quiet"
               onPointerDown={(event) => event.preventDefault()}
               onClick={openDiagram}
+              aria-expanded={
+                (assistantOpen || commandOpen) && assistantMode === "diagram"
+              }
+              aria-controls={writingId}
             >
               <Workflow size={15} />
               {t("blocks.diagram")}
             </Button>
             {writingAgent && (
-              <div ref={writingMenu.ref}>
+              <div>
                 <Button
-                  ref={writingTrigger}
                   size="sm"
                   variant="quiet"
-                  aria-expanded={writingMenu.open}
+                  aria-expanded={
+                    (assistantOpen || commandOpen) && assistantMode === "write"
+                  }
                   aria-controls={writingId}
                   onPointerDown={(event) => event.preventDefault()}
                   onClick={() =>
-                    writingMenu.open
-                      ? writingMenu.setOpen(false)
+                    assistantOpen || commandOpen
+                      ? (setAssistantOpen(false), setCommandOpen(false))
                       : writingAction.current()
                   }
                 >
@@ -655,83 +702,72 @@ export function RichTextEditor({
           hasWritingAssistant={!!writingAgent}
         />
       )}
-      {writingTarget && !readOnly && (
-        <OverlayScope owner={writingId}>
-          <AnchoredPanel
-            id={writingId}
-            label={
-              assistantMode === "write" ? ai("title") : t("blocks.diagram")
-            }
-            width={400}
-            anchor={
-              assistantMode === "write"
-                ? writingTrigger.current
-                : diagramTrigger.current
-            }
-            open={writingMenu.open && active}
-            placement="auto"
-            align="start"
-            getAnchorRect={writingAnchorRect}
-            className={styles.writingPanel}
-          >
-            {assistantMode === "write" && writingAgent ? (
-              <WritingAssistant
-                key={assistantSession}
-                editor={editor}
-                target={writingTarget}
-                active={writingMenu.open && active}
-                contentLocale={contentLocale}
-                agent={writingAgent}
-                onClose={() => {
-                  writingMenu.setOpen(false);
-                  editor.commands.focus();
-                }}
-              />
-            ) : (
-              <DiagramAssistant
-                key={assistantSession}
-                context={writingTarget.doc
-                  .textBetween(
-                    writingTarget.selection.from,
-                    writingTarget.selection.to,
-                    "\n",
-                  )
-                  .slice(0, 16000)}
-                contentLocale={contentLocale}
-                onClose={() => {
-                  writingMenu.setOpen(false);
-                  editor.commands.focus();
-                }}
-                onEdit={(value) => {
-                  writingMenu.setOpen(false);
-                  setDiagram({
-                    value,
-                    context: writingTarget.doc
-                      .textBetween(
-                        writingTarget.selection.from,
-                        writingTarget.selection.to,
-                        "\n",
-                      )
-                      .slice(0, 16000),
-                    target: writingTarget,
-                  });
-                }}
-                onInsert={(value) =>
-                  editor.isEditable &&
-                  editor.state.doc.eq(writingTarget.doc) &&
-                  editor
-                    .chain()
-                    .focus()
-                    .insertContentAt(writingTarget.selection.to, {
-                      type: "miniDiagram",
-                      attrs: { diagram: value },
-                    })
-                    .run()
-                }
-              />
-            )}
-          </AnchoredPanel>
-        </OverlayScope>
+      {writingTarget && assistantOpen && active && !readOnly && (
+        <InlineAssistant
+          editor={editor}
+          target={writingTarget}
+          id={writingId}
+          label={assistantMode === "write" ? ai("title") : t("blocks.diagram")}
+        >
+          {assistantMode === "write" && writingAgent ? (
+            <WritingAssistant
+              key={assistantSession}
+              editor={editor}
+              target={writingTarget}
+              initialInstruction={assistantInstruction}
+              active={active}
+              contentLocale={contentLocale}
+              agent={writingAgent}
+              onClose={() => {
+                setAssistantOpen(false);
+                editor.commands.focus();
+              }}
+            />
+          ) : (
+            <DiagramAssistant
+              key={assistantSession}
+              initialInstruction={assistantInstruction}
+              context={writingTarget.doc
+                .textBetween(
+                  writingTarget.selection.from,
+                  writingTarget.selection.to,
+                  "\n",
+                )
+                .slice(0, 16000)}
+              contentLocale={contentLocale}
+              onClose={() => {
+                setAssistantOpen(false);
+                editor.commands.focus();
+              }}
+              onEdit={(value) => {
+                setAssistantOpen(false);
+                setDiagram({
+                  value,
+                  context: writingTarget.doc
+                    .textBetween(
+                      writingTarget.selection.from,
+                      writingTarget.selection.to,
+                      "\n",
+                    )
+                    .slice(0, 16000),
+                  target: writingTarget,
+                });
+              }}
+              onInsert={(value) =>
+                editor.isEditable &&
+                editor.state.doc.eq(writingTarget.doc) &&
+                editor
+                  .chain()
+                  .focus()
+                  .insertContentAt(writingTarget.selection.to, {
+                    type: "miniDiagram",
+                    attrs: { diagram: value },
+                  })
+                  .run()
+              }
+            />
+          )}
+        </InlineAssistant>
       )}
       {slash !== null && active && (
         <div
@@ -781,8 +817,10 @@ export function RichTextEditor({
       >
         <EditorContent editor={editor} className={styles.document} />
       </div>
-      {!readOnly && active && (
+      {!readOnly && active && !assistantOpen && (
         <BubbleMenu
+          ref={bubble}
+          pluginKey="inlineEditorMenu"
           editor={editor}
           updateDelay={100}
           appendTo={() =>
@@ -793,6 +831,22 @@ export function RichTextEditor({
             document.body
           }
           className={styles.bubble}
+          data-command={commandOpen}
+          id={commandOpen ? writingId : undefined}
+          getReferencedVirtualElement={() =>
+            commandOpen &&
+            writingTarget &&
+            editor.state.doc.eq(writingTarget.doc)
+              ? {
+                  getBoundingClientRect: () =>
+                    posToDOMRect(
+                      editor.view,
+                      writingTarget.selection.from,
+                      writingTarget.selection.to,
+                    ),
+                }
+              : null
+          }
           options={{
             placement: "top",
             offset: 8,
@@ -800,54 +854,72 @@ export function RichTextEditor({
           }}
           shouldShow={({ state }) =>
             editor.isEditable &&
-            !state.selection.empty &&
-            !writingMenu.open &&
+            (commandOpen || !state.selection.empty) &&
+            !assistantOpen &&
             !editor.isActive("assetImage") &&
             !editor.isActive("miniDiagram") &&
             !diagram &&
             !editor.isActive("referenceCard")
           }
         >
-          <IconButton
-            aria-label={t("format.bold")}
-            onPointerDown={(e) => e.preventDefault()}
-            onClick={() => editor.chain().focus().toggleBold().run()}
-          >
-            <Bold size={15} />
-          </IconButton>
-          <IconButton
-            aria-label={t("format.italic")}
-            onPointerDown={(e) => e.preventDefault()}
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-          >
-            <Italic size={15} />
-          </IconButton>
-          <IconButton
-            aria-label={t("inlineLink")}
-            onClick={() =>
-              setLink(String(editor.getAttributes("link").href ?? ""))
-            }
-          >
-            <Link2 size={15} />
-          </IconButton>
-          {writingAgent && (
-            <IconButton
-              aria-label={ai("title")}
-              title={ai("title")}
-              onPointerDown={(event) => event.preventDefault()}
-              onClick={() => writingAction.current()}
-            >
-              <Sparkles size={15} />
-            </IconButton>
+          {commandOpen ? (
+            <AssistantCommand
+              key={`${assistantMode}-${assistantSession}`}
+              mode={assistantMode}
+              onClose={() => {
+                setCommandOpen(false);
+                editor.commands.focus();
+              }}
+              onSubmit={(instruction) => {
+                setAssistantInstruction(instruction);
+                setCommandOpen(false);
+                setAssistantOpen(true);
+              }}
+            />
+          ) : (
+            <>
+              <IconButton
+                aria-label={t("format.bold")}
+                onPointerDown={(e) => e.preventDefault()}
+                onClick={() => editor.chain().focus().toggleBold().run()}
+              >
+                <Bold size={15} />
+              </IconButton>
+              <IconButton
+                aria-label={t("format.italic")}
+                onPointerDown={(e) => e.preventDefault()}
+                onClick={() => editor.chain().focus().toggleItalic().run()}
+              >
+                <Italic size={15} />
+              </IconButton>
+              <IconButton
+                aria-label={t("inlineLink")}
+                onClick={() =>
+                  setLink(String(editor.getAttributes("link").href ?? ""))
+                }
+              >
+                <Link2 size={15} />
+              </IconButton>
+              {writingAgent && (
+                <IconButton
+                  aria-label={ai("title")}
+                  title={ai("title")}
+                  onPointerDown={(event) => event.preventDefault()}
+                  onClick={() => writingAction.current()}
+                >
+                  <Sparkles size={15} />
+                </IconButton>
+              )}
+              <IconButton
+                aria-label={t("blocks.diagram")}
+                title={t("blocks.diagram")}
+                onPointerDown={(event) => event.preventDefault()}
+                onClick={openDiagram}
+              >
+                <Workflow size={15} />
+              </IconButton>
+            </>
           )}
-          <IconButton
-            aria-label={t("blocks.diagram")}
-            title={t("blocks.diagram")}
-            onPointerDown={(event) => event.preventDefault()}
-            onClick={openDiagram}
-          >
-            <Workflow size={15} />
-          </IconButton>
         </BubbleMenu>
       )}
       {help && (

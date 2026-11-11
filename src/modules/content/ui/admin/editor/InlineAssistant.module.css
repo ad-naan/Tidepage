@@ -1,0 +1,21 @@
+.workspace {
+  display: block;
+  position: relative;
+  margin: 16px 0 24px;
+  padding: 0 0 0 16px;
+  min-width: 0;
+  max-width: 100%;
+  border-left: 2px solid var(--accent);
+  color: var(--ink);
+  font: 400 var(--text-body)/1.7 var(--font-ui);
+  white-space: normal;
+  cursor: default;
+}
+.workspace p {
+  margin: 0;
+}
+@media (max-width: 600px) {
+  .workspace {
+    padding-left: 12px;
+  }
+}

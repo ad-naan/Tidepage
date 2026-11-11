@@ -15,6 +15,12 @@
 }
 .tools > button {
   color: var(--muted);
+  white-space: nowrap;
+}
+.tools > button > svg {
+  flex: 0 0 14px;
+  width: 14px;
+  height: 14px;
 }
 .full {
   --font-diagram: "LXGW WenKai TC", var(--font-ui);

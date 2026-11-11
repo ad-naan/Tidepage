@@ -17,7 +17,9 @@ export function DiagramSurface({
   const [open, setOpen] = useState(false);
   return (
     <>
-      <div className={styles.fit}>{children}</div>
+      <div className={styles.fit} data-diagram-fit>
+        {children}
+      </div>
       <div className={styles.tools}>
         <Button size="sm" variant="quiet" onClick={() => setOpen(true)}>
           <Expand size={14} />
