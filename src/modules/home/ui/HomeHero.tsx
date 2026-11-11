@@ -135,7 +135,7 @@ export function HomeHero({ copy }: { copy: HomeCopy }) {
           <ProfileLinks links={copy.links} />
         </div>
       </div>
-      <HeroSketch quiet onWish={() => setMode("theme")} />
+      <HeroSketch />
     </section>
   );
 }

@@ -13,6 +13,7 @@ import { SiteHeader } from "@/widgets/site-shell/header/SiteHeader";
 import { useNotice } from "@/shared/ui/feedback/NoticeProvider";
 import { SiteFooter } from "@/widgets/site-shell/footer/SiteFooter";
 import { ExternalLinkPreview } from "@/shared/ui/link/ExternalLinkPreview";
+import { JournalProvider } from "@/modules/journal/ui/JournalProvider";
 import type { SitePresentation } from "@/modules/site-settings/domain/presentation";
 
 import type {
@@ -56,72 +57,74 @@ export function SiteShell({
   }, [pathname]);
   return (
     <MotionConfig transition={spring} reducedMotion="user">
-      <ExternalLinkPreview />
-      <div
-        className={`site-shell ${immersive ? "is-immersive" : ""}`}
-        data-page={pathname === "/" ? "home" : "inner"}
-      >
-        <SiteHeader
-          articles={articles}
-          navigation={navigation}
-          avatar={avatar}
-          navigationItems={presentation.navigation}
-          label={t(
-            nav.find(
-              (item) =>
-                item.href ===
-                (pathname.startsWith("/articles/") ? "/articles" : pathname),
-            )?.key || "elsewhere",
-          )}
-          immersive={immersive}
-          onImmersiveChange={() => setImmersive((v) => !v)}
-        />
-        <div className="main-wrap">
-          <main id="main-content">
-            <div key={pathname}>{children}</div>
-          </main>
-          <SiteFooter
-            year={year}
-            caption={presentation.footer}
-            showCoast={visitedCoast && pathname !== "/"}
-            theme={theme}
-            onThemeChange={setPreference}
-            onContact={() => setContact(true)}
-            onHeart={() =>
-              notify({
-                title: feedback("thanks"),
-                detail: footer("gratitude"),
-                tone: "success",
-                duration: 6500,
-              })
-            }
+      <JournalProvider>
+        <ExternalLinkPreview />
+        <div
+          className={`site-shell ${immersive ? "is-immersive" : ""}`}
+          data-page={pathname === "/" ? "home" : "inner"}
+        >
+          <SiteHeader
+            articles={articles}
+            navigation={navigation}
+            avatar={avatar}
+            navigationItems={presentation.navigation}
+            label={t(
+              nav.find(
+                (item) =>
+                  item.href ===
+                  (pathname.startsWith("/articles/") ? "/articles" : pathname),
+              )?.key || "elsewhere",
+            )}
+            immersive={immersive}
+            onImmersiveChange={() => setImmersive((v) => !v)}
           />
+          <div className="main-wrap">
+            <main id="main-content">
+              <div key={pathname}>{children}</div>
+            </main>
+            <SiteFooter
+              year={year}
+              caption={presentation.footer}
+              showCoast={visitedCoast && pathname !== "/"}
+              theme={theme}
+              onThemeChange={setPreference}
+              onContact={() => setContact(true)}
+              onHeart={() =>
+                notify({
+                  title: feedback("thanks"),
+                  detail: footer("gratitude"),
+                  tone: "success",
+                  duration: 6500,
+                })
+              }
+            />
+          </div>
+          {contact && (
+            <Dialog title={contactT("title")} onClose={() => setContact(false)}>
+              <div className="contact-card">
+                <Mail size={32} />
+                <h2>{contactT("heading")}</h2>
+                <p>
+                  {presentation.publicContact || (
+                    <>
+                      {contactT("body1")}
+                      <br />
+                      {contactT("body2")}
+                    </>
+                  )}
+                </p>
+                <Link
+                  href="/about"
+                  onClick={() => setContact(false)}
+                  className="button-outline"
+                >
+                  {contactT("link")} <ArrowRight size={16} />
+                </Link>
+              </div>
+            </Dialog>
+          )}
         </div>
-        {contact && (
-          <Dialog title={contactT("title")} onClose={() => setContact(false)}>
-            <div className="contact-card">
-              <Mail size={32} />
-              <h2>{contactT("heading")}</h2>
-              <p>
-                {presentation.publicContact || (
-                  <>
-                    {contactT("body1")}
-                    <br />
-                    {contactT("body2")}
-                  </>
-                )}
-              </p>
-              <Link
-                href="/about"
-                onClick={() => setContact(false)}
-                className="button-outline"
-              >
-                {contactT("link")} <ArrowRight size={16} />
-              </Link>
-            </div>
-          </Dialog>
-        )}
-      </div>
+      </JournalProvider>
     </MotionConfig>
   );
 }

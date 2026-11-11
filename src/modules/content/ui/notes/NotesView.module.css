@@ -191,8 +191,7 @@
   translate: 2px -1px;
 }
 .empty,
-.end,
-.readError {
+.end {
   display: grid;
   justify-items: center;
   gap: var(--space-3);

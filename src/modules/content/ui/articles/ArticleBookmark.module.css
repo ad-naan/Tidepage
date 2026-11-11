@@ -1,0 +1,15 @@
+.bookmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  color: var(--muted);
+  font: 400 var(--text-sm)/1.6 var(--font-ui);
+}
+.bookmark:hover {
+  color: var(--accent);
+}
+.bookmark > svg {
+  width: 14px;
+  height: 14px;
+}

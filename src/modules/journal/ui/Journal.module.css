@@ -1,0 +1,30 @@
+.trigger,
+.keep {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 36px;
+  color: var(--muted);
+  font: 400 var(--text-sm)/1.7 var(--font-ui);
+}
+.trigger > svg,
+.keep > svg {
+  width: 23px;
+  height: 26px;
+}
+.keep > svg {
+  width: 14px;
+  height: 14px;
+}
+.count {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.trigger:hover,
+.trigger:focus-visible,
+.keep:hover {
+  color: var(--ink);
+}
+:global(.selection-toolbar) .keep {
+  color: inherit;
+}

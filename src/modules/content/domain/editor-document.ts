@@ -3,6 +3,7 @@ import { locales, type Locale } from "@/shared/i18n/config";
 import { categorySchema, sketchSchema } from "./taxonomy";
 import { profile } from "@/shared/config/profile";
 import { parseSiteDateTime } from "@/shared/lib/date-time";
+import { afterwordSchema } from "./afterword";
 
 import {
   editorDocumentSchema,
@@ -21,6 +22,7 @@ export {
   type Embed,
 } from "@/shared/contracts/rich-text";
 export const articleTranslationSchema = z.object({
+  afterword: afterwordSchema.optional(),
   title: z.string().max(200),
   slug: z
     .string()
@@ -95,6 +97,8 @@ export function publicationIssues(article: ArticleDraft, locale: Locale) {
   const issues: string[] = [];
   if (!value.title.trim()) issues.push("title");
   if (!value.slug.trim()) issues.push("slug");
+  if (value.afterword?.updates.some((update) => !update.text.trim()))
+    issues.push("afterword");
   if (
     !documentText(value.body).trim() &&
     !value.body.content?.some((n) =>

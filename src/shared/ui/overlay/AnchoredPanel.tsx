@@ -7,11 +7,13 @@ import {
   useRef,
   type RefObject,
   type ReactNode,
+  type FocusEventHandler,
 } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useOverlayOwner } from "./OverlayScope";
 import { surfaceSpring } from "@/shared/lib/motion";
+import { PencilFrame } from "@/shared/ui/drawing/CoastalMarks";
 import styles from "./AnchoredPanel.module.css";
 
 /** Non-modal surface. Its disclosure owner controls dismissal; this surface restores anchor focus. */
@@ -29,18 +31,28 @@ export function AnchoredPanel({
   onPointerLeave,
   placement = "bottom",
   getAnchorRect,
+  surfaceStyle = "default",
+  gap = 12,
+  animateLayout = false,
+  onFocusCapture,
+  onBlurCapture,
 }: {
   open: boolean;
   anchor: HTMLElement | null;
   boundary?: RefObject<HTMLElement | null>;
   width: number;
-  align?: "start" | "end";
+  align?: "start" | "center" | "end";
   id: string;
   label: string;
   children: ReactNode;
   className?: string;
   onPointerEnter?: () => void;
   onPointerLeave?: () => void;
+  onFocusCapture?: FocusEventHandler<HTMLElement>;
+  onBlurCapture?: FocusEventHandler<HTMLElement>;
+  surfaceStyle?: "default" | "paper";
+  gap?: number;
+  animateLayout?: boolean;
   placement?: "bottom" | "auto";
   getAnchorRect?: () => {
     top: number;
@@ -84,13 +96,17 @@ export function AnchoredPanel({
       const offsetLeft = viewport?.offsetLeft ?? 0;
       const panelWidth = Math.min(width, viewportWidth - 32);
       const preferredLeft =
-        align === "start" ? bounds.left : bounds.right - panelWidth;
+        align === "start"
+          ? bounds.left
+          : align === "center"
+            ? bounds.left + (bounds.width - panelWidth) / 2
+            : bounds.right - panelWidth;
       const boundaryBottom =
         boundary?.current?.getBoundingClientRect().bottom ?? bounds.bottom;
       let top = Math.max(
         offsetTop + 12,
-        bounds.bottom + 14,
-        boundaryBottom + 12,
+        bounds.bottom + gap,
+        boundaryBottom + gap,
       );
       const below = offsetTop + viewportHeight - top - 16;
       const above = bounds.top - offsetTop - 24;
@@ -168,7 +184,17 @@ export function AnchoredPanel({
       window.visualViewport?.removeEventListener("resize", schedule);
       window.visualViewport?.removeEventListener("scroll", schedule);
     };
-  }, [open, anchor, boundary, width, align, placement, mounted, getAnchorRect]);
+  }, [
+    open,
+    anchor,
+    boundary,
+    width,
+    align,
+    placement,
+    mounted,
+    getAnchorRect,
+    gap,
+  ]);
   if (!mounted) return null;
   return createPortal(
     <AnimatePresence>
@@ -179,26 +205,42 @@ export function AnchoredPanel({
           role="region"
           aria-label={label}
           data-ui-overlay-owner={owner}
+          data-surface={surfaceStyle}
           className={`${styles.panel} ${className}`}
+          layout={animateLayout && !reduce}
           style={position}
           onPointerEnter={onPointerEnter}
           onPointerLeave={onPointerLeave}
+          onFocusCapture={onFocusCapture}
+          onBlurCapture={onBlurCapture}
           initial={{
             opacity: 0,
             y: reduce ? 0 : -5,
+            scale: reduce || surfaceStyle !== "paper" ? 1 : 0.98,
           }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: reduce ? 0 : -3 }}
           transition={
             reduce
               ? { duration: 0 }
               : {
                   y: surfaceSpring,
+                  scale: surfaceSpring,
+                  layout: { duration: 0.22, ease: [0.22, 1, 0.36, 1] },
                   opacity: { duration: 0.14, ease: "easeOut" },
                 }
           }
         >
-          {children}
+          {surfaceStyle === "paper" && (
+            <PencilFrame className={styles.paperFrame} />
+          )}
+          {animateLayout ? (
+            <motion.div layout={reduce ? false : "position"}>
+              {children}
+            </motion.div>
+          ) : (
+            children
+          )}
         </motion.section>
       )}
     </AnimatePresence>,

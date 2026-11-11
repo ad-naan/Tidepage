@@ -4,6 +4,8 @@ import { useTranslations } from "next-intl";
 import { Copy, Share2 } from "lucide-react";
 import { EngagementActions } from "@/modules/engagement/ui/EngagementActions";
 import { Button } from "@/shared/ui/button/Button";
+import { ArticleBookmark } from "./ArticleBookmark";
+import { JournalLink } from "@/modules/journal/ui/Journal";
 
 export function ArticleShareButton({
   title,
@@ -59,6 +61,8 @@ export function ArticleActions({
     <div className="article-actions">
       <EngagementActions target={{ type: "article", id: slug }} />
       <ArticleShareButton title={title} />
+      <ArticleBookmark slug={slug} title={title} />
+      <JournalLink />
     </div>
   );
 }

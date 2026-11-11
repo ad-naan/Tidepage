@@ -1,0 +1,61 @@
+.afterword {
+  position: relative;
+  margin: 24px 0;
+  padding: 16px 20px;
+  padding-left: 28px;
+}
+.bracket {
+  position: absolute;
+  left: 0;
+  top: 12px;
+  height: calc(100% - 24px);
+  width: 20px;
+  color: var(--accent);
+  opacity: 0.6;
+  filter: url(#tidepage-pencil);
+}
+.bracket path {
+  stroke: currentColor;
+  stroke-width: 1.1;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+}
+.label > svg {
+  width: 24px;
+  height: 28px;
+}
+.label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font: 500 var(--text-sm)/1.8 var(--font-ui);
+}
+.afterword .note,
+.updates p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 12px 0;
+  font: 400 var(--text-body)/1.9 var(--font-reading);
+}
+.latest {
+  margin-left: 12px;
+  font-weight: 400;
+}
+.afterword .updates {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+}
+.updates li {
+  padding-left: 16px;
+  margin-bottom: 20px;
+}
+.updates time {
+  font: 400 var(--text-xs)/1.8 var(--font-ui);
+  color: var(--muted);
+}
+.updates li:last-child,
+.updates p:last-child {
+  margin-bottom: 0;
+}

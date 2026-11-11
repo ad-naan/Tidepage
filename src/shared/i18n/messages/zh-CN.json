@@ -48,17 +48,21 @@
       "此刻的停留，也算一种前进。"
     ]
   },
+  "easterEggs": {
+    "notes": "让页边的叶子随风飘动",
+    "projects": "点亮插画里的灯塔",
+    "quotes": "让纸飞机飞一圈",
+    "gallery": "看看照片里的小鸟"
+  },
   "sketch": {
     "coast": "手绘海岸：水獭坐在礁石上，看着落日与远山",
     "page": "这一页，",
     "slow": "慢慢写。",
     "greet": "和小水獭打个招呼",
-    "greeting": "这一页，陪你看日落。",
-    "next": "下一页，一起继续走 ♡",
-    "skyPlay": "轻触日月，向海风许个愿",
+    "switchLight": "切换为浅色主题",
+    "switchDark": "切换为深色主题",
     "board": "登上纸船，进入海岸漫游",
-    "boardHint": "纸船里，藏着另一片海",
-    "departing": "纸船正在出发，带你驶向海岸……"
+    "boardHint": "海岸漫游 ↗"
   },
   "ui": {
     "dateTime": {
@@ -217,7 +221,22 @@
         "hint": "Spark Relics · 开源创意"
       }
     },
-    "emptyArticles": "还没有已发布的文章。"
+    "emptyArticles": "还没有已发布的文章。",
+    "desk": {
+      "title": "今日桌面",
+      "intro": "最近留下的，和想与你分享的。",
+      "note": "一张近况便笺",
+      "noteEmpty": "暂时没有写下近况，先留一张空白纸。",
+      "openNote": "翻开手记",
+      "project": "桌上的作品",
+      "projectEmpty": "想法慢慢成形",
+      "projectHelp": "做过的尝试，放在作品里。",
+      "openProject": "走进工作台",
+      "quote": "想留住的一句话",
+      "quoteEmpty": "下一句值得记住的话，还在路上。",
+      "quoteSource": "一言 · 想留住的话",
+      "openQuotes": "翻翻一言"
+    }
   },
   "articles": {
     "title": "写在光阴里",
@@ -246,7 +265,11 @@
     "readingProgress": "本文阅读进度",
     "backToTop": "回到顶部",
     "readingTools": "阅读工具",
-    "jumpComments": "跳到评论区"
+    "jumpComments": "跳到评论区",
+    "afterword": {
+      "title": "写在页边",
+      "updates": "后来又想了想 · {count} 则补记"
+    }
   },
   "header": {
     "search": "搜索文章",
@@ -451,7 +474,7 @@
     "empty": "点击书签，收藏想再读一遍的片段。",
     "noNotes": "新的手记还在路上。",
     "reader": {
-      "loadError": "暂时打不开这条手记，再点一次即可重试。",
+      "loadError": "暂时打不开这条手记，请重试。",
       "title": "手记 · {date}",
       "open": "阅读 {date} 的手记：{text}",
       "photos": "手记相册",
@@ -1326,7 +1349,8 @@
         "seoDescription": "SEO 描述",
         "coverAlt": "封面替代文字",
         "body": "正文",
-        "imageAlt": "图片替代文字"
+        "imageAlt": "图片替代文字",
+        "afterword": "补记正文（或移除空白补记）"
       },
       "toolbar": "正文工具栏",
       "undo": "撤销",
@@ -1844,6 +1868,17 @@
       "invalid": "请填写有效的 HTTPS 接口地址和数字歌单 ID。",
       "sharedHelp": "音乐设置全站共用。保存后刷新前台即可加载歌单，不会自动播放。",
       "description": "设置前台播放器的音源和歌单，保存后对所有语言生效。"
+    },
+    "afterword": {
+      "title": "作者批注与时间补记",
+      "note": "写作缘由 / 页边批注",
+      "help": "只在填写后公开显示。留下一点正文之外的背景；补记保留日期，与正文一起保存和发布。",
+      "date": "补记日期",
+      "text": "后来想说的话",
+      "add": "加入这则补记",
+      "remove": "移除第 {number} 则补记",
+      "edit": "编辑第 {number} 则补记",
+      "pending": "点击「加入这则补记」后，再保存文章。"
     }
   },
   "code": {
@@ -2057,5 +2092,41 @@
         "prompt": "将选中内容的核心概念及其联系画成关系图，节点文字简短清楚。没有选中内容时，请先生成一个简单的概念关系示例。"
       }
     }
+  },
+  "journal": {
+    "intro": "查看保存的章节书签和文字摘录。",
+    "eyebrow": "书签与摘录",
+    "collected": "已保存 {count} 条记录",
+    "quoteKept": "已摘录",
+    "bookmarkKept": "书签已保存",
+    "backDesk": "← 返回首页",
+    "index": "保存的记录",
+    "indexEmpty": "保存的书签和摘录会显示在这里。",
+    "leaf": "记录详情",
+    "pageNumber": "{current} / {total}",
+    "quoteHeading": "文字摘录",
+    "bookmarkHeading": "章节书签",
+    "bookmarkContext": "点击原文标题可继续阅读此章节。",
+    "from": "来源",
+    "takeOut": "删除记录",
+    "pages": "浏览记录",
+    "previous": "上一条",
+    "nextPage": "下一条",
+    "localLabel": "存储说明",
+    "unavailable": "无法读取记录",
+    "title": "阅读记录",
+    "localHelp": "记录仅保存在当前浏览器，按语言分别整理，不会同步到账号。清除浏览器数据后记录会丢失。",
+    "keepQuote": "摘录",
+    "keepBookmark": "保存章节书签",
+    "bookmarkHelp": "记住当前章节；再次点击会更新这篇文章的书签。",
+    "bookmark": "阅读书签",
+    "quote": "文字摘录",
+    "emptyTitle": "暂无阅读记录",
+    "emptyHelp": "阅读文章时可以保存章节书签，或选中文字进行摘录。",
+    "browse": "浏览文章",
+    "remove": "移除「{title}」",
+    "failed": "保存失败",
+    "full": "记录已达 100 条上限",
+    "failureHelp": "请检查浏览器存储是否可用，或移除不再需要的条目后重试。"
   }
 }

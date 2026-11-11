@@ -10,6 +10,7 @@ import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
 import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
 import { ArticleContents } from "./ArticleContents";
 import { ArticleActions } from "./ArticleActions";
+import { ArticleAfterword } from "./ArticleAfterword";
 import { articleDocument } from "@/modules/content/domain/legacy-draft";
 import { RichText } from "@/modules/content/ui/rich-text/RichText";
 import { ReadingImage } from "@/modules/content/ui/rich-text/ReadingImage";
@@ -39,7 +40,9 @@ export async function ArticleDetail({
   ]);
   return (
     <div className={`reading-page ${styles.reading}`}>
-      <ReadingQuoteSelection />
+      <ReadingQuoteSelection
+        article={{ slug: article.slug, title: article.title }}
+      />
       <Link href="/articles" className="back-link">
         <ArrowLeft size={16} />
         {t("back")}
@@ -83,14 +86,17 @@ export async function ArticleDetail({
             title={article.title}
           />
           <div className="prose">
-            <RichText
-              document={body}
-              chapters
-              imageDimensions={imageDimensions}
-            />
+            <div data-reading-body>
+              <RichText
+                document={body}
+                chapters
+                imageDimensions={imageDimensions}
+              />
+            </div>
             <div className="article-end">
               <CoastGlyph kind="shell" />
             </div>
+            <ArticleAfterword value={article.publication?.afterword} />
             <div className="tags">
               {article.tags.map((t) => (
                 <Link

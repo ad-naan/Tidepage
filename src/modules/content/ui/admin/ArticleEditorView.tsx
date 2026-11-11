@@ -67,6 +67,8 @@ import {
   translationSegments,
 } from "@/modules/content/domain/translation";
 import { PublicationReviewPanel } from "./PublicationReviewPanel";
+import { ArticleAfterwordEditor } from "./ArticleAfterwordEditor";
+import { ArticleAfterword } from "@/modules/content/ui/articles/ArticleAfterword";
 import styles from "./ArticleEditorView.module.css";
 
 const editorialEndpoint = "/api/v1/ai/writing";
@@ -671,7 +673,10 @@ export function ArticleEditorView({
             </div>
           ))}
           {preview && (
-            <RichText key={`preview-${locale}`} document={translation.body} />
+            <>
+              <RichText key={`preview-${locale}`} document={translation.body} />
+              <ArticleAfterword value={translation.afterword} />
+            </>
           )}
         </section>
         <aside
@@ -822,6 +827,11 @@ export function ArticleEditorView({
                 </Field>
               </div>
             </Disclosure>
+            <ArticleAfterwordEditor
+              key={locale}
+              value={translation.afterword}
+              onChange={(afterword) => updateTranslation({ afterword })}
+            />
             {!!geoReview[locale]?.length && (
               <div className={styles.generation}>
                 <strong>{t("ai.geoReview")}</strong>

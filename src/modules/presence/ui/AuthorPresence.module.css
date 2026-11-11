@@ -26,20 +26,26 @@
   outline-offset: 2px;
 }
 .panel[data-ui-overlay-owner] {
-  padding: 16px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--paper);
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--ink) 7%, transparent);
+  padding: 20px;
 }
 .heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
   font: 400 var(--text-sm)/1.5 var(--font-ui);
   color: var(--muted);
+}
+.headingLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.headingLabel > svg {
+  width: 18px;
+  height: 18px;
+  opacity: 0.8;
 }
 .heading > button {
   display: grid;

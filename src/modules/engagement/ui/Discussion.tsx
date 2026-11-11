@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
 import { Quote } from "lucide-react";
 import { Button } from "@/shared/ui/button/Button";
 import type { DiscussionTarget } from "@/modules/engagement/domain/discussion";
 import { useNearViewport } from "@/shared/hooks/useNearViewport";
 import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
+import { KeepQuote } from "@/modules/journal/ui/Journal";
 const CommentThread = dynamic(
   () => import("./CommentThread").then((module) => module.CommentThread),
   { loading: () => <LoadingSkeleton variant="rows" /> },
@@ -75,37 +76,63 @@ function DeferredDiscussion({
     </div>
   );
 }
-export function ReadingQuoteSelection() {
+export function ReadingQuoteSelection({
+  article,
+}: {
+  article?: { slug: string; title: string };
+}) {
   const t = useTranslations("discussion");
+  const reduced = useReducedMotion();
   const [selection, setSelection] = useState("");
   const [position, setPosition] = useState({ top: 0, left: 0 });
   useEffect(() => {
-    function capture() {
+    function capture(event: Event) {
+      if (
+        event.target instanceof Element &&
+        event.target.closest(".selection-toolbar")
+      )
+        return;
+      if (event instanceof KeyboardEvent && event.key === "Escape") {
+        setSelection("");
+        return;
+      }
       const s = window.getSelection();
       const text = s?.toString().trim();
       const element = s?.anchorNode?.parentElement;
-      if (!text || !element?.closest(".prose") || text.length > 500) {
+      const body = element?.closest("[data-reading-body]");
+      if (
+        !text ||
+        !s?.rangeCount ||
+        !body ||
+        !s.focusNode ||
+        !body.contains(s.focusNode) ||
+        text.length > 500
+      ) {
         setSelection("");
         return;
       }
       const rect = s!.getRangeAt(0).getBoundingClientRect();
       setSelection(text);
       setPosition({
-        top: Math.max(10, rect.top - 46),
+        top: Math.max(10, Math.min(window.innerHeight - 60, rect.top - 46)),
         left: Math.max(
           12,
-          Math.min(window.innerWidth - 200, rect.left + rect.width / 2 - 90),
+          Math.min(window.innerWidth - 290, rect.left + rect.width / 2 - 135),
         ),
       });
     }
-    document.addEventListener("mouseup", capture);
+    document.addEventListener("pointerup", capture);
     document.addEventListener("keyup", capture);
+    document.addEventListener("selectionchange", capture);
     const clear = () => setSelection("");
     window.addEventListener("scroll", clear);
+    window.addEventListener("resize", clear);
     return () => {
-      document.removeEventListener("mouseup", capture);
+      document.removeEventListener("pointerup", capture);
       document.removeEventListener("keyup", capture);
+      document.removeEventListener("selectionchange", capture);
       window.removeEventListener("scroll", clear);
+      window.removeEventListener("resize", clear);
     };
   }, []);
   return (
@@ -115,11 +142,19 @@ export function ReadingQuoteSelection() {
           <motion.div
             className="selection-toolbar"
             style={position}
-            initial={{ opacity: 0, y: 5 }}
+            initial={reduced ? false : { opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: reduced ? 0 : 0.16 }}
             onMouseDown={(e) => e.preventDefault()}
           >
+            {article && (
+              <KeepQuote
+                text={selection}
+                title={article.title}
+                href={`/articles/${article.slug}`}
+              />
+            )}
             <Button
               onClick={() => {
                 window.dispatchEvent(

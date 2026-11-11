@@ -19,6 +19,30 @@
     0 12px 42px #0003,
     0 2px 8px #0002;
 }
+.panel[data-surface="paper"] {
+  isolation: isolate;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 20px;
+}
+.paperFrame {
+  --paper-opacity: 1;
+  filter: drop-shadow(0 3px 6px #28251c14);
+}
+.paperFrame > path:first-child {
+  fill: color-mix(in srgb, var(--paper) 96%, var(--wash));
+}
+.paperFrame > path:nth-child(2) {
+  opacity: 0.24;
+}
+.paperFrame > path:last-child {
+  opacity: 0.24;
+}
+:global([data-theme="dark"]) .paperFrame {
+  filter: drop-shadow(0 4px 8px #0004);
+}
 @media (max-width: 600px) {
   .panel {
     padding: 17px;

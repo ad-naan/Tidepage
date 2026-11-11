@@ -1,6 +1,7 @@
 "use client";
 import { useTranslations } from "next-intl";
 import { Monitor, Music2 } from "lucide-react";
+import { PencilLine } from "@/shared/ui/drawing/CoastalMarks";
 import { useAuthorPresence } from "./useAuthorPresence";
 import styles from "./AuthorActivity.module.css";
 
@@ -39,6 +40,7 @@ export function AuthorActivity() {
       )}
       {snapshot.track && (
         <div className={styles.track}>
+          <PencilLine kind="trail" className={styles.separator} />
           <Music2 size={20} aria-hidden="true" />
           <div>
             <span className={styles.label}>{t("listening")}</span>
@@ -47,7 +49,10 @@ export function AuthorActivity() {
           </div>
         </div>
       )}
-      <p className={styles.note}>{t("sharedOnly")}</p>
+      <div className={styles.footnote}>
+        <PencilLine className={styles.separator} />
+        <p className={styles.note}>{t("sharedOnly")}</p>
+      </div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { afterwordSchema } from "./afterword";
 import { localeSchema } from "@/shared/i18n/schema";
 import type { Locale } from "@/shared/i18n/config";
 import { articleBlockSchema } from "./blocks";
@@ -35,6 +36,7 @@ export const articleSchema = z.object({
   publication: z
     .object({
       author: z.string(),
+      afterword: afterwordSchema.optional(),
       seoTitle: z.string(),
       seoDescription: z.string(),
       cover: z

@@ -11,6 +11,21 @@
   min-width: 0;
   min-height: 0;
 }
+.pendingGallery {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  padding: 16px;
+  background: var(--soft);
+  border-radius: 4px;
+}
+.loadError {
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+  color: var(--muted);
+  font: 400 var(--text-sm)/1.8 var(--font-ui);
+}
 .scroll {
   flex: 1;
   min-height: 0;
@@ -120,6 +135,9 @@
   }
 }
 @media (max-width: 700px) {
+  .pendingGallery {
+    height: min(45dvh, 360px);
+  }
   .reader {
     display: block;
   }

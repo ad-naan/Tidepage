@@ -48,17 +48,21 @@
       "Staying a moment is a way forward too."
     ]
   },
+  "easterEggs": {
+    "notes": "Make the leaf drift in the breeze",
+    "projects": "Light up the illustrated lighthouse",
+    "quotes": "Let the paper plane take a short flight",
+    "gallery": "Find the bird inside the photograph"
+  },
   "sketch": {
     "coast": "Hand-drawn coast: an otter on a rock watches the sunset and distant mountains",
     "page": "This page,",
     "slow": "take it slow.",
     "greet": "Say hello to the little otter",
-    "greeting": "This page, we'll watch the sunset.",
-    "next": "Next page, we'll keep walking together ♡",
-    "skyPlay": "Tap the sun or moon and make a wish",
     "board": "Board the paper boat and explore the coast",
-    "boardHint": "Another coast is waiting in this boat",
-    "departing": "Setting sail for the coast…"
+    "boardHint": "Explore the coast ↗",
+    "switchLight": "Switch to light theme",
+    "switchDark": "Switch to dark theme"
   },
   "ui": {
     "dateTime": {
@@ -217,7 +221,22 @@
         "hint": "Spark Relics · open-source ideas"
       }
     },
-    "emptyArticles": "No articles have been published yet."
+    "emptyArticles": "No articles have been published yet.",
+    "desk": {
+      "title": "On my desk",
+      "intro": "Recent traces, and a few things to share.",
+      "note": "A recent note",
+      "noteEmpty": "No recent note yet. A blank page for another day.",
+      "openNote": "Open the notebook",
+      "project": "From the workbench",
+      "projectEmpty": "Ideas taking shape",
+      "projectHelp": "Small experiments, collected as projects.",
+      "openProject": "Visit the workbench",
+      "quote": "A sentence to keep",
+      "quoteEmpty": "The next sentence worth keeping is still on its way.",
+      "quoteSource": "Quotes ? Words to keep",
+      "openQuotes": "Browse quotes"
+    }
   },
   "articles": {
     "title": "Written along the way",
@@ -246,7 +265,11 @@
     "readingProgress": "Article reading progress",
     "backToTop": "Back to top",
     "readingTools": "Reading tools",
-    "jumpComments": "Jump to comments"
+    "jumpComments": "Jump to comments",
+    "afterword": {
+      "title": "In the margins",
+      "updates": "A later thought ? {count, plural, one {# update} other {# updates}}"
+    }
   },
   "header": {
     "search": "Search articles",
@@ -451,7 +474,7 @@
     "empty": "Tap a bookmark to keep a moment you want to revisit.",
     "noNotes": "The next note is on its way.",
     "reader": {
-      "loadError": "Could not open this note. Select it again to retry.",
+      "loadError": "Could not open this note. Please try again.",
       "title": "Note · {date}",
       "open": "Read the note from {date}: {text}",
       "photos": "Note photos",
@@ -1326,7 +1349,8 @@
         "seoDescription": "SEO description",
         "coverAlt": "Cover alternative text",
         "body": "Body",
-        "imageAlt": "Image alternative text"
+        "imageAlt": "Image alternative text",
+        "afterword": "Update text (or remove the empty update)"
       },
       "toolbar": "Formatting toolbar",
       "undo": "Undo",
@@ -1844,6 +1868,17 @@
       "invalid": "Enter a valid HTTPS API URL and numeric playlist ID.",
       "sharedHelp": "Music settings apply to every language. Save and refresh the public site to load the playlist. Playback starts only when clicked.",
       "description": "Configure the player’s music source and playlist for every language."
+    },
+    "afterword": {
+      "title": "Author’s note & later thoughts",
+      "note": "Writing context / margin note",
+      "help": "Shown publicly only when filled in. Add context beyond the article; dated updates are saved and published with the article.",
+      "date": "Update date",
+      "text": "A later thought",
+      "add": "Add this update",
+      "remove": "Remove update {number}",
+      "edit": "Edit update {number}",
+      "pending": "Click “Add this update”, then save the article."
     }
   },
   "code": {
@@ -2057,5 +2092,41 @@
         "prompt": "Diagram the core concepts in the selection and their relationships using short, clear labels. If nothing is selected, create a simple concept map example."
       }
     }
+  },
+  "journal": {
+    "intro": "Your saved chapter bookmarks and text excerpts.",
+    "eyebrow": "Bookmarks and excerpts",
+    "collected": "{count} saved records",
+    "quoteKept": "Saved excerpt",
+    "bookmarkKept": "Bookmark saved",
+    "backDesk": "← Back to home",
+    "index": "Saved records",
+    "indexEmpty": "Saved bookmarks and excerpts appear here.",
+    "leaf": "Record details",
+    "pageNumber": "{current} / {total}",
+    "quoteHeading": "Text excerpt",
+    "bookmarkHeading": "Chapter bookmark",
+    "bookmarkContext": "Follow the source title to continue reading this chapter.",
+    "from": "Source",
+    "takeOut": "Delete record",
+    "pages": "Browse records",
+    "previous": "Previous",
+    "nextPage": "Next",
+    "localLabel": "Storage information",
+    "unavailable": "Unable to read records",
+    "title": "Reading history",
+    "localHelp": "Records are stored in this browser and organized by language. They do not sync to your account and are removed when browser data is cleared.",
+    "keepQuote": "Save excerpt",
+    "keepBookmark": "Save chapter bookmark",
+    "bookmarkHelp": "Remember this chapter. Clicking again updates this article’s bookmark.",
+    "bookmark": "Reading bookmark",
+    "quote": "Text excerpt",
+    "emptyTitle": "No reading records yet",
+    "emptyHelp": "Save a chapter bookmark or select text to save an excerpt while reading.",
+    "browse": "Browse articles",
+    "remove": "Remove “{title}”",
+    "failed": "Unable to save",
+    "full": "The limit of 100 records has been reached",
+    "failureHelp": "Check that browser storage is available, or remove an entry you no longer need and try again."
   }
 }

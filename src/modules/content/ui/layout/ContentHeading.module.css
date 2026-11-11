@@ -80,8 +80,24 @@
   transform: rotate(-2deg);
   transition: transform 0.5s;
 }
-.heading:hover .vignette {
-  transform: rotate(0) translateY(-2px);
+.vignette[data-sketch-room] {
+  position: relative;
+  cursor: pointer;
+  padding: 0;
+  background: none;
+  border: 0;
+}
+.vignette[data-sketch-room]:hover {
+  opacity: 1;
+}
+.vignette:focus-visible {
+  outline: 1px dashed var(--accent);
+  outline-offset: 5px;
+}
+.vignette > [data-sketch-canvas] {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .vignette svg {
   width: 100%;
@@ -101,6 +117,118 @@
 }
 .vignette .faint {
   opacity: 0.35;
+}
+.vignette .secret {
+  opacity: 0;
+  pointer-events: none;
+}
+.vignette[data-playing] .secret {
+  opacity: 0.65;
+}
+.vignette[data-playing] .beacon {
+  fill: var(--accent);
+}
+.leaf {
+  transform-origin: 48px 89px;
+}
+.plane {
+  transform-origin: 154px 49px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .vignette[data-playing] .leaf {
+    animation: leafDrift 2s ease-in-out both;
+  }
+  .vignette[data-playing] .wind {
+    animation: faintInk 2s ease both;
+  }
+  .vignette[data-playing] .rays {
+    animation: lighthouse 2s ease-in-out both;
+  }
+  .vignette[data-playing] .plane {
+    animation: planeFlight 2s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  .vignette[data-playing] .airTrail {
+    stroke-dasharray: 130;
+    animation: airInk 2s ease both;
+  }
+  .vignette[data-playing] .photoBird {
+    animation: birdInPhoto 2s ease both;
+  }
+}
+@keyframes leafDrift {
+  0%,
+  100% {
+    transform: none;
+  }
+  30% {
+    transform: translate(18px, -23px) rotate(32deg);
+  }
+  65% {
+    transform: translate(32px, -6px) rotate(-15deg);
+  }
+}
+@keyframes faintInk {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  30%,
+  65% {
+    opacity: 0.4;
+  }
+}
+@keyframes lighthouse {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  25%,
+  75% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes planeFlight {
+  0%,
+  100% {
+    transform: none;
+  }
+  32% {
+    transform: translate(60px, -16px) rotate(-8deg);
+  }
+  65% {
+    transform: translate(23px, 15px) rotate(7deg);
+  }
+}
+@keyframes airInk {
+  0% {
+    stroke-dashoffset: 130;
+    opacity: 0;
+  }
+  45% {
+    stroke-dashoffset: 0;
+    opacity: 0.4;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+@keyframes birdInPhoto {
+  0% {
+    transform: translate(18px, 5px);
+    opacity: 0;
+  }
+  30%,
+  65% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-8px, -7px);
+    opacity: 0;
+  }
 }
 .coast {
   position: absolute;
@@ -123,6 +251,17 @@
   }
   .vignette {
     display: none;
+  }
+  .vignette[data-sketch-room] {
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 82px;
+    height: 44px;
+  }
+  .heading:has(.vignette[data-sketch-room]) .identity {
+    padding-right: 90px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

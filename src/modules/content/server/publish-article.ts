@@ -87,6 +87,7 @@ export async function publishArticle(
       body: translation.body,
       publication: {
         author: draft.author.trim(),
+        ...(translation.afterword && { afterword: translation.afterword }),
         seoTitle,
         seoDescription,
         publishedAt: publishedAt.toISOString(),

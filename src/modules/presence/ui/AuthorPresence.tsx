@@ -8,6 +8,7 @@ import { useDisclosure } from "@/shared/hooks/useDisclosure";
 import { Button } from "@/shared/ui/button/Button";
 import { AnchoredPanel } from "@/shared/ui/overlay/AnchoredPanel";
 import { OverlayScope } from "@/shared/ui/overlay/OverlayScope";
+import { CoastGlyph } from "@/shared/ui/drawing/CoastalMarks";
 import { AuthorStatus } from "./AuthorStatus";
 import { AuthorActivity } from "./AuthorActivity";
 import styles from "./AuthorPresence.module.css";
@@ -50,7 +51,7 @@ export function AuthorPresence({
       )
         return;
       setOpen(false);
-    }, 180);
+    }, 260);
   }
   useEffect(() => {
     const dismiss = (event: Event) => {
@@ -101,7 +102,7 @@ export function AuthorPresence({
                 new CustomEvent("garden-disclosure", { detail: owner }),
               );
               setOpen(true);
-            }, 200);
+            }, 160);
           }}
           onPointerLeave={leave}
           onFocus={cancelClose}
@@ -122,8 +123,10 @@ export function AuthorPresence({
           open={open}
           anchor={trigger.current}
           boundary={boundary}
-          width={280}
+          width={304}
           align="start"
+          gap={6}
+          surfaceStyle="paper"
           id={id}
           label={t("panels.activity")}
           className={styles.panel}
@@ -137,7 +140,10 @@ export function AuthorPresence({
             }}
           >
             <div className={styles.heading}>
-              <span>{t("panels.activity")}</span>
+              <span className={styles.headingLabel}>
+                <CoastGlyph kind="wind" />
+                {t("panels.activity")}
+              </span>
               <Button
                 onClick={() => {
                   clearTimers();

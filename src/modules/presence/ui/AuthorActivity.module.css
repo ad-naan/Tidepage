@@ -1,6 +1,6 @@
 .activity {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-3);
   padding-block: var(--space-2);
   font-size: var(--text-sm);
   color: var(--ink);
@@ -10,6 +10,8 @@
   align-items: center;
   gap: var(--space-2);
   margin: 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
 }
 .status > span {
   width: 6px;
@@ -19,7 +21,7 @@
 }
 .apps {
   display: grid;
-  gap: var(--space-3);
+  gap: 6px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -29,25 +31,27 @@
   align-items: center;
   gap: var(--space-3);
   min-width: 0;
+  padding: 4px 2px;
 }
 .apps img {
   object-fit: contain;
   flex-shrink: 0;
+  width: 24px;
+  height: 24px;
 }
 .apps li > span {
   overflow-wrap: anywhere;
 }
 .track {
+  position: relative;
   display: flex;
   gap: var(--space-3);
-  padding: var(--space-3);
-  border: var(--stroke-ui) solid var(--line);
-  border-radius: var(--radius-control);
-  background: var(--soft);
+  padding: 20px 2px 4px;
 }
-.track > svg {
+.track > svg:not(.separator) {
   flex-shrink: 0;
   margin-top: 4px;
+  color: var(--accent);
 }
 .track > div {
   display: grid;
@@ -69,4 +73,19 @@
 .empty {
   margin: 0;
   color: var(--muted);
+}
+.footnote {
+  position: relative;
+  padding-top: 18px;
+}
+.separator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 8px;
+}
+.footnote > .note {
+  font-size: var(--text-xs);
+  line-height: 1.7;
 }

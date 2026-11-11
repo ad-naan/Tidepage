@@ -14,16 +14,10 @@ import { HanddrawnMark } from "@/shared/ui/drawing/HanddrawnMark";
 import { ContentHeading } from "@/modules/content/ui/layout/ContentHeading";
 import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
 import type { Note, NoteListEntry } from "@/modules/content/domain/models";
-import { apiGet } from "@/shared/http/client";
 import { Button } from "@/shared/ui/button/Button";
-import dynamic from "next/dynamic";
-import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
 import { ProgressiveList } from "@/shared/ui/loading/ProgressiveList";
 import { ImageFrame } from "@/shared/ui/image/MediaImage";
-const NoteReader = dynamic(
-  () => import("./NoteReader").then((module) => module.NoteReader),
-  { loading: () => <LoadingSkeleton variant="document" /> },
-);
+import { NoteReader } from "./NoteReader";
 import {
   EngagementProvider,
   useEngagement,
@@ -72,22 +66,9 @@ function NotesContent({
   const { states, loading, error } = useEngagement();
   const { principal, openLogin } = useIdentity();
   const [onlySaved, setOnlySaved] = useState(false);
-  const [selected, setSelected] = useState(initialNote);
-  const [opening, setOpening] = useState<string | null>(null);
-  const [readError, setReadError] = useState(false);
-  async function open(note: NoteListEntry) {
-    if (opening) return;
-    setOpening(note.id);
-    setReadError(false);
-    try {
-      const query = new URLSearchParams({ id: note.id, locale: note.locale });
-      setSelected(await apiGet<Note>(`/api/v1/notes?${query}`));
-    } catch {
-      setReadError(true);
-    } finally {
-      setOpening(null);
-    }
-  }
+  const [selected, setSelected] = useState<Note | NoteListEntry | null>(
+    initialNote,
+  );
   const isSaved = (id: string) =>
     states[targetKey({ type: "note", id })]?.saved;
   const visible = notes.filter((note) => !onlySaved || isSaved(note.id));
@@ -130,11 +111,6 @@ function NotesContent({
         <PencilLine className={styles.shore} />
       </div>
       <EngagementStatus />
-      {readError && (
-        <p role="alert" className={styles.readError}>
-          {t("reader.loadError")}
-        </p>
-      )}
       <ProgressiveList
         key={String(onlySaved)}
         items={visible}
@@ -175,8 +151,7 @@ function NotesContent({
                   </div>
                   <Button
                     className={styles.open}
-                    onClick={() => void open(note)}
-                    busy={opening === note.id}
+                    onClick={() => setSelected(note)}
                     aria-haspopup="dialog"
                     aria-label={t("reader.open", {
                       date: note.date,
@@ -202,8 +177,7 @@ function NotesContent({
                     )}
                     <Button
                       className={styles.readMore}
-                      onClick={() => void open(note)}
-                      disabled={opening !== null}
+                      onClick={() => setSelected(note)}
                       aria-haspopup="dialog"
                     >
                       {t("readMore")}

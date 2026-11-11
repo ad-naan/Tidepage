@@ -1,48 +1,40 @@
 "use client";
 import { Button } from "@/shared/ui/button/Button";
 import { useEffect, useId, useRef, useState, type PointerEvent } from "react";
-import {
-  motion,
-  AnimatePresence,
-  useInView,
-  useReducedMotion,
-} from "motion/react";
+import { motion, useInView, useReducedMotion } from "motion/react";
 import { useTranslations } from "next-intl";
-import { Link, useRouter } from "@/shared/i18n/navigation";
-import { softSpring } from "@/shared/lib/motion";
+import { Link } from "@/shared/i18n/navigation";
+import { useThemePreference } from "@/shared/ui/preferences/useThemePreference";
 import { CoastLetter } from "./CoastLetter";
-import { OtterDrawing } from "./OtterDrawing";
 import styles from "./illustration.module.css";
 import { siteAssets } from "@/shared/config/assets";
 
-export function HeroSketch({
-  quiet = false,
-  onWish,
-}: {
-  quiet?: boolean;
-  onWish?: () => void;
-}) {
+export function HeroSketch() {
   const t = useTranslations("sketch");
   const scene = useRef<HTMLDivElement>(null);
   const inView = useInView(scene);
   const uid = useId().replaceAll(":", "");
-  const [greeting, setGreeting] = useState(false);
-  const [wish, setWish] = useState(0);
-  const [boarding, setBoarding] = useState(false);
+  const [greeting, setGreeting] = useState(0);
+  const greetingId = useRef(0);
   const [ripples, setRipples] = useState<
     { id: number; x: number; y: number }[]
   >([]);
   const serial = useRef(0);
-  const departure = useRef<ReturnType<typeof setTimeout> | undefined>(
+  const greetingTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
-  const router = useRouter();
+  const { theme, setPreference } = useThemePreference();
   const reduce = useReducedMotion();
-  function makeWish() {
-    setWish((value) => value + 1);
-    onWish?.();
+  function greet() {
+    clearTimeout(greetingTimer.current);
+    setGreeting(++greetingId.current);
   }
-  useEffect(() => () => clearTimeout(departure.current), []);
+  function returnToRest(id: number) {
+    if (id !== greetingId.current) return;
+    clearTimeout(greetingTimer.current);
+    greetingTimer.current = setTimeout(() => setGreeting(0), 1300);
+  }
+  useEffect(() => () => clearTimeout(greetingTimer.current), []);
   function water(event: PointerEvent<SVGSVGElement>) {
     if (reduce) return;
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -114,22 +106,6 @@ export function HeroSketch({
                 r={index % 3 === 0 ? 1.1 : 0.7}
               />
             ))}
-            {wish > 0 && !reduce && (
-              <motion.path
-                key={wish}
-                d="M390 35l-58 30"
-                stroke="var(--coast-reflection)"
-                strokeWidth="1.2"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{
-                  pathLength: [0, 1, 1],
-                  opacity: [0, 1, 0],
-                  x: [0, -55, -90],
-                  y: [0, 28, 45],
-                }}
-                transition={{ duration: 1.8 }}
-              />
-            )}
           </g>
           <g opacity=".72">
             <path d="M180 118q12-12 25-8 2-14 20-14 8-26 34-18 13 1 16 18 21-3 29 13M235 69q12-5 21 0M282 108q8-2 10 7M556 98q8-15 21-9 4-25 27-18 6-20 27-13 20-1 25 18 19-6 29 10M580 85q7-3 11 2" />
@@ -139,15 +115,7 @@ export function HeroSketch({
               opacity=".55"
             />
           </g>
-          <motion.g
-            drag={!reduce}
-            dragConstraints={{ left: -25, right: 25, top: -30, bottom: 15 }}
-            dragSnapToOrigin
-            dragElastic={0.2}
-            style={{ cursor: "grab" }}
-            whileTap={{ cursor: "grabbing" }}
-            onTap={makeWish}
-          >
+          <g>
             <g className={styles.day}>
               <circle
                 cx="485"
@@ -195,7 +163,7 @@ export function HeroSketch({
                 <circle cx="470" cy="127" r="2.6" />
               </g>
             </g>
-          </motion.g>
+          </g>
           <path
             d="M107 169q129-4 225 1t345-2M148 175h118m40 1h89m122-1h146"
             opacity=".45"
@@ -274,25 +242,24 @@ export function HeroSketch({
               </g>
             );
           })}
-          {quiet ? (
-            <g transform="translate(205 166) scale(.96)">
-              <motion.g
-                animate={reduce ? {} : { y: greeting ? -2 : 0 }}
-                transition={softSpring}
-              >
-                <OtterDrawing />
-              </motion.g>
-            </g>
-          ) : (
-            <image
-              href={siteAssets.otter}
-              x="150"
-              y="123"
-              width="155"
-              height="143"
-              preserveAspectRatio="xMidYMid meet"
-            />
-          )}
+          <image
+            key={greeting}
+            data-otter-pose={greeting ? "wave" : "rest"}
+            href={
+              greeting
+                ? reduce
+                  ? siteAssets.heroOtterGreet
+                  : `${siteAssets.heroOtterWave}?play=${greeting}`
+                : siteAssets.heroOtterStill
+            }
+            x="168"
+            y="150"
+            width="126"
+            height="110"
+            preserveAspectRatio="xMidYMid meet"
+            onLoad={greeting ? () => returnToRest(greeting) : undefined}
+            onError={() => setGreeting(0)}
+          />{" "}
           <path
             d="M21 243C77 246 63 189 114 190S156 228 175 227"
             stroke="var(--accent)"
@@ -335,12 +302,7 @@ export function HeroSketch({
         </text>
         <path d="m90 328 28-8" stroke="var(--accent)" />
       </svg>
-      <div
-        className={styles.birds}
-        data-in-view={inView}
-        data-wish={wish % 2 !== 0}
-        aria-hidden="true"
-      >
+      <div className={styles.birds} data-in-view={inView} aria-hidden="true">
         <svg viewBox="0 0 700 390" fill="none">
           <path
             d="M98 61q15-3 23 7 5-16 22-20M117 68l5 1M362 57q9-2 16 5 4-9 14-12M597 31q9-3 17 5 3-9 13-11"
@@ -353,51 +315,12 @@ export function HeroSketch({
       </div>
       <Button
         className={styles.skyHit}
-        aria-label={t("skyPlay")}
-        onClick={makeWish}
+        aria-label={t(theme === "dark" ? "switchLight" : "switchDark")}
+        onClick={() => setPreference(theme === "dark" ? "light" : "dark")}
       />
-      <Link
-        href="/explore"
-        className={styles.boatLink}
-        aria-label={t("board")}
-        aria-disabled={boarding}
-        onClick={(event) => {
-          if (
-            event.metaKey ||
-            event.ctrlKey ||
-            event.shiftKey ||
-            event.altKey ||
-            event.button !== 0
-          )
-            return;
-          event.preventDefault();
-          if (boarding) return;
-          if (reduce) {
-            router.push("/explore");
-            return;
-          }
-          setBoarding(true);
-          departure.current = setTimeout(() => router.push("/explore"), 800);
-        }}
-      >
+      <Link href="/explore" className={styles.boatLink} aria-label={t("board")}>
         <span className={styles.boatHint}>{t("boardHint")}</span>
-        <motion.svg
-          viewBox="0 0 62 50"
-          fill="none"
-          aria-hidden="true"
-          animate={
-            boarding
-              ? { x: 100, y: -32, scale: 0.5, opacity: 0 }
-              : reduce
-                ? {}
-                : { y: [0, -2, 0], rotate: [-2, 2, -2] }
-          }
-          transition={
-            boarding
-              ? { duration: 0.8, ease: "easeIn" }
-              : { duration: 4, repeat: Infinity, ease: "easeInOut" }
-          }
-        >
+        <svg viewBox="0 0 62 50" fill="none" aria-hidden="true">
           <path
             d="m5 30 20 3 31-3-13 13H18Z"
             fill="var(--coast-shore)"
@@ -417,31 +340,10 @@ export function HeroSketch({
             opacity=".5"
             strokeWidth=".8"
           />
-        </motion.svg>
+        </svg>
       </Link>
-      <span className={styles.whisper} role="status">
-        {boarding ? t("departing") : ""}
-      </span>
       <CoastLetter />
-      <Button
-        className="otter-hit"
-        aria-label={t("greet")}
-        onClick={() => setGreeting((v) => !v)}
-      />
-      <AnimatePresence>
-        {greeting && (
-          <motion.div
-            className="otter-bubble"
-            initial={{ opacity: 0, scale: 0.5, y: 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.5 }}
-            transition={softSpring}
-          >
-            {t("greeting")}
-            <span>{t("next")}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Button className="otter-hit" aria-label={t("greet")} onClick={greet} />
     </div>
   );
 }

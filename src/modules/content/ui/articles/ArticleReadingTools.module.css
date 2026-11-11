@@ -2,6 +2,9 @@
   padding-left: 6px;
   margin-top: 14px;
 }
+.bookmark {
+  margin-top: 8px;
+}
 .rule {
   width: 136px;
   height: 9px;
@@ -60,6 +63,9 @@
   color: var(--accent);
 }
 @media (max-width: 960px) {
+  .bookmark {
+    display: none;
+  }
   .tools {
     position: relative;
     display: grid;

@@ -119,6 +119,10 @@ test("article publishing uses the saved revision and protects public slugs", asy
     draft.revision = 1;
     draft.publishedAt = "";
     draft.translations["zh-CN"].seoTitle = "Search title";
+    draft.translations["zh-CN"].afterword = {
+      note: "Why I wrote this",
+      updates: [{ date: "2026-11-11", text: "A later thought" }],
+    };
     await workbench.write(ownerId, "articles", 0, [draft]);
     await assert.rejects(
       publishArticle(
@@ -136,6 +140,14 @@ test("article publishing uses the saved revision and protects public slugs", asy
     await publishArticle(ownerId, request, db);
     const article = await fixture.service.articleBySlug(source.slug);
     assert.equal(article?.publication?.seoTitle, "Search title");
+    assert.deepEqual(
+      article?.publication?.afterword,
+      draft.translations["zh-CN"].afterword,
+    );
+    assert.deepEqual(
+      legacyArticlesToDraft([article!]).translations["zh-CN"].afterword,
+      draft.translations["zh-CN"].afterword,
+    );
     assert.deepEqual(
       article?.body,
       JSON.parse(JSON.stringify(draft.translations["zh-CN"].body)),

@@ -10,6 +10,7 @@ import { FooterPreferences } from "./FooterPreferences";
 import styles from "./SiteFooter.module.css";
 import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
 import { LiveReaders } from "@/modules/presence/ui/LiveReaders";
+import { JournalLink } from "@/modules/journal/ui/Journal";
 import { siteAssets } from "@/shared/config/assets";
 import { feedPath } from "@/shared/config/site";
 import type { ThemePreference } from "@/shared/ui/preferences/useThemePreference";
@@ -94,6 +95,7 @@ export function SiteFooter({
           <div className={styles.otter} style={otterAssets} />
         </div>
         <div className={styles.utilities}>
+          <JournalLink />
           <LiveReaders />
           <FooterPreferences theme={theme} onThemeChange={onThemeChange} />
         </div>

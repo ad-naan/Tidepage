@@ -1,0 +1,17 @@
+.editor {
+  display: grid;
+  gap: 16px;
+}
+.update {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+.meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}

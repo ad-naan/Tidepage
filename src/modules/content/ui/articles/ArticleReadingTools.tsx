@@ -11,6 +11,7 @@ import {
 import { AnimatedNumber } from "@/shared/ui/typography/AnimatedNumber";
 import { PencilLine } from "@/shared/ui/drawing/CoastalMarks";
 import { ArticleShareButton } from "./ArticleActions";
+import { ArticleBookmark } from "./ArticleBookmark";
 import styles from "./ArticleReadingTools.module.css";
 import { useArticleReadingValue } from "./useArticleReading";
 
@@ -65,6 +66,9 @@ export function ArticleReadingTools({
         >
           <MessageCircle size={18} />
         </Button>
+      </div>
+      <div className={styles.bookmark}>
+        <ArticleBookmark slug={slug} title={title} />
       </div>
       <div className={styles.status}>
         <EngagementStatus />

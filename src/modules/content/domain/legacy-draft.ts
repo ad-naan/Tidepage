@@ -90,6 +90,7 @@ export function legacyArticlesToDraft(articles: Article[]): ArticleDraft {
       seoTitle: article.publication?.seoTitle ?? "",
       seoDescription: article.publication?.seoDescription ?? "",
       coverAlt: article.publication?.cover?.alt ?? "",
+      afterword: article.publication?.afterword,
     };
   }
   return draft;

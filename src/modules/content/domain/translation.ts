@@ -59,6 +59,15 @@ function mapTranslation(
     coverAlt: replace(source.coverAlt, 300),
     tags: source.tags.map((tag) => replace(tag, 60)),
     body: visit(source.body),
+    ...(source.afterword && {
+      afterword: {
+        note: replace(source.afterword.note, 1200),
+        updates: source.afterword.updates.map((update) => ({
+          ...update,
+          text: replace(update.text, 2000),
+        })),
+      },
+    }),
   };
 }
 

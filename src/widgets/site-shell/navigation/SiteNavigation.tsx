@@ -4,6 +4,7 @@ import { Button } from "@/shared/ui/button/Button";
 import { useEffect, useId, useRef, useState, type RefObject } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronDown, ArrowUpRight } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
 import { navigationItems } from "@/shared/config/site";
 import type {
   ArticleSummary,
@@ -14,18 +15,26 @@ import { useDisclosure } from "@/shared/hooks/useDisclosure";
 import { OverlayScope } from "@/shared/ui/overlay/OverlayScope";
 import { AnchoredPanel } from "@/shared/ui/overlay/AnchoredPanel";
 import { HanddrawnMark } from "@/shared/ui/drawing/HanddrawnMark";
+import { CoastGlyph, PencilLine } from "@/shared/ui/drawing/CoastalMarks";
 import styles from "./SiteNavigation.module.css";
 import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
 
 const primaryKeys = new Set(["articles", "notes", "projects"]);
 type Preview = "articles" | "notes" | "projects";
 type Mode = Preview | "home" | "more";
+const motifs = {
+  home: "shell",
+  articles: "leaf",
+  notes: "tide",
+  projects: "wind",
+  more: "shell",
+} as const;
 const widths: Record<Mode, number> = {
-  home: 370,
-  articles: 350,
-  notes: 310,
-  projects: 320,
-  more: 190,
+  home: 400,
+  articles: 420,
+  notes: 360,
+  projects: 360,
+  more: 260,
 };
 
 export function SiteNavigation({
@@ -53,6 +62,7 @@ export function SiteNavigation({
   const t = useTranslations("nav");
   const sky = useTranslations("celestial");
   const pathname = usePathname();
+  const reduced = useReducedMotion();
   const { open, setOpen, ref } = useDisclosure("site-navigation");
   const trigger = useRef<HTMLButtonElement>(null);
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
@@ -90,18 +100,24 @@ export function SiteNavigation({
     );
   }
   function hover(next: Mode, element: HTMLElement) {
-    if (open && mode === next && intent.current === "click") return;
     clearTimers();
-    enterTimer.current = setTimeout(() => {
-      intent.current = "hover";
-      reveal(next, element);
-    }, 200);
+    if (open && mode === next) return;
+    enterTimer.current = setTimeout(
+      () => {
+        intent.current = "hover";
+        reveal(next, element);
+      },
+      open ? 70 : 160,
+    );
   }
   function leave() {
     if (enterTimer.current) clearTimeout(enterTimer.current);
     if (intent.current === "click") return;
     cancelClose();
-    leaveTimer.current = setTimeout(() => setOpen(false), 180);
+    leaveTimer.current = setTimeout(() => {
+      if (!document.getElementById(id)?.contains(document.activeElement))
+        setOpen(false);
+    }, 260);
   }
   function navigate() {
     clearTimers();
@@ -109,6 +125,36 @@ export function SiteNavigation({
     onNavigate?.();
   }
   useEffect(() => () => clearTimers(), []);
+  useEffect(() => {
+    clearTimers();
+  }, [pathname]);
+  useEffect(() => {
+    const dismiss = (event: Event) => {
+      if (
+        event.type === "garden-disclosure" &&
+        (event as CustomEvent).detail === "site-navigation"
+      )
+        return;
+      if (event instanceof KeyboardEvent && event.key !== "Escape") return;
+      if (
+        event instanceof PointerEvent &&
+        event.target instanceof Node &&
+        (ref.current?.contains(event.target) ||
+          document.getElementById(id)?.contains(event.target))
+      )
+        return;
+      clearTimers();
+    };
+    window.addEventListener("garden-disclosure", dismiss);
+    document.addEventListener("keydown", dismiss);
+    document.addEventListener("pointerdown", dismiss);
+    return () => {
+      clearTimers();
+      window.removeEventListener("garden-disclosure", dismiss);
+      document.removeEventListener("keydown", dismiss);
+      document.removeEventListener("pointerdown", dismiss);
+    };
+  }, [id]);
   useEffect(() => {
     if (!open || !focusNext.current) return;
     focusNext.current = false;
@@ -127,6 +173,17 @@ export function SiteNavigation({
         aria-label={sky("main")}
         ref={ref}
         onPointerLeave={leave}
+        onBlurCapture={(event) => {
+          const next = event.relatedTarget;
+          if (
+            next instanceof Node &&
+            !ref.current?.contains(next) &&
+            !document.getElementById(id)?.contains(next)
+          ) {
+            clearTimers();
+            setOpen(false);
+          }
+        }}
         onKeyDown={(event) => {
           if (event.key === "Escape") {
             event.preventDefault();
@@ -237,144 +294,178 @@ export function SiteNavigation({
           open={open}
           anchor={anchor}
           boundary={boundary}
+          align="center"
+          gap={6}
+          surfaceStyle="paper"
+          animateLayout
           width={widths[mode]}
           label={t(`preview.${mode}.title`)}
           className={`${styles.dropdown} ${mode !== "more" ? styles.preview : ""}`}
-          onPointerEnter={cancelClose}
+          onPointerEnter={clearTimers}
           onPointerLeave={leave}
+          onFocusCapture={cancelClose}
         >
-          {mode === "more" && (
-            <>
-              {homePages.map((item) => (
-                <Link
-                  className={styles.mobileItem}
-                  href={item.href}
-                  key={item.key}
-                  onClick={navigate}
-                  aria-current={isActive(item.href) ? "page" : undefined}
-                >
-                  {t(item.key)}
-                  <ArrowUpRight size={12} aria-hidden="true" />
-                </Link>
-              ))}
-              {primary.map((item) => (
-                <Link
-                  key={item.key}
-                  className={styles.mobileItem}
-                  href={item.href}
-                  aria-current={isActive(item.href) ? "page" : undefined}
-                  onClick={navigate}
-                >
-                  {t(item.key)}
-                  <ArrowUpRight size={12} aria-hidden="true" />
-                </Link>
-              ))}
-              {secondary.map((item) => (
-                <Link
-                  key={item.key}
-                  href={item.href}
-                  aria-current={isActive(item.href) ? "page" : undefined}
-                  onClick={navigate}
-                >
-                  {t(item.key)}
-                  <ArrowUpRight size={12} aria-hidden="true" />
-                </Link>
-              ))}
-            </>
-          )}
-          {mode === "home" && (
-            <div className={styles.homePreview}>
-              <div className={styles.homeIntro}>
-                <AuthorSignature size="sm" />
-                <p>{t("homeDescription")}</p>
-              </div>
-              <div className={styles.homeLinks}>
-                <Link
-                  href="/about"
-                  onClick={navigate}
-                  aria-current={pathname === "/about" ? "page" : undefined}
-                >
-                  <span>
-                    {t("homeAbout")}
-                    <small>{t("homeAboutDescription")}</small>
-                  </span>
-                  <ArrowUpRight size={14} aria-hidden="true" />
-                </Link>
-                <Link
-                  href="/site"
-                  onClick={navigate}
-                  aria-current={pathname === "/site" ? "page" : undefined}
-                >
-                  <span>
-                    {t("homeSite")}
-                    <small>{t("homeSiteDescription")}</small>
-                  </span>
-                  <ArrowUpRight size={14} aria-hidden="true" />
-                </Link>
-              </div>
-              <Link className={styles.homeBack} href="/" onClick={navigate}>
-                {t("homeBack")}
-                <ArrowUpRight size={12} aria-hidden="true" />
-              </Link>
+          <motion.div
+            key={mode}
+            className={styles.panelContent}
+            initial={reduced ? false : { opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+          >
+            <div className={styles.previewHeading}>
+              <CoastGlyph kind={motifs[mode]} className={styles.headingGlyph} />
+              <span>{t(`preview.${mode}.title`)}</span>
             </div>
-          )}
-          {mode !== "more" && mode !== "home" && (
-            <>
-              <div className={styles.previewHeading}>
-                <span>{t(`preview.${mode}.title`)}</span>
-                <span aria-hidden="true">✳</span>
+            {mode === "more" && (
+              <div className={styles.moreLinks}>
+                {homePages.map((item) => (
+                  <Link
+                    className={styles.mobileItem}
+                    href={item.href}
+                    key={item.key}
+                    onClick={navigate}
+                    aria-current={isActive(item.href) ? "page" : undefined}
+                  >
+                    <span className={styles.itemLabel}>
+                      {t(item.key)}
+                      <HanddrawnMark className={styles.itemMark} />
+                    </span>
+                    <ArrowUpRight size={12} aria-hidden="true" />
+                  </Link>
+                ))}
+                {primary.map((item) => (
+                  <Link
+                    key={item.key}
+                    className={styles.mobileItem}
+                    href={item.href}
+                    aria-current={isActive(item.href) ? "page" : undefined}
+                    onClick={navigate}
+                  >
+                    <span className={styles.itemLabel}>
+                      {t(item.key)}
+                      <HanddrawnMark className={styles.itemMark} />
+                    </span>
+                    <ArrowUpRight size={12} aria-hidden="true" />
+                  </Link>
+                ))}
+                {secondary.map((item) => (
+                  <Link
+                    key={item.key}
+                    href={item.href}
+                    aria-current={isActive(item.href) ? "page" : undefined}
+                    onClick={navigate}
+                  >
+                    <span className={styles.itemLabel}>
+                      {t(item.key)}
+                      <HanddrawnMark className={styles.itemMark} />
+                    </span>
+                    <ArrowUpRight size={12} aria-hidden="true" />
+                  </Link>
+                ))}
               </div>
-              {mode === "articles" && (
-                <div className={styles.previewArticles}>
-                  {articles.slice(0, 2).map((article) => (
-                    <Link
-                      key={article.slug}
-                      href={`/articles/${article.slug}`}
-                      onClick={navigate}
-                    >
-                      <small>
-                        <DateTime value={article.date} />
-                      </small>
-                      <span>{article.title}</span>
-                    </Link>
-                  ))}
-                  {!articles.length && <p>{t("preview.empty")}</p>}
+            )}
+            {mode === "home" && (
+              <div className={styles.homePreview}>
+                <div className={styles.homeIntro}>
+                  <AuthorSignature size="sm" />
+                  <p>{t("homeDescription")}</p>
                 </div>
-              )}
-              {mode === "notes" && (
-                <div className={styles.previewNote}>
-                  {content.note && (
-                    <>
-                      <p>{content.note.text}</p>
-                      <small>
-                        {content.note.date} · {content.note.mood}
-                      </small>
-                    </>
-                  )}
-                  {!content.note && <p>{t("preview.empty")}</p>}
+                <PencilLine className={styles.separator} />
+                <div className={styles.homeLinks}>
+                  <Link
+                    href="/about"
+                    onClick={navigate}
+                    aria-current={pathname === "/about" ? "page" : undefined}
+                  >
+                    <span>
+                      {t("homeAbout")}
+                      <small>{t("homeAboutDescription")}</small>
+                    </span>
+                    <ArrowUpRight size={14} aria-hidden="true" />
+                  </Link>
+                  <Link
+                    href="/site"
+                    onClick={navigate}
+                    aria-current={pathname === "/site" ? "page" : undefined}
+                  >
+                    <span>
+                      {t("homeSite")}
+                      <small>{t("homeSiteDescription")}</small>
+                    </span>
+                    <ArrowUpRight size={14} aria-hidden="true" />
+                  </Link>
                 </div>
-              )}
-              {mode === "projects" && (
-                <div className={styles.previewProjects}>
-                  {content.projects.map((project) => (
-                    <div key={project.id}>
-                      <strong>{project.name}</strong>
-                      <span>{project.subtitle}</span>
-                    </div>
-                  ))}
-                  {!content.projects.length && <p>{t("preview.empty")}</p>}
-                </div>
-              )}
-              <Link
-                className={styles.previewAll}
-                href={`/${mode}`}
-                onClick={navigate}
-              >
-                {t(`preview.${mode}.open`)}
-                <ArrowUpRight size={12} aria-hidden="true" />
-              </Link>
-            </>
-          )}
+                <PencilLine kind="trail" className={styles.separator} />
+                <Link className={styles.homeBack} href="/" onClick={navigate}>
+                  {t("homeBack")}
+                  <ArrowUpRight size={12} aria-hidden="true" />
+                </Link>
+              </div>
+            )}
+            {mode !== "more" && mode !== "home" && (
+              <>
+                {mode === "articles" && (
+                  <div className={styles.previewArticles}>
+                    {articles.slice(0, 3).map((article) => (
+                      <Link
+                        key={article.slug}
+                        href={`/articles/${article.slug}`}
+                        onClick={navigate}
+                      >
+                        <span>{article.title}</span>
+                        <small>
+                          <DateTime value={article.date} />
+                        </small>
+                      </Link>
+                    ))}
+                    {!articles.length && <p>{t("preview.empty")}</p>}
+                  </div>
+                )}
+                {mode === "notes" && (
+                  <div className={styles.previewNote}>
+                    {content.note && (
+                      <>
+                        <div className={styles.noteMeta}>
+                          <span>{content.note.date}</span>
+                          {content.note.mood && (
+                            <span className={styles.mood}>
+                              {content.note.mood}
+                            </span>
+                          )}
+                        </div>
+                        <p>{content.note.text}</p>
+                      </>
+                    )}
+                    {!content.note && <p>{t("preview.empty")}</p>}
+                  </div>
+                )}
+                {mode === "projects" && (
+                  <div className={styles.previewProjects}>
+                    {content.projects.map((project) => (
+                      <Link
+                        href="/projects"
+                        onClick={navigate}
+                        key={project.id}
+                      >
+                        <strong>{project.name}</strong>
+                        <span>{project.subtitle}</span>
+                      </Link>
+                    ))}
+                    {!content.projects.length && <p>{t("preview.empty")}</p>}
+                  </div>
+                )}
+                <PencilLine kind="trail" className={styles.separator} />
+                <Link
+                  className={styles.previewAll}
+                  href={`/${mode}`}
+                  onClick={navigate}
+                >
+                  {t(`preview.${mode}.open`)}
+                  <ArrowUpRight size={12} aria-hidden="true" />
+                </Link>
+              </>
+            )}
+          </motion.div>
         </AnchoredPanel>
       </nav>
     </OverlayScope>
