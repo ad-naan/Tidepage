@@ -1362,7 +1362,8 @@
         "ordered": "Ordered list",
         "callout": "Callout",
         "divider": "Divider",
-        "details": "Collapsible content"
+        "details": "Collapsible content",
+        "diagram": "Mini diagram"
       },
       "inlineLink": "Text link",
       "addRow": "Add row",
@@ -1945,6 +1946,74 @@
       "fluent-party-popper": "Party popper",
       "fluent-red-heart": "Red heart",
       "fluent-hundred-points": "Hundred points"
+    }
+  },
+  "diagrams": {
+    "title": "Mini diagram",
+    "preview": "Diagram preview",
+    "direction": "Layout direction",
+    "horizontal": "Horizontal",
+    "vertical": "Vertical",
+    "export": "Export SVG",
+    "templates": "Apply a template",
+    "templatesList": {
+      "flow": "Steps",
+      "branch": "Branch",
+      "cycle": "Loop"
+    },
+    "diagramTitle": "Diagram title",
+    "caption": "Caption",
+    "prompt": "Draw with AI",
+    "promptPlaceholder": "Turn the selected passage into three steps and highlight the last one",
+    "withContext": "Your selection and instructions will be sent to AI.",
+    "withoutContext": "Describe a relationship or ask for changes to this diagram.",
+    "generate": "Generate / revise",
+    "generating": "Arranging your diagram…",
+    "stop": "Stop",
+    "generationFailed": "Generation did not finish. Your diagram is preserved; try again.",
+    "loadFailed": "Diagram language resources could not load. Close and try again.",
+    "aiUnavailable": "Configure the writing assistant to generate and revise diagrams with AI.",
+    "nodes": "Nodes · {count}",
+    "connections": "Connections · {count}",
+    "nodeLabel": "Node {index} text",
+    "removeNode": "Remove node {index}",
+    "shape": "Node shape",
+    "tone": "Node color",
+    "shapes": {
+      "box": "Box",
+      "decision": "Decision",
+      "pill": "Rounded"
+    },
+    "tones": {
+      "ink": "Pencil",
+      "warm": "Warm orange",
+      "sea": "Sea green"
+    },
+    "addNode": "Add node",
+    "from": "From",
+    "to": "To",
+    "removeConnection": "Remove connection {index}",
+    "connectionLabel": "Connection {index} text",
+    "connectionLabelPlaceholder": "Connection label (optional)",
+    "addConnection": "Add connection",
+    "invalid": "Complete the title and node labels. Connections must link different nodes and cannot repeat.",
+    "editable": "Saved with the article. Edit it again at any time.",
+    "documentChanged": "The document changed. Close and reopen the diagram.",
+    "insert": "Insert diagram",
+    "update": "Update diagram",
+    "edit": "Edit diagram",
+    "template": {
+      "newNode": "New node",
+      "start": "Start",
+      "check": "Conditions met?",
+      "yes": "Continue",
+      "no": "Adjust and retry",
+      "idea": "Gather ideas",
+      "draft": "Shape a story",
+      "publish": "Publish and share",
+      "flow": "From idea to article",
+      "branch": "One choice, two paths",
+      "cycle": "A process of refinement"
     }
   }
 }

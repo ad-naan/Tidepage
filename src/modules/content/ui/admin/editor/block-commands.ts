@@ -15,6 +15,7 @@ import {
   MessageSquare,
   ChevronsUpDown,
   Sparkles,
+  Workflow,
 } from "lucide-react";
 
 export const blockCommands = [
@@ -34,6 +35,11 @@ export const blockCommands = [
   { key: "divider", icon: Minus, keywords: "divider hr 分割线" },
   { key: "table", icon: Table, keywords: "table 表格" },
   { key: "image", icon: Image, keywords: "image picture photo 图片" },
+  {
+    key: "diagram",
+    icon: Workflow,
+    keywords: "diagram flow chart sketch 手绘 图表 流程图",
+  },
   {
     key: "web",
     icon: Globe2,

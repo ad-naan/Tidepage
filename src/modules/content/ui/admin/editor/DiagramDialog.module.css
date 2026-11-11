@@ -1,0 +1,155 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 284px;
+  gap: 24px;
+  align-items: start;
+}
+.stage {
+  min-width: 0;
+  position: sticky;
+  top: 0;
+}
+.export {
+  display: inline-flex;
+  padding: 8px;
+  color: var(--ink);
+  border-radius: var(--radius-control);
+}
+.export[aria-disabled="true"] {
+  opacity: 0.4;
+  cursor: default;
+}
+.stageTools,
+.row,
+.aiActions,
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.stageTools {
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+}
+.preview {
+  max-height: 360px;
+  min-height: 220px;
+  overflow: auto;
+  padding-block: 12px;
+  scrollbar-width: thin;
+}
+.preview figure {
+  margin: 8px 0;
+}
+.settings,
+.items {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.items {
+  margin-top: 12px;
+}
+.settings > details {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.templates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.node {
+  display: grid;
+  gap: 6px;
+}
+.row > input,
+.row > div {
+  flex: 1;
+  min-width: 0;
+}
+.row > input {
+  width: 0;
+}
+.row > button {
+  flex-shrink: 0;
+}
+.index {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+.nodeOptions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding-left: 24px;
+}
+.edge {
+  display: grid;
+  gap: 6px;
+}
+.edge .row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) 28px;
+}
+.assistant {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.aiActions {
+  justify-content: space-between;
+  margin-top: 8px;
+}
+.aiActions > span,
+.help,
+.footer > span {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  line-height: 1.8;
+}
+.footer {
+  justify-content: space-between;
+  padding-top: 16px;
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.error {
+  color: var(--accent);
+  font-size: var(--text-body);
+  line-height: 1.8;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .preview {
+    animation: arrive 250ms ease-out;
+  }
+  @keyframes arrive {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+@media (max-width: 700px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .stage {
+    position: static;
+  }
+  .preview {
+    max-height: 300px;
+  }
+  .footer {
+    align-items: flex-start;
+  }
+  .footer > span {
+    max-width: 22ch;
+  }
+}

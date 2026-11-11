@@ -1,6 +1,7 @@
 import { documentText, type EditorNode } from "./editor-document";
 import { getSticker } from "@/shared/config/stickers";
 import { isFontSize } from "@/shared/contracts/rich-text";
+import { diagramSchema } from "@/shared/contracts/diagram";
 
 export function documentChapters(document: EditorNode) {
   const chapters: { title?: string; nodes: EditorNode[] }[] = [{ nodes: [] }];
@@ -118,6 +119,13 @@ export function documentMarkdown(node: EditorNode): string {
           })
           .join("\n") + "\n\n"
       );
+    case "miniDiagram": {
+      const result = diagramSchema.safeParse(node.attrs?.diagram);
+      if (!result.success) return "";
+      const value = result.data;
+      const labels = new Map(value.nodes.map((item) => [item.id, item.label]));
+      return `**${escape(value.title)}**\n\n${value.nodes.map((item) => `- ${escape(item.label)}`).join("\n")}\n\n${value.edges.map((edge) => `${escape(labels.get(edge.from)!)} → ${escape(labels.get(edge.to)!)}${edge.label ? ` (${escape(edge.label)})` : ""}`).join("  \n")}\n\n${escape(value.caption)}\n\n`;
+    }
     case "assetImage":
       return `![${escape(String(node.attrs?.alt ?? ""))}](${String(node.attrs?.assetId ?? "")})\n\n`;
     case "table":

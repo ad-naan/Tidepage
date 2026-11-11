@@ -22,6 +22,8 @@ import { isUploadedAssetId } from "@/modules/media/domain/asset-path";
 import { ReferenceCard } from "./ReferenceCard";
 import { ReadingImage } from "./ReadingImage";
 import { ReadingLink } from "./ReadingLink";
+import { MiniDiagram } from "@/shared/ui/drawing/MiniDiagram";
+import { diagramSchema } from "@/shared/contracts/diagram";
 import styles from "./RichText.module.css";
 import { getSticker } from "@/shared/config/stickers";
 import { isFontSize } from "@/shared/contracts/rich-text";
@@ -251,6 +253,10 @@ function RenderNode({
           dimensions={imageDimensions?.[src]}
         />
       );
+    }
+    case "miniDiagram": {
+      const result = diagramSchema.safeParse(node.attrs?.diagram);
+      return result.success ? <MiniDiagram value={result.data} /> : null;
     }
     case "referenceCard":
       return <ReferenceCard value={node.attrs as Embed} />;

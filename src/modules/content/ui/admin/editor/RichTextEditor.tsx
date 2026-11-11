@@ -1,5 +1,6 @@
 "use client";
 import { LoadingSkeleton } from "@/shared/ui/loading/LoadingSkeleton";
+import dynamic from "next/dynamic";
 import { useEffect, useId, useRef, useState } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
@@ -20,6 +21,7 @@ import {
   Maximize,
   Minimize,
   Sparkles,
+  Workflow,
 } from "lucide-react";
 import { Button, IconButton } from "@/shared/ui/button/Button";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
@@ -45,6 +47,8 @@ import {
 } from "@/modules/content/domain/editor-document";
 import { ReferenceCard, AssetImageNode, CalloutNode } from "./ReferenceNode";
 import { ReferenceDialog } from "./ReferenceDialog";
+import { MiniDiagramNode } from "./DiagramNode";
+import type { MiniDiagram as Diagram } from "@/shared/contracts/diagram";
 import { referenceUrl } from "@/modules/content/domain/reference-url";
 import { editCurrentBlock } from "./document-blocks";
 import styles from "./editor.module.css";
@@ -54,6 +58,10 @@ import {
   SubscriptMark,
   DetailsNode,
 } from "./ReadingExtensions";
+
+const DiagramDialog = dynamic(() =>
+  import("./DiagramDialog").then((module) => module.DiagramDialog),
+);
 
 export function RichTextEditor({
   initial,
@@ -81,6 +89,12 @@ export function RichTextEditor({
   const stickerLabels = useMessages().stickers.items as Record<string, string>;
   const { notify } = useNotice();
   const [imageOpen, setImageOpen] = useState(false);
+  const [diagram, setDiagram] = useState<{
+    value?: Diagram;
+    context: string;
+    target: WritingTarget;
+    pos?: number;
+  } | null>(null);
   const [reference, setReference] = useState<{
     value: Embed;
     target: WritingTarget;
@@ -127,6 +141,15 @@ export function RichTextEditor({
   }
   const [slashPosition, setSlashPosition] = useState({ left: 0, top: 0 });
   const editorRef = useRef<Editor | null>(null);
+  function openDiagram() {
+    const e = editorRef.current;
+    if (!e?.isEditable) return;
+    const { from, to } = e.state.selection;
+    setDiagram({
+      context: e.state.doc.textBetween(from, to, "\n").slice(0, 16000),
+      target: { doc: e.state.doc, selection: e.state.selection },
+    });
+  }
   function openReference(kind: Embed["kind"], url = "") {
     const editor = editorRef.current;
     if (!editor?.isEditable) return;
@@ -261,6 +284,18 @@ export function RichTextEditor({
         },
       }),
       AssetImageNode,
+      MiniDiagramNode.configure({
+        onEdit: (value: Diagram, pos: number) => {
+          const e = editorRef.current;
+          if (!e?.isEditable) return;
+          setDiagram({
+            value,
+            pos,
+            context: "",
+            target: { doc: e.state.doc, selection: e.state.selection },
+          });
+        },
+      }),
       CalloutNode,
       FontSizeMark,
       HighlightMark,
@@ -387,7 +422,10 @@ export function RichTextEditor({
     editor?.setEditable(!readOnly && active, false);
   }, [editor, readOnly, active]);
   useEffect(() => {
-    if (!active || readOnly) writingMenu.setOpen(false);
+    if (!active || readOnly) {
+      writingMenu.setOpen(false);
+      setDiagram(null);
+    }
   }, [active, readOnly, writingMenu.setOpen]);
   useEffect(
     () => () => {
@@ -449,6 +487,10 @@ export function RichTextEditor({
       writingAction.current();
       return;
     }
+    if (key === "diagram") {
+      openDiagram();
+      return;
+    }
     const chain = editor.chain().focus();
     if (key === "heading") chain.setHeading({ level: 2 }).run();
     else if (key === "subheading") chain.setHeading({ level: 3 }).run();
@@ -495,6 +537,15 @@ export function RichTextEditor({
         <div className={styles.viewportTools}>
           <span>{t("bodyLabel")}</span>
           <div>
+            <Button
+              size="sm"
+              variant="quiet"
+              onPointerDown={(event) => event.preventDefault()}
+              onClick={openDiagram}
+            >
+              <Workflow size={15} />
+              {t("blocks.diagram")}
+            </Button>
             {writingAgent && (
               <div ref={writingMenu.ref}>
                 <Button
@@ -641,6 +692,8 @@ export function RichTextEditor({
             !state.selection.empty &&
             !writingMenu.open &&
             !editor.isActive("assetImage") &&
+            !editor.isActive("miniDiagram") &&
+            !diagram &&
             !editor.isActive("referenceCard")
           }
         >
@@ -676,6 +729,14 @@ export function RichTextEditor({
               <Sparkles size={15} />
             </IconButton>
           )}
+          <IconButton
+            aria-label={t("blocks.diagram")}
+            title={t("blocks.diagram")}
+            onPointerDown={(event) => event.preventDefault()}
+            onClick={openDiagram}
+          >
+            <Workflow size={15} />
+          </IconButton>
         </BubbleMenu>
       )}
       {help && (
@@ -746,6 +807,34 @@ export function RichTextEditor({
             }}
           />
         </Dialog>
+      )}
+      {diagram && active && !readOnly && (
+        <DiagramDialog
+          initial={diagram.value}
+          context={diagram.context}
+          contentLocale={contentLocale}
+          aiEnabled={!!writingAgent}
+          onClose={() => setDiagram(null)}
+          onSave={(value) => {
+            if (!editor.isEditable || !editor.state.doc.eq(diagram.target.doc))
+              return false;
+            const chain = editor.chain().focus();
+            const saved =
+              diagram.pos !== undefined
+                ? chain
+                    .setNodeSelection(diagram.pos)
+                    .updateAttributes("miniDiagram", { diagram: value })
+                    .run()
+                : chain
+                    .insertContentAt(diagram.target.selection.to, {
+                      type: "miniDiagram",
+                      attrs: { diagram: value },
+                    })
+                    .run();
+            if (saved) setDiagram(null);
+            return saved;
+          }}
+        />
       )}
       {reference && (
         <ReferenceDialog

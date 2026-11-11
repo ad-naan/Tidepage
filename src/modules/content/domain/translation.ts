@@ -1,4 +1,5 @@
 import type { ArticleTranslation, EditorNode } from "./editor-document";
+import { diagramSchema } from "@/shared/contracts/diagram";
 
 const textAttributes: Record<string, Record<string, number | undefined>> = {
   assetImage: { alt: undefined, caption: undefined },
@@ -18,6 +19,22 @@ function mapTranslation(
     )
       return node;
     const attrs = node.attrs && { ...node.attrs };
+    if (node.type === "miniDiagram" && attrs) {
+      const value = diagramSchema.parse(attrs.diagram);
+      attrs.diagram = {
+        ...value,
+        title: replace(value.title, 120),
+        caption: replace(value.caption, 300),
+        nodes: value.nodes.map((item) => ({
+          ...item,
+          label: replace(item.label, 60),
+        })),
+        edges: value.edges.map((edge) => ({
+          ...edge,
+          label: replace(edge.label, 24),
+        })),
+      };
+    }
     if (attrs) {
       for (const [key, limit] of Object.entries(
         textAttributes[node.type] ?? {},

@@ -1,0 +1,45 @@
+.figure {
+  --font-diagram: "LXGW WenKai TC", var(--font-ui);
+  --diagram-sea: #557d79;
+  margin: 20px 0;
+  color: var(--ink);
+  font-family: var(--font-ui);
+}
+.title {
+  font-size: var(--text-body);
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.8;
+}
+.scroll {
+  max-width: 100%;
+  overflow: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+}
+.svg {
+  display: block;
+  max-width: none;
+  margin: auto;
+}
+.caption {
+  margin: 8px auto 0;
+  max-width: 50ch;
+  color: var(--muted);
+  font-size: var(--text-sm);
+  line-height: 1.8;
+  text-align: center;
+  white-space: pre-wrap;
+}
+:global([data-theme="dark"]) .figure {
+  --diagram-sea: #8db6ac;
+}
+@media print {
+  .scroll {
+    overflow: visible;
+  }
+  .svg {
+    max-width: 100%;
+    height: auto;
+  }
+}

@@ -104,6 +104,8 @@ import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 
 ## 共用正文
 
+正文手绘小图沿用同一契约与渲染链路：无业务含义的数据和 SVG 在 `shared/contracts/diagram.ts`、`shared/ui/drawing/MiniDiagram`，编辑适配位于 `modules/content/ui/admin/editor`。目录、国际化、AI 与保存方式见 [正文手绘小图](mini-diagrams.md)。
+
 业务无关的正文节点、标记、链接和校验定义位于 `shared/contracts/rich-text.ts`，领域层直接使用这个契约。文章元数据、站点设置与评论规则分别留在各自 domain；评论的精简块白名单位于 engagement/domain/comment-document.ts。UI 层复用 content/ui/rich-text 的渲染器，后台完整编辑器与评论精简编辑器使用相同标记定义。不要在每个页面重新写正文 CSS 或只读编辑器来充当阅读预览。
 
 站外 HTTP(S) 链接统一由 SiteShell 中的 `ExternalLinkPreview` 代理悬停和键盘聚焦，一次只挂载一个预览浮层。`ExternalLink` 可通过 `preview` 补充已有元数据；正文 ReadingLink、引用卡和其他外链复用这个入口。元数据在交互后请求，服务端校验公共地址、固定 DNS 结果、逐跳校验重定向，并限制大小、耗时、并发和缓存。抓取失败回退到链接文本与域名，不影响原链接打开。弹窗内预览挂到当前 dialog，Escape 优先关闭预览。

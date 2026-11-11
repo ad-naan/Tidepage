@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { getSticker } from "@/shared/config/stickers";
+import { diagramSchema, diagramText } from "./diagram";
 export const safeWebUrl = z.url({ protocol: /^https?$/ }).refine((value) => {
   try {
     const parsed = new URL(value);
@@ -72,6 +73,7 @@ const supportedNodes = new Set([
   "tableHeader",
   "referenceCard",
   "assetImage",
+  "miniDiagram",
 ]);
 const supportedMarks = new Set([
   "bold",
@@ -93,6 +95,11 @@ export function isEditorDocument(value: unknown): value is EditorNode {
       return false;
     const n = node as EditorNode;
     if (!supportedNodes.has(n.type)) return false;
+    if (
+      n.type === "miniDiagram" &&
+      !diagramSchema.safeParse(n.attrs?.diagram).success
+    )
+      return false;
     if (n.type === "sticker" && !getSticker(n.attrs?.id)) return false;
     if (
       n.text !== undefined &&
@@ -145,6 +152,10 @@ export const emptyDocument = (): EditorNode => ({
   content: [{ type: "paragraph" }],
 });
 export function documentText(node: EditorNode): string {
+  if (node.type === "miniDiagram") {
+    const result = diagramSchema.safeParse(node.attrs?.diagram);
+    return result.success ? diagramText(result.data) : "";
+  }
   if (node.type === "sticker")
     return `[${getSticker(node.attrs?.id)?.name ?? ""}]`;
   return (

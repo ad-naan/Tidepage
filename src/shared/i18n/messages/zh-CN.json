@@ -1362,7 +1362,8 @@
         "ordered": "有序列表",
         "callout": "提示块",
         "divider": "分割线",
-        "details": "折叠内容"
+        "details": "折叠内容",
+        "diagram": "手绘小图"
       },
       "inlineLink": "文字链接",
       "addRow": "添加行",
@@ -1945,6 +1946,74 @@
       "fluent-party-popper": "撒花",
       "fluent-red-heart": "一颗心",
       "fluent-hundred-points": "满分"
+    }
+  },
+  "diagrams": {
+    "title": "手绘小图",
+    "preview": "图表预览",
+    "direction": "排列方向",
+    "horizontal": "横向",
+    "vertical": "纵向",
+    "export": "导出 SVG",
+    "templates": "套用模板",
+    "templatesList": {
+      "flow": "步骤",
+      "branch": "分支",
+      "cycle": "循环"
+    },
+    "diagramTitle": "图表标题",
+    "caption": "图下注释",
+    "prompt": "让 AI 帮你画",
+    "promptPlaceholder": "例如：把选中的段落整理成三步流程，突出最后一步",
+    "withContext": "将选中文字与要求一起交给 AI。",
+    "withoutContext": "描述要表达的关系，也可以继续修改当前图表。",
+    "generate": "生成 / 修改",
+    "generating": "正在整理图表…",
+    "stop": "停止",
+    "generationFailed": "生成未完成，当前图表已保留，请重试。",
+    "loadFailed": "图表语言资源未加载，请关闭后重试。",
+    "aiUnavailable": "配置写作助手后，即可用 AI 生成和修改图表。",
+    "nodes": "节点 · {count}",
+    "connections": "连线 · {count}",
+    "nodeLabel": "节点 {index} 的文字",
+    "removeNode": "移除节点 {index}",
+    "shape": "节点形状",
+    "tone": "节点颜色",
+    "shapes": {
+      "box": "方框",
+      "decision": "条件",
+      "pill": "圆角"
+    },
+    "tones": {
+      "ink": "铅笔",
+      "warm": "暖橙",
+      "sea": "海绿"
+    },
+    "addNode": "添加节点",
+    "from": "起点",
+    "to": "终点",
+    "removeConnection": "移除连线 {index}",
+    "connectionLabel": "连线 {index} 的文字",
+    "connectionLabelPlaceholder": "连线说明（可选）",
+    "addConnection": "添加连线",
+    "invalid": "请补全标题和节点文字，并检查连线：起终点需不同，连接不能重复。",
+    "editable": "随正文保存，随时可以重新编辑。",
+    "documentChanged": "正文已变化，请关闭后重新打开图表。",
+    "insert": "插入正文",
+    "update": "更新图表",
+    "edit": "编辑小图",
+    "template": {
+      "newNode": "新节点",
+      "start": "开始",
+      "check": "是否满足条件？",
+      "yes": "继续执行",
+      "no": "调整后重试",
+      "idea": "收集灵感",
+      "draft": "整理成文",
+      "publish": "发布分享",
+      "flow": "从灵感到文章",
+      "branch": "一个选择，两条路径",
+      "cycle": "不断完善的过程"
     }
   }
 }

@@ -23,9 +23,12 @@
 | 阅读 | Inter + Noto Sans SC / `--font-reading`              | 长文正文、正文标题、列表与表格       |
 | 书卷 | Noto Serif SC Variable / `--font-editorial`          | 栏目标题、姓名、文章主标题与引用     |
 | 手写 | 现有本地 gardenHand / `--font-hand`                  | 签名、主题彩蛋与少量装饰；不用作正文 |
+| 图表 | LXGW WenKai TC 400 / 局部 `--font-diagram`           | 手绘小图的短标签与连线文字           |
 | 代码 | Cascadia Code、SFMono、Consolas / `--font-code`      | 代码块                               |
 
 Fontsource 可变字体在根布局引入，自托管 WOFF2、按 Unicode 范围请求子集，使用 `font-display: swap`。不运行时请求 Google Fonts。新增其他文字系统时补充对应字体与回退栈，组件不判断 locale。
+
+图表的手写字体由 `shared/ui/drawing/MiniDiagram` 按需引入，仅使用 400 字重和 Unicode 分片，并以现有界面字体栈补充缺少的字符。`--font-diagram` 限定在图表内，标题、题注与站点正文继续使用各自的字体角色。
 
 正文和普通界面用 400；栏目分组与文章主标题用 500，正文层级标题和明确强调使用 600。界面不使用 300 或浏览器合成的超粗字重。手写字体实际提供 300，限定在上述装饰范围。
 

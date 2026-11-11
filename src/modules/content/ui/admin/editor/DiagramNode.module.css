@@ -1,0 +1,30 @@
+.root {
+  position: relative;
+  margin: 16px 0;
+  padding: 12px 16px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-control);
+  transition: border-color var(--motion-quick);
+}
+.root[data-selected="true"] {
+  border-color: var(--accent);
+}
+.root figure {
+  margin: 8px 0;
+}
+.tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.grip {
+  display: inline-flex;
+  color: var(--muted);
+  cursor: grab;
+}
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    transition: none;
+  }
+}
