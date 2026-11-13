@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getEnv } from "@/server/config/env";
 import { profile } from "@/shared/config/profile";
-import { feedPath, shareImagePath } from "@/shared/config/site";
+import { feedPath, localizedShareImagePath } from "@/shared/config/site";
 import {
   getPublicSiteIdentity,
   getPersonalPage,
@@ -49,8 +49,11 @@ export function pageMetadata(
 ): Metadata {
   const fullTitle = pageTitle(path, title, identity);
   const image = {
-    url: absoluteUrl(identity.shareImage?.path ?? shareImagePath),
+    url: absoluteUrl(
+      identity.shareImage?.path ?? localizedShareImagePath(locale),
+    ),
     alt: identity.shareImage?.alt ?? identity.name,
+    ...(!identity.shareImage && { width: 1200, height: 630 }),
   };
   return {
     title: { absolute: fullTitle },
@@ -129,14 +132,17 @@ export async function articleMetadata(
     await getPublicSiteIdentity(article.locale),
   );
   const cover = publication?.cover;
+  const image = cover
+    ? { url: absoluteUrl(cover.assetId), alt: cover.alt }
+    : {
+        url: absoluteUrl(localizedShareImagePath(article.locale, article.slug)),
+        alt: article.title,
+        width: 1200,
+        height: 630,
+      };
   return {
     ...base,
-    ...(cover && {
-      twitter: {
-        ...base.twitter,
-        images: [{ url: absoluteUrl(cover.assetId), alt: cover.alt }],
-      },
-    }),
+    twitter: { ...base.twitter, images: [image] },
     openGraph: {
       ...base.openGraph,
       type: "article",
@@ -145,9 +151,7 @@ export async function articleMetadata(
       modifiedTime: article.updatedAt,
       authors: [publication?.author || profile.name],
       tags: article.tags,
-      ...(cover && {
-        images: [{ url: absoluteUrl(cover.assetId), alt: cover.alt }],
-      }),
+      images: [image],
     },
   };
 }

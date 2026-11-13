@@ -5,6 +5,12 @@ export const site = {
 } as const;
 export const shareImagePath = "/opengraph-image";
 
+export function localizedShareImagePath(locale: Locale, article?: string) {
+  const query = new URLSearchParams({ locale });
+  if (article) query.set("article", article);
+  return `/api/v1/share-image?${query}`;
+}
+
 export function feedPath(locale: Locale) {
   return `/feed.xml?locale=${locale}`;
 }

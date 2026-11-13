@@ -1,0 +1,50 @@
+[
+  {
+    "name": "site-zh",
+    "status": 200,
+    "bytes": 201954
+  },
+  {
+    "name": "site-en",
+    "status": 200,
+    "bytes": 211164
+  },
+  {
+    "name": "article-zh",
+    "status": 200,
+    "bytes": 205230
+  },
+  {
+    "name": "article-en",
+    "status": 200,
+    "bytes": 211081
+  },
+  {
+    "query": "locale=fr",
+    "status": 404
+  },
+  {
+    "query": "article=private-draft",
+    "status": 404
+  },
+  {
+    "query": "article=future-post",
+    "status": 404
+  },
+  {
+    "query": "article=missing-post",
+    "status": 404
+  },
+  {
+    "query": "locale=en&article=private-draft",
+    "status": 404
+  },
+  {
+    "locale": "zh-CN",
+    "articleMetadata": true
+  },
+  {
+    "locale": "en",
+    "articleMetadata": true
+  }
+]

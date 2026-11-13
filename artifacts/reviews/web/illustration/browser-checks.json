@@ -1,0 +1,32 @@
+{
+  "normalPlayback": {
+    "samples": 39,
+    "alwaysVisible": true,
+    "frames": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "-1"
+    ]
+  },
+  "repeatAndKeyboard": {
+    "samples": 83,
+    "alwaysVisible": true,
+    "frames": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "-1"
+    ]
+  },
+  "screenshotFrame": "3"
+}

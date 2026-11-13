@@ -4,7 +4,9 @@
     "description": "Experiences become stories; ideas become things. A collection of adnaan's notes on code, design, and everyday life.",
     "skip": "Skip to main content",
     "title": "Fragments of Time · adnaan",
-    "shareTagline": "Notes on code, product & everyday life."
+    "shareTagline": "Notes on code, product & everyday life.",
+    "shareDescription": "Experiences become stories.\nIdeas become things.",
+    "shareByline": "A personal journal by {author}"
   },
   "common": {
     "loading": "Turning to a new page…",

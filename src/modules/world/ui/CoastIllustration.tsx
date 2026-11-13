@@ -1,13 +1,13 @@
 "use client";
 import { Button } from "@/shared/ui/button/Button";
-import { useEffect, useId, useRef, useState, type PointerEvent } from "react";
+import { useId, useRef, useState, type PointerEvent } from "react";
 import { motion, useInView, useReducedMotion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/shared/i18n/navigation";
 import { useThemePreference } from "@/shared/ui/preferences/useThemePreference";
 import { CoastLetter } from "./CoastLetter";
+import { HeroOtter } from "./HeroOtter";
 import styles from "./illustration.module.css";
-import { siteAssets } from "@/shared/config/assets";
 
 export function HeroSketch() {
   const t = useTranslations("sketch");
@@ -15,26 +15,15 @@ export function HeroSketch() {
   const inView = useInView(scene);
   const uid = useId().replaceAll(":", "");
   const [greeting, setGreeting] = useState(0);
-  const greetingId = useRef(0);
   const [ripples, setRipples] = useState<
     { id: number; x: number; y: number }[]
   >([]);
   const serial = useRef(0);
-  const greetingTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined,
-  );
   const { theme, setPreference } = useThemePreference();
   const reduce = useReducedMotion();
   function greet() {
-    clearTimeout(greetingTimer.current);
-    setGreeting(++greetingId.current);
+    setGreeting((current) => current + 1);
   }
-  function returnToRest(id: number) {
-    if (id !== greetingId.current) return;
-    clearTimeout(greetingTimer.current);
-    greetingTimer.current = setTimeout(() => setGreeting(0), 1300);
-  }
-  useEffect(() => () => clearTimeout(greetingTimer.current), []);
   function water(event: PointerEvent<SVGSVGElement>) {
     if (reduce) return;
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -242,24 +231,7 @@ export function HeroSketch() {
               </g>
             );
           })}
-          <image
-            key={greeting}
-            data-otter-pose={greeting ? "wave" : "rest"}
-            href={
-              greeting
-                ? reduce
-                  ? siteAssets.heroOtterGreet
-                  : `${siteAssets.heroOtterWave}?play=${greeting}`
-                : siteAssets.heroOtterStill
-            }
-            x="168"
-            y="150"
-            width="126"
-            height="110"
-            preserveAspectRatio="xMidYMid meet"
-            onLoad={greeting ? () => returnToRest(greeting) : undefined}
-            onError={() => setGreeting(0)}
-          />{" "}
+          <HeroOtter playId={greeting} reducedMotion={Boolean(reduce)} />
           <path
             d="M21 243C77 246 63 189 114 190S156 228 175 227"
             stroke="var(--accent)"

@@ -120,7 +120,7 @@ import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 
 ## 桌面、旅途手账与文章补记
 
-首页由 `HomeHero`、`HomeNotes` 与 `ArticleList` 保留原有海岸插画和两栏内容结构。`HeroSketch` 管理插画热区、水獭一次播放的 GIF 及恢复静帧计时，卸载时清理计时器；共享 `useThemePreference` 负责主题设置。水獭的静止、挥爪静帧和 GIF 均在静态资源清单注册。
+首页由 `HomeHero`、`HomeNotes` 与 `ArticleList` 保留原有海岸插画和两栏内容结构。`HeroSketch` 管理插画热区；`HeroOtter` 在固定挂载的透明 WebP 精灵图内切换挥爪帧，加载完成前保留静帧，保留原 GIF 的逐帧时长，重复点击从头播放，卸载时清理计时器。减少动态效果时只显示挥爪静帧。共享 `useThemePreference` 负责主题设置。水獭的静帧、精灵图和生成源 GIF 均在静态资源清单注册。
 
 `ContentHeading` 的页眉线稿由同目录 `InteractiveHeadingSketch` 提供可选局部彩蛋，复用共享 Button；只有手记、项目、一言、相册启用。重播仅重建图层，不重建聚焦按钮；一次恢复计时在重新触发和卸载时清理。位移与静态减少动态效果分支都在同目录 CSS Module，动作名称登记在 `easterEggs` 语言目录。
 

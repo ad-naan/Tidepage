@@ -4,7 +4,9 @@
     "description": "把经历写成文字，把想法做成作品。这里收藏 adnaan 关于技术、设计与日常的光阴副本。",
     "skip": "跳到主要内容",
     "title": "光阴副本集 · adnaan",
-    "shareTagline": "关于代码、产品和日常生活的手记。"
+    "shareTagline": "关于代码、产品和日常生活的手记。",
+    "shareDescription": "把经历写成文字，\n把想法做成作品。",
+    "shareByline": "{author} 的个人博客"
   },
   "common": {
     "loading": "正在翻开新的一页…",

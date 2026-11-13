@@ -1,0 +1,21 @@
+{
+  "source": "public\\assets\\illustrations\\hero-otter-wave.gif",
+  "source_sha256": "fec6c04e43690b57ecd6302fb56e059b0787ae02b493bfc70b5c1522ddf3ccd2",
+  "output": "public\\assets\\illustrations\\hero-otter-wave-sprite.webp",
+  "output_sha256": "7af68c0411528c494dc3d50621b00418314080b5aebb4a5a5d0429b2cd46510a",
+  "bytes": 114696,
+  "frames": 8,
+  "durations_ms": [
+    160,
+    120,
+    120,
+    180,
+    200,
+    160,
+    120,
+    240
+  ],
+  "total_ms": 1300,
+  "all_frames_byte_identical": true,
+  "errors": []
+}

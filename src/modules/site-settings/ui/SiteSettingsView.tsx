@@ -26,7 +26,7 @@ import { SiteEditorialAssistant } from "./SiteEditorialAssistant";
 import { Avatar } from "@/shared/ui/avatar/Avatar";
 import type { Principal } from "@/modules/identity/domain/principal";
 import { profile } from "@/shared/config/profile";
-import { shareImagePath } from "@/shared/config/site";
+import { localizedShareImagePath } from "@/shared/config/site";
 import { Link } from "@/shared/i18n/navigation";
 import { MusicSettingsFields } from "@/modules/media/ui/admin/MusicSettingsFields";
 import { defaultMusicSettings } from "@/shared/contracts/music";
@@ -371,7 +371,7 @@ export function SiteSettingsView({
                             src={
                               key === "avatarAssetId"
                                 ? profile.avatar
-                                : shareImagePath
+                                : localizedShareImagePath(locale)
                             }
                             alt=""
                           />
