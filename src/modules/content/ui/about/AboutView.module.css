@@ -62,11 +62,6 @@
 .margin a:hover {
   color: var(--accent);
 }
-.links a:focus-visible,
-.margin a:focus-visible {
-  outline: 1px solid var(--accent);
-  outline-offset: 4px;
-}
 .portrait {
   margin: 0;
   text-align: center;

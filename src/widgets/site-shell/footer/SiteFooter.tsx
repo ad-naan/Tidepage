@@ -14,6 +14,7 @@ import { JournalLink } from "@/modules/journal/ui/Journal";
 import { siteAssets } from "@/shared/config/assets";
 import { feedPath } from "@/shared/config/site";
 import type { ThemePreference } from "@/shared/ui/preferences/useThemePreference";
+import type { BackgroundMotion } from "@/shared/ui/preferences/useBackgroundMotion";
 
 const otterAssets = {
   "--otter-light": `url("${siteAssets.footerOtterLight}")`,
@@ -28,6 +29,8 @@ export function SiteFooter({
   theme,
   showCoast = false,
   onThemeChange,
+  backgroundMotion,
+  onBackgroundMotionChange,
   onContact,
   onHeart,
 }: {
@@ -36,6 +39,8 @@ export function SiteFooter({
   theme: ThemePreference;
   showCoast?: boolean;
   onThemeChange: (theme: ThemePreference) => void;
+  backgroundMotion: BackgroundMotion;
+  onBackgroundMotionChange: (motion: BackgroundMotion) => void;
   onContact: () => void;
   onHeart: () => void;
 }) {
@@ -97,7 +102,12 @@ export function SiteFooter({
         <div className={styles.utilities}>
           <JournalLink />
           <LiveReaders />
-          <FooterPreferences theme={theme} onThemeChange={onThemeChange} />
+          <FooterPreferences
+            theme={theme}
+            onThemeChange={onThemeChange}
+            backgroundMotion={backgroundMotion}
+            onBackgroundMotionChange={onBackgroundMotionChange}
+          />
         </div>
       </div>
     </footer>

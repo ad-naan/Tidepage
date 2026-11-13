@@ -1,0 +1,137 @@
+/* The reading centre stays clear; only the paper's distant edges catch light. */
+.atmosphere {
+  --phase-light: #edd4af;
+  --phase-mist: #94adb8;
+  --phase-tide: #a4c3c3;
+  --light-origin: 9% 2%;
+  --morning-light: color-mix(in srgb, var(--phase-light) 26%, transparent);
+  --sea-mist: color-mix(in srgb, var(--phase-mist) 22%, transparent);
+  --tidal-light: color-mix(in srgb, var(--phase-tide) 20%, transparent);
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+:global([data-theme="dark"]) .atmosphere {
+  --phase-light: #b6badc;
+  --phase-mist: #789cbb;
+  --phase-tide: #739da6;
+  --morning-light: color-mix(in srgb, var(--phase-light) 18%, transparent);
+  --sea-mist: color-mix(in srgb, var(--phase-mist) 17%, transparent);
+  --tidal-light: color-mix(in srgb, var(--phase-tide) 18%, transparent);
+}
+.atmosphere[data-daylight="dawn"] {
+  --phase-light: #efc59e;
+  --phase-mist: #a2c0ba;
+  --phase-tide: #c6c9b0;
+  --light-origin: 4% 9%;
+  --matter-opacity: 0.8;
+}
+.atmosphere[data-daylight="day"] {
+  --phase-light: #e9dbb9;
+  --light-origin: 45% -6%;
+  --matter-opacity: 0.85;
+}
+.atmosphere[data-daylight="dusk"] {
+  --phase-light: #e4a17b;
+  --phase-mist: #b0a8c1;
+  --phase-tide: #c8ae92;
+  --light-origin: 96% 20%;
+  --matter-opacity: 0.85;
+}
+.atmosphere[data-daylight="night"] {
+  --phase-light: #b0c5e5;
+  --phase-mist: #7a9fbb;
+  --phase-tide: #8aaeb7;
+  --light-origin: 78% 2%;
+  --matter-opacity: 0.62;
+}
+.scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.85;
+  mask-image: radial-gradient(
+    ellipse 38% 52% at 50% 46%,
+    transparent 18%,
+    #000 100%
+  );
+}
+.atmosphere[data-reading="true"] {
+  --matter-opacity: 0.28;
+}
+.atmosphere[data-reading="true"] .scene {
+  opacity: 0.38;
+}
+.sunlight,
+.mist,
+.tide {
+  position: absolute;
+  inset: -8%;
+}
+.sunlight {
+  background: radial-gradient(
+    ellipse 56% 66% at var(--light-origin),
+    var(--morning-light),
+    transparent 76%
+  );
+}
+.mist {
+  background: radial-gradient(
+    ellipse 42% 66% at 98% 48%,
+    var(--sea-mist),
+    transparent 78%
+  );
+}
+.tide {
+  background: radial-gradient(
+    ellipse 58% 26% at 36% 103%,
+    var(--tidal-light),
+    transparent 82%
+  );
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sunlight {
+    animation: morning-drift 72s ease-in-out infinite alternate paused;
+  }
+  .mist {
+    animation: sea-drift 96s ease-in-out infinite alternate paused;
+  }
+  .tide {
+    animation: tide-drift 54s ease-in-out infinite alternate paused;
+  }
+  .atmosphere[data-running="true"] .scene > div {
+    animation-play-state: running;
+  }
+}
+@keyframes morning-drift {
+  to {
+    transform: translate(3%, 2%);
+  }
+}
+@keyframes sea-drift {
+  to {
+    transform: translate(-3%, -2%);
+  }
+}
+@keyframes tide-drift {
+  to {
+    transform: translate(2%, -1.5%);
+  }
+}
+@media (max-width: 700px) {
+  .atmosphere .scene {
+    opacity: 0.65;
+  }
+  .atmosphere[data-reading="true"] .scene {
+    opacity: 0.28;
+  }
+}
+@media (forced-colors: active) {
+  .atmosphere {
+    display: none;
+  }
+}

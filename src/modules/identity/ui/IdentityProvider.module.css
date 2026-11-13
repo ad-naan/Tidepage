@@ -82,11 +82,6 @@
   background: var(--soft);
   border-color: var(--accent);
 }
-.providerLink:focus-visible,
-.workbench:focus-visible {
-  outline: 1px dashed var(--accent);
-  outline-offset: 4px;
-}
 .account {
   display: grid;
   gap: 10px;
@@ -124,6 +119,7 @@
   font: 500 20px/1.6 var(--font-ui);
 }
 .workbench.workbench {
+  --control-focus-tide: var(--focus-on-solid);
   display: flex;
   align-items: center;
   gap: 10px;

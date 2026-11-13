@@ -36,11 +36,6 @@
 .recordButton:focus-visible .recordVisual {
   opacity: 0.13;
 }
-.recordButton:focus-visible,
-.trigger:focus-visible {
-  outline: 1px dashed var(--accent);
-  outline-offset: 4px;
-}
 .trigger {
   position: relative;
   display: grid;

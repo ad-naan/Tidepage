@@ -29,6 +29,7 @@ import "@/styles/layout.css";
 import "@/styles/sky-header.css";
 import "@/styles/tokens.css";
 import "@/styles/design-contract.css";
+import "@/styles/focus.css";
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   const identity = await getPublicSiteIdentity(locale);

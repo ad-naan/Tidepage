@@ -76,8 +76,6 @@
   stroke-dashoffset: 0;
 }
 .link:focus-visible {
-  outline: 1px dashed var(--accent);
-  outline-offset: 3px;
   border-radius: 3px;
 }
 .hint {

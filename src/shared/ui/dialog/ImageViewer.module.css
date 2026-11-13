@@ -17,10 +17,6 @@
   touch-action: none;
   border-radius: 5px;
 }
-.stage:focus-visible {
-  outline: 1px dashed var(--accent);
-  outline-offset: -3px;
-}
 .stage[data-zoomed="true"] {
   cursor: grab;
 }

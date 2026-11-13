@@ -39,6 +39,8 @@ import {
 } from "@/modules/content/domain/editor-document";
 import { Button, IconButton } from "@/shared/ui/button/Button";
 import { Input } from "@/shared/ui/field/Input";
+import { TagEditor } from "@/modules/content/ui/tags/TagEditor";
+import { normalizeTags } from "@/modules/content/domain/tags";
 import { DatePicker } from "@/shared/ui/date-picker/DatePicker";
 import { Textarea } from "@/shared/ui/field/Textarea";
 import { Field } from "@/shared/ui/field/Field";
@@ -260,9 +262,7 @@ export function ArticleEditorView({
       if (editor)
         translations[code] = {
           ...translationOf(current, code),
-          tags: translationOf(current, code)
-            .tags.map((tag) => tag.trim())
-            .filter(Boolean),
+          tags: normalizeTags(translationOf(current, code).tags),
           body: editor.getJSON() as EditorNode,
         };
     }
@@ -755,10 +755,12 @@ export function ArticleEditorView({
               />
             </Field>
             <Field id="article-tags" label={t("editor.fields.tags")}>
-              <Input
+              <TagEditor
+                locale={locale}
+                multiple
                 value={translation.tags.join(",")}
-                onChange={(e) =>
-                  updateTranslation({ tags: e.target.value.split(",") })
+                onValueChange={(value) =>
+                  updateTranslation({ tags: value.split(/[,，]/) })
                 }
               />
             </Field>

@@ -5,7 +5,7 @@
   overflow: hidden;
 }
 .composer:focus-within {
-  border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+  border-color: var(--focus-ink);
 }
 .tools {
   display: flex;

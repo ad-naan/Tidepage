@@ -507,6 +507,7 @@ body {
   margin-top: 13px;
 }
 .github-button {
+  --control-focus-tide: var(--focus-on-solid);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -782,6 +783,7 @@ body {
   margin-top: 18px;
 }
 .player-play {
+  --control-focus-tide: var(--focus-on-solid);
   height: 43px;
   width: 43px;
   display: grid;
@@ -983,6 +985,7 @@ mark {
   margin-right: 8px;
 }
 .selection-toolbar {
+  --control-focus-tide: var(--focus-on-solid);
   position: fixed;
   z-index: 45;
   background: var(--ink);
@@ -1153,6 +1156,7 @@ mark {
   padding: 0 6px;
 }
 .comment-submit {
+  --control-focus-tide: var(--focus-on-solid);
   margin-left: auto;
   display: flex;
   align-items: center;

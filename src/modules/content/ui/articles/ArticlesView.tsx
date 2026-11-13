@@ -14,15 +14,19 @@ import type { ArticleSummary, Category } from "@/modules/content/domain/models";
 import type { Page } from "@/shared/contracts/api";
 import { Link } from "@/shared/i18n/navigation";
 import { ArticleList } from "./ArticleList";
+import { TagFilter } from "@/modules/content/ui/tags/TagFilter";
+import type { ContentTag } from "@/modules/content/domain/tags";
 import { CoastalVignette } from "@/shared/ui/illustration/CoastalVignette";
 import { Button } from "@/shared/ui/button/Button";
 
 export function ArticlesView({
   result,
   category,
+  tags,
 }: {
   result: Page<ArticleSummary>;
   category?: Category;
+  tags: ContentTag[];
 }) {
   const t = useTranslations("articles"),
     categories = useTranslations("categories");
@@ -84,10 +88,12 @@ export function ArticlesView({
             );
           }}
         />
+        <TagFilter kind="articles" tags={tags} />
         <label className="archive-search">
           <Search size={13} aria-hidden="true" />
           <Input
             appearance="bare"
+            data-focus="integrated"
             className="inline-search"
             aria-label={t("search")}
             value={query}

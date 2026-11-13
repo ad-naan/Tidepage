@@ -7,6 +7,9 @@ import { usePathname } from "@/shared/i18n/navigation";
 import { MotionConfig } from "motion/react";
 import { Mail, ArrowRight } from "lucide-react";
 import { useThemePreference } from "@/shared/ui/preferences/useThemePreference";
+import { useBackgroundMotion } from "@/shared/ui/preferences/useBackgroundMotion";
+import { SiteAtmosphere } from "./SiteAtmosphere";
+import styles from "./SiteShell.module.css";
 import { Dialog } from "@/shared/ui/dialog/Dialog";
 import { spring } from "@/shared/lib/motion";
 import { SiteHeader } from "@/widgets/site-shell/header/SiteHeader";
@@ -43,6 +46,8 @@ export function SiteShell({
     contactT = useTranslations("contact");
   const pathname = usePathname();
   const { selected: theme, setPreference } = useThemePreference();
+  const { selected: backgroundMotion, setPreference: setBackgroundMotion } =
+    useBackgroundMotion();
   const [immersive, setImmersive] = useState(false);
   const [contact, setContact] = useState(false);
   const { notify } = useNotice();
@@ -60,9 +65,15 @@ export function SiteShell({
       <JournalProvider>
         <ExternalLinkPreview />
         <div
-          className={`site-shell ${immersive ? "is-immersive" : ""}`}
+          className={`site-shell ${styles.shell} ${immersive ? "is-immersive" : ""}`}
           data-page={pathname === "/" ? "home" : "inner"}
         >
+          {pathname !== "/explore" && (
+            <SiteAtmosphere
+              motion={backgroundMotion}
+              reading={immersive || pathname.startsWith("/articles/")}
+            />
+          )}
           <SiteHeader
             articles={articles}
             navigation={navigation}
@@ -88,6 +99,8 @@ export function SiteShell({
               showCoast={visitedCoast && pathname !== "/"}
               theme={theme}
               onThemeChange={setPreference}
+              backgroundMotion={backgroundMotion}
+              onBackgroundMotionChange={setBackgroundMotion}
               onContact={() => setContact(true)}
               onHeart={() =>
                 notify({

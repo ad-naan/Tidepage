@@ -415,7 +415,10 @@
       "theme": "Theme",
       "light": "Light",
       "system": "System",
-      "dark": "Dark"
+      "dark": "Dark",
+      "background": "Backdrop",
+      "flowing": "Flowing",
+      "still": "Still"
     },
     "coast": "Back to the coast",
     "rss": "Subscribe via RSS",
@@ -2130,5 +2133,24 @@
     "failed": "Unable to save",
     "full": "The limit of 100 records has been reached",
     "failureHelp": "Check that browser storage is available, or remove an entry you no longer need and try again."
+  },
+  "tags": {
+    "filter": "Filter by tag",
+    "selected": "Viewing: #{tag}",
+    "clear": "Clear tag",
+    "search": "Search tags",
+    "empty": "No matching tags.",
+    "searching": "Finding tags…",
+    "limit": "Showing up to 20 matching tags. Type to narrow the results.",
+    "failed": "Could not load tags. Try again.",
+    "retry": "Retry",
+    "reuse": "Reuse existing tags",
+    "editorHelp": "Separate tags with commas. Reuse existing tags to keep topics consistent.",
+    "singleHelp": "Enter one topic or choose an existing tag.",
+    "suggestionsFailed": "Suggestions are unavailable. You can still enter tags.",
+    "more": "View {count} more tags in the article",
+    "label": "Tags",
+    "all": "All tags",
+    "sorted": "Sorted by use"
   }
 }

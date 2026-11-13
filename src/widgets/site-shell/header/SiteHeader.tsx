@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { NoticeDock } from "@/shared/ui/feedback/NoticeProvider";
 import { AnchoredPanel } from "@/shared/ui/overlay/AnchoredPanel";
 import { OverlayScope } from "@/shared/ui/overlay/OverlayScope";
+import { PencilLine } from "@/shared/ui/drawing/CoastalMarks";
 
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@/shared/i18n/navigation";
@@ -237,10 +238,11 @@ export function SiteHeader({
               <div className="header-music-slot" ref={setMusicContainer} />
             ) : (
               <>
-                <div className="living-search-field">
+                <div className={`living-search-field ${styles.searchField}`}>
                   <Search size={20} />
                   <Input
                     appearance="bare"
+                    data-focus="integrated"
                     ref={input}
                     aria-label={t("searchContent")}
                     placeholder={t("searchPlaceholder")}
@@ -258,6 +260,7 @@ export function SiteHeader({
                       <X size={14} />
                     </Button>
                   )}
+                  <PencilLine kind="fold" className={styles.searchShore} />
                 </div>
                 <div className="living-search-meta">
                   <span>

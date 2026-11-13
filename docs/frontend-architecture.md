@@ -104,6 +104,12 @@ import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 
 交互文案位于语言目录的 `comments`、`engagement`、`notes.reader`、`admin.noteImages`。互动复用 IdentityProvider；访客发言、点赞和收藏需要配置现有 GitHub/Gitee OAuth 登录。
 
+## 内容标签
+
+文章保留单一固定分类和多个标签，手记保留一个主题标签。`content/domain/tags` 统一显示文本、大小写无关的标签标识、中英文逗号解析和链接生成；发布时做 NFKC、空白与前置井号清理并按标识去重。SQL 查询应用同样的规范，因此旧记录无需迁移即可精确筛选。
+
+文章和手记工具栏复用 `content/ui/tags/TagFilter`，用共享 AnchoredPanel 与 useDisclosure 提供紧凑的可搜索入口、当前选择和清除，支持 Escape、外部点击和焦点恢复。标签查询仅统计当前语言已到发布时间的公开内容，按引用内容数排序，每次最多返回 20 项；输入搜索词后在服务端查找，页面不加载完整标签库。分类、标签与关键词可组合，改变筛选重置页码。后台 TagEditor 复用公开标签建议，文章列表最多显示三个标签及剩余数量，详情保留完整标签。
+
 ## 共用正文
 
 正文手绘小图沿用同一契约与渲染链路：无业务含义的数据和 SVG 在 `shared/contracts/diagram.ts`、`shared/ui/drawing/MiniDiagram`，编辑适配位于 `modules/content/ui/admin/editor`。目录、国际化、AI 与保存方式见 [正文手绘小图](mini-diagrams.md)。
@@ -133,3 +139,9 @@ import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 `pnpm run check:architecture` 会检查分层、客户端/服务端依赖、旧目录，以及原生控件的归属。业务和组合层不能直接写 `button`、`motion.button`、`input`、`textarea`、`select`、`a`、`dialog`、`details/summary`，必须使用统一出口。原生标签只允许出现在它自己的基础实现中；不能另建一个“临时基础组件”绕过检查。
 
 `tests/ui-architecture.test.mjs` 使用合法与违规样例验证这些规则。`pnpm run check` 执行格式、架构、类型和测试；生产构建另执行 `pnpm run build`。字体、间距与笔触见 [设计基础](design-system.md)。
+
+## 页面背景与动效偏好
+
+`widgets/site-shell/SiteAtmosphere` 组合低对比度光雾层与 `SeasonalMatter` 四季飘落层，属于站点构图，不进入业务模块。`shared/lib/seasonal-atmosphere` 复用站点日期工具按上海时区计算季节与晨昏，组件订阅现有的共享分钟时钟。形状由 `shared/ui/drawing/CoastalMarks` 提供：春花嫩叶、夏叶、秋叶与冬雪。SiteShell 在海岸漫游外挂载，并在文章与专注阅读时减淡。背景层不接收指针事件、不进入无障碍树；桌面指针用被动监听驱动有上限的光雾视差与邻近叶片偏转，不绘制随机曲线或点击反馈。
+
+`shared/ui/preferences/useBackgroundMotion` 保存本机缓动 / 静止选择，页脚复用 FilterTabs；初始服务端画面保持静止，挂载后再按本机选择、页面可见性与系统动效偏好启动。漂移、下落与翻转使用 CSS transform；叶片偏转的 RAF 在回落后停止。暂停取消 RAF、冻结 CSS 动画，卸载清理事件；减少动态效果保留静态形状，高对比度隐藏装饰。文案位于 `footer.preferences`。

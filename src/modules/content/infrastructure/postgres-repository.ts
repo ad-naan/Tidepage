@@ -14,6 +14,8 @@ import {
   sql,
 } from "drizzle-orm";
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
+import { tagKey } from "@/modules/content/domain/tags";
+import { tagKeySql } from "./tags";
 import { getDb, type Database } from "@/server/db/client";
 import { publicListRank } from "@/server/db/public-list-rank";
 import { dateKey, formatDate } from "@/shared/lib/date-time";
@@ -87,7 +89,11 @@ function fullNote(row: typeof n.$inferSelect): Note {
 export function postgresContentRepository(
   db: Database = getDb(),
 ): ContentRepository & {
-  listNotes(locale: Locale, limit?: number): Promise<NoteListEntry[]>;
+  listNotes(
+    locale: Locale,
+    limit?: number,
+    tag?: string,
+  ): Promise<NoteListEntry[]>;
   noteById(id: string, locale: Locale): Promise<Note | null>;
 } {
   return {
@@ -223,6 +229,9 @@ export function postgresContentRepository(
         published(a),
         eq(a.locale, query.locale),
         query.category ? eq(a.category, query.category) : undefined,
+        query.tag
+          ? sql`exists (select 1 from unnest(${a.tags}) as value where ${tagKeySql(sql`value`)} = ${query.tag})`
+          : undefined,
         query.q
           ? or(
               ilike(a.title, pattern),
@@ -274,7 +283,7 @@ export function postgresContentRepository(
         pageCount: Math.ceil(total / query.pageSize),
       };
     },
-    listNotes: async (locale, limit) => {
+    listNotes: async (locale, limit, tag) => {
       const query = db
         .select({
           locale: n.locale,
@@ -289,7 +298,13 @@ export function postgresContentRepository(
           sketch: n.sketch,
         })
         .from(n)
-        .where(and(published(n), eq(n.locale, locale)))
+        .where(
+          and(
+            published(n),
+            eq(n.locale, locale),
+            tag ? sql`${tagKeySql(sql`${n.tag}`)} = ${tagKey(tag)}` : undefined,
+          ),
+        )
         .orderBy(
           publicListRank("notes", locale, n.id),
           desc(n.publishedOn),

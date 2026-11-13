@@ -79,10 +79,6 @@
   padding: 0;
   color: var(--muted);
 }
-.homeToggle:focus-visible {
-  outline: 1px solid var(--accent);
-  outline-offset: 2px;
-}
 .homePreview {
   padding: 0;
 }
@@ -136,8 +132,6 @@
 }
 .primary a:focus-visible,
 .more:focus-visible {
-  outline: 1px dashed var(--accent);
-  outline-offset: 4px;
   border-radius: 2px;
 }
 .mobileLabel {
@@ -189,10 +183,6 @@
 .dropdown a:hover,
 .dropdown a:focus-visible {
   color: var(--ink);
-}
-.dropdown a:focus-visible {
-  outline: 1px dashed var(--accent);
-  outline-offset: 2px;
 }
 .dropdown a:is(:hover, :focus-visible)::before {
   opacity: 1;

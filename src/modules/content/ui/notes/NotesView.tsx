@@ -4,6 +4,13 @@ import { useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { listItemMotion } from "@/shared/lib/motion";
 import { useFormatter, useTranslations } from "next-intl";
+import { Link } from "@/shared/i18n/navigation";
+import { TagFilter } from "@/modules/content/ui/tags/TagFilter";
+import {
+  tagLabel,
+  taggedUrl,
+  type ContentTag,
+} from "@/modules/content/domain/tags";
 import { ArrowUpRight, Bookmark, Images } from "lucide-react";
 import {
   PencilLine,
@@ -41,24 +48,28 @@ function noteSketch(id: string) {
 export function NotesView({
   notes,
   initialNote = null,
+  tags,
 }: {
   notes: NoteListEntry[];
   initialNote?: Note | null;
+  tags: ContentTag[];
 }) {
   return (
     <EngagementProvider
       targets={notes.map((note) => ({ type: "note", id: note.id }))}
     >
-      <NotesContent notes={notes} initialNote={initialNote} />
+      <NotesContent notes={notes} initialNote={initialNote} tags={tags} />
     </EngagementProvider>
   );
 }
 function NotesContent({
   notes,
   initialNote,
+  tags,
 }: {
   notes: NoteListEntry[];
   initialNote: Note | null;
+  tags: ContentTag[];
 }) {
   const reduced = useReducedMotion();
   const t = useTranslations("notes");
@@ -86,6 +97,7 @@ function NotesContent({
       />
       <div className={styles.toolbar}>
         <SketchLabel kind="leaf">{t("year")}</SketchLabel>
+        <TagFilter kind="notes" tags={tags} />
         <Button
           className={styles.filter}
           disabled={loading || error}
@@ -173,7 +185,12 @@ function NotesContent({
                   </Button>
                   <div className={styles.entryFooter}>
                     {note.tag && (
-                      <span className={styles.tag}>#{note.tag}</span>
+                      <Link
+                        href={taggedUrl("notes", note.tag)}
+                        className={styles.tag}
+                      >
+                        #{tagLabel(note.tag)}
+                      </Link>
                     )}
                     <Button
                       className={styles.readMore}

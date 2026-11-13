@@ -131,10 +131,6 @@
   background: var(--soft);
   color: var(--accent);
 }
-.sidebar nav > a:focus-visible {
-  outline: 1px dashed var(--accent);
-  outline-offset: 2px;
-}
 @media (prefers-reduced-motion: no-preference) {
   .page {
     animation: pageReveal var(--motion-soft) ease-out both;

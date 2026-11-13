@@ -1,6 +1,8 @@
 import { getLocale } from "next-intl/server";
 import { NotesView } from "@/modules/content/ui/notes/NotesView";
-import { getNote, listNotes } from "@/modules/content/server";
+import { getNote, listNotes, getContentTags } from "@/modules/content/server";
+import { tagFilterSchema } from "@/modules/content/domain/tags";
+import { redirect } from "@/shared/i18n/navigation";
 import { collectionItemId } from "@/modules/content/domain/managed-collections";
 import { getReadingImageDimensions } from "@/modules/content/server/reading-image-dimensions";
 import { getPageMetadata } from "@/server/seo/metadata";
@@ -9,10 +11,15 @@ export default async function Page({
   searchParams,
 }: PageProps<"/[locale]/notes">) {
   const locale = await getLocale();
-  const id = collectionItemId.safeParse((await searchParams).open).data;
-  const [notes, selected] = await Promise.all([
-    listNotes(locale),
+  const params = await searchParams;
+  const id = collectionItemId.safeParse(params.open).data;
+  const parsedTag = tagFilterSchema.optional().safeParse(params.tag);
+  if (!parsedTag.success) return redirect({ href: "/notes", locale });
+  const tag = parsedTag.data;
+  const [notes, selected, tags] = await Promise.all([
+    listNotes(locale, undefined, tag),
     id ? getNote(id, locale) : null,
+    getContentTags({ locale, kind: "notes", q: "", limit: 8 }),
   ]);
   const initialNote = selected
     ? {
@@ -20,5 +27,12 @@ export default async function Page({
         imageDimensions: await getReadingImageDimensions([selected.body]),
       }
     : null;
-  return <NotesView key={id} notes={notes} initialNote={initialNote} />;
+  return (
+    <NotesView
+      key={`${id ?? ""}:${tag ?? ""}`}
+      notes={notes}
+      initialNote={initialNote}
+      tags={tags}
+    />
+  );
 }

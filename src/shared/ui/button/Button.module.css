@@ -7,10 +7,6 @@
     border-color var(--motion-quick),
     opacity var(--motion-quick);
 }
-.root:focus-visible {
-  outline: 1px dashed var(--accent);
-  outline-offset: 4px;
-}
 .root:disabled {
   cursor: default;
   opacity: 0.48;
@@ -76,6 +72,7 @@
   }
 }
 .primary {
+  --control-focus-tide: var(--focus-on-solid);
   color: var(--paper);
   background: var(--ink);
   border-radius: 3px 8px 2px 5px;

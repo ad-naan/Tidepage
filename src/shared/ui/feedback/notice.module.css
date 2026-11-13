@@ -101,10 +101,6 @@
 .dismiss:hover {
   color: var(--ink);
 }
-.dismiss:focus-visible {
-  outline: 1px dashed var(--accent);
-  outline-offset: 2px;
-}
 .context {
   min-height: 40px;
 }

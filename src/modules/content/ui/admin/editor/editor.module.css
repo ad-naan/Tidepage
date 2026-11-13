@@ -103,10 +103,6 @@
   outline: none;
   white-space: pre-wrap;
 }
-.document :global(.tiptap:focus-visible) {
-  outline: 1px dashed var(--line);
-  outline-offset: -4px;
-}
 .dragPreview {
   position: fixed;
   top: -10000px;

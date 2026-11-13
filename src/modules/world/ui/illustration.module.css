@@ -58,6 +58,8 @@
   display: inline;
 }
 .skyHit {
+  --control-focus-tide: none;
+  --focus-wash: transparent;
   position: absolute;
   left: 64%;
   top: 25%;
@@ -68,10 +70,12 @@
   cursor: pointer;
 }
 .skyHit:focus-visible {
-  outline: 1px dashed var(--coast-reflection);
+  outline: 2px solid var(--focus-ink);
   outline-offset: 8px;
 }
 .boatLink {
+  --control-focus-tide: none;
+  --focus-wash: transparent;
   position: absolute;
   left: 53%;
   top: 49%;
@@ -96,7 +100,7 @@
   color: var(--coast-reflection);
 }
 .boatLink:focus-visible {
-  outline: 1px dashed var(--coast-reflection);
+  outline: 2px solid var(--focus-ink);
   outline-offset: 3px;
 }
 .boatHint {

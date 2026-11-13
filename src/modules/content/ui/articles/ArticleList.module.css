@@ -1,0 +1,21 @@
+.row {
+  position: relative;
+}
+.title {
+  color: inherit;
+  text-decoration: none;
+}
+.title::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.tags {
+  position: relative;
+  z-index: 2;
+}
+.tags a {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}

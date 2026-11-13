@@ -275,10 +275,6 @@
 .table tr:last-child td {
   border-bottom: 0;
 }
-.table:focus-visible {
-  outline: 1px solid var(--accent);
-  outline-offset: 3px;
-}
 .rich.rich.compact {
   font-size: 14px;
   line-height: 1.85;

@@ -83,11 +83,6 @@
 .signature a:hover {
   color: var(--accent);
 }
-.guide a:focus-visible,
-.signature a:focus-visible {
-  outline: 1px solid var(--accent);
-  outline-offset: 4px;
-}
 @media (max-width: 700px) {
   .page {
     margin-top: 20px;

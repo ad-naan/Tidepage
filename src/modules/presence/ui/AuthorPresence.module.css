@@ -21,10 +21,6 @@
   color: var(--ink);
   background: transparent;
 }
-.trigger:focus-visible {
-  outline: 1px solid var(--accent);
-  outline-offset: 2px;
-}
 .panel[data-ui-overlay-owner] {
   padding: 20px;
 }

@@ -2,6 +2,8 @@
 import { DateTime } from "@/shared/ui/typography/DateTime";
 import { useRef } from "react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/shared/i18n/navigation";
+import { taggedUrl, tagLabel } from "@/modules/content/domain/tags";
 import { MessageCircle } from "lucide-react";
 import type { Note } from "@/modules/content/domain/models";
 import { profile } from "@/shared/config/profile";
@@ -45,7 +47,11 @@ export function NoteReaderContent({ note }: { note: Note }) {
             ) : note.text ? (
               <RichText document={plainTextDocument(note.text)} />
             ) : null}
-            {note.tag && <span className={styles.tag}>#{note.tag}</span>}
+            {note.tag && (
+              <Link href={taggedUrl("notes", note.tag)} className={styles.tag}>
+                #{tagLabel(note.tag)}
+              </Link>
+            )}
           </article>
           <div ref={comments} className={styles.comments}>
             <Discussion target={{ type: "note", id: note.id }} compact />

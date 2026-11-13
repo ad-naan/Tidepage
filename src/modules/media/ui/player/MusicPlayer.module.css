@@ -101,10 +101,6 @@
 .modeButton:focus-visible {
   color: var(--accent);
 }
-.modeButton:focus-visible {
-  outline: 1px dashed var(--accent);
-  outline-offset: 3px;
-}
 .modeLabel {
   font-size: 10px;
   white-space: nowrap;

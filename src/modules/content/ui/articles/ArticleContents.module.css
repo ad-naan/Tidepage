@@ -78,8 +78,6 @@
   color: var(--accent);
 }
 .row:focus-visible {
-  outline: 1px solid var(--accent);
-  outline-offset: -1px;
   border-radius: 3px;
 }
 .trigger {

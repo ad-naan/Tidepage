@@ -25,10 +25,7 @@
   font: 400 var(--text-body)/1.6 var(--font-ui);
 }
 .inputRow:focus-within {
-  box-shadow: 0 1px 0 var(--accent);
-}
-.inputRow textarea:focus-visible {
-  outline: none;
+  box-shadow: 0 2px 0 var(--focus-ink);
 }
 .inputRow > button {
   width: 28px;

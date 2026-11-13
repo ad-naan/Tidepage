@@ -40,3 +40,19 @@ button[aria-expanded="true"] .searchIcon > svg + svg {
     gap: 8px;
   }
 }
+.searchField.searchField {
+  position: relative;
+  border-bottom: 0;
+}
+.searchShore {
+  position: absolute;
+  inset: auto 0 0;
+  color: var(--muted);
+}
+.searchField:focus-within .searchShore {
+  color: var(--focus-ink);
+}
+.searchField:focus-within .searchShore path:first-child {
+  stroke-width: 1.25;
+  opacity: 0.85;
+}

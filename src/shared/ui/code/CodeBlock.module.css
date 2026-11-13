@@ -106,10 +106,6 @@
 .header button:hover {
   color: var(--accent);
 }
-.viewport:focus-visible {
-  outline: 1px solid var(--accent);
-  outline-offset: -2px;
-}
 .pre [data-token~="comment"],
 .pre [data-token~="prolog"],
 .pre [data-token~="doctype"] {

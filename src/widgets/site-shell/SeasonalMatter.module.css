@@ -1,0 +1,131 @@
+.matter {
+  --leaf-one: #bd8d50;
+  --leaf-two: #9b6852;
+  --leaf-three: #c4a05f;
+  position: absolute;
+  inset: 0;
+  opacity: var(--matter-opacity, 0.82);
+  mask-image: linear-gradient(
+    90deg,
+    #000 6%,
+    #0009 15%,
+    transparent 28%,
+    transparent 72%,
+    #0009 85%,
+    #000 94%
+  );
+}
+.matter[data-season="spring"] {
+  --leaf-one: #8ba574;
+  --leaf-two: #a3b47d;
+  --leaf-three: #729a82;
+}
+.matter[data-season="summer"] {
+  --leaf-one: #729779;
+  --leaf-two: #93a66e;
+  --leaf-three: #759c94;
+}
+.matter[data-season="winter"] {
+  --leaf-one: #a4b7c2;
+  --leaf-two: #94aab7;
+  --leaf-three: #b5c1c9;
+}
+:global([data-theme="dark"]) .matter {
+  --leaf-one: #c5a064;
+  --leaf-two: #b58164;
+  --leaf-three: #d1b57c;
+}
+:global([data-theme="dark"]) .matter[data-season="spring"] {
+  --leaf-one: #a3bb87;
+  --leaf-two: #b6c797;
+  --leaf-three: #86af98;
+}
+:global([data-theme="dark"]) .matter[data-season="summer"] {
+  --leaf-one: #8cae92;
+  --leaf-two: #a1b983;
+  --leaf-three: #8db6aa;
+}
+:global([data-theme="dark"]) .matter[data-season="winter"] {
+  --leaf-one: #c0d6e5;
+  --leaf-two: #a9c6da;
+  --leaf-three: #d7e1e9;
+}
+.fall {
+  position: absolute;
+  inset-inline-start: var(--leaf-x);
+  top: var(--leaf-rest);
+  width: var(--leaf-size);
+  height: calc(var(--leaf-size) * 1.25);
+  color: var(--leaf-one);
+}
+.fall[data-tone="1"] {
+  color: var(--leaf-two);
+}
+.fall[data-tone="2"] {
+  color: var(--leaf-three);
+}
+.fall[data-kind="petal"] {
+  color: #d2a1a3;
+}
+.response {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.form {
+  transform: rotate(var(--leaf-angle));
+  transform-origin: 50% 60%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .fall {
+    top: 0;
+    animation: leaf-fall var(--leaf-duration) linear var(--leaf-delay) infinite
+      paused;
+  }
+  .form {
+    animation: leaf-turn 5.6s ease-in-out var(--leaf-delay) infinite alternate
+      paused;
+  }
+  :global([data-running="true"]) .fall,
+  :global([data-running="true"]) .form {
+    animation-play-state: running;
+  }
+}
+@keyframes leaf-fall {
+  0% {
+    transform: translate3d(0, -50px, 0);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.94;
+  }
+  35% {
+    transform: translate3d(20px, 35vh, 0);
+  }
+  65% {
+    transform: translate3d(-14px, 68vh, 0);
+  }
+  92% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(8px, calc(100vh + 50px), 0);
+    opacity: 0;
+  }
+}
+@keyframes leaf-turn {
+  from {
+    transform: rotate(calc(var(--leaf-angle) - 16deg)) scaleX(0.72);
+  }
+  to {
+    transform: rotate(calc(var(--leaf-angle) + 20deg)) scaleX(1);
+  }
+}
+@media (max-width: 700px) {
+  .fall:nth-child(n + 5) {
+    display: none;
+  }
+  .matter {
+    opacity: calc(var(--matter-opacity, 0.82) * 0.85);
+  }
+}

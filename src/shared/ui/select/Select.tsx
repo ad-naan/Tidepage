@@ -94,6 +94,7 @@ export function Select<Value extends string>({
       dir={dir}
     >
       <SelectPrimitive.Trigger
+        data-focus={variant === "ghost" ? "control" : "field"}
         ref={trigger}
         id={id}
         aria-label={label}

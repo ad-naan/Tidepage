@@ -82,6 +82,7 @@
     color var(--motion-quick);
 }
 .primary {
+  --control-focus-tide: var(--focus-on-solid);
   padding: var(--space-3) var(--space-5);
   border: var(--stroke-ui) solid var(--ink);
   border-radius: 5px 8px 6px 7px;
@@ -89,8 +90,8 @@
   color: var(--paper);
 }
 .primary:hover {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: color-mix(in srgb, var(--ink) 85%, var(--accent));
+  border-color: var(--ink);
   color: var(--paper);
 }
 .secondary {

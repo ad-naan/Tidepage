@@ -1,5 +1,6 @@
 import "server-only";
 import { isNull, or } from "drizzle-orm";
+import { normalizeTags } from "@/modules/content/domain/tags";
 import { getDb, type Database } from "@/server/db/client";
 import { conflictError, validationError } from "@/server/http/errors";
 import { isUploadedAssetId } from "@/shared/contracts/asset-path";
@@ -78,9 +79,7 @@ export async function publishArticle(
       title,
       excerpt,
       category: draft.category,
-      tags: [
-        ...new Set(translation.tags.map((tag) => tag.trim()).filter(Boolean)),
-      ],
+      tags: normalizeTags(translation.tags),
       minutes: draft.minutes,
       sketch: draft.sketch,
       sections: [],

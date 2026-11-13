@@ -1,8 +1,7 @@
 import type { ComponentProps } from "react";
 import type { LinkPreview } from "@/shared/contracts/link-preview";
-import styles from "./Anchor.module.css";
 export function Anchor({ className = "", ...props }: ComponentProps<"a">) {
-  return <a {...props} className={`${styles.link} ${className}`} />;
+  return <a {...props} className={className} />;
 }
 /** Public HTTP(S) links share safe new-tab defaults; locale routes use shared/i18n/Link. */
 export function ExternalLink({

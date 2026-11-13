@@ -1,5 +1,6 @@
 import "server-only";
 import { eq, isNull, or, sql } from "drizzle-orm";
+import { tagLabel } from "@/modules/content/domain/tags";
 import { z } from "zod";
 import { getDb, type Database } from "@/server/db/client";
 import { conflictError } from "@/server/http/errors";
@@ -67,6 +68,7 @@ export async function publishNote(
       tag: z
         .string()
         .max(80)
+        .transform(tagLabel)
         .parse(item.translations[request.locale]?.tag ?? ""),
       sketch: sketchSchema.parse(item.sketch),
       images,

@@ -1,5 +1,6 @@
 import { DateTime } from "@/shared/ui/typography/DateTime";
 import { getTranslations } from "next-intl/server";
+import { normalizeTags, taggedUrl } from "@/modules/content/domain/tags";
 import { Link } from "@/shared/i18n/navigation";
 import {
   PencilLine,
@@ -98,11 +99,8 @@ export async function ArticleDetail({
             </div>
             <ArticleAfterword value={article.publication?.afterword} />
             <div className="tags">
-              {article.tags.map((t) => (
-                <Link
-                  key={t}
-                  href={`/articles?category=${encodeURIComponent(article.category)}`}
-                >
+              {normalizeTags(article.tags).map((t) => (
+                <Link key={t} href={taggedUrl("articles", t)}>
                   #{t}
                 </Link>
               ))}

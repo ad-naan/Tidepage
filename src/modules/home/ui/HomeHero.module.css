@@ -46,10 +46,6 @@
   opacity: 1;
   transform: scale(1.3);
 }
-.spark:focus-visible {
-  outline: 1px solid var(--accent);
-  outline-offset: 2px;
-}
 .hint {
   position: absolute;
   left: calc(100% + 5px);
@@ -215,10 +211,6 @@
 }
 .writingLink:hover > svg {
   transform: translateX(3px);
-}
-.writingLink:focus-visible {
-  outline: 1px dashed var(--accent);
-  outline-offset: 4px;
 }
 .connectionDivider {
   color: var(--muted);

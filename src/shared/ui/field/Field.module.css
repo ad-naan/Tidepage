@@ -24,12 +24,6 @@
     transition: none;
   }
 }
-.input:focus-visible,
-.range:focus-visible,
-.file:focus-visible {
-  outline: 1px dashed var(--accent);
-  outline-offset: 3px;
-}
 .input:disabled,
 .range:disabled,
 .file:disabled {
@@ -61,6 +55,9 @@
 }
 .bare {
   color: inherit;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 .range {
   accent-color: var(--accent);

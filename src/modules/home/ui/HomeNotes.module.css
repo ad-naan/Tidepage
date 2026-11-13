@@ -27,7 +27,3 @@
   color: var(--muted);
   font: 400 var(--text-xs)/1.5 var(--font-ui);
 }
-.row:focus-visible {
-  outline: 1px dashed var(--accent);
-  outline-offset: 3px;
-}

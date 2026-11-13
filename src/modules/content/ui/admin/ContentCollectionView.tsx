@@ -40,6 +40,7 @@ import {
 } from "@/modules/content/domain/managed-collections";
 import { documentText } from "@/shared/contracts/rich-text";
 import { NoteImagesEditor } from "./NoteImagesEditor";
+import { TagEditor } from "@/modules/content/ui/tags/TagEditor";
 import { EditorialDeleteDialog } from "./EditorialDeleteDialog";
 import { PublicListOrderButton } from "./PublicListOrderButton";
 import { ApiClientError, apiGet, apiSend } from "@/shared/http/client";
@@ -707,7 +708,20 @@ export function ContentCollectionView({
                           : undefined
                     }
                   >
-                    {["text", "description"].includes(key) ? (
+                    {kind === "notes" && key === "tag" ? (
+                      <TagEditor
+                        locale={locale}
+                        value={value.translations[locale]?.tag ?? ""}
+                        onValueChange={(tag) =>
+                          update({
+                            translations: {
+                              ...value.translations,
+                              [locale]: { ...value.translations[locale], tag },
+                            },
+                          })
+                        }
+                      />
+                    ) : ["text", "description"].includes(key) ? (
                       <Textarea
                         rows={4}
                         value={value.translations[locale]?.[key] ?? ""}

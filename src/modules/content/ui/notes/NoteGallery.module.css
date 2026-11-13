@@ -16,10 +16,6 @@
   overflow: hidden;
   touch-action: pan-y;
 }
-.stage:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
 .photo {
   position: absolute;
   inset: 0;

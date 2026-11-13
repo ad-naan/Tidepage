@@ -141,8 +141,6 @@
 }
 .footer a:focus-visible,
 .footer button:focus-visible {
-  outline: 1px dashed var(--accent);
-  outline-offset: 4px;
   border-radius: 3px;
 }
 @media (max-width: 760px) {

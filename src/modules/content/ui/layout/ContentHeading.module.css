@@ -90,10 +90,6 @@
 .vignette[data-sketch-room]:hover {
   opacity: 1;
 }
-.vignette:focus-visible {
-  outline: 1px dashed var(--accent);
-  outline-offset: 5px;
-}
 .vignette > [data-sketch-canvas] {
   display: block;
   width: 100%;

@@ -1,5 +1,7 @@
 ﻿import "server-only";
 import { cache } from "react";
+import { queryContentTags } from "@/modules/content/infrastructure/tags";
+import type { TagQuery } from "@/modules/content/domain/tags";
 import { z } from "zod";
 import { getEnv } from "@/server/config/env";
 import { getCacheStore } from "@/server/cache/redis";
@@ -100,8 +102,11 @@ export const listArticles = async (input: unknown) =>
 export const getNotes = cache(async (locale: Locale = defaultLocale) =>
   (await service()).notes(locale),
 );
-export const listNotes = cache((locale: Locale, limit?: number) =>
-  postgresContentRepository().listNotes(locale, limit),
+export const getContentTags = cache((query: TagQuery) =>
+  queryContentTags(query),
+);
+export const listNotes = cache((locale: Locale, limit?: number, tag?: string) =>
+  postgresContentRepository().listNotes(locale, limit, tag),
 );
 export const getNote = (id: string, locale: Locale) =>
   postgresContentRepository().noteById(id, locale);

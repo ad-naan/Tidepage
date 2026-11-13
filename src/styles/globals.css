@@ -80,12 +80,6 @@ a,
 input {
   -webkit-tap-highlight-color: transparent;
 }
-button:focus-visible,
-a:focus-visible,
-input:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 5px;
-}
 button svg,
 a svg {
   flex-shrink: 0;
@@ -443,9 +437,6 @@ input {
   height: 28%;
   border-radius: 45%;
   cursor: pointer;
-}
-.otter-hit:focus-visible {
-  outline-offset: 0;
 }
 .otter-bubble {
   position: absolute;
@@ -891,6 +882,7 @@ input {
   color: var(--accent);
 }
 .button-solid {
+  --control-focus-tide: var(--focus-on-solid);
   background: var(--ink);
   color: var(--paper);
   border-color: var(--ink);

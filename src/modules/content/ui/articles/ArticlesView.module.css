@@ -25,6 +25,7 @@
   align-items: center;
   gap: 8px;
   width: 190px;
+  margin-inline-start: auto;
   color: var(--muted);
 }
 .archive.archive :global(.archive-search > svg:last-child) {
@@ -41,10 +42,16 @@
   font: 400 12px/1.7 var(--font-ui);
 }
 .archive.archive :global(.archive-search:focus-within) {
-  color: var(--accent);
+  color: var(--focus-ink);
 }
 .archive.archive :global(.archive-search:focus-within > svg:last-child) {
-  color: var(--accent);
+  color: var(--focus-ink);
+  opacity: 1;
+}
+.archive.archive
+  :global(.archive-search:focus-within > svg:last-child path:first-child) {
+  stroke-width: 1.25;
+  opacity: 0.85;
 }
 .archive.archive :global(.archive-label) {
   display: flex;
@@ -140,10 +147,6 @@
   left: 0;
   bottom: -5px;
 }
-.archive.archive :global(.article-row:focus-visible) {
-  outline: 1px dashed var(--accent);
-  outline-offset: 4px;
-}
 @media (max-width: 700px) {
   .archive.archive {
     margin: 8px auto 30px;
@@ -153,7 +156,8 @@
     gap: 6px 12px;
   }
   .archive.archive :global(.archive-search) {
-    width: 100%;
+    width: auto;
+    flex: 1 1 140px;
   }
   .archive.archive :global(.article-row) {
     grid-template-columns: 30px minmax(0, 1fr);

@@ -77,7 +77,7 @@
   background: color-mix(in srgb, var(--paper) 94%, var(--sand));
 }
 .composer:focus-within {
-  border-color: var(--accent);
+  border-color: var(--focus-ink);
 }
 .composer textarea {
   display: block;
@@ -92,9 +92,6 @@
   max-height: 140px;
   resize: none;
   font: 400 var(--text-body)/1.8 var(--font-ui);
-}
-.composer textarea:focus-visible {
-  outline: none;
 }
 .footer {
   justify-content: space-between;

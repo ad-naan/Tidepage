@@ -17,7 +17,5 @@
   color: var(--accent);
 }
 .toggle:focus-visible {
-  outline: 1px dashed var(--accent);
-  outline-offset: 4px;
   border-radius: 3px;
 }

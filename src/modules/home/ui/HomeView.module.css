@@ -47,10 +47,6 @@
   text-decoration-color: var(--accent);
   text-underline-offset: 4px;
 }
-.quote:focus-visible {
-  outline: 1px dashed var(--accent);
-  outline-offset: 3px;
-}
 .quote .quoteSketch {
   align-self: center;
   width: 72px;

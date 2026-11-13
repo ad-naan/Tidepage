@@ -2,6 +2,71 @@ import type { ReactNode } from "react";
 import styles from "./CoastalMarks.module.css";
 
 type Motif = "shell" | "tide" | "wind" | "leaf";
+export type SeasonalMarkKind = "leaf" | "ginkgo" | "petal" | "snow";
+
+/** Small filled paper forms, deliberately different from line-art ornaments. */
+export function SeasonalMark({
+  kind,
+  className = "",
+}: {
+  kind: SeasonalMarkKind;
+  className?: string;
+}) {
+  return (
+    <svg
+      className={`${styles.seasonal} ${className}`}
+      viewBox="0 0 32 40"
+      fill="none"
+      aria-hidden="true"
+    >
+      {kind === "snow" ? (
+        <path
+          d="M16 5v30M3 12l26 16M3 28l26-16M12 8l4 4 4-4m-8 24 4-4 4 4M5 17l5-1-1-5m14 18-1-5 5-1M4 23l6 1-1 5m14-18-1 5 5 1"
+          stroke="currentColor"
+          strokeWidth="1.1"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      ) : kind === "ginkgo" ? (
+        <>
+          <path
+            d="M16 30C12 24 7 23 3 24L1 17C1 10 6 4 11 2c3 2 4 5 5 9 1-5 2-8 5-9 6 3 10 8 10 15l-3 8c-5-2-8 0-12 5Z"
+            fill="currentColor"
+          />
+          <path d="m16 29 1 9" stroke="currentColor" strokeWidth="1" />
+          <path
+            className={styles.vein}
+            d="M16 29C10 20 7 15 6 10m10 19C13 18 12 12 12 7m4 22V14m0 15c4-12 6-17 10-20m-10 20c6-7 9-10 12-12"
+          />
+        </>
+      ) : kind === "petal" ? (
+        <>
+          <path
+            d="M16 34C8 29 0 17 4 9c3-6 9-6 12-1 4-6 10-5 13 1 4 9-6 21-13 25Z"
+            fill="currentColor"
+          />
+          <path className={styles.vein} d="M16 32c-2-8-2-15 0-22" />
+        </>
+      ) : (
+        <>
+          <path
+            d="M5 29C-1 17 10 5 28 2c1 17-8 29-23 27Z"
+            fill="currentColor"
+          />
+          <path
+            d="M2 37C6 24 14 13 25 5"
+            stroke="currentColor"
+            strokeWidth="1"
+          />
+          <path
+            className={styles.vein}
+            d="M5 28 25 5M10 23 9 15m6 4 9-1m-5-4-1-6"
+          />
+        </>
+      )}
+    </svg>
+  );
+}
 const glyphs: Record<Motif, ReactNode> = {
   shell: (
     <>

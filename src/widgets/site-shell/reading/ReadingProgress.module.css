@@ -33,10 +33,6 @@
   color: var(--accent);
   background: var(--soft);
 }
-.back:focus-visible {
-  outline: 1px solid var(--accent);
-  outline-offset: 3px;
-}
 .copy {
   min-width: 0;
   flex: 1;

@@ -2,6 +2,22 @@ import { site } from "@/shared/config/site";
 
 export type DateInput = string | number | Date;
 export type DateDisplay = "date" | "datetime" | "activity";
+
+/** The site's calendar, independent of the reader's device time zone. */
+export function siteClockParts(value: DateInput) {
+  const input = parsed(value);
+  if (!input) return null;
+  const parts = formatter("en-US", {
+    timeZone: site.timeZone,
+    month: "numeric",
+    hour: "numeric",
+    hourCycle: "h23",
+  }).formatToParts(input.date);
+  return {
+    month: Number(parts.find((part) => part.type === "month")?.value),
+    hour: Number(parts.find((part) => part.type === "hour")?.value),
+  };
+}
 const minute = 60_000;
 const hour = 60 * minute;
 const day = 24 * hour;

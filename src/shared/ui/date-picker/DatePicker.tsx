@@ -112,6 +112,7 @@ export function DatePicker({
   return (
     <>
       <Button
+        data-focus="field"
         id={id}
         className={styles.trigger}
         variant="quiet"

@@ -56,10 +56,6 @@
   background: color-mix(in srgb, var(--accent) 5%, transparent);
   color: var(--ink);
 }
-.line:focus-visible {
-  outline: 1px dashed var(--accent);
-  outline-offset: -2px;
-}
 .line[data-active="true"]:hover {
   color: var(--accent);
 }
