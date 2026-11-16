@@ -64,7 +64,29 @@
     "board": "Board the paper boat and explore the coast",
     "boardHint": "Explore the coast ↗",
     "switchLight": "Switch to light theme",
-    "switchDark": "Switch to dark theme"
+    "switchDark": "Switch to dark theme",
+    "otter": {
+      "hint": "Say hello",
+      "title": "Your little coastal guide",
+      "close": "Put away the otter's note",
+      "hello": "Hello! I was waiting for the breeze, and for you. Where shall we wander?",
+      "again": "Hello again! Pick a place and I'll point the way.",
+      "destinationsLabel": "Explore with the otter",
+      "destinations": {
+        "articles": {
+          "label": "Find something to read",
+          "reply": "The articles hold ideas I've spent time thinking about. Let's turn a page."
+        },
+        "notes": {
+          "label": "Browse everyday notes",
+          "reply": "Little pieces of everyday life. Just a few words can be worth a pause."
+        },
+        "coast": {
+          "label": "Take the boat to the coast",
+          "reply": "The paper boat is ready. Walk by the bay, watch the sunset, and perhaps meet a friend."
+        }
+      }
+    }
   },
   "ui": {
     "dateTime": {

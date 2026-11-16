@@ -14,16 +14,12 @@ export function HeroSketch() {
   const scene = useRef<HTMLDivElement>(null);
   const inView = useInView(scene);
   const uid = useId().replaceAll(":", "");
-  const [greeting, setGreeting] = useState(0);
   const [ripples, setRipples] = useState<
     { id: number; x: number; y: number }[]
   >([]);
   const serial = useRef(0);
   const { theme, setPreference } = useThemePreference();
   const reduce = useReducedMotion();
-  function greet() {
-    setGreeting((current) => current + 1);
-  }
   function water(event: PointerEvent<SVGSVGElement>) {
     if (reduce) return;
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -235,7 +231,6 @@ export function HeroSketch() {
               </g>
             );
           })}
-          <HeroOtter playId={greeting} reducedMotion={Boolean(reduce)} />
           <path
             d="M21 243C77 246 63 189 114 190S156 228 175 227"
             stroke="var(--accent)"
@@ -319,7 +314,7 @@ export function HeroSketch() {
         </svg>
       </Link>
       <CoastLetter />
-      <Button className="otter-hit" aria-label={t("greet")} onClick={greet} />
+      <HeroOtter />
     </div>
   );
 }

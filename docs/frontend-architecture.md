@@ -128,6 +128,8 @@ import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 
 首页由 `HomeHero`、`HomeNotes` 与 `ArticleList` 保留原有海岸插画和两栏内容结构。`HeroSketch` 管理插画热区；`HeroOtter` 在固定挂载的透明 WebP 精灵图内切换挥爪帧，加载完成前保留静帧，保留原 GIF 的逐帧时长，重复点击从头播放，卸载时清理计时器。减少动态效果时只显示挥爪静帧。共享 `useThemePreference` 负责主题设置。水獭的静帧、精灵图和生成源 GIF 均在静态资源清单注册。
 
+`HeroOtter` 自己管理视线跟随、回应与探索纸条，避免指针更新让整幅海岸插画重渲染。网格控制点与边界在 `world/domain/hero-otter-rig`，按需加载的 PixiJS 绘制与资源释放在 `world/runtime/createHeroOtter`；静帧和原有挥爪是完整回退。纸条复用共享 OverlayScope、AnchoredPanel、Button 和本地化 Link，键盘打开后进入首个探索链接，关闭恢复到水獭入口。
+
 `ContentHeading` 的页眉线稿由同目录 `InteractiveHeadingSketch` 提供可选局部彩蛋，复用共享 Button；只有手记、项目、一言、相册启用。重播仅重建图层，不重建聚焦按钮；一次恢复计时在重新触发和卸载时清理。位移与静态减少动态效果分支都在同目录 CSS Module，动作名称登记在 `easterEggs` 语言目录。
 
 `modules/journal` 管理读者主动保存的本机阅读书签和摘录，由 `SiteShell` 提供上下文；独立 `/journal` 路由组合 `JournalView`，文章与页脚通过 `JournalLink` 进入。它与需要登录的账号收藏分别存储，不改变账号互动计数。记录有版本、语言、数量上限和站内链接白名单，写入成功才显示保存状态，重复书签更新章节，满额不会自动丢弃旧条目。读取状态区分加载、空白和存储不可用；失败不会显示为空记录。当前版本不做跨设备同步。业务无关的文具线稿由 `shared/ui/illustration/StationeryDrawing` 提供，页面构图与浏览状态留在所属业务视图。

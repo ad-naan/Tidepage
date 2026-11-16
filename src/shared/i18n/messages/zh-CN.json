@@ -64,7 +64,29 @@
     "switchLight": "切换为浅色主题",
     "switchDark": "切换为深色主题",
     "board": "登上纸船，进入海岸漫游",
-    "boardHint": "海岸漫游 ↗"
+    "boardHint": "海岸漫游 ↗",
+    "otter": {
+      "hint": "戳戳我",
+      "title": "海岸边的小向导",
+      "close": "收好水獭的小纸条",
+      "hello": "你好呀！我在这里等风，也等你。想一起去哪儿逛逛？",
+      "again": "嘿嘿，收到你的招呼啦。挑个地方，我给你指路。",
+      "destinationsLabel": "跟着水獭探索",
+      "destinations": {
+        "articles": {
+          "label": "读一篇文章",
+          "reply": "那些认真琢磨过的想法，都收在文章里了。一起翻翻？"
+        },
+        "notes": {
+          "label": "翻翻生活手记",
+          "reply": "这里有日常的小片段，短短几句，也值得停一会儿。"
+        },
+        "coast": {
+          "label": "坐纸船去海岸",
+          "reply": "纸船已经停好了。去海湾走走，看落日，也许还会遇见新朋友。"
+        }
+      }
+    }
   },
   "ui": {
     "dateTime": {

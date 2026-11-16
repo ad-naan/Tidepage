@@ -1,0 +1,117 @@
+.companion {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.artwork {
+  position: absolute;
+  left: 24%;
+  top: 38.4615%;
+  width: 18%;
+  height: 28.2051%;
+  contain: layout style paint;
+}
+.fallback {
+  width: 100%;
+  height: 100%;
+}
+.canvas {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  height: 100%;
+  width: auto;
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  visibility: hidden;
+}
+.canvas > canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.artwork[data-renderer="pixi"] .canvas {
+  visibility: visible;
+}
+.artwork[data-renderer="pixi"] .fallback {
+  visibility: hidden;
+}
+.artwork:has([data-otter-pose="wave"], [data-otter-pose="greet"]) .canvas {
+  visibility: hidden;
+}
+.artwork:has([data-otter-pose="wave"], [data-otter-pose="greet"]) .fallback {
+  visibility: visible;
+}
+.trigger {
+  position: absolute;
+  left: 27%;
+  top: 38%;
+  width: 16%;
+  height: 29%;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 45%;
+  pointer-events: auto;
+  z-index: 3;
+}
+.hint {
+  position: absolute;
+  top: 96%;
+  left: 50%;
+  transform: translateX(-50%);
+  font: 400 11px/1.6 var(--font-ui);
+  color: var(--muted);
+  white-space: nowrap;
+  opacity: 0;
+}
+.trigger:hover .hint,
+.trigger:focus-visible .hint {
+  opacity: 1;
+}
+.panel[data-ui-overlay-owner] {
+  padding: 18px;
+}
+.heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font: 400 12px/1.6 var(--font-ui);
+}
+.heading > button {
+  margin-left: auto;
+  padding: 4px;
+}
+.reply {
+  min-height: 3.6em;
+  margin: 10px 0 12px;
+  color: var(--ink);
+  font: 400 14px/1.8 var(--font-ui);
+}
+.destinations {
+  display: grid;
+  gap: 2px;
+}
+.destinations > a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px;
+  border-radius: 6px;
+  font: 400 12px/1.6 var(--font-ui);
+  color: var(--muted);
+}
+.destinations > a:hover,
+.destinations > a:focus-visible {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--wash) 45%, transparent);
+}
+.destinations > a > svg:last-child {
+  margin-left: auto;
+}
+@media (hover: none) {
+  .hint {
+    opacity: 0.8;
+  }
+}
