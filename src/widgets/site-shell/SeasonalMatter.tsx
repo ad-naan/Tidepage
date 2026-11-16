@@ -49,25 +49,25 @@ export function SeasonalMatter({
   running: boolean;
 }) {
   const items = useRef<(HTMLSpanElement | null)[]>([]);
+  const responses = useRef(
+    leaves.map(() => ({ x: 0, y: 0, angle: 0, tx: 0, ty: 0, ta: 0 })),
+  );
   useEffect(() => {
     if (!running) return;
     let frame = 0;
     let pending: { x: number; y: number; wind: number } | null = null;
     let lastX: number | undefined;
-    const poses = leaves.map(() => ({
-      x: 0,
-      y: 0,
-      angle: 0,
-      tx: 0,
-      ty: 0,
-      ta: 0,
-    }));
+    const poses = responses.current;
     const paint = () => {
       frame = 0;
       if (pending) {
         const pointer = pending;
-        const bounds = items.current.map((element) =>
-          element?.getBoundingClientRect(),
+        // Falling only drifts a few pixels horizontally. Measure nearby leaves
+        // rather than synchronizing every animated layer with the main thread.
+        const bounds = items.current.map((element, index) =>
+          Math.abs((leaves[index].x / 100) * innerWidth - pointer.x) < 200
+            ? element?.getBoundingClientRect()
+            : undefined,
         );
         bounds.forEach((bounds, index) => {
           if (!bounds || !bounds.width) return;
@@ -86,6 +86,16 @@ export function SeasonalMatter({
       }
       let moving = false;
       poses.forEach((pose, index) => {
+        if (
+          Math.abs(pose.x) +
+            Math.abs(pose.y) +
+            Math.abs(pose.angle) +
+            Math.abs(pose.tx) +
+            Math.abs(pose.ty) +
+            Math.abs(pose.ta) <
+          0.01
+        )
+          return;
         pose.x += (pose.tx - pose.x) * 0.16;
         pose.y += (pose.ty - pose.y) * 0.16;
         pose.angle += (pose.ta - pose.angle) * 0.16;
@@ -146,7 +156,12 @@ export function SeasonalMatter({
           }
         >
           <span className={styles.response}>
-            <SeasonalMark kind={kind(season, index)} className={styles.form} />
+            <span className={styles.flutter}>
+              <SeasonalMark
+                kind={kind(season, index)}
+                className={styles.form}
+              />
+            </span>
           </span>
         </span>
       ))}

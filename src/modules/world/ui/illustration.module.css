@@ -137,7 +137,7 @@
 }
 .star {
   opacity: 0.45;
-  animation: twinkle 5s ease-in-out infinite;
+  animation: twinkle 5s ease-in-out infinite paused;
 }
 .star:nth-child(2n) {
   animation-delay: 1.6s;
@@ -146,7 +146,11 @@
   animation-delay: 3.1s;
 }
 .firefly {
-  animation: glow 5s ease-in-out infinite;
+  animation: glow 5s ease-in-out infinite paused;
+}
+:global([data-theme="dark"]) .scene[data-in-view="true"] .star,
+:global([data-theme="dark"]) .scene[data-in-view="true"] .firefly {
+  animation-play-state: running;
 }
 .firefly:nth-child(2n) {
   animation-delay: 2.2s;

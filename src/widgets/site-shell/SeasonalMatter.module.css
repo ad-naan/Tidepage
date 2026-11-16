@@ -73,13 +73,16 @@
 .matter[data-season="autumn"] .fall[data-kind="oak"] {
   color: var(--oak);
 }
-.response {
+.response,
+.flutter {
   display: block;
   width: 100%;
   height: 100%;
 }
 .form {
   transform: rotate(var(--leaf-angle));
+}
+.flutter {
   transform-origin: 50% 60%;
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -88,13 +91,14 @@
     animation: leaf-fall var(--leaf-duration) linear var(--leaf-delay) infinite
       paused;
   }
-  .form {
+  .flutter {
     animation: leaf-turn var(--leaf-flutter) ease-in-out var(--leaf-delay)
       infinite alternate paused;
   }
   :global([data-running="true"]) .fall,
-  :global([data-running="true"]) .form {
+  :global([data-running="true"]) .flutter {
     animation-play-state: running;
+    will-change: transform;
   }
 }
 @keyframes leaf-fall {
@@ -121,10 +125,10 @@
 }
 @keyframes leaf-turn {
   from {
-    transform: rotate(calc(var(--leaf-angle) - 16deg)) scaleX(0.72);
+    transform: rotate(-16deg) scaleX(0.72);
   }
   to {
-    transform: rotate(calc(var(--leaf-angle) + 20deg)) scaleX(1);
+    transform: rotate(20deg) scaleX(1);
   }
 }
 @media (max-width: 700px) {

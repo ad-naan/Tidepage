@@ -34,7 +34,11 @@ export function HeroSketch() {
     setRipples((current) => [...current.slice(-3), { id, x, y }]);
   }
   return (
-    <div className={`hero-art ${styles.scene}`} ref={scene}>
+    <div
+      className={`hero-art ${styles.scene}`}
+      ref={scene}
+      data-in-view={inView}
+    >
       <svg
         viewBox="0 0 700 390"
         aria-label={t("coast")}

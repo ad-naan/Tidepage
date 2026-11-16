@@ -26,7 +26,13 @@
   --sky-shadow: #b98a5b;
   --header-cut: url(#header-sky-cut);
 }
-.sky-header::before {
+.header-surface {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.sky-header > .header-surface::before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -43,10 +49,10 @@
     ),
     radial-gradient(ellipse 38% 95% at 77% 2%, var(--sky-gold), transparent 80%);
 }
-.sky-header.is-resting::before {
+.sky-header.is-resting > .header-surface::before {
   mask-image: linear-gradient(#000 45%, transparent);
 }
-.sky-header.is-compact::before {
+.sky-header.is-compact > .header-surface::before {
   clip-path: var(--header-cut);
   backdrop-filter: blur(12px);
   background:
@@ -474,16 +480,14 @@
 
 /* Scroll state: a smaller, translucent horizon suspended over the page. */
 .site-shell > .header-slot > .sky-header {
-  transition:
-    width 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-    transform var(--motion-soft) var(--motion-ease-out);
+  transition: transform var(--motion-soft) var(--motion-ease-out);
 }
 .site-shell > .header-slot > .sky-header.is-compact {
   width: min(1080px, calc(100% - var(--site-gutter) * 2 - 28px));
   max-width: 1080px;
   transform: translateY(16px);
 }
-.sky-header.is-compact::before {
+.sky-header.is-compact > .header-surface::before {
   left: -20px;
   width: calc(100% + 40px);
   top: -5px;
@@ -632,7 +636,7 @@
 .sky-header.is-compact .header-floating-wash {
   opacity: 1;
 }
-.sky-header.is-compact::before {
+.sky-header.is-compact > .header-surface::before {
   background: none;
   mask-image: none;
 }
@@ -745,8 +749,6 @@
 }
 @media (pointer: coarse) and (hover: none) and (prefers-reduced-motion: no-preference) {
   .site-shell > .header-slot > .sky-header {
-    transition:
-      width var(--motion-quick) var(--motion-ease-out),
-      transform var(--motion-quick) var(--motion-ease-out);
+    transition: transform var(--motion-quick) var(--motion-ease-out);
   }
 }

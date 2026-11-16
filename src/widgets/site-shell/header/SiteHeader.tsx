@@ -7,7 +7,8 @@ import { AnchoredPanel } from "@/shared/ui/overlay/AnchoredPanel";
 import { OverlayScope } from "@/shared/ui/overlay/OverlayScope";
 import { PencilLine } from "@/shared/ui/drawing/CoastalMarks";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import { Link } from "@/shared/i18n/navigation";
 import { usePathname } from "@/shared/i18n/navigation";
 import { ArrowRight, Command, Focus, Search, X } from "lucide-react";
@@ -67,12 +68,73 @@ export function SiteHeader({
   const input = useRef<HTMLInputElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const header = useRef<HTMLElement>(null);
+  const reduce = useMediaQuery("(prefers-reduced-motion: reduce)", true);
+  const transition = useRef<{
+    surface: DOMRect;
+    items: { element: HTMLElement; bounds: DOMRect }[];
+  } | null>(null);
+  const animations = useRef<Animation[]>([]);
   const activeArticle = useReadingArticle();
   const article =
     pathname === `/articles/${activeArticle?.slug}` ? activeArticle : null;
   const reading = !!article && condensed;
   const search = useArticleSearch(query, open && panel === "search", articles);
   const results = search.items;
+
+  function captureHeader() {
+    const surface =
+      header.current?.querySelector<HTMLElement>(".header-surface");
+    if (!surface || reduce) return;
+    transition.current = {
+      surface: surface.getBoundingClientRect(),
+      items: Array.from(
+        header.current!.querySelectorAll<HTMLElement>(".living-header-row > *"),
+      ).map((element) => ({
+        element,
+        bounds: element.getBoundingClientRect(),
+      })),
+    };
+  }
+
+  useLayoutEffect(() => {
+    const previous = transition.current;
+    transition.current = null;
+    animations.current.forEach((animation) => animation.cancel());
+    animations.current = [];
+    const surface =
+      header.current?.querySelector<HTMLElement>(".header-surface");
+    if (!previous || !surface || reduce) return;
+    // Commit the new layout once. Move the paper and controls independently so
+    // text stays sharp and width/max-width cannot clip an in-flight transition.
+    const bounds = surface.getBoundingClientRect();
+    const items = previous.items.map(({ element, bounds: before }) => ({
+      element,
+      x: before.left - element.getBoundingClientRect().left,
+    }));
+    const timing = {
+      duration: 380,
+      easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+    };
+    animations.current = [
+      surface.animate(
+        [
+          { transform: `scaleX(${previous.surface.width / bounds.width})` },
+          { transform: "scaleX(1)" },
+        ],
+        timing,
+      ),
+      ...items.map(({ element, x }) =>
+        element.animate(
+          [{ transform: `translateX(${x}px)` }, { transform: "translateX(0)" }],
+          timing,
+        ),
+      ),
+    ];
+  }, [condensed, reduce]);
+  useEffect(
+    () => () => animations.current.forEach((animation) => animation.cancel()),
+    [],
+  );
 
   useEffect(() => {
     let compact = window.scrollY > 88;
@@ -82,11 +144,12 @@ export function SiteHeader({
       const next = compact ? window.scrollY >= 40 : window.scrollY > 88;
       if (next === compact) return;
       compact = next;
+      captureHeader();
       setCompact(next);
     }
     window.addEventListener("scroll", update, { passive: true });
     return () => window.removeEventListener("scroll", update);
-  }, [pathname]);
+  }, [pathname, reduce]);
 
   const show = (next: HeaderPanel) => {
     window.dispatchEvent(
@@ -135,7 +198,9 @@ export function SiteHeader({
                   : "resting"
           }
         >
-          <HeaderSky />
+          <div className="header-surface">
+            <HeaderSky />
+          </div>
           <div className="living-header-row">
             <div className={styles.identity}>
               <HeaderBrand avatar={avatar} />
@@ -202,7 +267,10 @@ export function SiteHeader({
                   className={`living-focus-button ${immersive ? "active" : ""}`}
                   aria-label={immersive ? t("focusExit") : t("focusEnter")}
                   aria-pressed={immersive}
-                  onClick={onImmersiveChange}
+                  onClick={() => {
+                    captureHeader();
+                    onImmersiveChange();
+                  }}
                   whileTap={{ scale: 0.9 }}
                 >
                   <Focus size={18} />

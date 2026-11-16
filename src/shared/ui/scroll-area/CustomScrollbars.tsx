@@ -66,6 +66,8 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
   const [geometry, setGeometry] = useState<Geometry>(empty);
   const [dragging, setDragging] = useState(false);
   const rail = useRef<HTMLDivElement>(null);
+  const thumbElement = useRef<HTMLDivElement>(null);
+  const measured = useRef<Geometry>(empty);
   const drag = useRef<{
     pointer: number;
     offset: number;
@@ -74,10 +76,24 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
   } | null>(null);
   const originalSelect = useRef<string | null>(null);
   const isPage = host === null;
+  const syncThumb = useCallback(
+    (next: Geometry) => {
+      if (!thumbElement.current) return;
+      thumbElement.current.style.transform = vertical
+        ? `translateY(${next.position}px)`
+        : `translateX(${next.position}px)`;
+      thumbElement.current.setAttribute(
+        "aria-valuenow",
+        String(Math.round(next.offset)),
+      );
+    },
+    [vertical],
+  );
   const read = useCallback(() => {
     const target = host || document.documentElement;
     if (host && unavailable(host)) {
       if (rail.current) rail.current.hidden = true;
+      measured.current = empty;
       setGeometry(empty);
       return;
     }
@@ -139,6 +155,8 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
       ),
       visible,
     };
+    measured.current = next;
+    syncThumb(next);
     setGeometry((previous) =>
       Object.keys(next).every(
         (key) =>
@@ -147,12 +165,31 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
         ? previous
         : next,
     );
-  }, [host, vertical]);
+  }, [host, vertical, syncThumb]);
+
+  const updateOffset = useCallback(() => {
+    const current = measured.current;
+    if (!current.visible) return;
+    const offset = vertical
+      ? (host?.scrollTop ?? window.scrollY)
+      : (host?.scrollLeft ?? window.scrollX);
+    const position = Math.max(
+      0,
+      Math.min(
+        current.travel,
+        (offset / Math.max(1, current.extent - current.viewport)) *
+          current.travel,
+      ),
+    );
+    measured.current = { ...current, offset, position };
+    syncThumb(measured.current);
+  }, [host, vertical, syncThumb]);
 
   useLayoutEffect(() => {
     if (!host) return;
     const hide = () => {
       if (rail.current) rail.current.hidden = true;
+      measured.current = empty;
       setGeometry(empty);
     };
     const entries = hides.get(host) ?? new Set();
@@ -166,23 +203,29 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
 
   useEffect(() => {
     let frame = 0;
-    const schedule = () => {
+    let needsMeasure = false;
+    const schedule = (measure = true) => {
+      needsMeasure ||= measure;
       if (frame) return;
       frame = requestAnimationFrame(() => {
         frame = 0;
-        read();
+        if (needsMeasure) read();
+        else updateOffset();
+        needsMeasure = false;
       });
     };
     const scroll = (event: Event) => {
       const target = event.target;
-      if (
+      if (target === host || (!host && target === document)) schedule(false);
+      else if (
         target === document ||
         (host && target instanceof Element && target.contains(host))
       )
         schedule();
     };
     read();
-    const resize = new ResizeObserver(schedule);
+    const refresh = () => schedule();
+    const resize = new ResizeObserver(refresh);
     resize.observe(host || document.documentElement);
     let content: Element[] = [];
     const observeContent = () => {
@@ -209,8 +252,8 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
       capture: true,
       passive: true,
     });
-    window.addEventListener("resize", schedule);
-    window.addEventListener(SCROLLBARS_REFRESH_EVENT, schedule);
+    window.addEventListener("resize", refresh);
+    window.addEventListener(SCROLLBARS_REFRESH_EVENT, refresh);
     // Covers the final position after a disclosure's initial transform settles.
     const settled = window.setTimeout(schedule, 450);
     return () => {
@@ -219,25 +262,30 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
       cancelAnimationFrame(frame);
       clearTimeout(settled);
       document.removeEventListener("scroll", scroll, true);
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener(SCROLLBARS_REFRESH_EVENT, schedule);
+      window.removeEventListener("resize", refresh);
+      window.removeEventListener(SCROLLBARS_REFRESH_EVENT, refresh);
       if (originalSelect.current !== null)
         document.documentElement.style.userSelect = originalSelect.current;
     };
-  }, [host, read]);
+  }, [host, read, updateOffset]);
 
   const scrollTo = (offset: number) => {
+    const geometry = measured.current;
     const target = host || document.documentElement;
     const value = Math.min(
       Math.max(0, offset),
       Math.max(0, geometry.extent - geometry.viewport),
     );
-    // Direct assignment keeps dragging synchronous even when the page uses smooth anchor scrolling.
-    if (vertical) target.scrollTop = value;
-    else target.scrollLeft = value;
-    read();
+    // Explicitly bypass smooth anchor scrolling while dragging or using the keys.
+    target.scrollTo(
+      vertical
+        ? { top: value, behavior: "instant" }
+        : { left: value, behavior: "instant" },
+    );
+    updateOffset();
   };
   const start = (event: PointerEvent<HTMLDivElement>) => {
+    const geometry = measured.current;
     if (event.button !== 0 || geometry.travel <= 0) return;
     event.preventDefault();
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -281,6 +329,7 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
     }
   };
   const keyboard = (event: KeyboardEvent<HTMLDivElement>) => {
+    const geometry = measured.current;
     const deltas: Record<string, number> = {
       ArrowDown: 40,
       ArrowRight: 40,
@@ -335,6 +384,7 @@ function Scrollbar({ host, axis }: { host: HTMLElement | null; axis: Axis }) {
       onLostPointerCapture={stop}
     >
       <div
+        ref={thumbElement}
         className="custom-scrollbar-thumb"
         role="scrollbar"
         aria-label={t(vertical ? "vertical" : "horizontal", {
