@@ -9,20 +9,36 @@ import type { Season } from "@/shared/lib/seasonal-atmosphere";
 import styles from "./SeasonalMatter.module.css";
 
 const leaves = [
-  { x: 4, phase: 0.12, duration: 31, size: 25, turn: -24 },
-  { x: 94, phase: 0.38, duration: 37, size: 22, turn: 28 },
-  { x: 11, phase: 0.66, duration: 35, size: 28, turn: -42 },
-  { x: 88, phase: 0.86, duration: 29, size: 24, turn: 18 },
-  { x: 97, phase: 0.17, duration: 33, size: 26, turn: -18 },
-  { x: 2, phase: 0.45, duration: 39, size: 21, turn: 42 },
-  { x: 15, phase: 0.83, duration: 34, size: 23, turn: 12 },
-  { x: 85, phase: 0.58, duration: 38, size: 22, turn: -32 },
+  { x: 5, phase: 0.12, duration: 31, size: 25, turn: -24 },
+  { x: 92, phase: 0.38, duration: 37, size: 22, turn: 28 },
+  { x: 31, phase: 0.66, duration: 35, size: 28, turn: -42 },
+  { x: 67, phase: 0.86, duration: 29, size: 24, turn: 18 },
+  { x: 15, phase: 0.17, duration: 33, size: 26, turn: -18 },
+  { x: 80, phase: 0.45, duration: 39, size: 21, turn: 42 },
+  { x: 45, phase: 0.83, duration: 34, size: 23, turn: 12 },
+  { x: 57, phase: 0.58, duration: 38, size: 22, turn: -32 },
+  { x: 22, phase: 0.27, duration: 36, size: 30, turn: 22 },
+  { x: 73, phase: 0.73, duration: 32, size: 27, turn: -15 },
+  { x: 38, phase: 0.48, duration: 41, size: 20, turn: -36 },
+  { x: 61, phase: 0.08, duration: 35, size: 25, turn: 34 },
+  { x: 9, phase: 0.91, duration: 33, size: 28, turn: -12 },
+  { x: 87, phase: 0.52, duration: 40, size: 19, turn: 28 },
+  { x: 49, phase: 0.04, duration: 30, size: 26, turn: -30 },
+  { x: 28, phase: 0.31, duration: 37, size: 29, turn: 16 },
+  { x: 53, phase: 0.76, duration: 39, size: 23, turn: 38 },
+  { x: 95, phase: 0.95, duration: 34, size: 24, turn: -26 },
 ];
 
+const seasonalKinds: Record<Season, readonly SeasonalMarkKind[]> = {
+  spring: ["petal", "willow", "birch", "petal", "birch", "willow"],
+  summer: ["willow", "oak", "birch", "willow", "birch"],
+  autumn: ["maple", "ginkgo", "oak", "maple", "birch", "ginkgo", "willow"],
+  winter: ["snow"],
+};
+
 function kind(season: Season, index: number): SeasonalMarkKind {
-  if (season === "winter") return "snow";
-  if (season === "spring" && index % 3 === 0) return "petal";
-  return index % 2 ? "leaf" : "ginkgo";
+  const kinds = seasonalKinds[season];
+  return kinds[index % kinds.length];
 }
 
 export function SeasonalMatter({
@@ -125,6 +141,7 @@ export function SeasonalMatter({
               "--leaf-delay": `${-leaf.phase * leaf.duration}s`,
               "--leaf-size": `${season === "winter" ? leaf.size * 0.62 : leaf.size}px`,
               "--leaf-angle": `${leaf.turn}deg`,
+              "--leaf-flutter": `${5.1 + (index % 4) * 1.3}s`,
             } as CSSProperties
           }
         >

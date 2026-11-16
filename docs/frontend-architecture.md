@@ -142,6 +142,6 @@ import { FilterTabs } from "@/shared/ui/filter-tabs/FilterTabs";
 
 ## 页面背景与动效偏好
 
-`widgets/site-shell/SiteAtmosphere` 组合低对比度光雾层与 `SeasonalMatter` 四季飘落层，属于站点构图，不进入业务模块。`shared/lib/seasonal-atmosphere` 复用站点日期工具按上海时区计算季节与晨昏，组件订阅现有的共享分钟时钟。形状由 `shared/ui/drawing/CoastalMarks` 提供：春花嫩叶、夏叶、秋叶与冬雪。SiteShell 在海岸漫游外挂载，并在文章与专注阅读时减淡。背景层不接收指针事件、不进入无障碍树；桌面指针用被动监听驱动有上限的光雾视差与邻近叶片偏转，不绘制随机曲线或点击反馈。
+`widgets/site-shell/SiteAtmosphere` 组合低对比度光雾层与 `SeasonalMatter` 四季飘落层，属于站点构图，不进入业务模块。`shared/lib/seasonal-atmosphere` 复用站点日期工具按上海时区计算季节与晨昏，组件订阅现有的共享分钟时钟。形状由 `shared/ui/drawing/CoastalMarks` 提供：枫叶、银杏、橡树叶、桦叶、柳叶、花瓣与雪花；站点组合按季节选择形状与密度，共享绘画组件不读取时钟或季节。SiteShell 在海岸漫游外挂载，并在文章与专注阅读时减淡。背景层不接收指针事件、不进入无障碍树；桌面指针用被动监听驱动有上限的光雾视差与邻近叶片偏转，不绘制随机曲线或点击反馈。
 
 `shared/ui/preferences/useBackgroundMotion` 保存本机缓动 / 静止选择，页脚复用 FilterTabs；初始服务端画面保持静止，挂载后再按本机选择、页面可见性与系统动效偏好启动。漂移、下落与翻转使用 CSS transform；叶片偏转的 RAF 在回落后停止。暂停取消 RAF、冻结 CSS 动画，卸载清理事件；减少动态效果保留静态形状，高对比度隐藏装饰。文案位于 `footer.preferences`。

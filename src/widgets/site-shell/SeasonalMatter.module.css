@@ -2,18 +2,12 @@
   --leaf-one: #bd8d50;
   --leaf-two: #9b6852;
   --leaf-three: #c4a05f;
+  --maple: #b2755b;
+  --ginkgo: #c3a15b;
+  --oak: #9c7d59;
   position: absolute;
   inset: 0;
   opacity: var(--matter-opacity, 0.82);
-  mask-image: linear-gradient(
-    90deg,
-    #000 6%,
-    #0009 15%,
-    transparent 28%,
-    transparent 72%,
-    #0009 85%,
-    #000 94%
-  );
 }
 .matter[data-season="spring"] {
   --leaf-one: #8ba574;
@@ -34,6 +28,9 @@
   --leaf-one: #c5a064;
   --leaf-two: #b58164;
   --leaf-three: #d1b57c;
+  --maple: #cd8b6c;
+  --ginkgo: #d4b673;
+  --oak: #ba9974;
 }
 :global([data-theme="dark"]) .matter[data-season="spring"] {
   --leaf-one: #a3bb87;
@@ -67,6 +64,15 @@
 .fall[data-kind="petal"] {
   color: #d2a1a3;
 }
+.matter[data-season="autumn"] .fall[data-kind="maple"] {
+  color: var(--maple);
+}
+.matter[data-season="autumn"] .fall[data-kind="ginkgo"] {
+  color: var(--ginkgo);
+}
+.matter[data-season="autumn"] .fall[data-kind="oak"] {
+  color: var(--oak);
+}
 .response {
   display: block;
   width: 100%;
@@ -83,8 +89,8 @@
       paused;
   }
   .form {
-    animation: leaf-turn 5.6s ease-in-out var(--leaf-delay) infinite alternate
-      paused;
+    animation: leaf-turn var(--leaf-flutter) ease-in-out var(--leaf-delay)
+      infinite alternate paused;
   }
   :global([data-running="true"]) .fall,
   :global([data-running="true"]) .form {
@@ -122,7 +128,7 @@
   }
 }
 @media (max-width: 700px) {
-  .fall:nth-child(n + 5) {
+  .fall:nth-child(n + 9) {
     display: none;
   }
   .matter {

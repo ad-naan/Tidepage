@@ -49,16 +49,23 @@ export function NotesView({
   notes,
   initialNote = null,
   tags,
+  authorAvatar,
 }: {
   notes: NoteListEntry[];
   initialNote?: Note | null;
   tags: ContentTag[];
+  authorAvatar: string;
 }) {
   return (
     <EngagementProvider
       targets={notes.map((note) => ({ type: "note", id: note.id }))}
     >
-      <NotesContent notes={notes} initialNote={initialNote} tags={tags} />
+      <NotesContent
+        notes={notes}
+        initialNote={initialNote}
+        tags={tags}
+        authorAvatar={authorAvatar}
+      />
     </EngagementProvider>
   );
 }
@@ -66,10 +73,12 @@ function NotesContent({
   notes,
   initialNote,
   tags,
+  authorAvatar,
 }: {
   notes: NoteListEntry[];
   initialNote: Note | null;
   tags: ContentTag[];
+  authorAvatar: string;
 }) {
   const reduced = useReducedMotion();
   const t = useTranslations("notes");
@@ -251,6 +260,7 @@ function NotesContent({
         <NoteReader
           key={selected.id}
           note={selected}
+          authorAvatar={authorAvatar}
           onClose={() => setSelected(null)}
         />
       )}

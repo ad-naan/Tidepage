@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 import styles from "./CoastalMarks.module.css";
 
 type Motif = "shell" | "tide" | "wind" | "leaf";
-export type SeasonalMarkKind = "leaf" | "ginkgo" | "petal" | "snow";
+export type SeasonalMarkKind =
+  "maple" | "ginkgo" | "oak" | "birch" | "willow" | "petal" | "snow";
 
 /** Small filled paper forms, deliberately different from line-art ornaments. */
 export function SeasonalMark({
@@ -27,6 +28,39 @@ export function SeasonalMark({
           strokeLinecap="round"
           strokeLinejoin="round"
         />
+      ) : kind === "maple" ? (
+        <>
+          <path
+            d="m16 32-6-2-1-4-6-1 2-5-4-6 7 1-1-8 6 5 3-11 4 11 6-5-1 8 7-1-4 7 2 5-7 1-1 4-5 2Z"
+            fill="currentColor"
+          />
+          <path d="m16 30 1 9" stroke="currentColor" strokeWidth="1" />
+          <path
+            className={styles.vein}
+            d="M16 32V7m0 21L5 18m11 6-5-12m5 16 11-10m-11 6 5-12"
+          />
+        </>
+      ) : kind === "oak" ? (
+        <>
+          <path
+            d="M16 2c-5 0-6 4-4 7-6-2-10 2-7 6-6 1-5 7 1 7-3 4 1 8 6 6l4 5 4-5c6 2 9-2 6-6 6 0 7-6 1-7 3-4-1-8-7-6 2-3 1-7-4-7Z"
+            fill="currentColor"
+          />
+          <path d="M16 31v8" stroke="currentColor" strokeWidth="1" />
+          <path
+            className={styles.vein}
+            d="M16 32V6m0 9-6-3m6 10-9-4m9 10-6-3m6-10 6-3m-6 10 9-4m-9 10 6-3"
+          />
+        </>
+      ) : kind === "willow" ? (
+        <>
+          <path d="M8 33C7 19 15 7 25 1c0 16-7 29-17 32Z" fill="currentColor" />
+          <path d="M5 39q2-7 5-11" stroke="currentColor" strokeWidth="0.8" />
+          <path
+            className={styles.vein}
+            d="M8 33Q16 15 23 5m-9 15-1-6m4 0 5-3m-11 17 7-4"
+          />
+        </>
       ) : kind === "ginkgo" ? (
         <>
           <path
@@ -50,17 +84,13 @@ export function SeasonalMark({
       ) : (
         <>
           <path
-            d="M5 29C-1 17 10 5 28 2c1 17-8 29-23 27Z"
+            d="M16 2 21 8l3 1-1 3 4 3-2 3 3 3-4 3 1 3-5 3-4 3-5-2-4-4 1-3-4-3 2-3-3-3 4-3-1-3 4-2Z"
             fill="currentColor"
           />
-          <path
-            d="M2 37C6 24 14 13 25 5"
-            stroke="currentColor"
-            strokeWidth="1"
-          />
+          <path d="M16 31q-1 5-3 8" stroke="currentColor" strokeWidth="1" />
           <path
             className={styles.vein}
-            d="M5 28 25 5M10 23 9 15m6 4 9-1m-5-4-1-6"
+            d="M16 32V6m0 9-5-4m5 11-8-6m8 12-7-5m7-8 5-4m-5 11 8-6m-8 12 7-5"
           />
         </>
       )}

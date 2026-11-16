@@ -15,8 +15,15 @@ import { EngagementActions } from "@/modules/engagement/ui/EngagementActions";
 import styles from "./NoteReader.module.css";
 import { AuthorSignature } from "@/modules/identity/ui/AuthorSignature";
 import { plainTextDocument } from "@/shared/contracts/rich-text";
+import { Avatar } from "@/shared/ui/avatar/Avatar";
 
-export function NoteReaderContent({ note }: { note: Note }) {
+export function NoteReaderContent({
+  note,
+  authorAvatar,
+}: {
+  note: Note;
+  authorAvatar: string;
+}) {
   const t = useTranslations("notes");
   const { images, body } = note;
   const comments = useRef<HTMLDivElement>(null);
@@ -29,9 +36,12 @@ export function NoteReaderContent({ note }: { note: Note }) {
           data-custom-scroll={t("reader.readingRegion")}
         >
           <header className={styles.byline}>
-            <span className={styles.avatar} aria-hidden>
-              {profile.name.slice(0, 1).toUpperCase()}
-            </span>
+            <Avatar
+              className={styles.avatar}
+              src={authorAvatar}
+              name={profile.name}
+              size="lg"
+            />
             <div>
               <AuthorSignature size="sm" />
               <DateTime value={note.publishedOn} />

@@ -18,9 +18,11 @@ type LoadedReader = {
 /** Keep the dialog mounted while its data and reading tools load together. */
 export function NoteReader({
   note,
+  authorAvatar,
   onClose,
 }: {
   note: Note | NoteListEntry;
+  authorAvatar: string;
   onClose: () => void;
 }) {
   const t = useTranslations("notes");
@@ -55,7 +57,7 @@ export function NoteReader({
       onClose={onClose}
     >
       {loaded ? (
-        <loaded.Content note={loaded.note} />
+        <loaded.Content note={loaded.note} authorAvatar={authorAvatar} />
       ) : (
         <div className={styles.reader}>
           <div className={styles.pendingGallery}>

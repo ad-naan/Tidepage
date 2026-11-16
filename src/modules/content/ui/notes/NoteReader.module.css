@@ -40,15 +40,9 @@
   margin-bottom: 28px;
   font: 400 var(--text-sm)/1.6 var(--font-ui);
 }
-.avatar {
-  display: grid;
-  place-items: center;
+.byline .avatar {
   width: 38px;
   height: 38px;
-  border-radius: 50%;
-  background: var(--sage);
-  color: var(--ink);
-  font: 500 var(--text-subtitle)/1 var(--font-editorial);
 }
 .byline strong {
   display: block;

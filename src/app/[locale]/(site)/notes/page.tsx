@@ -6,6 +6,7 @@ import { redirect } from "@/shared/i18n/navigation";
 import { collectionItemId } from "@/modules/content/domain/managed-collections";
 import { getReadingImageDimensions } from "@/modules/content/server/reading-image-dimensions";
 import { getPageMetadata } from "@/server/seo/metadata";
+import { getPublicSiteAvatar } from "@/modules/site-settings/server";
 export const generateMetadata = () => getPageMetadata("/notes");
 export default async function Page({
   searchParams,
@@ -16,10 +17,11 @@ export default async function Page({
   const parsedTag = tagFilterSchema.optional().safeParse(params.tag);
   if (!parsedTag.success) return redirect({ href: "/notes", locale });
   const tag = parsedTag.data;
-  const [notes, selected, tags] = await Promise.all([
+  const [notes, selected, tags, authorAvatar] = await Promise.all([
     listNotes(locale, undefined, tag),
     id ? getNote(id, locale) : null,
     getContentTags({ locale, kind: "notes", q: "", limit: 8 }),
+    getPublicSiteAvatar(locale),
   ]);
   const initialNote = selected
     ? {
@@ -33,6 +35,7 @@ export default async function Page({
       notes={notes}
       initialNote={initialNote}
       tags={tags}
+      authorAvatar={authorAvatar}
     />
   );
 }
